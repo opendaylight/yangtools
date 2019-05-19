@@ -29,7 +29,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -128,13 +127,13 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
     private final Queue<String> strings = new ArrayDeque<>(8);
     // Let's be modest, 16-level deep constructs are not exactly common.
     private final Deque<Iterator<? extends DeclaredStatement<?>>> stack = new ArrayDeque<>(8);
-    private final Map<QNameModule, @NonNull String> namespaces;
     private final Set<StatementDefinition> ignoredStatements;
+    private final StatementPrefixResolver resolver;
     private final boolean omitDefaultStatements;
 
-    YangTextSnippetIterator(final DeclaredStatement<?> stmt, final Map<QNameModule, @NonNull String> namespaces,
+    YangTextSnippetIterator(final DeclaredStatement<?> stmt, final StatementPrefixResolver resolver,
         final Set<StatementDefinition> ignoredStatements, final boolean omitDefaultStatements) {
-        this.namespaces = requireNonNull(namespaces);
+        this.resolver = requireNonNull(resolver);
         this.ignoredStatements = requireNonNull(ignoredStatements);
         this.omitDefaultStatements = omitDefaultStatements;
         pushStatement(requireNonNull(stmt));
@@ -196,7 +195,7 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
 
         // Add statement prefixed with namespace if needed
         final QName stmtName = def.getStatementName();
-        final Optional<String> prefix = ExportUtils.statementPrefix(namespaces, stmtName);
+        final Optional<String> prefix = ExportUtils.statementPrefix(resolver, stmtName, stmt);
         if (prefix.isPresent()) {
             strings.add(prefix.get());
             strings.add(":");
