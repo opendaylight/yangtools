@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatementNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
@@ -40,7 +39,6 @@ import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
@@ -64,15 +62,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
         final String localPrefix = findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class).get();
         final Builder<String, ModuleEffectiveStatement> prefixToModuleBuilder = ImmutableMap.builder();
         prefixToModuleBuilder.put(localPrefix, this);
-
-        streamEffectiveSubstatements(ImportEffectiveStatement.class)
-                .map(imp -> imp.findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class).get())
-                .forEach(prefix -> {
-                    final StmtContext<?, ?, ?> importedCtx =
-                            verifyNotNull(ctx.getFromNamespace(ImportPrefixToModuleCtx.class, prefix),
-                                "Failed to resolve prefix %s", prefix);
-                    prefixToModuleBuilder.put(prefix, (ModuleEffectiveStatement) importedCtx.buildEffective());
-                });
+        appendPrefixes(ctx, prefixToModuleBuilder);
         prefixToModule = prefixToModuleBuilder.build();
 
         final Map<QNameModule, String> tmp = Maps.newLinkedHashMapWithExpectedSize(prefixToModule.size() + 1);
