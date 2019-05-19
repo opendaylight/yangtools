@@ -20,11 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
@@ -109,15 +107,6 @@ final class ModuleNamespaceContext implements NamespaceContext {
         final String prefix = moduleToPrefix.get(module);
         checkArgument(prefix != null, "Module %s does not map to a prefix", module);
         return new SimpleImmutableEntry<>(prefix, module.getNamespace().toString());
-    }
-
-    Entry<String, String> prefixAndNamespaceForStatement(final QName stmtName) {
-        final Optional<String> prefix = ExportUtils.statementPrefix(moduleToPrefix, stmtName);
-        if (!prefix.isPresent()) {
-            return YIN_PREFIX_AND_NAMESPACE;
-        }
-
-        return new SimpleImmutableEntry<>(prefix.get(), stmtName.getNamespace().toString());
     }
 
     Map<String, String> prefixesAndNamespaces() {
