@@ -13,7 +13,6 @@ import static org.eclipse.jdt.annotation.DefaultLocation.RETURN_TYPE;
 
 import com.google.common.annotations.Beta;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -23,7 +22,6 @@ import java.util.stream.StreamSupport;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -42,21 +40,21 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 @NonNullByDefault({ PARAMETER, RETURN_TYPE })
 public final class YangTextSnippet implements Immutable, Iterable<@NonNull String> {
     private final Set<@NonNull StatementDefinition> ignoredStatements;
-    private final Map<QNameModule, @NonNull String> mapper;
+    private final StatementPrefixResolver resolver;
     private final DeclaredStatement<?> statement;
     private final boolean omitDefaultStatements;
 
-    YangTextSnippet(final DeclaredStatement<?> statement, final Map<QNameModule, @NonNull String> namespaces,
+    YangTextSnippet(final DeclaredStatement<?> statement, final StatementPrefixResolver resolver,
             final Set<@NonNull StatementDefinition> ignoredStatements, final boolean omitDefaultStatements) {
         this.statement = requireNonNull(statement);
-        this.mapper = requireNonNull(namespaces);
+        this.resolver = requireNonNull(resolver);
         this.ignoredStatements = requireNonNull(ignoredStatements);
         this.omitDefaultStatements = omitDefaultStatements;
     }
 
     @Override
     public Iterator<@NonNull String> iterator() {
-        return new YangTextSnippetIterator(statement, mapper, ignoredStatements, omitDefaultStatements);
+        return new YangTextSnippetIterator(statement, resolver, ignoredStatements, omitDefaultStatements);
     }
 
     @Override
