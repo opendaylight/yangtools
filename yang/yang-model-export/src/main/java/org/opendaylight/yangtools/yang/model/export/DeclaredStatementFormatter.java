@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement.QNameModuleToPrefixNamespace;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 
 /**
  * Utility class for formatting {@link DeclaredStatement}s.
@@ -47,6 +48,12 @@ public final class DeclaredStatementFormatter implements Immutable {
      * @throws NullPointerException if any of the arguments is null
      */
     public YangTextSnippet toYangTextSnippet(final ModuleEffectiveStatement module,
+            final DeclaredStatement<?> statement) {
+        return new YangTextSnippet(statement, module.findAll(QNameModuleToPrefixNamespace.class), ignoredStatements,
+            omitDefaultStatements);
+    }
+
+    public YangTextSnippet toYangTextSnippet(final SubmoduleEffectiveStatement module,
             final DeclaredStatement<?> statement) {
         return new YangTextSnippet(statement, module.findAll(QNameModuleToPrefixNamespace.class), ignoredStatements,
             omitDefaultStatements);
