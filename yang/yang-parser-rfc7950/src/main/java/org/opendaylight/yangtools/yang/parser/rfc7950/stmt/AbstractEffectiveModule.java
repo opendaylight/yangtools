@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.ArrayList;
@@ -41,13 +43,17 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
@@ -283,5 +289,18 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         return SourceException.throwIfNull(
             StmtContextUtils.firstAttributeOf(ctx.declaredSubstatements(), PrefixStatement.class),
             ctx.getStatementSourceReference(), "Unable to resolve prefix for %s %s.", type, name);
+    }
+
+    // Alright. this is quite ugly
+    protected final void appendPrefixes(final StmtContext<?, ?, ?> ctx,
+            final Builder<String, ModuleEffectiveStatement> builder) {
+        streamEffectiveSubstatements(ImportEffectiveStatement.class)
+            .map(imp -> imp.findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class).get())
+            .forEach(pfx -> {
+                final StmtContext<?, ?, ?> importedCtx =
+                        verifyNotNull(ctx.getFromNamespace(ImportPrefixToModuleCtx.class, pfx),
+                            "Failed to resolve prefix %s", pfx);
+                builder.put(pfx, (ModuleEffectiveStatement) importedCtx.buildEffective());
+            });
     }
 }
