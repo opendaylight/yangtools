@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueData;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
@@ -54,10 +55,13 @@ import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.OpaqueAnydataNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.YangModeledAnyXmlNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.schema.stream.AbstractOpaqueAnydataStreamWriter;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -224,6 +228,8 @@ public final class XmlParserStream implements Closeable, Flushable {
                 nodeDataWithSchema = new LeafNodeDataWithSchema((LeafSchemaNode) parentNode);
             } else if (parentNode instanceof LeafListSchemaNode) {
                 nodeDataWithSchema = new LeafListNodeDataWithSchema((LeafListSchemaNode) parentNode);
+            } else if (parentNode instanceof AnyDataSchemaNode) {
+                nodeDataWithSchema = new OpaqueAnydataNodeDataWithSchema((AnyDataSchemaNode) parentNode);
             } else {
                 throw new IllegalStateException("Unsupported schema node type " + parentNode.getClass() + ".");
             }
@@ -326,6 +332,34 @@ public final class XmlParserStream implements Closeable, Flushable {
         return (Document) result.getNode();
     }
 
+    private static OpaqueData readOpaqueAnydataValue(final XMLStreamReader in) throws XMLStreamException {
+        final OpaqueAnydataStreamWriter writer = new OpaqueAnydataStreamWriter();
+
+        do {
+            final int event = in.next();
+            try {
+                switch (event) {
+                    case XMLStreamConstants.START_ELEMENT:
+                        final String xmlElementName = in.getLocalName();
+                        final String xmlPrefix = in.getPrefix();
+                        final String xmlNamespace = in.getNamespaceURI();
+
+                        writer.startOpaqueContainer(null);
+                        break;
+                    case XMLStreamConstants.END_ELEMENT:
+                        writer.endNode();
+                        break;
+                    default:
+                        throw new IllegalStateException("Unhandled event " + event);
+                }
+            } catch (IOException e) {
+                throw new XMLStreamException("Inconsistent anydata stream", e);
+            }
+        } while (writer.result() == null);
+
+        return writer.result();
+    }
+
     private void read(final XMLStreamReader in, final AbstractNodeDataWithSchema<?> parent, final String rootElement)
             throws XMLStreamException, URISyntaxException {
         if (!in.hasNext()) {
@@ -365,6 +399,19 @@ public final class XmlParserStream implements Closeable, Flushable {
 
         if (parent instanceof AnyXmlNodeDataWithSchema) {
             setValue(parent, readAnyXmlValue(in), in.getNamespaceContext());
+            if (isNextEndDocument(in)) {
+                return;
+            }
+
+            if (!isAtElement(in)) {
+                in.nextTag();
+            }
+
+            return;
+        }
+
+        if (parent instanceof OpaqueAnydataNodeDataWithSchema) {
+            setValue(parent, readOpaqueAnydataValue(in), in.getNamespaceContext());
             if (isNextEndDocument(in)) {
                 return;
             }
@@ -503,14 +550,16 @@ public final class XmlParserStream implements Closeable, Flushable {
     private Object translateValueByType(final Object value, final DataSchemaNode node,
             final NamespaceContext namespaceCtx) {
         if (node instanceof AnyXmlSchemaNode) {
-
             checkArgument(value instanceof Document);
             /*
-             *  FIXME: Figure out some YANG extension dispatch, which will
-             *  reuse JSON parsing or XML parsing - anyxml is not well-defined in
-             * JSON.
+             * FIXME: Figure out some YANG extension dispatch, which will reuse JSON parsing or XML parsing -
+             *        anyxml is not well-defined in JSON.
              */
             return new DOMSource(((Document) value).getDocumentElement());
+        }
+        if (node instanceof AnyDataSchemaNode) {
+            checkArgument(value instanceof OpaqueData, "Unexpected anydata value %s", value);
+            return value;
         }
 
         checkArgument(node instanceof TypedDataSchemaNode);
@@ -539,5 +588,23 @@ public final class XmlParserStream implements Closeable, Flushable {
     @Override
     public void flush() throws IOException {
         writer.flush();
+    }
+
+    private static final class OpaqueAnydataStreamWriter extends AbstractOpaqueAnydataStreamWriter {
+        private OpaqueData result;
+
+        OpaqueAnydataStreamWriter() {
+            super(false);
+        }
+
+        OpaqueData result() {
+            return result;
+        }
+
+        @Override
+        protected void finishAnydata(final OpaqueData opaqueData) {
+            checkState(result == null, "Result already set to %s", result);
+            result = requireNonNull(opaqueData);
+        }
     }
 }
