@@ -16,34 +16,34 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
+import org.opendaylight.yangtools.rfc7952.data.api.OpaqueMetadata;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 
 /**
- * Immutable implementation of {@link NormalizedMetadata}.
+ * Immutable implementation of {@link OpaqueMetadata}.
  */
 @Beta
-public class ImmutableNormalizedMetadata implements NormalizedMetadata {
-    private static final class Container extends ImmutableNormalizedMetadata {
-        private final @NonNull ImmutableMap<PathArgument, NormalizedMetadata> children;
+public class ImmutableOpaqueMetadata implements OpaqueMetadata {
+    private static final class Container extends ImmutableOpaqueMetadata {
+        private final @NonNull ImmutableMap<OpaqueIdentifier, OpaqueMetadata> children;
 
-        Container(final PathArgument identifier, final Map<QName, Object> annotations,
-                final Map<PathArgument, ImmutableNormalizedMetadata> children) {
+        Container(final OpaqueIdentifier identifier, final Map<QName, Object> annotations,
+                final Map<OpaqueIdentifier, ImmutableOpaqueMetadata> children) {
             super(identifier, annotations);
             this.children = ImmutableMap.copyOf(children);
         }
 
         @Override
-        public ImmutableMap<PathArgument, NormalizedMetadata> getChildren() {
+        public ImmutableMap<OpaqueIdentifier, OpaqueMetadata> getChildren() {
             return children;
         }
     }
 
-    private final @NonNull PathArgument identifier;
+    private final @NonNull OpaqueIdentifier identifier;
     private final @NonNull ImmutableMap<QName, Object> annotations;
 
-    ImmutableNormalizedMetadata(final PathArgument identifier, final Map<QName, Object> annotations) {
+    ImmutableOpaqueMetadata(final OpaqueIdentifier identifier, final Map<QName, Object> annotations) {
         this.identifier = requireNonNull(identifier);
         this.annotations = ImmutableMap.copyOf(annotations);
     }
@@ -58,7 +58,7 @@ public class ImmutableNormalizedMetadata implements NormalizedMetadata {
     }
 
     @Override
-    public final PathArgument getIdentifier() {
+    public final OpaqueIdentifier getIdentifier() {
         return identifier;
     }
 
@@ -68,20 +68,20 @@ public class ImmutableNormalizedMetadata implements NormalizedMetadata {
     }
 
     /**
-     * {@link org.opendaylight.yangtools.concepts.Builder} of {@link ImmutableNormalizedMetadata} instances.
+     * {@link org.opendaylight.yangtools.concepts.Builder} of {@link ImmutableOpaqueMetadata} instances.
      */
     public static final class Builder
-            implements org.opendaylight.yangtools.concepts.Builder<ImmutableNormalizedMetadata> {
-        private final Map<PathArgument, ImmutableNormalizedMetadata> children = new HashMap<>();
+            implements org.opendaylight.yangtools.concepts.Builder<ImmutableOpaqueMetadata> {
+        private final Map<OpaqueIdentifier, ImmutableOpaqueMetadata> children = new HashMap<>();
         private final Map<QName, Object> annotations = new HashMap<>();
-        private PathArgument identifier;
+        private OpaqueIdentifier identifier;
 
         Builder() {
             // Hidden to prevent instantiation
         }
 
         @SuppressWarnings("checkstyle:hiddenField")
-        public Builder withIdentifier(final PathArgument identifier) {
+        public Builder withIdentifier(final OpaqueIdentifier identifier) {
             this.identifier = requireNonNull(identifier);
             return this;
         }
@@ -97,22 +97,22 @@ public class ImmutableNormalizedMetadata implements NormalizedMetadata {
             return this;
         }
 
-        public Builder withChild(final ImmutableNormalizedMetadata child) {
+        public Builder withChild(final ImmutableOpaqueMetadata child) {
             children.put(child.getIdentifier(), child);
             return this;
         }
 
         @SuppressWarnings("checkstyle:hiddenField")
-        public Builder withChildren(final Collection<ImmutableNormalizedMetadata> children) {
+        public Builder withChildren(final Collection<ImmutableOpaqueMetadata> children) {
             children.forEach(this::withChild);
             return this;
         }
 
         @Override
-        public ImmutableNormalizedMetadata build() {
-            final PathArgument id = identifier;
+        public ImmutableOpaqueMetadata build() {
+            final OpaqueIdentifier id = identifier;
             checkArgument(id != null, "Identifier has not been set");
-            return children.isEmpty() ? new ImmutableNormalizedMetadata(id, annotations)
+            return children.isEmpty() ? new ImmutableOpaqueMetadata(id, annotations)
                     : new Container(id, annotations, children);
         }
     }

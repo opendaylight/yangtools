@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.data.util.schema.opaque;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 
 @Beta
 public final class OpaqueDataContainerBuilder extends AbstractOpaqueDataContainerBuilder<OpaqueDataContainer> {
@@ -31,13 +31,13 @@ public final class OpaqueDataContainerBuilder extends AbstractOpaqueDataContaine
     }
 
     @Override
-    public OpaqueDataContainerBuilder withIdentifier(final NodeIdentifier newIdentifier) {
+    public OpaqueDataContainerBuilder withIdentifier(final OpaqueIdentifier newIdentifier) {
         super.withIdentifier(newIdentifier);
         return this;
     }
 
     @Override
-    OpaqueDataContainer build(final NodeIdentifier identifier, final ImmutableList<@NonNull OpaqueDataNode> children) {
+    OpaqueDataContainer build(final OpaqueIdentifier identifier, final ImmutableList<@NonNull OpaqueDataNode> children) {
         return new ImmutableOpaqueDataContainer(identifier, children);
     }
 }

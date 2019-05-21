@@ -11,12 +11,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 
 @Beta
-public abstract class AbstractAnydataNodeDataWithSchema<T> extends SimpleNodeDataWithSchema<AnyDataSchemaNode> {
-    private NormalizedMetadata metadata;
+public abstract class AbstractAnydataNodeDataWithSchema<T, M> extends SimpleNodeDataWithSchema<AnyDataSchemaNode> {
+    private M metadata;
 
     protected AbstractAnydataNodeDataWithSchema(final AnyDataSchemaNode dataSchemaNode) {
         super(dataSchemaNode);
@@ -34,11 +33,11 @@ public abstract class AbstractAnydataNodeDataWithSchema<T> extends SimpleNodeDat
         super.setValue(value);
     }
 
-    public final NormalizedMetadata getMetadata() {
+    public final M getMetadata() {
         return metadata;
     }
 
-    public final void setMetadata(final NormalizedMetadata value) {
+    public final void setMetadata(final M value) {
         checkState(metadata == null, "Metadata already set to %s", metadata);
         metadata = value;
     }

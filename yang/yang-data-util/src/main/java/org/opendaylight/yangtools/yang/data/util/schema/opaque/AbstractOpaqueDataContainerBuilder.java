@@ -15,9 +15,9 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 
 @Beta
 public abstract class AbstractOpaqueDataContainerBuilder<T extends OpaqueDataContainer>
@@ -37,15 +37,16 @@ public abstract class AbstractOpaqueDataContainerBuilder<T extends OpaqueDataCon
         return this;
     }
 
+    @Override
     public OpaqueDataValueBuilder withValue(final Object value) {
         checkState(children.isEmpty(), "Unexpected children %s", children);
         return new OpaqueDataValueBuilder().withIdentifier(identifier()).withValue(value);
     }
 
     @Override
-    final T build(final NodeIdentifier identifier) {
+    final T build(final OpaqueIdentifier identifier) {
         return build(identifier, ImmutableList.copyOf(children));
     }
 
-    abstract @NonNull T build(@NonNull NodeIdentifier identifier, @NonNull ImmutableList<OpaqueDataNode> children);
+    abstract @NonNull T build(@NonNull OpaqueIdentifier identifier, @NonNull ImmutableList<OpaqueDataNode> children);
 }

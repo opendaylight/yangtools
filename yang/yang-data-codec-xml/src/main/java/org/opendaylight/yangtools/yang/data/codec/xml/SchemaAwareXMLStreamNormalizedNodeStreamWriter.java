@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -165,5 +166,12 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     @Override
     SchemaNode startAnydata(final NodeIdentifier name) {
         return tracker.startAnydataNode(name);
+    }
+
+    @Override
+    String resolveNamespace(final OpaqueIdentifier opaque) throws IOException {
+        return opaque.resolveNamespace(getSchemaContext())
+                .orElseThrow(() -> new IOException("Cannot resolve " + opaque))
+                .toString();
     }
 }

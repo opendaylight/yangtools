@@ -18,10 +18,10 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.data.api.OpaqueAnydataStreamWriter;
-import org.opendaylight.yangtools.rfc7952.data.util.ImmutableNormalizedMetadata.Builder;
+import org.opendaylight.yangtools.rfc7952.data.util.ImmutableOpaqueMetadata.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueData;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 import org.opendaylight.yangtools.yang.data.util.schema.stream.AbstractOpaqueAnydataStreamWriter;
 
 @Beta
@@ -41,13 +41,13 @@ public abstract class AbstractImmutableOpaqueAnydataStreamWriter extends Abstrac
     }
 
     @Override
-    protected final void enter(final NodeIdentifier name) throws IOException {
-        builders.push(ImmutableNormalizedMetadata.builder().withIdentifier(name));
+    protected final void enter(final OpaqueIdentifier name) throws IOException {
+        builders.push(ImmutableOpaqueMetadata.builder().withIdentifier(name));
     }
 
     @Override
     protected final void exit() throws IOException {
-        final ImmutableNormalizedMetadata metadata = builders.pop().build();
+        final ImmutableOpaqueMetadata metadata = builders.pop().build();
         final Builder current = verifyNotNull(builders.peek());
         if (!metadata.getAnnotations().isEmpty() || !metadata.getChildren().isEmpty()) {
             current.withChild(metadata);
@@ -56,10 +56,10 @@ public abstract class AbstractImmutableOpaqueAnydataStreamWriter extends Abstrac
 
     @Override
     protected final void finishAnydata(final OpaqueData opaqueData) {
-        final ImmutableNormalizedMetadata metadata = builders.pop().build();
+        final ImmutableOpaqueMetadata metadata = builders.pop().build();
         verify(builders.isEmpty());
         finishAnydata(opaqueData, metadata);
     }
 
-    protected abstract void finishAnydata(@NonNull OpaqueData opaqueData, ImmutableNormalizedMetadata metadata);
+    protected abstract void finishAnydata(@NonNull OpaqueData opaqueData, ImmutableOpaqueMetadata metadata);
 }

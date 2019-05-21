@@ -11,15 +11,15 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataValue;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 
 @Beta
 public final class OpaqueDataValueBuilder extends AbstractOpaqueDataNodeBuilder<OpaqueDataValue> {
     private Object value;
 
     @Override
-    public OpaqueDataValueBuilder withIdentifier(final NodeIdentifier identifier) {
+    public OpaqueDataValueBuilder withIdentifier(final OpaqueIdentifier identifier) {
         super.withIdentifier(identifier);
         return this;
     }
@@ -32,7 +32,7 @@ public final class OpaqueDataValueBuilder extends AbstractOpaqueDataNodeBuilder<
     }
 
     @Override
-    public OpaqueDataValue build(final NodeIdentifier identifier) {
+    public OpaqueDataValue build(final OpaqueIdentifier identifier) {
         checkState(value != null, "Value has not been set");
         return new ImmutableOpaqueDataValue(identifier, value);
     }

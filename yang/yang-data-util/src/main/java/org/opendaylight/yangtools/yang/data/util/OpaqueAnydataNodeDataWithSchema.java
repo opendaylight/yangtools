@@ -11,9 +11,9 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.util.List;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.rfc7952.data.api.OpaqueAnydataStreamWriter;
+import org.opendaylight.yangtools.rfc7952.data.api.OpaqueMetadata;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueData;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataContainer;
@@ -26,7 +26,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.OpaqueAnydataExten
 import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 
 @Beta
-public final class OpaqueAnydataNodeDataWithSchema extends AbstractAnydataNodeDataWithSchema<OpaqueData> {
+public final class OpaqueAnydataNodeDataWithSchema
+        extends AbstractAnydataNodeDataWithSchema<OpaqueData, OpaqueMetadata> {
     public OpaqueAnydataNodeDataWithSchema(final AnyDataSchemaNode dataSchemaNode) {
         super(dataSchemaNode);
     }
@@ -48,7 +49,7 @@ public final class OpaqueAnydataNodeDataWithSchema extends AbstractAnydataNodeDa
     }
 
     private static void streamOpaqueAnydataNode(final OpaqueAnydataExtension ext, final NodeIdentifier name,
-            final OpaqueData data, final NormalizedMetadata metadata) throws IOException {
+            final OpaqueData data, final OpaqueMetadata metadata) throws IOException {
         if (metadata != null) {
             final StreamWriter dataWriter = ext.startOpaqueAnydataNode(name, data.hasAccurateLists());
             final OpaqueDataNode node = data.getRoot();
@@ -63,7 +64,7 @@ public final class OpaqueAnydataNodeDataWithSchema extends AbstractAnydataNodeDa
     }
 
     private static void streamOpaqueDataNode(final OpaqueAnydataStreamWriter writer, final OpaqueDataNode node,
-            final NormalizedMetadata metadata) throws IOException {
+            final OpaqueMetadata metadata) throws IOException {
         if (node instanceof OpaqueDataValue) {
             writer.startOpaqueContainer(node.getIdentifier(), 0);
             writeMetadata(writer, metadata);
@@ -89,7 +90,7 @@ public final class OpaqueAnydataNodeDataWithSchema extends AbstractAnydataNodeDa
         writer.endOpaqueNode();
     }
 
-    private static void writeMetadata(final OpaqueAnydataStreamWriter writer, final NormalizedMetadata metadata)
+    private static void writeMetadata(final OpaqueAnydataStreamWriter writer, final OpaqueMetadata metadata)
             throws IOException {
         if (metadata != null) {
             writer.metadata(ImmutableMap.copyOf(metadata.getAnnotations()));

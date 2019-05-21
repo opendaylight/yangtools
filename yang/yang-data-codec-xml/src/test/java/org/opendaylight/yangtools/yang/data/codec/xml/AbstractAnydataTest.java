@@ -18,7 +18,7 @@ public abstract class AbstractAnydataTest {
     static final QName FOO_QNAME = QName.create("test-anydata", "foo");
     static final QName BAR_QNAME = QName.create(FOO_QNAME, "bar");
     static final NodeIdentifier FOO_NODEID = NodeIdentifier.create(FOO_QNAME);
-    static final NodeIdentifier BAR_NODEID = NodeIdentifier.create(BAR_QNAME);
+    static final XMLOpaqueIdentifier BAR_ID = new XMLOpaqueIdentifier(BAR_QNAME);
 
     static SchemaContext SCHEMA_CONTEXT;
 
