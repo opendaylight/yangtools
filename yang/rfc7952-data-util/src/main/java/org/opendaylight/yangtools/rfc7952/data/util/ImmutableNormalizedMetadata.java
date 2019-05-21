@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 @Beta
 public class ImmutableNormalizedMetadata implements NormalizedMetadata {
     private static final class Container extends ImmutableNormalizedMetadata {
-        private final ImmutableMap<PathArgument, NormalizedMetadata> children;
+        private final @NonNull ImmutableMap<PathArgument, NormalizedMetadata> children;
 
         Container(final PathArgument identifier, final Map<QName, Object> annotations,
                 final Map<PathArgument, ImmutableNormalizedMetadata> children) {
