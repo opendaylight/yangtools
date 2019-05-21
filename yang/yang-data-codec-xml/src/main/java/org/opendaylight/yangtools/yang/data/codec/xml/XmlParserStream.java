@@ -304,7 +304,7 @@ public final class XmlParserStream implements Closeable, Flushable {
 
         if (parent instanceof LeafNodeDataWithSchema || parent instanceof LeafListEntryNodeDataWithSchema) {
             parent.setAttributes(getElementAttributes(in));
-            setValue(parent, in.getElementText().trim(), in.getNamespaceContext());
+            setValue((SimpleNodeDataWithSchema) parent, in.getElementText().trim(), in.getNamespaceContext());
             if (isNextEndDocument(in)) {
                 return;
             }
@@ -334,7 +334,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         }
 
         if (parent instanceof AnyXmlNodeDataWithSchema) {
-            setValue(parent, readAnyXmlValue(in), in.getNamespaceContext());
+            setValue((AnyXmlNodeDataWithSchema) parent, readAnyXmlValue(in), in.getNamespaceContext());
             if (isNextEndDocument(in)) {
                 return;
             }
@@ -465,15 +465,12 @@ public final class XmlParserStream implements Closeable, Flushable {
         in.nextTag();
     }
 
-    private void setValue(final AbstractNodeDataWithSchema parent, final Object value,
+    private void setValue(final SimpleNodeDataWithSchema parent, final Object value,
             final NamespaceContext nsContext) {
-        checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type",
-                parent.getSchema().getQName());
-        final SimpleNodeDataWithSchema parentSimpleNode = (SimpleNodeDataWithSchema) parent;
-        checkArgument(parentSimpleNode.getValue() == null, "Node '%s' has already set its value to '%s'",
-                parentSimpleNode.getSchema().getQName(), parentSimpleNode.getValue());
-
-        parentSimpleNode.setValue(translateValueByType(value, parentSimpleNode.getSchema(), nsContext));
+        final DataSchemaNode schema = parent.getSchema();
+        final Object prev = parent.getValue();
+        checkArgument(prev == null, "Node '%s' has already set its value to '%s'", schema.getQName(), prev);
+        parent.setValue(translateValueByType(value, schema, nsContext));
     }
 
     private Object translateValueByType(final Object value, final DataSchemaNode node,
