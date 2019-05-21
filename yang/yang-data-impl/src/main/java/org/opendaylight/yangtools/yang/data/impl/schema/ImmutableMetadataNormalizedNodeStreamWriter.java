@@ -25,8 +25,8 @@ import org.opendaylight.yangtools.rfc7952.data.util.ImmutableNormalizedMetadata;
 import org.opendaylight.yangtools.rfc7952.data.util.ImmutableNormalizedMetadata.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.AnydataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.OpaqueAnydataExtension;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 
 /**
@@ -59,7 +59,7 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
 
     private static final Factory<ImmutableMetadataNormalizedNodeStreamWriter, ?, NormalizedNodeStreamWriterExtension>
         EXTENSIONS_FACTORY = ObjectExtensions.factory(ImmutableMetadataNormalizedNodeStreamWriter.class,
-            OpaqueAnydataExtension.class, NormalizedMetadataStreamWriter.class);
+            AnydataExtension.class, NormalizedMetadataStreamWriter.class);
 
     private final Deque<Builder> builders = new ArrayDeque<>();
     private final NormalizedNodeMetadataResult result;

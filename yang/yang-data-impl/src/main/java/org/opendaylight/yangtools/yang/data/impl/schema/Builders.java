@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.annotations.Beta;
 import javax.xml.transform.dom.DOMSource;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
+import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -24,18 +23,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OpaqueAnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
-import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueData;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnydataNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
@@ -52,7 +50,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeSchemaAwareBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOpaqueAnydataNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
@@ -109,9 +106,9 @@ public final class Builders {
         return ImmutableYangModeledAnyXmlNodeBuilder.create(schema);
     }
 
-    @Beta
-    public static @NonNull NormalizedNodeBuilder<NodeIdentifier, OpaqueData, OpaqueAnydataNode> opaqueAnydataBuilder() {
-        return ImmutableOpaqueAnydataNodeBuilder.create();
+    public static <T> NormalizedNodeBuilder<NodeIdentifier, T, AnydataNode<T>> anydataBuilder(
+            final Class<T> objectModel) {
+        return ImmutableAnydataNodeBuilder.create(objectModel);
     }
 
     public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> orderedLeafSetBuilder() {

@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedNodeStreamWriter<SchemaNode>
         implements SchemaContextProvider {
@@ -150,9 +151,14 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     @Override
     public void scalarValue(final Object value) throws IOException {
         final Object current = tracker.getParent();
-        checkState(current instanceof LeafSchemaNode || current instanceof LeafListSchemaNode,
-            "Unexpected scalar value %s with %s", value, current);
-        writeValue(value, (SchemaNode) current);
+        if (current instanceof TypedDataSchemaNode) {
+            writeValue(value, (SchemaNode) current);
+        } else if (current instanceof AnyDataSchemaNode) {
+            checkArgument(value instanceof DOMSource, "Unexpected anydata value %s", value);
+            anydataValue((DOMSource) value);
+        } else {
+            throw new IllegalStateException("Unexpected scalar value " + value + " with " + current);
+        }
     }
 
     @Override
@@ -163,7 +169,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     }
 
     @Override
-    SchemaNode startAnydata(final NodeIdentifier name) {
-        return tracker.startAnydataNode(name);
+    void startAnydata(final NodeIdentifier name) {
+        tracker.startAnydataNode(name);
     }
 }
