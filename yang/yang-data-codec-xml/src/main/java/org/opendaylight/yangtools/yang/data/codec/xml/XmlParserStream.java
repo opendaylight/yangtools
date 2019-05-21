@@ -46,11 +46,10 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.rfc7952.data.util.AbstractImmutableOpaqueAnydataStreamWriter;
-import org.opendaylight.yangtools.rfc7952.data.util.ImmutableNormalizedMetadata;
+import org.opendaylight.yangtools.rfc7952.data.util.ImmutableOpaqueMetadata;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueData;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
@@ -344,7 +343,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     private void readOpaqueAnydataValue(final XMLStreamReader in, final OpaqueAnydataNodeDataWithSchema parent)
             throws XMLStreamException {
         final DefaultOpaqueAnydataStreamWriter opaqueWriter = new DefaultOpaqueAnydataStreamWriter();
-        final Entry<OpaqueData, ImmutableNormalizedMetadata> result;
+        final Entry<OpaqueData, ImmutableOpaqueMetadata> result;
         while (true) {
             final int event = in.next();
             try {
@@ -352,8 +351,8 @@ public final class XmlParserStream implements Closeable, Flushable {
                     case XMLStreamConstants.START_ELEMENT:
                         final String nsUri = in.getNamespaceURI();
                         final QNameModule module = resolveXmlNamespace(nsUri).orElseGet(() -> rawXmlNamespace(nsUri));
-                        opaqueWriter.startOpaqueContainer(NodeIdentifier.create(QName.create(module,
-                            in.getLocalName())));
+                        opaqueWriter.startOpaqueContainer(new XMLOpaqueIdentifier(module.getNamespace(),
+                            in.getLocalName()));
                         break;
                     case XMLStreamConstants.END_ELEMENT:
                         opaqueWriter.endOpaqueNode();
@@ -369,7 +368,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                 throw new XMLStreamException("Inconsistent anydata stream", e);
             }
 
-            final Entry<OpaqueData, ImmutableNormalizedMetadata> optResult = opaqueWriter.result();
+            final Entry<OpaqueData, ImmutableOpaqueMetadata> optResult = opaqueWriter.result();
             if (optResult != null) {
                 result = optResult;
                 break;
@@ -632,18 +631,18 @@ public final class XmlParserStream implements Closeable, Flushable {
     //               not required to keep all the book keeping. Immutable builder should not care as long as structure
     //               is kept...
     private static final class DefaultOpaqueAnydataStreamWriter extends AbstractImmutableOpaqueAnydataStreamWriter {
-        private Entry<@NonNull OpaqueData, @Nullable ImmutableNormalizedMetadata> result;
+        private Entry<@NonNull OpaqueData, @Nullable ImmutableOpaqueMetadata> result;
 
         DefaultOpaqueAnydataStreamWriter() {
             super(false);
         }
 
-        Entry<@NonNull OpaqueData, @Nullable ImmutableNormalizedMetadata> result() {
+        Entry<@NonNull OpaqueData, @Nullable ImmutableOpaqueMetadata> result() {
             return result;
         }
 
         @Override
-        protected void finishAnydata(final OpaqueData opaqueData, final ImmutableNormalizedMetadata metadata) {
+        protected void finishAnydata(final OpaqueData opaqueData, final ImmutableOpaqueMetadata metadata) {
             checkState(result == null, "Result already set to %s", result);
             result = new SimpleImmutableEntry<>(requireNonNull(opaqueData), metadata);
         }

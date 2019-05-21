@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataContaine
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataList;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataValue;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 
 /**
  * A {@link NormalizedNodeStreamWriterExtension} supporting streaming of opaque {@code anydata} nodes. As anydata
@@ -116,9 +117,9 @@ public interface OpaqueAnydataExtension extends NormalizedNodeStreamWriterExtens
          *                      and should not fail writing of child events, if there are more events than count.
          * @throws IOException if an underlying IO error occurs
          */
-        void startOpaqueContainer(NodeIdentifier name, int childSizeHint) throws IOException;
+        void startOpaqueContainer(OpaqueIdentifier name, int childSizeHint) throws IOException;
 
-        default void startOpaqueContainer(final NodeIdentifier name) throws IOException {
+        default void startOpaqueContainer(final OpaqueIdentifier name) throws IOException {
             startOpaqueContainer(name, NormalizedNodeStreamWriter.UNKNOWN_SIZE);
         }
 
@@ -131,9 +132,9 @@ public interface OpaqueAnydataExtension extends NormalizedNodeStreamWriterExtens
          *                      and should not fail writing of child events, if there are more events than count.
          * @throws IOException if an underlying IO error occurs
          */
-        void startOpaqueList(NodeIdentifier name, int childSizeHint) throws IOException;
+        void startOpaqueList(OpaqueIdentifier name, int childSizeHint) throws IOException;
 
-        default void startOpaqueList(final NodeIdentifier name) throws IOException {
+        default void startOpaqueList(final OpaqueIdentifier name) throws IOException {
             startOpaqueList(name, NormalizedNodeStreamWriter.UNKNOWN_SIZE);
         }
 

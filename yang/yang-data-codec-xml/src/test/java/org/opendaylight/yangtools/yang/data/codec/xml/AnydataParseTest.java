@@ -43,7 +43,7 @@ public class AnydataParseTest extends AbstractAnydataTest {
         final NormalizedNode<?, ?> parsed = result.getResult();
         assertEquals(Builders.opaqueAnydataBuilder().withNodeIdentifier(FOO_NODEID)
             .withValue(new OpaqueDataBuilder().withAccurateLists(false)
-                .withRoot(new OpaqueDataContainerBuilder().withIdentifier(BAR_NODEID).build()).build())
+                .withRoot(new OpaqueDataContainerBuilder().withIdentifier(BAR_ID).build()).build())
             .build(), parsed);
     }
 

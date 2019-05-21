@@ -13,19 +13,19 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 
 @NonNullByDefault
 abstract class AbstractOpaqueDataNode implements OpaqueDataNode {
-    private final NodeIdentifier identifier;
+    private final OpaqueIdentifier identifier;
 
-    AbstractOpaqueDataNode(final NodeIdentifier identifier) {
+    AbstractOpaqueDataNode(final OpaqueIdentifier identifier) {
         this.identifier = requireNonNull(identifier);
     }
 
     @Override
-    public final NodeIdentifier getIdentifier() {
+    public final OpaqueIdentifier getIdentifier() {
         return identifier;
     }
 

@@ -28,6 +28,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier.NamespaceAware;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.OpaqueAnydataExtension;
@@ -136,12 +138,29 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     abstract String encodeValue(@NonNull ValueWriter xmlWriter, @NonNull Object value, T context)
             throws XMLStreamException;
 
+    abstract String resolveNamespace(OpaqueIdentifier opaque) throws IOException;
+
     final void writeValue(final @NonNull Object value, final T context) throws IOException {
         try {
             facade.writeCharacters(encodeValue(facade, value, context));
         } catch (XMLStreamException e) {
             throw new IOException("Failed to write value", e);
         }
+    }
+
+    final void startElement(final OpaqueIdentifier opaque) throws IOException {
+        try {
+            facade.writeStartElement(getNamespace(opaque), opaque.getLocalName());
+        } catch (XMLStreamException e) {
+            throw new IOException("Failed to start element", e);
+        }
+    }
+
+    private String getNamespace(final OpaqueIdentifier opaque) throws IOException {
+        if (opaque instanceof NamespaceAware) {
+            return ((NamespaceAware) opaque).getNamespace().toString();
+        }
+        return resolveNamespace(opaque);
     }
 
     final void startElement(final QName qname) throws IOException {
@@ -267,14 +286,14 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         }
 
         @Override
-        public void startOpaqueList(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        public void startOpaqueList(final OpaqueIdentifier name, final int childSizeHint) throws IOException {
             stack.push(Boolean.FALSE);
         }
 
         @Override
-        public void startOpaqueContainer(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        public void startOpaqueContainer(final OpaqueIdentifier name, final int childSizeHint) throws IOException {
             stack.push(Boolean.TRUE);
-            startElement(name.getNodeType());
+            startElement(name);
         }
 
         @Override

@@ -14,9 +14,9 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueData;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.OpaqueAnydataExtension;
 import org.opendaylight.yangtools.yang.data.util.schema.opaque.AbstractOpaqueDataContainerBuilder;
@@ -36,14 +36,14 @@ public abstract class AbstractOpaqueAnydataStreamWriter implements OpaqueAnydata
     }
 
     @Override
-    public final void startOpaqueContainer(final NodeIdentifier name, final int childSizeHint) throws IOException {
+    public final void startOpaqueContainer(final OpaqueIdentifier name, final int childSizeHint) throws IOException {
         enter(name);
         push(childSizeHint == NormalizedNodeStreamWriter.UNKNOWN_SIZE ? new OpaqueDataContainerBuilder()
                 : new OpaqueDataContainerBuilder(childSizeHint), name);
     }
 
     @Override
-    public final void startOpaqueList(final NodeIdentifier name, final int childSizeHint) throws IOException {
+    public final void startOpaqueList(final OpaqueIdentifier name, final int childSizeHint) throws IOException {
         enter(name);
         push(childSizeHint == NormalizedNodeStreamWriter.UNKNOWN_SIZE ? new OpaqueDataListBuilder()
                 : new OpaqueDataListBuilder(childSizeHint), name);
@@ -70,7 +70,7 @@ public abstract class AbstractOpaqueAnydataStreamWriter implements OpaqueAnydata
         }
     }
 
-    protected void enter(final NodeIdentifier name) throws IOException {
+    protected void enter(final OpaqueIdentifier name) throws IOException {
         // No-op default
     }
 
@@ -80,7 +80,7 @@ public abstract class AbstractOpaqueAnydataStreamWriter implements OpaqueAnydata
 
     protected abstract void finishAnydata(@NonNull OpaqueData opaqueData);
 
-    private void push(final AbstractOpaqueDataContainerBuilder<?> newBuilder, final NodeIdentifier name) {
+    private void push(final AbstractOpaqueDataContainerBuilder<?> newBuilder, final OpaqueIdentifier name) {
         builders.push(newBuilder.withIdentifier(name));
     }
 }

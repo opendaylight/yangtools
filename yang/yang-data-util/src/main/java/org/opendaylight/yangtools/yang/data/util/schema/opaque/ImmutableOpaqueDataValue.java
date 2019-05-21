@@ -12,14 +12,14 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataValue;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 
 @NonNullByDefault
 final class ImmutableOpaqueDataValue extends AbstractOpaqueDataNode implements OpaqueDataValue {
     private final Object value;
 
-    ImmutableOpaqueDataValue(final NodeIdentifier identifier, final Object value) {
+    ImmutableOpaqueDataValue(final OpaqueIdentifier identifier, final Object value) {
         super(identifier);
         this.value = requireNonNull(value);
     }
