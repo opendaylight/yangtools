@@ -20,7 +20,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,6 +43,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
@@ -61,6 +64,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -99,6 +103,8 @@ public final class XmlParserStream implements Closeable, Flushable {
         TRANSFORMER_FACTORY = fa;
     }
 
+    // Cache of nsUri Strings to QNameModules, as inferred from document
+    private final Map<String, QNameModule> rawNamespaces = new HashMap<>();
     private final NormalizedNodeStreamWriter writer;
     private final XmlCodecFactory codecs;
     private final DataSchemaNode parentNode;
@@ -244,7 +250,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         return parse(new DOMSourceXMLStreamReader(src));
     }
 
-    private static ImmutableMap<QName, String> getElementAttributes(final XMLStreamReader in) {
+    private ImmutableMap<QName, String> getElementAttributes(final XMLStreamReader in) {
         checkState(in.isStartElement(), "Attributes can be extracted only from START_ELEMENT.");
         final Map<QName, String> attributes = new LinkedHashMap<>();
 
@@ -260,7 +266,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                 continue;
             }
 
-            final QName qName = QName.create(URI.create(attributeNS), in.getAttributeLocalName(attrIndex));
+            final QName qName = QName.create(rawXmlNamespace(attributeNS), in.getAttributeLocalName(attrIndex));
             attributes.put(qName, in.getAttributeValue(attrIndex));
         }
 
@@ -293,7 +299,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     }
 
     private void read(final XMLStreamReader in, final AbstractNodeDataWithSchema parent, final String rootElement)
-            throws XMLStreamException, URISyntaxException {
+            throws XMLStreamException {
         if (!in.hasNext()) {
             return;
         }
@@ -376,28 +382,35 @@ public final class XmlParserStream implements Closeable, Flushable {
                         parentSchema = ((YangModeledAnyXmlSchemaNode) parentSchema).getSchemaOfAnyXmlData();
                     }
 
-                    final String xmlElementNamespace = in.getNamespaceURI();
-                    if (!namesakes.add(new SimpleImmutableEntry<>(xmlElementNamespace, xmlElementName))) {
+                    final String elementNS = in.getNamespaceURI();
+                    if (!namesakes.add(new SimpleImmutableEntry<>(elementNS, xmlElementName))) {
                         throw new XMLStreamException(String.format(
-                            "Duplicate namespace \"%s\" element \"%s\" in XML input", xmlElementNamespace,
-                            xmlElementName), in.getLocation());
+                            "Duplicate namespace \"%s\" element \"%s\" in XML input", elementNS, xmlElementName),
+                            in.getLocation());
+                    }
+
+                    final URI nsUri;
+                    try {
+                        nsUri = rawXmlNamespace(elementNS).getNamespace();
+                    } catch (IllegalArgumentException e) {
+                        throw new XMLStreamException("Failed to convert namespace " + xmlElementName, in.getLocation(),
+                            e);
                     }
 
                     final Deque<DataSchemaNode> childDataSchemaNodes =
-                            ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName,
-                                    new URI(xmlElementNamespace));
+                            ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName, nsUri);
 
                     if (childDataSchemaNodes.isEmpty()) {
                         if (!strictParsing) {
-                            LOG.debug("Skipping unknown node ns=\"{}\" localName=\"{}\" at path {}",
-                                xmlElementNamespace, xmlElementName, parentSchema.getPath());
+                            LOG.debug("Skipping unknown node ns=\"{}\" localName=\"{}\" at path {}", elementNS,
+                                xmlElementName, parentSchema.getPath());
                             skipUnknownNode(in);
                             continue;
                         }
 
                         throw new XMLStreamException(String.format(
-                            "Schema for node with name %s and namespace %s does not exist at %s",
-                            xmlElementName, xmlElementNamespace, parentSchema.getPath(), in.getLocation()));
+                            "Schema for node with name %s and namespace %s does not exist at %s", xmlElementName,
+                            elementNS, parentSchema.getPath(), in.getLocation()));
                     }
 
                     read(in, ((CompositeNodeDataWithSchema) parent).addChild(childDataSchemaNodes), rootElement);
@@ -454,7 +467,6 @@ public final class XmlParserStream implements Closeable, Flushable {
         in.nextTag();
     }
 
-
     private void setValue(final AbstractNodeDataWithSchema parent, final Object value,
             final NamespaceContext nsContext) {
         checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type",
@@ -504,5 +516,9 @@ public final class XmlParserStream implements Closeable, Flushable {
     @Override
     public void flush() throws IOException {
         writer.flush();
+    }
+
+    private QNameModule rawXmlNamespace(final String xmlNamespace) {
+        return rawNamespaces.computeIfAbsent(xmlNamespace, nsUri -> QNameModule.create(URI.create(nsUri)));
     }
 }
