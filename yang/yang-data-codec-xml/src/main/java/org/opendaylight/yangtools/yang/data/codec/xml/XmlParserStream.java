@@ -42,19 +42,14 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
-import org.opendaylight.yangtools.rfc7952.data.util.AbstractImmutableOpaqueAnydataStreamWriter;
-import org.opendaylight.yangtools.rfc7952.data.util.ImmutableNormalizedMetadata;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueData;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.AnydataNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ContainerNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafListEntryNodeDataWithSchema;
@@ -62,7 +57,6 @@ import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
-import org.opendaylight.yangtools.yang.data.util.OpaqueAnydataNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
@@ -239,7 +233,7 @@ public final class XmlParserStream implements Closeable, Flushable {
             } else if (parentNode instanceof LeafListSchemaNode) {
                 nodeDataWithSchema = new LeafListNodeDataWithSchema((LeafListSchemaNode) parentNode);
             } else if (parentNode instanceof AnyDataSchemaNode) {
-                nodeDataWithSchema = new OpaqueAnydataNodeDataWithSchema((AnyDataSchemaNode) parentNode);
+                nodeDataWithSchema = new AnydataNodeDataWithSchema((AnyDataSchemaNode) parentNode, DOMSource.class);
             } else {
                 throw new IllegalStateException("Unsupported schema node type " + parentNode.getClass() + ".");
             }
@@ -341,45 +335,6 @@ public final class XmlParserStream implements Closeable, Flushable {
         return (Document) result.getNode();
     }
 
-    private void readOpaqueAnydataValue(final XMLStreamReader in, final OpaqueAnydataNodeDataWithSchema parent)
-            throws XMLStreamException {
-        final DefaultOpaqueAnydataStreamWriter opaqueWriter = new DefaultOpaqueAnydataStreamWriter();
-        final Entry<OpaqueData, ImmutableNormalizedMetadata> result;
-        while (true) {
-            final int event = in.next();
-            try {
-                switch (event) {
-                    case XMLStreamConstants.START_ELEMENT:
-                        final String nsUri = in.getNamespaceURI();
-                        final QNameModule module = resolveXmlNamespace(nsUri).orElseGet(() -> rawXmlNamespace(nsUri));
-                        opaqueWriter.startOpaqueContainer(NodeIdentifier.create(QName.create(module,
-                            in.getLocalName())));
-                        break;
-                    case XMLStreamConstants.END_ELEMENT:
-                        opaqueWriter.endOpaqueNode();
-                        break;
-                    case XMLStreamConstants.CHARACTERS:
-                        opaqueWriter.opaqueValue(in.getText());
-                        break;
-                    default:
-                        LOG.debug("Ignoring event {}", event);
-                        continue;
-                }
-            } catch (IOException e) {
-                throw new XMLStreamException("Inconsistent anydata stream", e);
-            }
-
-            final Entry<OpaqueData, ImmutableNormalizedMetadata> optResult = opaqueWriter.result();
-            if (optResult != null) {
-                result = optResult;
-                break;
-            }
-        }
-
-        setValue(parent, result.getKey(), in.getNamespaceContext());
-        parent.setMetadata(result.getValue());
-    }
-
     private void read(final XMLStreamReader in, final AbstractNodeDataWithSchema<?> parent, final String rootElement)
             throws XMLStreamException {
         if (!in.hasNext()) {
@@ -430,9 +385,9 @@ public final class XmlParserStream implements Closeable, Flushable {
             return;
         }
 
-        if (parent instanceof OpaqueAnydataNodeDataWithSchema) {
+        if (parent instanceof AnydataNodeDataWithSchema) {
             parent.setAttributes(getElementAttributes(in));
-            readOpaqueAnydataValue(in, (OpaqueAnydataNodeDataWithSchema) parent);
+            setValue((AnydataNodeDataWithSchema) parent, readAnyXmlValue(in), in.getNamespaceContext());
             if (isNextEndDocument(in)) {
                 return;
             }
@@ -573,17 +528,13 @@ public final class XmlParserStream implements Closeable, Flushable {
 
     private Object translateValueByType(final Object value, final DataSchemaNode node,
             final NamespaceContext namespaceCtx) {
-        if (node instanceof AnyXmlSchemaNode) {
+        if (node instanceof AnyXmlSchemaNode || node instanceof AnyDataSchemaNode) {
             checkArgument(value instanceof Document);
             /*
              * FIXME: Figure out some YANG extension dispatch, which will reuse JSON parsing or XML parsing -
              *        anyxml is not well-defined in JSON.
              */
             return new DOMSource(((Document) value).getDocumentElement());
-        }
-        if (node instanceof AnyDataSchemaNode) {
-            checkArgument(value instanceof OpaqueData, "Unexpected anydata value %s", value);
-            return value;
         }
 
         checkArgument(node instanceof TypedDataSchemaNode);
@@ -623,29 +574,5 @@ public final class XmlParserStream implements Closeable, Flushable {
 
     private QNameModule rawXmlNamespace(final String xmlNamespace) {
         return rawNamespaces.computeIfAbsent(xmlNamespace, nsUri -> QNameModule.create(URI.create(nsUri)));
-    }
-
-    // Utility writer just to keep the event model intact. This requires us to build an intermediate representation,
-    // simply because we are required to perform list coalescence.
-    //
-    // FIXME: 5.0.0: we should be able to negotiate downstream's tolerance to reentrant lists, so that we are not
-    //               not required to keep all the book keeping. Immutable builder should not care as long as structure
-    //               is kept...
-    private static final class DefaultOpaqueAnydataStreamWriter extends AbstractImmutableOpaqueAnydataStreamWriter {
-        private Entry<@NonNull OpaqueData, @Nullable ImmutableNormalizedMetadata> result;
-
-        DefaultOpaqueAnydataStreamWriter() {
-            super(false);
-        }
-
-        Entry<@NonNull OpaqueData, @Nullable ImmutableNormalizedMetadata> result() {
-            return result;
-        }
-
-        @Override
-        protected void finishAnydata(final OpaqueData opaqueData, final ImmutableNormalizedMetadata metadata) {
-            checkState(result == null, "Result already set to %s", result);
-            result = new SimpleImmutableEntry<>(requireNonNull(opaqueData), metadata);
-        }
     }
 }

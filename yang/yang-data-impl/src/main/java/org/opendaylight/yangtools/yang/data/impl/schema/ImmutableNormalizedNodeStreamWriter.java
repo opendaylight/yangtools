@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ClassToInstanceMap;
@@ -26,14 +25,14 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueData;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.AnydataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.OpaqueAnydataExtension;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnydataNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
@@ -41,13 +40,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLe
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOpaqueAnydataNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableYangModeledAnyXmlNodeBuilder;
-import org.opendaylight.yangtools.yang.data.util.schema.stream.AbstractOpaqueAnydataStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
@@ -65,14 +62,11 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * <p>
  * This class is not final for purposes of customization, normal users should not need to subclass it.
  */
-public class ImmutableNormalizedNodeStreamWriter
-        implements NormalizedNodeStreamWriter, OpaqueAnydataExtension {
+public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter, AnydataExtension {
     @SuppressWarnings("rawtypes")
     private final Deque<NormalizedNodeBuilder> builders = new ArrayDeque<>();
 
     private DataSchemaNode nextSchema;
-
-    private AbstractOpaqueAnydataStreamWriter opaqueAnydata;
 
     @SuppressWarnings("rawtypes")
     protected ImmutableNormalizedNodeStreamWriter(final NormalizedNodeBuilder topLevelBuilder) {
@@ -145,7 +139,7 @@ public class ImmutableNormalizedNodeStreamWriter
 
     @Override
     public ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(OpaqueAnydataExtension.class, this);
+        return ImmutableClassToInstanceMap.of(AnydataExtension.class, this);
     }
 
     @Override
@@ -294,17 +288,11 @@ public class ImmutableNormalizedNodeStreamWriter
     }
 
     @Override
-    public OpaqueAnydataExtension.StreamWriter startOpaqueAnydataNode(final NodeIdentifier name,
-            final boolean accurateLists) throws IOException {
-        checkNotAnydata();
-
-        builders.push(ImmutableOpaqueAnydataNodeBuilder.create().withNodeIdentifier(name));
-        return this.opaqueAnydata = new AbstractOpaqueAnydataStreamWriter(accurateLists) {
-            @Override
-            protected void finishAnydata(final OpaqueData opaqueData) {
-                ImmutableNormalizedNodeStreamWriter.this.finishAnydata(opaqueData);
-            }
-        };
+    public boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
+        checkDataNodeContainer();
+        enter(name, ImmutableAnydataNodeBuilder.create(objectModel));
+        // We support all object models
+        return true;
     }
 
     /**
@@ -347,10 +335,6 @@ public class ImmutableNormalizedNodeStreamWriter
         }
     }
 
-    private void checkNotAnydata() {
-        checkArgument(opaqueAnydata == null, "Opaque anydata node is open");
-    }
-
     @SuppressWarnings("rawtypes")
     private NormalizedNodeBuilder current() {
         return builders.peek();
@@ -371,14 +355,5 @@ public class ImmutableNormalizedNodeStreamWriter
         final NormalizedNodeBuilder current = current();
         checkState(!(current instanceof NormalizedNodeContainerBuilder), "Unexpected node container %s", current);
         return current;
-    }
-
-    void finishAnydata(final OpaqueData content) {
-        checkState(opaqueAnydata != null, "Unexpected anydata content %s", content);
-        opaqueAnydata = null;
-
-        final NormalizedNodeBuilder<?, ?, ?> builder = builders.peek();
-        verify(builder instanceof ImmutableOpaqueAnydataNodeBuilder, "Unexpected builder %s", builder);
-        ((ImmutableOpaqueAnydataNodeBuilder) builder).withValue(content);
     }
 }
