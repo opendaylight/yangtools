@@ -8,16 +8,17 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
+import java.io.IOException;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.AnydataExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 
 @Beta
 public abstract class AbstractAnydataNodeDataWithSchema<T> extends SimpleNodeDataWithSchema<AnyDataSchemaNode> {
-    private NormalizedMetadata metadata;
-
     protected AbstractAnydataNodeDataWithSchema(final AnyDataSchemaNode dataSchemaNode) {
         super(dataSchemaNode);
     }
@@ -34,14 +35,18 @@ public abstract class AbstractAnydataNodeDataWithSchema<T> extends SimpleNodeDat
         super.setValue(value);
     }
 
-    public final NormalizedMetadata getMetadata() {
-        return metadata;
+    @Override
+    protected void write(final NormalizedNodeStreamWriter writer, final NormalizedMetadataStreamWriter metaWriter)
+            throws IOException {
+        final AnydataExtension ext = writer.getExtensions().getInstance(AnydataExtension.class);
+        if (ext != null) {
+            writer.nextDataSchemaNode(getSchema());
+            if (ext.startAnydataNode(provideNodeIdentifier(), objectModelClass())) {
+                writer.scalarValue(getValue());
+                writer.endNode();
+            }
+        }
     }
 
-    public final void setMetadata(final NormalizedMetadata value) {
-        checkState(metadata == null, "Metadata already set to %s", metadata);
-        metadata = value;
-    }
-
-    protected abstract Class<T> objectModelClass();
+    protected abstract @NonNull Class<T> objectModelClass();
 }

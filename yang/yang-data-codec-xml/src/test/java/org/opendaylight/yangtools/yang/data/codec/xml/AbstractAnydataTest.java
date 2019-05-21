@@ -7,18 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import javax.xml.transform.dom.DOMSource;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public abstract class AbstractAnydataTest {
     static final QName FOO_QNAME = QName.create("test-anydata", "foo");
-    static final QName BAR_QNAME = QName.create(FOO_QNAME, "bar");
     static final NodeIdentifier FOO_NODEID = NodeIdentifier.create(FOO_QNAME);
-    static final NodeIdentifier BAR_NODEID = NodeIdentifier.create(BAR_QNAME);
 
     static SchemaContext SCHEMA_CONTEXT;
 
@@ -33,4 +39,17 @@ public abstract class AbstractAnydataTest {
     }
 
 
+    static DOMSource toDOMSource(final String str) throws IOException, SAXException {
+        return new DOMSource(readXmlToDocument(toInputStream(str)).getDocumentElement());
+    }
+
+    static InputStream toInputStream(final String str) {
+        return new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
+        final Document doc = UntrustedXML.newDocumentBuilder().parse(xmlContent);
+        doc.getDocumentElement().normalize();
+        return doc;
+    }
 }
