@@ -51,8 +51,8 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         normalizedNodeWriter.write(Builders.opaqueAnydataBuilder().withNodeIdentifier(FOO_NODEID)
             .withValue(new OpaqueDataBuilder().withAccurateLists(false)
                 .withRoot(
-                    new OpaqueDataListBuilder().withIdentifier(BAR_NODEID)
-                    .withChild(new OpaqueDataContainerBuilder().withIdentifier(BAR_NODEID).build())
+                    new OpaqueDataListBuilder().withIdentifier(BAR_ID)
+                    .withChild(new OpaqueDataContainerBuilder().withIdentifier(BAR_ID).build())
                     .build())
                 .build())
             .build());
