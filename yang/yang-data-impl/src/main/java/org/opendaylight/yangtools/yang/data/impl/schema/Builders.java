@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.annotations.Beta;
 import javax.xml.transform.dom.DOMSource;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -24,12 +22,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OpaqueAnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
-import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueData;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
@@ -52,7 +48,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeSchemaAwareBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOpaqueAnydataNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
@@ -107,11 +102,6 @@ public final class Builders {
     public static <T> DataContainerNodeBuilder<NodeIdentifier, YangModeledAnyXmlNode> yangModeledAnyXmlBuilder(
             final YangModeledAnyXmlSchemaNode schema) {
         return ImmutableYangModeledAnyXmlNodeBuilder.create(schema);
-    }
-
-    @Beta
-    public static @NonNull NormalizedNodeBuilder<NodeIdentifier, OpaqueData, OpaqueAnydataNode> opaqueAnydataBuilder() {
-        return ImmutableOpaqueAnydataNodeBuilder.create();
     }
 
     public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> orderedLeafSetBuilder() {
