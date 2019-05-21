@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -18,19 +18,17 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
+import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.data.util.schema.opaque.OpaqueDataBuilder;
-import org.opendaylight.yangtools.yang.data.util.schema.opaque.OpaqueDataContainerBuilder;
 import org.xml.sax.SAXException;
 
 public class AnydataParseTest extends AbstractAnydataTest {
 
     @Test
-    public void testOpaqueAnydata() throws XMLStreamException, IOException, URISyntaxException, SAXException {
+    public void testAnydata() throws XMLStreamException, IOException, URISyntaxException, SAXException {
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(
             toInputStream("<foo xmlns=\"test-anydata\"><bar/></foo>"));
 
@@ -41,10 +39,7 @@ public class AnydataParseTest extends AbstractAnydataTest {
         xmlParser.parse(reader);
 
         final NormalizedNode<?, ?> parsed = result.getResult();
-        assertEquals(Builders.opaqueAnydataBuilder().withNodeIdentifier(FOO_NODEID)
-            .withValue(new OpaqueDataBuilder().withAccurateLists(false)
-                .withRoot(new OpaqueDataContainerBuilder().withIdentifier(BAR_NODEID).build()).build())
-            .build(), parsed);
+        assertTrue(parsed instanceof AnydataNode);
     }
 
     private static InputStream toInputStream(final String str) {
