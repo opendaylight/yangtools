@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 
 final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedNodeStreamWriter<Object> {
     private enum NodeType {
@@ -143,5 +144,10 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     Object startAnydata(final NodeIdentifier name) {
         nodeTypeStack.push(NodeType.ANY_XML);
         return null;
+    }
+
+    @Override
+    String resolveNamespace(final OpaqueIdentifier opaque) throws IOException {
+        throw new IOException("Cannot resolve " + opaque);
     }
 }

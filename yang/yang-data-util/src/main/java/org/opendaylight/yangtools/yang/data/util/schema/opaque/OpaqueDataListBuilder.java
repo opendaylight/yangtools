@@ -11,9 +11,9 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataList;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 
 @Beta
 public final class OpaqueDataListBuilder extends AbstractOpaqueDataContainerBuilder<OpaqueDataList> {
@@ -32,13 +32,13 @@ public final class OpaqueDataListBuilder extends AbstractOpaqueDataContainerBuil
     }
 
     @Override
-    public OpaqueDataListBuilder withIdentifier(final NodeIdentifier newIdentifier) {
+    public OpaqueDataListBuilder withIdentifier(final OpaqueIdentifier newIdentifier) {
         super.withIdentifier(newIdentifier);
         return this;
     }
 
     @Override
-    OpaqueDataList build(final NodeIdentifier identifier, final ImmutableList<OpaqueDataNode> children) {
+    OpaqueDataList build(final OpaqueIdentifier identifier, final ImmutableList<OpaqueDataNode> children) {
         for (OpaqueDataNode child : children) {
             checkState(identifier.equals(child.getIdentifier()), "Child %s does not match list identifier %s", child,
                 identifier);
