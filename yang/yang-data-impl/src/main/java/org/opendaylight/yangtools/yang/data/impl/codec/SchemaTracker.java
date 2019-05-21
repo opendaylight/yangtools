@@ -259,10 +259,8 @@ public final class SchemaTracker {
         return (AnyDataSchemaNode)schema;
     }
 
-    public AnyDataSchemaNode startAnydataNode(final NodeIdentifier name) {
-        final AnyDataSchemaNode ret = anydataNode(name);
-        schemaStack.push(ret);
-        return ret;
+    public void startAnydataNode(final NodeIdentifier name) {
+        schemaStack.push(anydataNode(name));
     }
 
     public Object endNode() {

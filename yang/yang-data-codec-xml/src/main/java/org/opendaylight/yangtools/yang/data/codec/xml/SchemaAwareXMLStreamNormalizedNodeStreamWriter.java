@@ -150,8 +150,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     @Override
     public void scalarValue(final Object value) throws IOException {
         final Object current = tracker.getParent();
-        checkState(current instanceof LeafSchemaNode || current instanceof LeafListSchemaNode,
-            "Unexpected scalar value %s with %s", value, current);
+        checkState(current instanceof LeafSchemaNode || current instanceof LeafListSchemaNode
+            || current instanceof AnyDataSchemaNode, "Unexpected scalar value %s with %s", value, current);
         writeValue(value, (SchemaNode) current);
     }
 
@@ -163,7 +163,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     }
 
     @Override
-    SchemaNode startAnydata(final NodeIdentifier name) {
-        return tracker.startAnydataNode(name);
+    void startAnydata(final NodeIdentifier name) {
+        tracker.startAnydataNode(name);
     }
 }
