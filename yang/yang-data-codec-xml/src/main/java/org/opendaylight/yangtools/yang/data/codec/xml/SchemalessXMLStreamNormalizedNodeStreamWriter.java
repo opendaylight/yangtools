@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -31,6 +32,7 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
         AUGMENTATION,
         SCALAR,
         ANY_XML,
+        ANYDATA,
     }
 
     private final Deque<NodeType> nodeTypeStack = new ArrayDeque<>();
@@ -113,8 +115,14 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     @Override
     public void scalarValue(final Object value) throws IOException {
         final NodeType type = nodeTypeStack.peek();
-        checkState(type == NodeType.SCALAR, "Unexpected scalar %s in %s", value, type);
-        writeValue(value, null);
+        if (type == NodeType.SCALAR) {
+            writeValue(value, null);
+        } else if (type == NodeType.ANYDATA) {
+            verify(value instanceof DOMSource, "Unexpected anydata value %s", value);
+            anydataValue((DOMSource) value);
+        } else {
+            throw new IllegalStateException("Unexpected scalar " + value + " in type " + type);
+        }
     }
 
     @Override
@@ -140,8 +148,7 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     }
 
     @Override
-    Object startAnydata(final NodeIdentifier name) {
-        nodeTypeStack.push(NodeType.ANY_XML);
-        return null;
+    void startAnydata(final NodeIdentifier name) {
+        nodeTypeStack.push(NodeType.ANYDATA);
     }
 }
