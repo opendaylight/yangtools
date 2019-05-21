@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.rfc7952.data.api;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 
@@ -27,6 +29,27 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
  * attached to {@code leaf-list} and {@code list} nodes by correctly extending them to each entry.
  */
 @Beta
-public interface NormalizedMetadataStreamWriter extends NormalizedNodeStreamWriterExtension, StreamWriterMethods {
+public interface NormalizedMetadataStreamWriter extends NormalizedNodeStreamWriterExtension {
+    /**
+     * Emit a block of metadata associated with the currently-open node. The argument is a map of annotation names,
+     * as defined {@code md:annotation} extension. Values are normalized objects, which are required to be
+     * effectively-immutable.
+     *
+     * @param metadata Metadata block
+     * @throws NullPointerException if {@code metadata} is null
+     * @throws IllegalStateException when this method is invoked outside of an open node or metadata has already been
+     *                               emitted.
+     * @throws IOException if an underlying IO error occurs
+     */
+    void metadata(ImmutableMap<QName, Object> metadata) throws IOException;
 
+    /**
+     * Indicate whether metadata is required to be emitted just after an entry is open. The default implementation
+     * returns false.
+     *
+     * @return True if metadata must occur just after the start of an entry.
+     */
+    default boolean requireMetadataFirst() {
+        return false;
+    }
 }

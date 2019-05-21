@@ -15,15 +15,14 @@ import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.dom.DOMSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.util.schema.opaque.OpaqueDataBuilder;
-import org.opendaylight.yangtools.yang.data.util.schema.opaque.OpaqueDataContainerBuilder;
-import org.opendaylight.yangtools.yang.data.util.schema.opaque.OpaqueDataListBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnydataNodeBuilder;
+import org.xml.sax.SAXException;
 
 @RunWith(Parameterized.class)
 public class AnydataSerializeTest extends AbstractAnydataTest {
@@ -40,7 +39,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     }
 
     @Test
-    public void testOpaqueAnydata() throws XMLStreamException, IOException {
+    public void testDOMAnydata() throws XMLStreamException, IOException, SAXException {
         final StringWriter writer = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(writer);
 
@@ -48,17 +47,11 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
             xmlStreamWriter, SCHEMA_CONTEXT);
         final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
             xmlNormalizedNodeStreamWriter);
-        normalizedNodeWriter.write(Builders.opaqueAnydataBuilder().withNodeIdentifier(FOO_NODEID)
-            .withValue(new OpaqueDataBuilder().withAccurateLists(false)
-                .withRoot(
-                    new OpaqueDataListBuilder().withIdentifier(BAR_NODEID)
-                    .withChild(new OpaqueDataContainerBuilder().withIdentifier(BAR_NODEID).build())
-                    .build())
-                .build())
-            .build());
+        normalizedNodeWriter.write(ImmutableAnydataNodeBuilder.create(DOMSource.class).withNodeIdentifier(FOO_NODEID)
+            .withValue(toDOMSource("<bar/>")).build());
         normalizedNodeWriter.flush();
 
         final String serializedXml = writer.toString();
-        assertEquals("<foo xmlns=\"test-anydata\"><bar/></foo>", serializedXml);
+        assertEquals("<foo xmlns=\"test-anydata\"><bar></bar></foo>", serializedXml);
     }
 }
