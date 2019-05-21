@@ -12,14 +12,14 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 
 @NonNullByDefault
 abstract class AbstractOpaqueDataContainer extends AbstractOpaqueDataNode {
     private final ImmutableList<OpaqueDataNode> children;
 
-    AbstractOpaqueDataContainer(final NodeIdentifier identifier, final ImmutableList<OpaqueDataNode> children) {
+    AbstractOpaqueDataContainer(final OpaqueIdentifier identifier, final ImmutableList<OpaqueDataNode> children) {
         super(identifier);
         this.children = requireNonNull(children);
     }

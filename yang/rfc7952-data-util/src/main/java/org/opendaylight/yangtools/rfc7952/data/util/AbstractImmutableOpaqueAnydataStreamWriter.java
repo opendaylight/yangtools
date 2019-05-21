@@ -20,8 +20,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.data.api.OpaqueAnydataStreamWriter;
 import org.opendaylight.yangtools.rfc7952.data.util.ImmutableNormalizedMetadata.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueData;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 import org.opendaylight.yangtools.yang.data.util.schema.stream.AbstractOpaqueAnydataStreamWriter;
 
 @Beta
@@ -41,7 +41,7 @@ public abstract class AbstractImmutableOpaqueAnydataStreamWriter extends Abstrac
     }
 
     @Override
-    protected final void enter(final NodeIdentifier name) throws IOException {
+    protected final void enter(final OpaqueIdentifier name) throws IOException {
         builders.push(ImmutableNormalizedMetadata.builder().withIdentifier(name));
     }
 

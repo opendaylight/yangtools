@@ -13,22 +13,22 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Builder;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 
 @Beta
 public abstract class AbstractOpaqueDataNodeBuilder<T extends OpaqueDataNode> implements Builder<T> {
-    private NodeIdentifier identifier;
+    private OpaqueIdentifier identifier;
 
     AbstractOpaqueDataNodeBuilder() {
         // Hidden on purpose
     }
 
-    final NodeIdentifier identifier() {
+    final OpaqueIdentifier identifier() {
         return identifier;
     }
 
-    public AbstractOpaqueDataNodeBuilder<T> withIdentifier(final NodeIdentifier newIdentifier) {
+    public AbstractOpaqueDataNodeBuilder<T> withIdentifier(final OpaqueIdentifier newIdentifier) {
         checkState(identifier == null, "Identifier already set to %s", identifier);
         identifier = requireNonNull(newIdentifier);
         return this;
@@ -42,5 +42,5 @@ public abstract class AbstractOpaqueDataNodeBuilder<T extends OpaqueDataNode> im
         return build(identifier);
     }
 
-    abstract @NonNull T build(@NonNull NodeIdentifier identifier);
+    abstract @NonNull T build(@NonNull OpaqueIdentifier identifier);
 }

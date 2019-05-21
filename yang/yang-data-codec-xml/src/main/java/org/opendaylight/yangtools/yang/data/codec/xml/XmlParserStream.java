@@ -50,7 +50,6 @@ import org.opendaylight.yangtools.rfc7952.data.util.ImmutableNormalizedMetadata;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueData;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
@@ -352,8 +351,8 @@ public final class XmlParserStream implements Closeable, Flushable {
                     case XMLStreamConstants.START_ELEMENT:
                         final String nsUri = in.getNamespaceURI();
                         final QNameModule module = resolveXmlNamespace(nsUri).orElseGet(() -> rawXmlNamespace(nsUri));
-                        opaqueWriter.startOpaqueContainer(NodeIdentifier.create(QName.create(module,
-                            in.getLocalName())));
+                        opaqueWriter.startOpaqueContainer(new XMLOpaqueIdentifier(module.getNamespace(),
+                            in.getLocalName()));
                         break;
                     case XMLStreamConstants.END_ELEMENT:
                         opaqueWriter.endOpaqueNode();

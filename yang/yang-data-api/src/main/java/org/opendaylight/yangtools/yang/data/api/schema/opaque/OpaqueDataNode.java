@@ -10,13 +10,12 @@ package org.opendaylight.yangtools.yang.data.api.schema.opaque;
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
  * Common interface for opaque containers and lists. All implementations of this interface are required to be
  * deeply-immutable.
  */
 @Beta
-public interface OpaqueDataNode extends Identifiable<NodeIdentifier>, Immutable {
+public interface OpaqueDataNode extends Identifiable<OpaqueIdentifier>, Immutable {
 
 }

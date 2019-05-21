@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.yang.data.util.schema.opaque;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataList;
 import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueIdentifier;
 
 @NonNullByDefault
 final class ImmutableOpaqueDataList extends AbstractOpaqueDataContainer implements OpaqueDataList {
-    ImmutableOpaqueDataList(final NodeIdentifier identifier, final ImmutableList<OpaqueDataNode> children) {
+    ImmutableOpaqueDataList(final OpaqueIdentifier identifier, final ImmutableList<OpaqueDataNode> children) {
         super(identifier, children);
     }
 
