@@ -43,6 +43,22 @@ public abstract class OpaqueIdentifier implements Identifier, WritableObject {
         URI getNamespace();
     }
 
+    /**
+     * An {@link OpaqueIdentifier} which has been previously bound to a module name. There is no implied relationship
+     * between the module name and any SchemaContext. This name is sufficient only for transporting data through JSON.
+     *
+     * @author Robert Varga
+     */
+    public interface ModuleNameAware {
+        /**
+         * Return the XML namespace which has been bound to this identifier. This does not necessarily contribute to
+         * equality of the identifier.
+         *
+         * @return A namespace.
+         */
+        String getModuleName();
+    }
+
     private static final long serialVersionUID = 1L;
 
     public abstract String getLocalName();
