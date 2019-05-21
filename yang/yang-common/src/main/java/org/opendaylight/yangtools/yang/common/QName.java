@@ -211,7 +211,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      * @return A QName instance
      * @throws IOException if I/O error occurs
      */
-    public static QName readFrom(final DataInput in) throws IOException {
+    public static @NonNull QName readFrom(final DataInput in) throws IOException {
         final QNameModule module = QNameModule.readFrom(in);
         return new QName(module, checkLocalName(in.readUTF()));
     }
