@@ -43,6 +43,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueData;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataNode;
+import org.opendaylight.yangtools.yang.data.util.schema.opaque.OpaqueDataBuilder;
+import org.opendaylight.yangtools.yang.data.util.schema.opaque.OpaqueDataValueBuilder;
 
 public class ImmutableNormalizedNodeStreamWriterTest {
 
@@ -72,6 +77,8 @@ public class ImmutableNormalizedNodeStreamWriterTest {
     private QName myChoice;
     private QName myLeafInCase2;
     private QName myAnyxml;
+    private QName myAnydata;
+    private QName myDataNode;
 
     private QName myContainer3;
     private QName myDoublyKeyedList;
@@ -109,6 +116,8 @@ public class ImmutableNormalizedNodeStreamWriterTest {
         myChoice = QName.create(bazModule, "my-choice");
         myLeafInCase2 = QName.create(bazModule, "my-leaf-in-case-2");
         myAnyxml = QName.create(bazModule, "my-anyxml");
+        myAnydata = QName.create(bazModule, "my-anydata");
+        myDataNode = QName.create(bazModule, "my-data-node");
 
         myContainer3 = QName.create(bazModule, "my-container-3");
         myDoublyKeyedList = QName.create(bazModule, "my-doubly-keyed-list");
@@ -221,11 +230,25 @@ public class ImmutableNormalizedNodeStreamWriterTest {
         AnyXmlNode myAnyxmlNode = Builders.anyXmlBuilder().withNodeIdentifier(new NodeIdentifier(myAnyxml))
                 .withValue(anyxmlDomSource).build();
 
+        OpaqueDataNode opaqueDataNode = new OpaqueDataValueBuilder()
+                .withIdentifier(new NodeIdentifier(myDataNode))
+                .withValue("opaque-value")
+                .build();
+
+        OpaqueData opaqueData = new OpaqueDataBuilder()
+                .withRoot(opaqueDataNode)
+                .withAccurateLists(false)
+                .build();
+
+        AnydataNode myAnydataNode = Builders.opaqueAnydataBuilder().withNodeIdentifier(new NodeIdentifier(myAnydata))
+                .withValue(opaqueData).build();
+
         ContainerNode myContainer2Node = Builders.containerBuilder().withNodeIdentifier(
                 new NodeIdentifier(myContainer2))
                 .withChild(innerContainerNode)
                 .withChild(myLeaf3Node)
                 .withChild(myChoiceNode)
+                .withChild(myAnydataNode)
                 .withChild(myAnyxmlNode).build();
 
         // my-container-3

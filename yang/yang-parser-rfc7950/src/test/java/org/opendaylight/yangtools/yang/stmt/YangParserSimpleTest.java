@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -91,6 +92,53 @@ public class YangParserSimpleTest {
                 assertEquals(Optional.of("anyxml data error-app-tag"), must.getErrorAppTag());
                 assertEquals(Optional.of("an error occured in data"), must.getDescription());
                 assertEquals(Optional.of("data must ref"), must.getReference());
+            }
+        }
+        assertTrue(found1);
+        assertTrue(found2);
+    }
+
+    @Test
+    public void testParseAnyData() {
+        final AnyDataSchemaNode anydata = (AnyDataSchemaNode) testModule.findDataChildByName(
+                QName.create(testModule.getQNameModule(), "dataNode")).orElse(null);
+
+        assertNotNull("'anydata data not found'", anydata);
+        assertEquals("AnydataEffectiveStatementImpl{qname=(urn:opendaylight:simple-nodes?revision=2013-07-30)dataNode, "
+                        + "path=AbsoluteSchemaPath{path=[(urn:opendaylight:simple-nodes?revision=2013-07-30)dataNode]}}",
+                anydata.toString());
+
+        // test SchemaNode args
+        assertEquals(QName.create(SN, "dataNode"), anydata.getQName());
+        assertEquals(Optional.of("anydata desc"), anydata.getDescription());
+        assertEquals(Optional.of("dataNode ref"), anydata.getReference());
+        assertEquals(Status.OBSOLETE, anydata.getStatus());
+        assertEquals(0, anydata.getUnknownSchemaNodes().size());
+        // test DataSchemaNode args
+        assertFalse(anydata.isAugmenting());
+        assertFalse(anydata.isConfiguration());
+
+        assertTrue(anydata.isMandatory());
+        assertTrue(anydata.getWhenCondition().isPresent());
+        assertEquals("class != 'wheel'", anydata.getWhenCondition().get().getOriginalString());
+        final Collection<MustDefinition> mustConstraints = anydata.getMustConstraints();
+        assertEquals(2, mustConstraints.size());
+
+        final String must1 = "ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)";
+        final String must2 = "ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)";
+
+        boolean found1 = false;
+        boolean found2 = false;
+        for (final MustDefinition must : mustConstraints) {
+            if (must1.equals(must.toString())) {
+                found1 = true;
+                assertEquals(Optional.of("An ethernet MTU must be 1500"), must.getErrorMessage());
+            } else if (must2.equals(must.toString())) {
+                found2 = true;
+                assertEquals(Optional.of("An atm MTU must be  64 .. 17966"), must.getErrorMessage());
+                assertEquals(Optional.of("anydata dataNode error-app-tag"), must.getErrorAppTag());
+                assertEquals(Optional.of("an error occured in dataNode"), must.getDescription());
+                assertEquals(Optional.of("dataNode must ref"), must.getReference());
             }
         }
         assertTrue(found1);

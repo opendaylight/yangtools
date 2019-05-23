@@ -1,5 +1,5 @@
 module simple-nodes {
-    yang-version 1;
+    yang-version 1.1;
     namespace "urn:opendaylight:"+
         "simple-nodes";
     prefix "sn";
@@ -40,6 +40,27 @@ module simple-nodes {
              reference "data must ref";
         }
         reference "data ref";
+        status obsolete;
+        when "class != 'wheel'";
+    }
+
+    anydata dataNode {
+        config false;
+        description "anydata desc";
+        if-feature has-name;
+        mandatory true;
+        must "ifType != 'ethernet' or " +
+              "(ifType = 'ethernet' and ifMTU = 1500)" {
+             error-message "An ethernet MTU must be 1500";
+        }
+        must "ifType != 'atm' or " +
+              "(ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)" {
+             error-app-tag "anydata dataNode error-app-tag";
+             error-message "An atm MTU must be  64 .. 17966";
+             description "an error occured in dataNode";
+             reference "dataNode must ref";
+        }
+        reference "dataNode ref";
         status obsolete;
         when "class != 'wheel'";
     }

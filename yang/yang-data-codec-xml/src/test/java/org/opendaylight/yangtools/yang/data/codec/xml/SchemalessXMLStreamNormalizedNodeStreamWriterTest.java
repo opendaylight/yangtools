@@ -49,6 +49,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
+import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -59,10 +60,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueData;
+import org.opendaylight.yangtools.yang.data.api.schema.opaque.OpaqueDataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.util.schema.opaque.OpaqueDataBuilder;
+import org.opendaylight.yangtools.yang.data.util.schema.opaque.OpaqueDataValueBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -102,6 +107,8 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
     private QName myChoice;
     private QName myLeafInCase2;
     private QName myAnyxml;
+    private QName myAnydata;
+    private QName myDataNode;
 
     private QName myContainer3;
     private QName myDoublyKeyedList;
@@ -143,6 +150,8 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
         myChoice = QName.create(foobarModule, "my-choice");
         myLeafInCase2 = QName.create(foobarModule, "my-leaf-in-case-2");
         myAnyxml = QName.create(foobarModule, "my-anyxml");
+        myAnydata = QName.create(foobarModule, "my-anydata");
+        myDataNode = QName.create(foobarModule, "my-data-node");
 
         myContainer3 = QName.create(foobarModule, "my-container-3");
         myDoublyKeyedList = QName.create(foobarModule, "my-doubly-keyed-list");
@@ -265,10 +274,24 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
         AnyXmlNode myAnyxmlNode = Builders.anyXmlBuilder().withNodeIdentifier(new NodeIdentifier(myAnyxml))
                 .withValue(anyxmlDomSource).build();
 
+        OpaqueDataNode opaqueDataNode = new OpaqueDataValueBuilder()
+                .withIdentifier(new NodeIdentifier(myDataNode))
+                .withValue("opaque-value")
+                .build();
+
+        OpaqueData opaqueData = new OpaqueDataBuilder()
+                .withRoot(opaqueDataNode)
+                .withAccurateLists(false)
+                .build();
+
+        AnydataNode myAnydataNode = Builders.opaqueAnydataBuilder().withNodeIdentifier(new NodeIdentifier(myAnydata))
+                .withValue(opaqueData).build();
+
         ContainerNode myContainer2Node = Builders.containerBuilder().withNodeIdentifier(
                 new NodeIdentifier(myContainer2))
                 .withChild(innerContainerNode)
                 .withChild(myLeaf3Node)
+                .withChild(myAnydataNode)
                 .withChild(myChoiceNode).build();
                 //.withChild(myAnyxmlNode).build();
 
