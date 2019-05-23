@@ -44,6 +44,9 @@
             <my-leaf-2>value2</my-leaf-2>
         </inner-container>
         <my-leaf-3>value3</my-leaf-3>
+        <my-anydata>
+            <my-data-node>opaque-value</my-data-node>
+        </my-anydata>
         <my-leaf-in-case-2>case2value</my-leaf-in-case-2>
     </my-container-2>
 

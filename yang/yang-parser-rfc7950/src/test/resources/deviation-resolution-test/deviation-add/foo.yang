@@ -59,7 +59,15 @@ module foo {
         deviate add {
             mandatory true;
             foo:custom-property "arg";
-            foo:custom-property "another arg";
+            foo:custom-property "another_arg";
+        }
+    }
+
+    deviation "/bar:my-anydata" {
+        deviate add {
+            mandatory true;
+            foo:custom-property "arg";
+            foo:custom-property "another_arg";
         }
     }
 
