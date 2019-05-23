@@ -71,4 +71,8 @@ module bar {
     anyxml my-anyxml {
 
     }
+
+    anydata my-anydata {
+
+    }
 }

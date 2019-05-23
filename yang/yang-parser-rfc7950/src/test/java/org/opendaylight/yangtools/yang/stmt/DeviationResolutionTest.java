@@ -22,6 +22,7 @@ import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -111,6 +112,12 @@ public class DeviationResolutionTest {
         assertNotNull(myAnyxml);
         assertTrue(myAnyxml.isMandatory());
         assertEquals(2, myAnyxml.getUnknownSchemaNodes().size());
+
+        final AnyDataSchemaNode myAnyData = (AnyDataSchemaNode) barModule.findDataChildByName(
+                QName.create(barModule.getQNameModule(), "my-anydata")).orElse(null);
+        assertNotNull(myAnyData);
+        assertTrue(myAnyData.isMandatory());
+        assertEquals(2, myAnyData.getUnknownSchemaNodes().size());
     }
 
     @Test
