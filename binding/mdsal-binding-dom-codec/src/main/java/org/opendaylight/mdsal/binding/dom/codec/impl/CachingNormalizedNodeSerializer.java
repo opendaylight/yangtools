@@ -48,7 +48,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
     }
 
     @Override
-    protected BindingStreamEventWriter delegate() {
+    protected AnydataBindingStreamWriter delegate() {
         return delegate;
     }
 

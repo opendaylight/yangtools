@@ -9,16 +9,16 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
+import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 
 //FIXME: Consider moving this to yang.binding.util.* in Be
-abstract class ForwardingBindingStreamEventWriter implements BindingStreamEventWriter {
+abstract class ForwardingBindingStreamEventWriter implements AnydataBindingStreamWriter {
 
-    protected abstract BindingStreamEventWriter delegate();
+    protected abstract AnydataBindingStreamWriter delegate();
 
     @Override
     public void leafNode(final String localName, final Object value) throws IOException {
@@ -88,6 +88,11 @@ abstract class ForwardingBindingStreamEventWriter implements BindingStreamEventW
     @Override
     public void startAugmentationNode(final Class<? extends Augmentation<?>> augmentationType) throws IOException {
         delegate().startAugmentationNode(augmentationType);
+    }
+
+    @Override
+    public void anydataNode(final String name, final OpaqueObject<?> value) throws IOException {
+        delegate().anydataNode(name, value);
     }
 
     @Override

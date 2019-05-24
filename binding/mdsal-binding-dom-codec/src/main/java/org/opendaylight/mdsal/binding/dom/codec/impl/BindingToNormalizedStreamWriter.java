@@ -19,20 +19,22 @@ import java.util.Map.Entry;
 import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
+import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.AnydataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter, Delegator<NormalizedNodeStreamWriter> {
+final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWriter,
+        Delegator<NormalizedNodeStreamWriter> {
     private final Deque<NodeCodecContext> schema = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter delegate;
     private final NodeCodecContext rootNodeSchema;
@@ -124,6 +126,18 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
         delegate.startLeafNode(dom.getKey());
         delegate.scalarValue(dom.getValue());
         delegate.endNode();
+    }
+
+    @Override
+    public void anydataNode(final String name, final OpaqueObject<?> value) throws IOException {
+        final AnydataExtension ext = delegate.getExtensions().getInstance(AnydataExtension.class);
+        if (ext != null) {
+            final Entry<NodeIdentifier, Object> dom = serializeLeaf(name, value);
+            if (ext.startAnydataNode(dom.getKey(), value.getValue().getObjectModel())) {
+                delegate.scalarValue(dom.getValue());
+                delegate.endNode();
+            }
+        }
     }
 
     @Override

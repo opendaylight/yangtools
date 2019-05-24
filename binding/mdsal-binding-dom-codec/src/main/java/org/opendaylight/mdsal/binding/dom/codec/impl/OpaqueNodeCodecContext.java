@@ -28,9 +28,11 @@ import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.OpaqueData;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
+import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ForeignDataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
@@ -48,6 +50,30 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
             verify(DOMSource.class.isAssignableFrom(model), "Cannot just yet support object model %s", model);
             return Builders.anyXmlBuilder().withNodeIdentifier(getDomPathArgument())
                     .withValue((DOMSource) opaqueData.getData()).build();
+        }
+
+        @Override
+        T deserialize(final ForeignDataNode<?, ?> foreignData) {
+            // Streaming cannot support anything but DOMSource-based AnyxmlNodes.
+            verify(foreignData instanceof AnyXmlNode, "Variable node %s not supported yet", foreignData);
+            return super.deserialize(foreignData);
+        }
+    }
+
+    static final class AnyData<T extends OpaqueObject<T>> extends OpaqueNodeCodecContext<T> {
+        AnyData(final AnyDataSchemaNode schema, final String getterName, final Class<T> bindingClass,
+                final CodecClassLoader loader) {
+            super(schema, getterName, bindingClass, loader);
+        }
+
+        @Override
+        AnydataNode<?> serializedData(final OpaqueData<?> opaqueData) {
+            return buildAnydata(opaqueData);
+        }
+
+        private <M> @NonNull AnydataNode<M> buildAnydata(final OpaqueData<M> opaqueData) {
+            return Builders.anydataBuilder(opaqueData.getObjectModel()).withNodeIdentifier(getDomPathArgument())
+                    .withValue(opaqueData.getData()).build();
         }
     }
 
@@ -93,10 +119,10 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
     @Override
     public final T deserialize(final NormalizedNode<?, ?> data) {
         checkArgument(data instanceof ForeignDataNode, "Unexpected value %s", data);
-        final ForeignDataNode<?, ?> foreignData = (ForeignDataNode<?, ?>) data;
-        // Streaming cannot support anything but DOMSource-based AnyxmlNodes.
-        verify(foreignData instanceof AnyXmlNode, "Variable node %s not supported yet", foreignData);
+        return deserialize((ForeignDataNode<?, ?>) data);
+    }
 
+    T deserialize(final ForeignDataNode<?, ?> foreignData) {
         return bindingClass.cast(createBindingProxy(new ForeignOpaqueData<>(foreignData)));
     }
 

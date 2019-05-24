@@ -63,6 +63,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -122,6 +123,8 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         UNKNOWN_SIZE,
         invokeMethod(BindingStreamEventWriter.class, "startUnkeyedListItem", int.class));
 
+    private static final StackManipulation STREAM_ANYDATA = invokeMethod(DataObjectStreamer.class,
+        "streamAnydata", BindingStreamEventWriter.class, String.class, Object.class);
     private static final StackManipulation STREAM_ANYXML = invokeMethod(DataObjectStreamer.class,
         "streamAnyxml", BindingStreamEventWriter.class, String.class, Object.class);
     private static final StackManipulation STREAM_CHOICE = invokeMethod(DataObjectStreamer.class,
@@ -266,6 +269,9 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         }
         if (childSchema instanceof ChoiceSchemaNode) {
             return choiceChildStream(getter);
+        }
+        if (childSchema instanceof AnyDataSchemaNode) {
+            return qnameChildStream(STREAM_ANYDATA, getter, childSchema);
         }
         if (childSchema instanceof AnyXmlSchemaNode) {
             return qnameChildStream(STREAM_ANYXML, getter, childSchema);

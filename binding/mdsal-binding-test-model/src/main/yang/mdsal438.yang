@@ -1,0 +1,22 @@
+module mdsal438 {
+    yang-version 1.1;
+    prefix mdsal438;
+    namespace mdsal438;
+
+    grouping grp {
+        anydata grp-any;
+    }
+
+    container cont {
+        anydata cont-any;
+
+        uses grp;
+    }
+
+    list lst {
+        uses grp;
+    }
+
+    anydata any;
+}
+

@@ -60,6 +60,7 @@ import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -301,8 +302,8 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
             final DataNodeContainer childSchema) {
         final Map<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
         for (final DataSchemaNode leaf : childSchema.getChildNodes()) {
-            // FIXME: support AnyDataSchemaNode, too
-            if (leaf instanceof TypedDataSchemaNode || leaf instanceof AnyXmlSchemaNode) {
+            if (leaf instanceof TypedDataSchemaNode || leaf instanceof AnyXmlSchemaNode
+                    || leaf instanceof AnyDataSchemaNode) {
                 getterToLeafSchema.put(BindingSchemaMapping.getGetterMethodName(leaf), leaf);
             }
         }
@@ -343,10 +344,11 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                     final Codec<Object, Object> codec = getCodec(valueType, leafListSchema.getType());
                     valueNode = new LeafSetNodeCodecContext(leafListSchema, codec, method.getName());
                 } else if (schema instanceof AnyXmlSchemaNode) {
-                    final Class<?> valueType = method.getReturnType();
-                    verify(OpaqueObject.class.isAssignableFrom(valueType), "Illegal value type %s", valueType);
                     valueNode = new OpaqueNodeCodecContext.AnyXml<>((AnyXmlSchemaNode) schema, method.getName(),
-                            valueType.asSubclass(OpaqueObject.class), loader);
+                            opaqueReturnType(method), loader);
+                } else if (schema instanceof AnyDataSchemaNode) {
+                    valueNode = new OpaqueNodeCodecContext.AnyData<>((AnyDataSchemaNode) schema, method.getName(),
+                            opaqueReturnType(method), loader);
                 } else {
                     verify(schema == null, "Unhandled schema %s for method %s", schema, method);
                     // We do not have schema for leaf, so we will ignore it (e.g. getClass).
@@ -427,5 +429,12 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
     @Override
     public BindingCodecTreeNode getSubtreeCodec(final SchemaPath path) {
         throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static Class<? extends OpaqueObject> opaqueReturnType(final Method method) {
+        final Class<?> valueType = method.getReturnType();
+        verify(OpaqueObject.class.isAssignableFrom(valueType), "Illegal value type %s", valueType);
+        return valueType.asSubclass(OpaqueObject.class);
     }
 }

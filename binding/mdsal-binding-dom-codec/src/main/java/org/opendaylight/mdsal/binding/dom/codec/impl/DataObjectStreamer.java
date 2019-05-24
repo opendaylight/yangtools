@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableClassToInstanceMap;
@@ -30,6 +31,7 @@ import org.opendaylight.yangtools.yang.binding.DataObjectSerializer;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
+import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +47,14 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
 
     protected DataObjectStreamer() {
 
+    }
+
+    protected static final void streamAnydata(final BindingStreamEventWriter writer, final String localName,
+            final Object value) throws IOException {
+        if (value != null && writer instanceof AnydataBindingStreamWriter) {
+            verify(value instanceof OpaqueObject, "Unexpected data %s", value);
+            ((AnydataBindingStreamWriter) writer).anydataNode(localName, (OpaqueObject<?>) value);
+        }
     }
 
     protected static final void streamAnyxml(final BindingStreamEventWriter writer, final String localName,
