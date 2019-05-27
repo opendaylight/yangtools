@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 @Beta
 @NonNullByDefault
@@ -16,12 +18,12 @@ public interface NormalizableAnydata {
     /**
      * Attempt to interpret this anydata content in the context of specified tree and node.
      *
-     * @param contextTree Data schema tree
-     * @param contextNode Data schema node
+     * @param schemaContext Schema context
+     * @param contextNode Corresponding schema node
      * @return Normalized anydata instance
      * @throws NullPointerException if any argument is null
      * @throws AnydataNormalizationException if this data cannot be interpreted in the requested context
      */
-    NormalizedAnydata normalizeTo(DataSchemaContextTree contextTree, DataSchemaContextNode<?> contextNode)
+    NormalizedAnydata normalizeTo(SchemaContext schemaContext, DataSchemaNode contextNode)
             throws AnydataNormalizationException;
 }
