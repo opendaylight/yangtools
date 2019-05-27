@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.AnydataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
+import org.opendaylight.yangtools.yang.data.util.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -156,13 +157,28 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         }
     }
 
-    final void anydataValue(final DOMSource domSource) throws IOException {
+    final void anydataValue(final Object value) throws IOException {
+        if (value instanceof DOMSourceAnydata) {
+            anydataValue(((DOMSourceAnydata) value).getSource());
+        } else if (value instanceof NormalizedAnydata) {
+            anydataValue((NormalizedAnydata) value);
+        } else {
+            throw new IllegalStateException("Unexpected anydata value " + value);
+        }
+    }
+
+    private void anydataValue(final DOMSource domSource) throws IOException {
         final Node domNode = requireNonNull(domSource.getNode());
         try {
             facade.anydataWriteStreamReader(new DOMSourceXMLStreamReader(domSource));
         } catch (XMLStreamException e) {
             throw new IOException("Unable to transform anyXml value: " + domNode, e);
         }
+    }
+
+    private void anydataValue(final NormalizedAnydata domSource) throws IOException {
+        // FIXME: implement this
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     final void anyxmlValue(final DOMSource domSource) throws IOException {
@@ -257,7 +273,8 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
 
     @Override
     public final boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
-        if (DOMSource.class.isAssignableFrom(objectModel)) {
+        if (DOMSourceAnydata.class.isAssignableFrom(objectModel)
+                || NormalizedAnydata.class.isAssignableFrom(objectModel)) {
             startAnydata(name);
             startElement(name.getNodeType());
             return true;
