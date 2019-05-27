@@ -257,7 +257,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
 
     @Override
     public final boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
-        if (DOMSource.class.isAssignableFrom(objectModel)) {
+        if (DOMSourceAnydata.class.isAssignableFrom(objectModel)) {
             startAnydata(name);
             startElement(name.getNodeType());
             return true;
