@@ -52,6 +52,6 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         normalizedNodeWriter.flush();
 
         final String serializedXml = writer.toString();
-        assertEquals("<foo xmlns=\"test-anydata\"><bar xmlns=\"test-anydata\"></bar></foo>", serializedXml);
+        assertEquals("<foo xmlns=\"test-anydata\"><bar></bar></foo>", serializedXml);
     }
 }
