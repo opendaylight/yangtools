@@ -15,7 +15,6 @@ import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.dom.DOMSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -47,8 +46,8 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
             xmlStreamWriter, SCHEMA_CONTEXT);
         final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
             xmlNormalizedNodeStreamWriter);
-        normalizedNodeWriter.write(ImmutableAnydataNodeBuilder.create(DOMSource.class).withNodeIdentifier(FOO_NODEID)
-            .withValue(toDOMSource("<bar xmlns=\"test-anydata\"/>")).build());
+        normalizedNodeWriter.write(ImmutableAnydataNodeBuilder.create(DOMSourceAnydata.class)
+            .withNodeIdentifier(FOO_NODEID).withValue(toDOMSource("<bar xmlns=\"test-anydata\"/>")).build());
         normalizedNodeWriter.flush();
 
         final String serializedXml = writer.toString();
