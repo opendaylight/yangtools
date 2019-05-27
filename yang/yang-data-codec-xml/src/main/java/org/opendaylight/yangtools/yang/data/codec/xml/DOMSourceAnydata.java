@@ -17,8 +17,6 @@ import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.AbstractNormalizableAnydata;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.xml.sax.SAXException;
@@ -36,18 +34,11 @@ final class DOMSourceAnydata extends AbstractNormalizableAnydata {
     }
 
     @Override
-    protected void writeTo(final NormalizedNodeStreamWriter streamWriter, final DataSchemaContextTree contextTree,
-            final DataSchemaContextNode<?> contextNode) throws IOException {
-        // TODO: this is rather ugly
-        final DataSchemaNode root = contextTree.getRoot().getDataSchemaNode();
-        if (!(root instanceof SchemaContext)) {
-            throw new IOException("Unexpected root context " + root);
-        }
-
+    protected void writeTo(final NormalizedNodeStreamWriter streamWriter, final SchemaContext schemaContext,
+            final DataSchemaNode contextNode) throws IOException {
         final XmlParserStream xmlParser;
         try {
-            xmlParser = XmlParserStream.create(streamWriter, (SchemaContext) root,
-                contextNode.getDataSchemaNode());
+            xmlParser = XmlParserStream.create(streamWriter, schemaContext, contextNode);
         } catch (IllegalArgumentException e) {
             throw new IOException("Failed to instantiate XML parser", e);
         }

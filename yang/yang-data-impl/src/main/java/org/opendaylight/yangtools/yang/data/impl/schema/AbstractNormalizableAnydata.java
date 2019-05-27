@@ -18,10 +18,10 @@ import org.opendaylight.yangtools.rfc7952.data.util.MetadataNormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AnydataNormalizationException;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.data.util.NormalizableAnydata;
 import org.opendaylight.yangtools.yang.data.util.NormalizedAnydata;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * Abstract base class for implementing the NormalizableAnydata interface. This class provides the binding to
@@ -31,20 +31,20 @@ import org.opendaylight.yangtools.yang.data.util.NormalizedAnydata;
 @NonNullByDefault
 public abstract class AbstractNormalizableAnydata implements NormalizableAnydata {
     @Override
-    public final NormalizedAnydata normalizeTo(final DataSchemaContextTree contextTree,
-            final DataSchemaContextNode<?> contextNode) throws AnydataNormalizationException {
+    public final NormalizedAnydata normalizeTo(final SchemaContext schemaContext, final DataSchemaNode contextNode)
+            throws AnydataNormalizationException {
         final NormalizedNodeMetadataResult result = new NormalizedNodeMetadataResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         try {
-            writeTo(streamWriter, contextTree, contextNode);
+            writeTo(streamWriter, schemaContext, contextNode);
         } catch (IOException e) {
             throw new AnydataNormalizationException("Failed to normalize anydata", e);
         }
 
         final NormalizedNode<?, ?> data = result.getResult();
         final Optional<NormalizedMetadata> optMeta = result.getMetadata();
-        return optMeta.isPresent() ? new MetadataNormalizedAnydata(contextTree, contextNode, data, optMeta.get())
-                : new NormalizedAnydata(contextTree, contextNode, result.getResult());
+        return optMeta.isPresent() ? new MetadataNormalizedAnydata(schemaContext, contextNode, data, optMeta.get())
+                : new NormalizedAnydata(schemaContext, contextNode, result.getResult());
     }
 
     @Override
@@ -54,6 +54,6 @@ public abstract class AbstractNormalizableAnydata implements NormalizableAnydata
 
     protected abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
 
-    protected abstract void writeTo(NormalizedNodeStreamWriter streamWriter, DataSchemaContextTree contextTree,
-            DataSchemaContextNode<?> contextNode) throws IOException;
+    protected abstract void writeTo(NormalizedNodeStreamWriter streamWriter, SchemaContext schemaContext,
+            DataSchemaNode contextNode) throws IOException;
 }
