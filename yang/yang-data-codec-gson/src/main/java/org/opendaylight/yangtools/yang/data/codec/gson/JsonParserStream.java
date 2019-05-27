@@ -15,6 +15,7 @@ import com.google.common.annotations.Beta;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.internal.bind.TypeAdapters;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.MalformedJsonException;
 import java.io.Closeable;
@@ -36,6 +37,7 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.AnydataNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
@@ -262,6 +264,10 @@ public final class JsonParserStream implements Closeable, Flushable {
                             .addChild(childDataSchemaNodes);
                     if (newChild instanceof AnyXmlNodeDataWithSchema) {
                         readAnyXmlValue(in, (AnyXmlNodeDataWithSchema) newChild, jsonElementName);
+                    } else if (newChild instanceof AnydataNodeDataWithSchema) {
+                        final AnydataNodeDataWithSchema anydata = (AnydataNodeDataWithSchema) newChild;
+                        anydata.setObjectModel(JsonElementAnydata.class);
+                        anydata.setValue(new JsonElementAnydata(codecs, TypeAdapters.JSON_ELEMENT.read(in)));
                     } else {
                         read(in, newChild);
                     }

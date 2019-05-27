@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
 import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
+import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -49,11 +51,13 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
  */
 @Beta
 public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
+    private final BiFunction<SchemaContext, JSONCodecFactory, JSONInstanceIdentifierCodec> iidCodecSupplier;
     private final JSONCodec<?> iidCodec;
 
     JSONCodecFactory(final SchemaContext context, final CodecCache<JSONCodec<?>> cache,
             final BiFunction<SchemaContext, JSONCodecFactory, JSONInstanceIdentifierCodec> iidCodecSupplier) {
         super(context, cache);
+        this.iidCodecSupplier = requireNonNull(iidCodecSupplier);
         iidCodec = verifyNotNull(iidCodecSupplier.apply(context, this));
     }
 
@@ -150,5 +154,18 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
     @Override
     protected JSONCodec<?> unknownCodec(final UnknownTypeDefinition type) {
         return NullJSONCodec.INSTANCE;
+    }
+
+    // Returns a one-off factory for the purposes of normalizing an anydata tree.
+    //
+    // FIXME: 4.0.0: this is really ugly, as we should be able to tell if the new context is the same as ours and
+    //               whether our cache is thread-safe -- in which case we should just return this.
+    //               The supplier/cache/factory layout needs to be reworked so that this call ends up being equivalent
+    //               to JSONCodecFactorySupplier.getShared() in case this factory is not thread safe.
+    //
+    //               The above is not currently possible, as we cannot reference JSONCodecFactorySupplier from the
+    //               factory due to that potentially creating a circular reference.
+    JSONCodecFactory rebaseTo(final SchemaContext newSchemaContext) {
+        return new JSONCodecFactory(newSchemaContext, new LazyCodecCache<>(), iidCodecSupplier);
     }
 }

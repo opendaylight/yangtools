@@ -12,6 +12,9 @@ import static java.util.Objects.requireNonNull;
 import static org.w3c.dom.Node.ELEMENT_NODE;
 import static org.w3c.dom.Node.TEXT_NODE;
 
+import com.google.common.collect.ClassToInstanceMap;
+import com.google.common.collect.ImmutableClassToInstanceMap;
+import com.google.gson.internal.bind.TypeAdapters;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
@@ -22,8 +25,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.AnydataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -41,7 +47,7 @@ import org.w3c.dom.Text;
  * <p>
  * Values of leaf and leaf-list are NOT translated according to codecs.
  */
-public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
+public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter, AnydataExtension {
     private static final class Exclusive extends JSONNormalizedNodeStreamWriter {
         Exclusive(final JSONCodecFactory codecFactory, final SchemaTracker tracker, final JsonWriter writer,
                 final JSONStreamWriterRootContext rootContext) {
@@ -200,6 +206,11 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
+    public ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
+        return ImmutableClassToInstanceMap.of(AnydataExtension.class, this);
+    }
+
+    @Override
     public void startLeafNode(final NodeIdentifier name) throws IOException {
         tracker.startLeafNode(name);
         context.emittingChild(codecs.getSchemaContext(), writer);
@@ -280,6 +291,18 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
+    public boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
+        if (JsonElementAnydata.class.isAssignableFrom(objectModel)) {
+            tracker.startAnydataNode(name);
+            context.emittingChild(codecs.getSchemaContext(), writer);
+            context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public final void startAnyxmlNode(final NodeIdentifier name) throws IOException {
         tracker.startAnyxmlNode(name);
         context.emittingChild(codecs.getSchemaContext(), writer);
@@ -315,8 +338,13 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public void scalarValue(final Object value) throws IOException {
         final Object current = tracker.getParent();
-        checkState(current instanceof TypedDataSchemaNode, "Cannot emit scalar %s for %s", value, current);
-        writeValue(value, codecs.codecFor((TypedDataSchemaNode) current));
+        if (current instanceof TypedDataSchemaNode) {
+            writeValue(value, codecs.codecFor((TypedDataSchemaNode) current));
+        } else if (current instanceof AnyDataSchemaNode) {
+            writeAnydataValue(value);
+        } else {
+            throw new IllegalStateException(String.format("Cannot emit scalar %s for %s", value, current));
+        }
     }
 
     @Override
@@ -330,6 +358,11 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @SuppressWarnings("unchecked")
     private void writeValue(final Object value, final JSONCodec<?> codec) throws IOException {
         ((JSONCodec<Object>) codec).writeValue(writer, value);
+    }
+
+    private void writeAnydataValue(final Object value) throws IOException {
+        checkState(value instanceof JsonElementAnydata, "Unexpected anydata value %s", value);
+        TypeAdapters.JSON_ELEMENT.write(writer, ((JsonElementAnydata) value).getElement());
     }
 
     private void writeAnyXmlValue(final DOMSource anyXmlValue) throws IOException {
