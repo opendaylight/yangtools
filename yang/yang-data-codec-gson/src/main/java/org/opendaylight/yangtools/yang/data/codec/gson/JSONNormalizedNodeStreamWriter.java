@@ -293,7 +293,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     @Override
     public boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
-        if (NormalizedAnydata.class.isAssignableFrom(objectModel)) {
+        if (JsonAnydata.class.isAssignableFrom(objectModel)
+                || NormalizedAnydata.class.isAssignableFrom(objectModel)) {
             tracker.startAnydataNode(name);
             context.emittingChild(codecs.getSchemaContext(), writer);
             context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
@@ -362,7 +363,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     private void writeAnydataValue(final Object value) throws IOException {
-        if (value instanceof NormalizedAnydata) {
+        if (value instanceof JsonAnydata) {
+            ((JsonAnydata) value).writeTo(writer);
+        } else if (value instanceof NormalizedAnydata) {
             writeNormalizedAnydata((NormalizedAnydata) value);
         } else {
             throw new IllegalStateException("Unexpected anydata value " + value);
