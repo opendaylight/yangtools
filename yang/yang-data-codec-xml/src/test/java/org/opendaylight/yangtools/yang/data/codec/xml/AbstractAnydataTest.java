@@ -38,9 +38,8 @@ public abstract class AbstractAnydataTest {
         SCHEMA_CONTEXT = null;
     }
 
-
-    static DOMSource toDOMSource(final String str) throws IOException, SAXException {
-        return new DOMSource(readXmlToDocument(toInputStream(str)).getDocumentElement());
+    static DOMSourceAnydata toDOMSource(final String str) throws IOException, SAXException {
+        return new DOMSourceAnydata(new DOMSource(readXmlToDocument(toInputStream(str)).getDocumentElement()));
     }
 
     static InputStream toInputStream(final String str) {
