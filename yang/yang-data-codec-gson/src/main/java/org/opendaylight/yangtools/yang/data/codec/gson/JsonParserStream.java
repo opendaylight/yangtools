@@ -34,6 +34,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.util.AbstractAnydataNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
@@ -262,6 +263,8 @@ public final class JsonParserStream implements Closeable, Flushable {
                             .addChild(childDataSchemaNodes);
                     if (newChild instanceof AnyXmlNodeDataWithSchema) {
                         readAnyXmlValue(in, (AnyXmlNodeDataWithSchema) newChild, jsonElementName);
+                    } else if (newChild instanceof AbstractAnydataNodeDataWithSchema) {
+                        // FIXME: read in anydata
                     } else {
                         read(in, newChild);
                     }
