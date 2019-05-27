@@ -154,8 +154,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
         if (current instanceof TypedDataSchemaNode) {
             writeValue(value, (SchemaNode) current);
         } else if (current instanceof AnyDataSchemaNode) {
-            checkArgument(value instanceof DOMSource, "Unexpected anydata value %s", value);
-            anydataValue((DOMSource) value);
+            anydataValue(value);
         } else {
             throw new IllegalStateException("Unexpected scalar value " + value + " with " + current);
         }
