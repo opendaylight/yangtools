@@ -16,6 +16,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
 /**
  * The contents of an {@code anydata} node in a normalized format. This representation acts as a schema-bound bridge
@@ -26,24 +29,25 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  */
 @Beta
 @NonNullByDefault
-public class NormalizedAnydata implements Immutable {
-    private final DataSchemaContextNode<?> contextNode;
-    private final DataSchemaContextTree contextTree;
+public class NormalizedAnydata implements Immutable, SchemaContextProvider {
+    private final SchemaContext schemaContext;
+    private final DataSchemaNode contextNode;
     private final NormalizedNode<?, ?> data;
 
-    public NormalizedAnydata(final DataSchemaContextTree contextTree, final DataSchemaContextNode<?> contextNode,
+    public NormalizedAnydata(final SchemaContext schemaContext, final DataSchemaNode contextNode,
             final NormalizedNode<?, ?> data) {
-        this.contextTree = requireNonNull(contextTree);
+        this.schemaContext = requireNonNull(schemaContext);
         this.contextNode = requireNonNull(contextNode);
         this.data = requireNonNull(data);
     }
 
-    public final DataSchemaContextNode<?> getContextNode() {
-        return contextNode;
+    @Override
+    public final SchemaContext getSchemaContext() {
+        return schemaContext;
     }
 
-    public final DataSchemaContextTree getContextTree() {
-        return contextTree;
+    public final DataSchemaNode getContextNode() {
+        return contextNode;
     }
 
     public final NormalizedNode<?, ?> getData() {
@@ -66,6 +70,6 @@ public class NormalizedAnydata implements Immutable {
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("tree", contextTree).add("node", contextNode).add("data", data);
+        return helper.add("schemaConteext", schemaContext).add("node", contextNode).add("data", data);
     }
 }

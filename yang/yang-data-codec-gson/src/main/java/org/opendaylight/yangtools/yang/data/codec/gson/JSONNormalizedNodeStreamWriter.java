@@ -30,12 +30,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.data.util.NormalizedAnydata;
+import org.opendaylight.yangtools.yang.data.util.SingleChildDataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -372,20 +371,10 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     private void writeNormalizedAnydata(final NormalizedAnydata anydata) throws IOException {
-        // TODO: this is rather ugly
-        final DataSchemaNode root = anydata.getContextTree().getRoot().getDataSchemaNode();
-        if (!(root instanceof SchemaContext)) {
-            throw new IOException("Unexpected root context " + root);
-        }
-
-        final DataSchemaNode node = anydata.getContextNode().getDataSchemaNode();
-        if (!(node instanceof DataNodeContainer)) {
-            throw new IOException("Unexpected node context " + node);
-        }
-
         NormalizedNodeWriter.forStreamWriter(JSONNormalizedNodeStreamWriter.createNestedWriter(
-            codecs.rebaseTo((SchemaContext) root), (DataNodeContainer) node, context.getNamespace(), writer)).write(
-                anydata.getData()).flush();
+            codecs.rebaseTo(anydata.getSchemaContext()),
+            new SingleChildDataNodeContainer(anydata.getContextNode()), context.getNamespace(), writer))
+                .write(anydata.getData()).flush();
     }
 
     private void writeAnyXmlValue(final DOMSource anyXmlValue) throws IOException {
