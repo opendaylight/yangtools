@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -118,8 +117,7 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
         if (type == NodeType.SCALAR) {
             writeValue(value, null);
         } else if (type == NodeType.ANYDATA) {
-            verify(value instanceof DOMSource, "Unexpected anydata value %s", value);
-            anydataValue((DOMSource) value);
+            anydataValue(value);
         } else {
             throw new IllegalStateException("Unexpected scalar " + value + " in type " + type);
         }

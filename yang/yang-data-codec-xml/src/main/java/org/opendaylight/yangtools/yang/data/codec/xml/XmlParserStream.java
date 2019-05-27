@@ -233,7 +233,8 @@ public final class XmlParserStream implements Closeable, Flushable {
             } else if (parentNode instanceof LeafListSchemaNode) {
                 nodeDataWithSchema = new LeafListNodeDataWithSchema((LeafListSchemaNode) parentNode);
             } else if (parentNode instanceof AnyDataSchemaNode) {
-                nodeDataWithSchema = new AnydataNodeDataWithSchema((AnyDataSchemaNode) parentNode, DOMSource.class);
+                nodeDataWithSchema = new AnydataNodeDataWithSchema((AnyDataSchemaNode) parentNode,
+                    DOMSourceAnydata.class);
             } else {
                 throw new IllegalStateException("Unsupported schema node type " + parentNode.getClass() + ".");
             }
@@ -528,13 +529,17 @@ public final class XmlParserStream implements Closeable, Flushable {
 
     private Object translateValueByType(final Object value, final DataSchemaNode node,
             final NamespaceContext namespaceCtx) {
-        if (node instanceof AnyXmlSchemaNode || node instanceof AnyDataSchemaNode) {
+        if (node instanceof AnyXmlSchemaNode) {
             checkArgument(value instanceof Document);
             /*
              * FIXME: Figure out some YANG extension dispatch, which will reuse JSON parsing or XML parsing -
              *        anyxml is not well-defined in JSON.
              */
             return new DOMSource(((Document) value).getDocumentElement());
+        }
+        if (node instanceof AnyDataSchemaNode) {
+            checkArgument(value instanceof Document);
+            return new DOMSourceAnydata(new DOMSource(((Document) value).getDocumentElement()));
         }
 
         checkArgument(node instanceof TypedDataSchemaNode);
