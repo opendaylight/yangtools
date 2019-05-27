@@ -239,8 +239,15 @@ final class StreamWriterFacade extends ValueWriter {
     }
 
     private void forwardNamespaces(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
+        final NamespaceContext context = writer.getNamespaceContext();
+
         for (int i = 0; i < reader.getNamespaceCount(); ++i) {
-            writer.writeNamespace(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
+            final String prefix = reader.getNamespacePrefix(i);
+            final String uri = reader.getNamespaceURI(i);
+
+            if (context == null || !uri.equals(context.getNamespaceURI(prefix))) {
+                writer.writeNamespace(prefix, uri);
+            }
         }
     }
 
