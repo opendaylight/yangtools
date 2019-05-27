@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
 import org.opendaylight.yangtools.yang.data.util.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -325,20 +324,14 @@ final class StreamWriterFacade extends ValueWriter {
     }
 
     void emitNormalizedAnydata(final NormalizedAnydata anydata) throws XMLStreamException {
-        // TODO: this is rather ugly
-        final DataSchemaNode root = anydata.getContextTree().getRoot().getDataSchemaNode();
-        if (!(root instanceof SchemaContext)) {
-            throw new XMLStreamException("Unexpected root context " + root);
-        }
-
-        final DataSchemaNode node = anydata.getContextNode().getDataSchemaNode();
+        final DataSchemaNode node = anydata.getContextNode();
         if (!(node instanceof DataNodeContainer)) {
             throw new XMLStreamException("Unexpected node context " + node);
         }
 
         try {
             NormalizedNodeWriter.forStreamWriter(XMLStreamNormalizedNodeStreamWriter.create(writer,
-                (SchemaContext) root, (DataNodeContainer) node), false).write(anydata.getData()).flush();
+                anydata.getSchemaContext(), (DataNodeContainer) node), false).write(anydata.getData()).flush();
         } catch (IOException e) {
             throw new XMLStreamException("Failed to emit anydata " + anydata, e);
         }
