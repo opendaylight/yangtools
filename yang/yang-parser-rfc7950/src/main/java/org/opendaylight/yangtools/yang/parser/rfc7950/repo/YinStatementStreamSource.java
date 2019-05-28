@@ -11,13 +11,11 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.rfc7950.repo.StatementSourceReferenceHandler.extractRef;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Optional;
 import javax.xml.transform.TransformerException;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -52,13 +50,8 @@ import org.w3c.dom.NodeList;
 @Beta
 public final class YinStatementStreamSource implements StatementStreamSource {
     private static final Logger LOG = LoggerFactory.getLogger(YinStatementStreamSource.class);
-    private static final LoadingCache<String, URI> URI_CACHE = CacheBuilder.newBuilder().weakValues().build(
-        new CacheLoader<String, URI>() {
-            @Override
-            public URI load(final String key) throws URISyntaxException {
-                return new URI(key);
-            }
-        });
+    private static final LoadingCache<String, URI> URI_CACHE = Caffeine.newBuilder().weakValues().build(URI::new);
+
     private final SourceIdentifier identifier;
     private final Node root;
 

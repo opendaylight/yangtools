@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -26,13 +25,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  */
 // FIXME: 4.0.0: @NonNullByDefault
 public final class DataSchemaContextTree {
-    private static final LoadingCache<SchemaContext, DataSchemaContextTree> TREES = CacheBuilder.newBuilder()
-            .weakKeys().weakValues().build(new CacheLoader<SchemaContext, DataSchemaContextTree>() {
-                @Override
-                public DataSchemaContextTree load(final SchemaContext key) throws Exception {
-                    return new DataSchemaContextTree(key);
-                }
-            });
+    private static final LoadingCache<SchemaContext, DataSchemaContextTree> TREES = Caffeine.newBuilder()
+            .weakKeys().weakValues().build(DataSchemaContextTree::new);
 
     private final DataSchemaContextNode<?> root;
 
@@ -41,7 +35,7 @@ public final class DataSchemaContextTree {
     }
 
     public static @NonNull DataSchemaContextTree from(final @NonNull SchemaContext ctx) {
-        return TREES.getUnchecked(ctx);
+        return TREES.get(ctx);
     }
 
     /**

@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.util;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Verify;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -29,13 +28,8 @@ final class OffsetMapCache {
      * Cache for offsets where order matters. The key is a List, which defines the iteration order. Since we want
      * to retain this order, it is okay to use a simple LoadingCache.
      */
-    private static final LoadingCache<List<?>, ImmutableMap<?, Integer>> ORDERED_CACHE =
-            CacheBuilder.newBuilder().weakValues().build(new CacheLoader<List<?>, ImmutableMap<?, Integer>>() {
-                @Override
-                public ImmutableMap<?, Integer> load(final List<?> key) {
-                    return createMap(key);
-                }
-            });
+    private static final LoadingCache<List<?>, ImmutableMap<?, Integer>> ORDERED_CACHE = Caffeine.newBuilder()
+            .weakValues().build(OffsetMapCache::createMap);
     /*
      * Cache for offsets where order does not mapper. The key is a Set of elements. We use manual two-stage loading
      * because of the nature of the objects we store as values, which is ImmutableMaps. An ImmutableMap, when queried
@@ -47,8 +41,8 @@ final class OffsetMapCache {
      * we construct the map and put it conditionally with Map.keySet() as the key. This will detect concurrent loading
      * and also lead to the cache and the map sharing the same Set.
      */
-    private static final Cache<Set<?>, ImmutableMap<?, Integer>> UNORDERED_CACHE =
-            CacheBuilder.newBuilder().weakValues().build();
+    private static final Cache<Set<?>, ImmutableMap<?, Integer>> UNORDERED_CACHE = Caffeine.newBuilder()
+            .weakValues().build();
 
     private OffsetMapCache() {
         throw new UnsupportedOperationException();
@@ -66,7 +60,7 @@ final class OffsetMapCache {
             return unorderedOffsets(args);
         }
 
-        return (ImmutableMap<T, Integer>) ORDERED_CACHE.getUnchecked(ImmutableList.copyOf(args));
+        return (ImmutableMap<T, Integer>) ORDERED_CACHE.get(ImmutableList.copyOf(args));
     }
 
     static <T> ImmutableMap<T, Integer> unorderedOffsets(final Collection<T> args) {
