@@ -10,10 +10,9 @@ package org.opendaylight.yangtools.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.annotations.Beta;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import java.io.Serializable;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Iterator;
@@ -68,13 +67,8 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
     }
 
     private static final long serialVersionUID = 1L;
-    private static final LoadingCache<Object, SingletonSet<Object>> CACHE = CacheBuilder.newBuilder().weakValues()
-            .build(new CacheLoader<Object, SingletonSet<Object>>() {
-                @Override
-                public SingletonSet<Object> load(final Object key) {
-                    return SingletonSet.of(key);
-                }
-            });
+    private static final LoadingCache<Object, SingletonSet<Object>> CACHE = Caffeine.newBuilder().weakValues()
+            .build(SingletonSet::of);
 
     private final @NonNull SingletonSet<K> keySet;
     private final @NonNull V value;
@@ -234,7 +228,7 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
 
     @SuppressWarnings("unchecked")
     static <K> @NonNull SingletonSet<K> cachedSet(final K key) {
-        return (SingletonSet<K>) CACHE.getUnchecked(key);
+        return (SingletonSet<K>) CACHE.get(key);
     }
 
     private static <K, V> Entry<K, V> singleEntry(final Map<K, V> map) {

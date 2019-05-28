@@ -9,10 +9,9 @@ package org.opendaylight.yangtools.yang.common;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.annotations.Beta;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.kohsuke.MetaInfServices;
@@ -75,13 +74,8 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
         LRU_SIZE = p >= 0 ? Math.min(p, MAX_LRU_SIZE) : DEFAULT_LRU_SIZE;
     }
 
-    private static final LoadingCache<Short, Uint16> LRU = CacheBuilder.newBuilder().weakValues().maximumSize(LRU_SIZE)
-            .build(new CacheLoader<Short, Uint16>() {
-                @Override
-                public Uint16 load(final Short key) {
-                    return new Uint16(key);
-                }
-            });
+    private static final LoadingCache<Short, Uint16> LRU = Caffeine.newBuilder().weakValues().maximumSize(LRU_SIZE)
+            .build(Uint16::new);
 
     private final short value;
 
@@ -102,7 +96,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
                 }
             }
 
-            return LRU.getUnchecked(value);
+            return LRU.get(value);
         }
 
         Uint16 ret = CACHE[slot];
