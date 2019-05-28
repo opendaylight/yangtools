@@ -227,8 +227,13 @@ final class StreamWriterFacade extends ValueWriter {
                     if (depth != 0) {
                         forwardStartElement(reader);
                     } else {
-                        // anydata: forward namespaces only
-                        forwardNamespaces(reader);
+                        // anydata: forward namespaces only, skipping the default namespace
+                        for (int i = 0; i < reader.getNamespaceCount(); ++i) {
+                            final String prefix = reader.getNamespacePrefix(i);
+                            if (!XMLConstants.DEFAULT_NS_PREFIX.equals(prefix)) {
+                                writer.writeNamespace(prefix, reader.getNamespaceURI(i));
+                            }
+                        }
                     }
                     ++depth;
                     break;

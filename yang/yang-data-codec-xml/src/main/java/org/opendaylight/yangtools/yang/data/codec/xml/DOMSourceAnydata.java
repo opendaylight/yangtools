@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -67,5 +68,10 @@ final class DOMSourceAnydata extends AbstractNormalizableAnydata {
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         return helper.add("source", source);
+    }
+
+    @VisibleForTesting
+    DOMSource getSource() {
+        return source;
     }
 }
