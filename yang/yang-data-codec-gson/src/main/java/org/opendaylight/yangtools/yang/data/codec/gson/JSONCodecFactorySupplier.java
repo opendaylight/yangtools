@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Stopwatch;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
@@ -48,7 +48,7 @@ public enum JSONCodecFactorySupplier {
 
     private static final Logger LOG = LoggerFactory.getLogger(JSONCodecFactorySupplier.class);
 
-    private static final class EagerCacheLoader extends CacheLoader<SchemaContext, JSONCodecFactory> {
+    private static final class EagerCacheLoader implements CacheLoader<SchemaContext, JSONCodecFactory> {
         private final BiFunction<SchemaContext, JSONCodecFactory, JSONInstanceIdentifierCodec>
             iidCodecSupplier;
 
@@ -97,13 +97,9 @@ public enum JSONCodecFactorySupplier {
     JSONCodecFactorySupplier(
             final BiFunction<SchemaContext, JSONCodecFactory, JSONInstanceIdentifierCodec> iidCodecSupplier) {
         this.iidCodecSupplier = requireNonNull(iidCodecSupplier);
-        precomputed = CacheBuilder.newBuilder().weakKeys().build(new EagerCacheLoader(iidCodecSupplier));
-        shared = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<SchemaContext, JSONCodecFactory>() {
-            @Override
-            public JSONCodecFactory load(final SchemaContext key) {
-                return new JSONCodecFactory(key, new SharedCodecCache<>(), iidCodecSupplier);
-            }
-        });
+        precomputed = Caffeine.newBuilder().weakKeys().build(new EagerCacheLoader(iidCodecSupplier));
+        shared = Caffeine.newBuilder().weakKeys().build(
+            key -> new JSONCodecFactory(key, new SharedCodecCache<>(), iidCodecSupplier));
     }
 
     /**
@@ -128,7 +124,7 @@ public enum JSONCodecFactorySupplier {
      * @throws NullPointerException if context is null
      */
     public @NonNull JSONCodecFactory getPrecomputed(final @NonNull SchemaContext context) {
-        return verifyNotNull(precomputed.getUnchecked(context));
+        return verifyNotNull(precomputed.get(context));
     }
 
     /**
@@ -160,7 +156,7 @@ public enum JSONCodecFactorySupplier {
      * @throws NullPointerException if context is null
      */
     public @NonNull JSONCodecFactory getShared(final @NonNull SchemaContext context) {
-        return verifyNotNull(shared.getUnchecked(context));
+        return verifyNotNull(shared.get(context));
     }
 
     /**

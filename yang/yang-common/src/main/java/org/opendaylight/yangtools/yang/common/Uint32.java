@@ -9,10 +9,9 @@ package org.opendaylight.yangtools.yang.common;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.annotations.Beta;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.primitives.UnsignedInteger;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -77,13 +76,8 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
         LRU_SIZE = p >= 0 ? Math.min(p, MAX_LRU_SIZE) : DEFAULT_LRU_SIZE;
     }
 
-    private static final LoadingCache<Integer, Uint32> LRU = CacheBuilder.newBuilder().weakValues()
-        .maximumSize(LRU_SIZE).build(new CacheLoader<Integer, Uint32>() {
-                @Override
-                public Uint32 load(final Integer key) {
-                    return new Uint32(key);
-                }
-            });
+    private static final LoadingCache<Integer, Uint32> LRU = Caffeine.newBuilder().weakValues().maximumSize(LRU_SIZE)
+            .build(Uint32::new);
 
     private final int value;
 
@@ -104,7 +98,7 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
                 }
             }
 
-            return LRU.getUnchecked(value);
+            return LRU.get(value);
         }
 
         final int slot = (int)longSlot;
