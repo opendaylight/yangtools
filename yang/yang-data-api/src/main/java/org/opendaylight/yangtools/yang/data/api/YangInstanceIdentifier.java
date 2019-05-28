@@ -11,10 +11,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.annotations.Beta;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -541,13 +540,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      */
     public static final class NodeIdentifier extends AbstractPathArgument {
         private static final long serialVersionUID = -2255888212390871347L;
-        private static final LoadingCache<QName, NodeIdentifier> CACHE = CacheBuilder.newBuilder().weakValues()
-                .build(new CacheLoader<QName, NodeIdentifier>() {
-                    @Override
-                    public NodeIdentifier load(final QName key) {
-                        return new NodeIdentifier(key);
-                    }
-                });
+        private static final LoadingCache<QName, NodeIdentifier> CACHE = Caffeine.newBuilder().weakValues()
+                .build(NodeIdentifier::new);
 
         public NodeIdentifier(final QName node) {
             super(node);
@@ -561,7 +555,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @return A {@link NodeIdentifier}
          */
         public static @NonNull NodeIdentifier create(final QName node) {
-            return CACHE.getUnchecked(node);
+            return CACHE.get(node);
         }
 
         @Override

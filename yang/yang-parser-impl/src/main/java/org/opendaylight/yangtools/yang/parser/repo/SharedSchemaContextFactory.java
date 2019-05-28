@@ -11,9 +11,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.base.Function;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -53,9 +53,9 @@ import org.slf4j.LoggerFactory;
 final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
     private static final Logger LOG = LoggerFactory.getLogger(SharedSchemaContextFactory.class);
 
-    private final Cache<Collection<SourceIdentifier>, EffectiveModelContext> revisionCache = CacheBuilder.newBuilder()
+    private final Cache<Collection<SourceIdentifier>, EffectiveModelContext> revisionCache = Caffeine.newBuilder()
             .weakValues().build();
-    private final Cache<Collection<SourceIdentifier>, EffectiveModelContext> semVerCache = CacheBuilder.newBuilder()
+    private final Cache<Collection<SourceIdentifier>, EffectiveModelContext> semVerCache = Caffeine.newBuilder()
             .weakValues().build();
     private final @NonNull SchemaRepository repository;
     private final @NonNull SchemaContextFactoryConfiguration config;

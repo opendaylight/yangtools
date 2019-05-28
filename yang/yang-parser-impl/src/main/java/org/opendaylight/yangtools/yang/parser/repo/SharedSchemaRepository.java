@@ -9,10 +9,9 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import static java.util.Objects.requireNonNull;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.google.common.annotations.Beta;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.concepts.Identifiable;
@@ -33,13 +32,8 @@ import org.opendaylight.yangtools.yang.model.repo.util.AbstractSchemaRepository;
 @MetaInfServices(value = SchemaRepository.class)
 public final class SharedSchemaRepository extends AbstractSchemaRepository implements Identifiable<String> {
     private final LoadingCache<SchemaContextFactoryConfiguration, EffectiveModelContextFactory> cacheByConfig =
-            CacheBuilder.newBuilder().softValues()
-            .build(new CacheLoader<SchemaContextFactoryConfiguration, EffectiveModelContextFactory>() {
-                @Override
-                public EffectiveModelContextFactory load(final SchemaContextFactoryConfiguration key) {
-                    return new SharedSchemaContextFactory(SharedSchemaRepository.this, key);
-                }
-            });
+            Caffeine.newBuilder().softValues().build(
+                key -> new SharedSchemaContextFactory(SharedSchemaRepository.this, key));
 
     private final @NonNull String id;
 
@@ -55,7 +49,7 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
     @Override
     public @NonNull EffectiveModelContextFactory createEffectiveModelContextFactory(
             final @NonNull SchemaContextFactoryConfiguration config) {
-        return cacheByConfig.getUnchecked(config);
+        return cacheByConfig.get(config);
     }
 
     @Override
