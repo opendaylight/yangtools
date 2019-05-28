@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<foo xmlns="test-anydata">
+    <bgp xmlns="http://example.com/ns/bgp"
+         xmlns:or="urn:ietf:params:xml:ns:yang:ietf-origin"
+         or:origin="or:intended">
+        <peer>
+            <name>2001:db8::2:3</name>
+            <local-port or:origin="or:system">60794</local-port>
+            <state>established</state>
+        </peer>
+    </bgp>
+</foo>
