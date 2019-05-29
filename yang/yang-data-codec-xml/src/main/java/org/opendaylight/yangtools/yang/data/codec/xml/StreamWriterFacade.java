@@ -218,23 +218,32 @@ final class StreamWriterFacade extends ValueWriter {
     void anydataWriteStreamReader(final XMLStreamReader reader) throws XMLStreamException {
         flushElement();
 
+        // Do not emit top-level element
+        int depth = 0;
         while (reader.hasNext()) {
             final int event = reader.next();
             switch (event) {
                 case XMLStreamConstants.START_ELEMENT:
-                    forwardStartElement(reader);
+                    if (depth != 0) {
+                        forwardStartElement(reader);
+                    } else {
+                        // anydata: forward namespaces only
+                        forwardNamespaces(reader);
+                    }
+                    ++depth;
                     break;
                 case XMLStreamConstants.END_ELEMENT:
-                    writer.writeEndElement();
+                    if (depth != 0) {
+                        writer.writeEndElement();
+                    }
+                    --depth;
                     break;
                 case XMLStreamConstants.CHARACTERS:
                     writer.writeCharacters(reader.getText());
                     break;
                 case XMLStreamConstants.COMMENT:
-                    writer.writeComment(reader.getText());
-                    break;
                 case XMLStreamConstants.SPACE:
-                    // Ignore insignificant whitespace
+                    // Ignore comments and insignificant whitespace
                     break;
                 case XMLStreamConstants.START_DOCUMENT:
                 case XMLStreamConstants.END_DOCUMENT:
@@ -273,6 +282,7 @@ final class StreamWriterFacade extends ValueWriter {
                         forwardStartElement(reader);
                     } else {
                         forwardNamespaces(reader);
+                        // anyxml, hence we need to forward attributes
                         forwardAttributes(reader);
                     }
                     ++depth;
