@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "d9eca6e4_1ce8c6de",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlParserStream.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 391,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-05-29T13:36:58Z",
+      "side": 1,
+      "message": "Hmm... this is probably the wrong approach -- if would break down if inner payload is a list -- i.e. we would have multiple root elements in the document, which is not allowed.",
+      "range": {
+        "startLine": 391,
+        "startChar": 12,
+        "endLine": 391,
+        "endChar": 25
+      },
+      "revId": "893ea6d849e3dfceda1bb5ae4b8642cc29019140",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eeb1cef3_3ca861b4",
         "filename": "yang/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/AnydataSerializeTest.java",
         "patchSetId": 4
