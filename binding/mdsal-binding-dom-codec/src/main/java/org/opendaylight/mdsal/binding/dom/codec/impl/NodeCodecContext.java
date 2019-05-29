@@ -40,13 +40,8 @@ abstract class NodeCodecContext implements BindingCodecTreeNode {
      * Transition runtime constant to allow choosing between legacy mutable lists and immutable lists.
      */
     // FIXME: 5.0.0: MDSAL-446: remove this knob completely
-    static final boolean COMPAT_MUTABLE_LISTS;
-
-    static {
-        final String propVal = System.getProperty("org.opendaylight.mdsal.binding.dom.codec.impl.compat-mutable-lists");
-        // FIXME: 5.0.0: MDSAL-446: if not above, flip the default to opt-out
-        COMPAT_MUTABLE_LISTS = propVal == null ? true : Boolean.parseBoolean(propVal);
-    }
+    static final boolean COMPAT_MUTABLE_LISTS = Boolean.getBoolean(
+        "org.opendaylight.mdsal.binding.dom.codec.impl.compat-mutable-lists");
 
     /**
      * Returns Yang Instance Identifier Path Argument of current node.
