@@ -14,12 +14,13 @@ import java.io.IOException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
-import org.opendaylight.yangtools.rfc7952.data.util.MetadataNormalizedAnydata;
+import org.opendaylight.yangtools.rfc7952.data.util.ImmutableMetadataNormalizedAnydata;
+import org.opendaylight.yangtools.yang.data.api.schema.AnydataNormalizationException;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizableAnydata;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.util.AnydataNormalizationException;
-import org.opendaylight.yangtools.yang.data.util.NormalizableAnydata;
-import org.opendaylight.yangtools.yang.data.util.NormalizedAnydata;
+import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -43,8 +44,9 @@ public abstract class AbstractNormalizableAnydata implements NormalizableAnydata
 
         final NormalizedNode<?, ?> data = result.getResult();
         final Optional<NormalizedMetadata> optMeta = result.getMetadata();
-        return optMeta.isPresent() ? new MetadataNormalizedAnydata(schemaContext, contextNode, data, optMeta.get())
-                : new NormalizedAnydata(schemaContext, contextNode, result.getResult());
+        return optMeta.isPresent()
+                ? new ImmutableMetadataNormalizedAnydata(schemaContext, contextNode, data, optMeta.get())
+                        : new ImmutableNormalizedAnydata(schemaContext, contextNode, result.getResult());
     }
 
     @Override

@@ -21,7 +21,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.util.NormalizedAnydata;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.util.SingleChildDataNodeContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

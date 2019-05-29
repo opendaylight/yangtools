@@ -5,13 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.util;
+package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
+/**
+ * An {@link AnydataNode#getValueObjectModel() anydata value object model} which can be normalized to
+ * {@link NormalizedAnydata} when provided with proper context.
+ */
 @Beta
 @NonNullByDefault
 public interface NormalizableAnydata {
