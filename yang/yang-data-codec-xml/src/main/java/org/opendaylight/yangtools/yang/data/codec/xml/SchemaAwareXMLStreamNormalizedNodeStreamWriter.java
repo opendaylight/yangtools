@@ -87,8 +87,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
             if (parent == schema) {
                 endElement();
             }
-        } else if (schema instanceof ContainerSchemaNode || schema instanceof LeafSchemaNode
-                || schema instanceof AnyDataSchemaNode) {
+        } else if (schema instanceof ContainerSchemaNode || schema instanceof LeafSchemaNode) {
             endElement();
         }
     }
@@ -168,7 +167,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     }
 
     @Override
-    void startAnydata(final NodeIdentifier name) {
+    void startAnydata(final NodeIdentifier name) throws IOException {
         tracker.startAnydataNode(name);
     }
 }

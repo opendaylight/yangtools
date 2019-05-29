@@ -39,7 +39,9 @@ public abstract class AbstractAnydataTest {
     }
 
     static DOMSourceAnydata toDOMSource(final String str) throws IOException, SAXException {
-        return new DOMSourceAnydata(new DOMSource(readXmlToDocument(toInputStream(str)).getDocumentElement()));
+        return new DOMSourceAnydata(new DOMSource(
+            // DOMSource must have a single document element, which we are ignoring
+            readXmlToDocument(toInputStream("<IGNORED>" + str + "</IGNORED>")).getDocumentElement()));
     }
 
     static InputStream toInputStream(final String str) {

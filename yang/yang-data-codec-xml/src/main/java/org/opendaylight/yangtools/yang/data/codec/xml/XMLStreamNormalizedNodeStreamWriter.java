@@ -121,7 +121,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         return EXTENSIONS_BUILDER.newInstance(this);
     }
 
-    abstract void startAnydata(NodeIdentifier name);
+    abstract void startAnydata(NodeIdentifier name) throws IOException;
 
     abstract void startList(NodeIdentifier name);
 

@@ -27,6 +27,12 @@ import org.xml.sax.SAXException;
  * and can be changed at any time. Current implementation uses W3C DOM tree as the backing implementations, but others
  * are possible as well.
  *
+ * <p>
+ * Note that the DOMSource is expected to contain a top-level synthetic element, which acts as holder of namespace
+ * declarations coming from parsing context but is otherwise ignored. Parser-side of things is expected to reuse the
+ * {@code anydata} element name for this purpose. Writer-side of things is expected to skip this element except for
+ * its namespace declarations.
+ *
  * @author Robert Varga
  */
 @NonNullByDefault
