@@ -751,6 +751,17 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @param childNames
          *            Set of possible child nodes.
          */
+        public AugmentationIdentifier(final ImmutableSet<QName> childNames) {
+            this.childNames = requireNonNull(childNames);
+        }
+
+        /**
+         * Construct new augmentation identifier using supplied set of possible
+         * child nodes.
+         *
+         * @param childNames
+         *            Set of possible child nodes.
+         */
         public AugmentationIdentifier(final Set<QName> childNames) {
             this.childNames = ImmutableSet.copyOf(childNames);
         }
