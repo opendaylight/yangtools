@@ -25,11 +25,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.AnydataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
-import org.opendaylight.yangtools.yang.data.util.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -159,28 +159,19 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
 
     final void anydataValue(final Object value) throws IOException {
         if (value instanceof DOMSourceAnydata) {
-            anydataValue(((DOMSourceAnydata) value).getSource());
+            try {
+                facade.anydataWriteStreamReader(((DOMSourceAnydata) value).toStreamReader());
+            } catch (XMLStreamException e) {
+                throw new IOException("Unable to transform anydata value: " + value, e);
+            }
         } else if (value instanceof NormalizedAnydata) {
-            anydataValue((NormalizedAnydata) value);
+            try {
+                facade.emitNormalizedAnydata((NormalizedAnydata) value);
+            } catch (XMLStreamException e) {
+                throw new IOException("Unable to emit anydata value: " + value, e);
+            }
         } else {
             throw new IllegalStateException("Unexpected anydata value " + value);
-        }
-    }
-
-    private void anydataValue(final DOMSource domSource) throws IOException {
-        final Node domNode = requireNonNull(domSource.getNode());
-        try {
-            facade.anydataWriteStreamReader(new DOMSourceXMLStreamReader(domSource));
-        } catch (XMLStreamException e) {
-            throw new IOException("Unable to transform anyXml value: " + domNode, e);
-        }
-    }
-
-    private void anydataValue(final NormalizedAnydata anydata) throws IOException {
-        try {
-            facade.emitNormalizedAnydata(anydata);
-        } catch (XMLStreamException e) {
-            throw new IOException("Unable to emit anydata value: " + anydata, e);
         }
     }
 
