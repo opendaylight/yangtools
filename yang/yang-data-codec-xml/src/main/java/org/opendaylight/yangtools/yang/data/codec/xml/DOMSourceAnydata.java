@@ -13,6 +13,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -21,6 +22,13 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.xml.sax.SAXException;
 
+/**
+ * Internal parser representation of a parsed-out chunk of XML. This format is completely internal to the parser
+ * and can be changed at any time. Current implementation uses W3C DOM tree as the backing implementations, but others
+ * are possible as well.
+ *
+ * @author Robert Varga
+ */
 @NonNullByDefault
 final class DOMSourceAnydata extends AbstractNormalizableAnydata {
     private final DOMSource source;
@@ -29,8 +37,8 @@ final class DOMSourceAnydata extends AbstractNormalizableAnydata {
         this.source = requireNonNull(source);
     }
 
-    DOMSource getSource() {
-        return source;
+    XMLStreamReader toStreamReader() throws XMLStreamException {
+        return new DOMSourceXMLStreamReader(source);
     }
 
     @Override
@@ -44,7 +52,7 @@ final class DOMSourceAnydata extends AbstractNormalizableAnydata {
         }
 
         try {
-            xmlParser.traverse(source).close();
+            xmlParser.parse(toStreamReader()).close();
         } catch (XMLStreamException | URISyntaxException | SAXException e) {
             throw new IOException("Failed to parse payload", e);
         }

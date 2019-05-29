@@ -11,7 +11,16 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
- * A NormalizedNode holding the contents of an {@code anydata} node in some object model.
+ * A NormalizedNode holding the contents of an {@code anydata} node in some object model. While no guarantees are placed
+ * on object models, there are related interfaces available for data interchange:
+ *
+ * <ul>
+ *   <li>{@link NormalizedAnydata}, which exposes the contents as a {@link NormalizedNode} with attached schema
+ *       information</li>
+ *   <li>{@link NormalizableAnydata}, which is trait optionally implemented by object models and allows the opaque,
+ *       implementation-specific representation to be interpreted in a the context of provided schema information,
+ *       potentially forming a NormalizedAnydata node.
+ * </ul>
  *
  * @param <V> Value type, uniquely identifying the object model used for values
  */

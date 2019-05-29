@@ -19,9 +19,10 @@ import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.util.NormalizedAnydata;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.util.SingleChildDataNodeContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -214,7 +215,7 @@ final class StreamWriterFacade extends ValueWriter {
         writer.flush();
     }
 
-    void anydataWriteStreamReader(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
+    void anydataWriteStreamReader(final XMLStreamReader reader) throws XMLStreamException {
         flushElement();
 
         while (reader.hasNext()) {
@@ -338,7 +339,7 @@ final class StreamWriterFacade extends ValueWriter {
         }
     }
 
-    private void forwardAttributes(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
+    private void forwardAttributes(final XMLStreamReader reader) throws XMLStreamException {
         for (int i = 0, count = reader.getAttributeCount(); i < count; ++i) {
             final String localName = reader.getAttributeLocalName(i);
             final String value = reader.getAttributeValue(i);
@@ -351,13 +352,13 @@ final class StreamWriterFacade extends ValueWriter {
         }
     }
 
-    private void forwardNamespaces(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
+    private void forwardNamespaces(final XMLStreamReader reader) throws XMLStreamException {
         for (int i = 0; i < reader.getNamespaceCount(); ++i) {
             writer.writeNamespace(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
         }
     }
 
-    private void forwardProcessingInstruction(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
+    private void forwardProcessingInstruction(final XMLStreamReader reader) throws XMLStreamException {
         final String target = reader.getPITarget();
         final String data = reader.getPIData();
         if (data != null) {
@@ -367,7 +368,7 @@ final class StreamWriterFacade extends ValueWriter {
         }
     }
 
-    private void forwardStartElement(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
+    private void forwardStartElement(final XMLStreamReader reader) throws XMLStreamException {
         final String localName = reader.getLocalName();
         final String prefix = reader.getPrefix();
         if (prefix != null) {
