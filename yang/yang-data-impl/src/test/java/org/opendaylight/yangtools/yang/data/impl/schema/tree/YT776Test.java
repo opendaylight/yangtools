@@ -39,7 +39,7 @@ public class YT776Test {
     private static final QName OBJECT = QName.create(MODULE, "object");
     private static final QName OBJECT_ID = QName.create(MODULE, "object-id");
     private static final NodeIdentifier OBJECT_LIST = new NodeIdentifier(OBJECT);
-    private static final NodeIdentifierWithPredicates OBJECT_ITEM = new NodeIdentifierWithPredicates(OBJECT,
+    private static final NodeIdentifierWithPredicates OBJECT_ITEM = NodeIdentifierWithPredicates.of(OBJECT,
         ImmutableMap.of(OBJECT_ID, "1"));
     private static final LeafNode<?> OBJECT_ID_LEAF = leafBuilder().withNodeIdentifier(new NodeIdentifier(OBJECT_ID))
             .withValue("1").build();
@@ -48,7 +48,7 @@ public class YT776Test {
     private static final QName NESTED = QName.create(MODULE, "nested");
     private static final QName NESTED_ATTRIBUTE = QName.create(MODULE, "nested-attribute");
     private static final NodeIdentifier NESTED_LIST = new NodeIdentifier(NESTED);
-    private static final NodeIdentifierWithPredicates NESTED_ITEM = new NodeIdentifierWithPredicates(NESTED,
+    private static final NodeIdentifierWithPredicates NESTED_ITEM = NodeIdentifierWithPredicates.of(NESTED,
         ImmutableMap.of(NESTED_ATTRIBUTE, "foo"));
 
     private static final NodeIdentifier ANY_OF = new NodeIdentifier(QName.create(MODULE, "any-of"));
@@ -56,7 +56,7 @@ public class YT776Test {
     private static final NodeIdentifier SOME_LEAF_ID = new NodeIdentifier(SOME_LEAF);
     private static final QName SOME_LIST = QName.create(MODULE, "some-list");
     private static final NodeIdentifier SOME_LIST_ID = new NodeIdentifier(SOME_LIST);
-    private static final NodeIdentifierWithPredicates SOME_LIST_ITEM = new NodeIdentifierWithPredicates(SOME_LIST,
+    private static final NodeIdentifierWithPredicates SOME_LIST_ITEM = NodeIdentifierWithPredicates.of(SOME_LIST,
                 ImmutableMap.of(SOME_LEAF, "foo"));
     private static SchemaContext SCHEMA_CONTEXT;
 

@@ -163,14 +163,14 @@ public class Bug5968Test {
 
         modificationTree.write(
                 YangInstanceIdentifier.of(ROOT).node(MY_LIST)
-                        .node(new NodeIdentifierWithPredicates(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue))),
+                        .node(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue))),
                 taskEntryNode);
     }
 
     private static MapEntryNode createMapEntry(final Object listIdValue, final Object mandatoryLeafValue,
             final Object commonLeafValue) {
         return Builders.mapEntryBuilder()
-                .withNodeIdentifier(new NodeIdentifierWithPredicates(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
                 .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue))
                 .withChild(ImmutableNodes.leafNode(MANDATORY_LEAF, mandatoryLeafValue))
                 .withChild(ImmutableNodes.leafNode(COMMON_LEAF, commonLeafValue)).build();
@@ -178,7 +178,7 @@ public class Bug5968Test {
 
     private static MapEntryNode createMapEntry(final Object listIdValue, final Object commonLeafValue) {
         return Builders.mapEntryBuilder()
-                .withNodeIdentifier(new NodeIdentifierWithPredicates(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
                 .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue))
                 .withChild(ImmutableNodes.leafNode(COMMON_LEAF, commonLeafValue)).build();
     }

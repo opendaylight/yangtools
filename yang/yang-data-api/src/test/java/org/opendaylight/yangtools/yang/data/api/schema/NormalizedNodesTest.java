@@ -47,7 +47,7 @@ public class NormalizedNodesTest {
         final QName listQName = QName.create("test-ns", "test-list");
         final QName listKeyQName = QName.create("test-ns", "test-list-key");
         final NodeIdentifierWithPredicates nodeIdentifierWithPredicates =
-                new NodeIdentifierWithPredicates(listQName, listKeyQName, "str-value");
+                NodeIdentifierWithPredicates.of(listQName, listKeyQName, "str-value");
         final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
         doReturn(Optional.of(mockedMapEntryNode)).when(mockedMapNode).getChild(any(NodeIdentifierWithPredicates.class));
         assertEquals(mockedMapEntryNode, NormalizedNodes.getDirectChild(mockedMapNode, nodeIdentifierWithPredicates)
@@ -114,7 +114,7 @@ public class NormalizedNodesTest {
         doReturn(Collections.singletonList(mockedMapNode)).when(mockedAugmentationNode).getValue();
 
         final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
-        final NodeIdentifierWithPredicates listEntryNodeId = new NodeIdentifierWithPredicates(listQName,
+        final NodeIdentifierWithPredicates listEntryNodeId = NodeIdentifierWithPredicates.of(listQName,
                 leafNodeQName, "key-leaf-value");
         doReturn(listEntryNodeId).when(mockedMapEntryNode).getIdentifier();
         doReturn(Collections.singletonList(mockedMapEntryNode)).when(mockedMapNode).getValue();

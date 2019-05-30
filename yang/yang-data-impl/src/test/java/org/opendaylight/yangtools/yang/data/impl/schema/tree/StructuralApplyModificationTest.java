@@ -44,8 +44,8 @@ public final class StructuralApplyModificationTest extends AbstractTestModelTest
         addListEntryModification.write(YangInstanceIdentifier.create(rootContainerId),
             Builders.containerBuilder().withNodeIdentifier(rootContainerId).build());
 
-        final YangInstanceIdentifier.NodeIdentifierWithPredicates outerListEntryId =
-            new YangInstanceIdentifier.NodeIdentifierWithPredicates(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 1);
+        final NodeIdentifierWithPredicates outerListEntryId = NodeIdentifierWithPredicates.of(
+            TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 1);
 
         // Write list entry (MapEntryNode) without creating list parent (MapNode)
         final MapEntryNode outerListEntry = Builders.mapEntryBuilder().withNodeIdentifier(outerListEntryId).build();
@@ -138,6 +138,6 @@ public final class StructuralApplyModificationTest extends AbstractTestModelTest
     }
 
     private static NodeIdentifierWithPredicates getNId(final QName qname, final QName key, final String val) {
-        return new NodeIdentifierWithPredicates(qname, key, val);
+        return NodeIdentifierWithPredicates.of(qname, key, val);
     }
 }

@@ -23,8 +23,8 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -86,10 +86,10 @@ public class Bug890Test {
 
         assertEquals(2, outgoingLabelsMap.getValue().size());
         Collection<MapEntryNode> labels = outgoingLabelsMap.getValue();
-        YangInstanceIdentifier.NodeIdentifierWithPredicates firstNodeId =
-                new YangInstanceIdentifier.NodeIdentifierWithPredicates(OUTGOING_LABELS_QNAME, INDEX_QNAME, 0);
-        YangInstanceIdentifier.NodeIdentifierWithPredicates secondNodeId =
-                new YangInstanceIdentifier.NodeIdentifierWithPredicates(OUTGOING_LABELS_QNAME, INDEX_QNAME, 1);
+        NodeIdentifierWithPredicates firstNodeId =
+                NodeIdentifierWithPredicates.of(OUTGOING_LABELS_QNAME, INDEX_QNAME, 0);
+        NodeIdentifierWithPredicates secondNodeId =
+                NodeIdentifierWithPredicates.of(OUTGOING_LABELS_QNAME, INDEX_QNAME, 1);
         assertTrue(labels.stream().anyMatch(mapEntryNode -> mapEntryNode.getIdentifier().compareTo(firstNodeId) == 0));
         assertTrue(labels.stream().anyMatch(mapEntryNode -> mapEntryNode.getIdentifier().compareTo(secondNodeId) == 0));
     }

@@ -181,7 +181,7 @@ public final class TestingNormalizedNodeStructuresCreator {
         key.put(QName.create("ns:complex:json", "2014-08-11", "key111"), "key111 value");
         key.put(QName.create("ns:complex:json", "2014-08-11", "lf111"), "lf111 value");
 
-        lst11Entry1Builder.withNodeIdentifier(new NodeIdentifierWithPredicates(QName.create("ns:complex:json",
+        lst11Entry1Builder.withNodeIdentifier(NodeIdentifierWithPredicates.of(QName.create("ns:complex:json",
                 "2014-08-11", "lst11"), key));
         lst11Entry1Builder.withChild(Builders.leafBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "key111")))

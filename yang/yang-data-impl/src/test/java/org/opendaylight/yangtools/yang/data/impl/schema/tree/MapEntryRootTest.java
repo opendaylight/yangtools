@@ -23,7 +23,7 @@ public class MapEntryRootTest extends AbstractTestModelTest {
     public void testMapEntryRoot() {
         final DataTreeConfiguration treeConfig = DataTreeConfiguration.builder(TreeType.OPERATIONAL).setRootPath(
             TestModel.TEST_PATH.node(TestModel.OUTER_LIST_QNAME).node(
-                new NodeIdentifierWithPredicates(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, (short) 12))).build();
+                NodeIdentifierWithPredicates.of(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, (short) 12))).build();
         final DataTree dataTree = new InMemoryDataTreeFactory().create(treeConfig, SCHEMA_CONTEXT);
         assertTrue(dataTree instanceof InMemoryDataTree);
 

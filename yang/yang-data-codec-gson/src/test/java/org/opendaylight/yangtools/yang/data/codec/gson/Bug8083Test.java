@@ -62,7 +62,7 @@ public class Bug8083Test {
     private static final YangInstanceIdentifier TEST_IID = YangInstanceIdentifier.builder()
             .node(TOP_QNAME)
             .node(FOOLIST_QNAME)
-            .node(new NodeIdentifierWithPredicates(FOOLIST_QNAME, ImmutableMap.of(NAME_QNAME, "key-value")))
+            .node(NodeIdentifierWithPredicates.of(FOOLIST_QNAME, ImmutableMap.of(NAME_QNAME, "key-value")))
             .node(new AugmentationIdentifier(ImmutableSet.of(BARCONTAINER_QNAME)))
             .node(BARCONTAINER_QNAME)
             .node(QName.create(BARMOD, "bar-leaf"))

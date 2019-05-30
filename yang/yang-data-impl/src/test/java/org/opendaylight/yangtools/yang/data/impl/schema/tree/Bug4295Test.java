@@ -143,13 +143,11 @@ public class Bug4295Test {
     }
 
     private DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createRootContainerBuilder() {
-        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(
-                new YangInstanceIdentifier.NodeIdentifier(root));
+        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(root));
     }
 
     private DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createSubRootContainerBuilder() {
-        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(
-                new YangInstanceIdentifier.NodeIdentifier(subRoot));
+        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(subRoot));
     }
 
     private CollectionNodeBuilder<MapEntryNode, MapNode> createInnerListBuilder() {
@@ -159,13 +157,13 @@ public class Bug4295Test {
     private NodeIdentifierWithPredicates createInnerListEntryPath(final String keyValue) {
         Builder<QName, Object> builder = ImmutableMap.builder();
         ImmutableMap<QName, Object> keys = builder.put(iid, keyValue).build();
-        return new YangInstanceIdentifier.NodeIdentifierWithPredicates(innerList, keys);
+        return NodeIdentifierWithPredicates.of(innerList, keys);
     }
 
     private NodeIdentifierWithPredicates createOuterListEntryPath(final String keyValue) {
         Builder<QName, Object> builder = ImmutableMap.builder();
         ImmutableMap<QName, Object> keys = builder.put(oid, keyValue).build();
-        return new YangInstanceIdentifier.NodeIdentifierWithPredicates(outerList, keys);
+        return NodeIdentifierWithPredicates.of(outerList, keys);
     }
 
     private MapEntryNode createOuterListEntry(final String keyValue, final String leafValue) {

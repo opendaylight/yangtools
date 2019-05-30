@@ -231,45 +231,45 @@ public class YangInstanceIdentifierTest {
     @Test
     public void testNodeIdentifierWithPredicates() {
 
-        NodeIdentifierWithPredicates node1 = new NodeIdentifierWithPredicates(NODENAME1, KEY1, "foo");
+        NodeIdentifierWithPredicates node1 = NodeIdentifierWithPredicates.of(NODENAME1, KEY1, "foo");
         verifyNodeIdentifierWithPredicates("NodeIdentifierWithPredicates", node1, NODENAME1, KEY1, "foo");
 
-        NodeIdentifierWithPredicates node2 = new NodeIdentifierWithPredicates(NODENAME1, KEY1, "foo");
+        NodeIdentifierWithPredicates node2 = NodeIdentifierWithPredicates.of(NODENAME1, KEY1, "foo");
 
         assertEquals("hashCode", node1.hashCode(), node2.hashCode());
         assertTrue("equals", node1.equals(node2));
 
-        assertFalse("equals", node1.equals(new NodeIdentifierWithPredicates(NODENAME2, KEY1, "foo")));
-        assertFalse("equals", node1.equals(new NodeIdentifierWithPredicates(NODENAME1, KEY2, "foo")));
-        assertFalse("equals", node1.equals(new NodeIdentifierWithPredicates(NODENAME1, KEY1, "bar")));
+        assertFalse("equals", node1.equals(NodeIdentifierWithPredicates.of(NODENAME2, KEY1, "foo")));
+        assertFalse("equals", node1.equals(NodeIdentifierWithPredicates.of(NODENAME1, KEY2, "foo")));
+        assertFalse("equals", node1.equals(NodeIdentifierWithPredicates.of(NODENAME1, KEY1, "bar")));
         assertFalse("equals", node1.equals(new Object()));
 
         // for code coverage
         assertNotNull(node1.toString());
         assertNotNull(node1.toRelativeString(node2));
 
-        NodeIdentifierWithPredicates node3 = new NodeIdentifierWithPredicates(NODENAME1,
+        NodeIdentifierWithPredicates node3 = NodeIdentifierWithPredicates.of(NODENAME1,
                 ImmutableMap.of(KEY1, 10, KEY2, 20));
 
-        NodeIdentifierWithPredicates node4 = new NodeIdentifierWithPredicates(NODENAME1,
+        NodeIdentifierWithPredicates node4 = NodeIdentifierWithPredicates.of(NODENAME1,
                 ImmutableMap.of(KEY1, 10, KEY2, 20));
 
         assertEquals("hashCode", node3.hashCode(), node4.hashCode());
         assertTrue("equals", node3.equals(node4));
 
         assertFalse("equals", node3.equals(node1));
-        assertFalse("equals", node1.equals(new NodeIdentifierWithPredicates(NODENAME1,
+        assertFalse("equals", node1.equals(NodeIdentifierWithPredicates.of(NODENAME1,
             ImmutableMap.of(KEY1, 10, KEY3, 20))));
 
-        node1 = new NodeIdentifierWithPredicates(NODENAME1, KEY1, new byte[]{1,2});
-        node2 = new NodeIdentifierWithPredicates(NODENAME1, KEY1, new byte[]{1,2});
+        node1 = NodeIdentifierWithPredicates.of(NODENAME1, KEY1, new byte[]{ 1, 2 });
+        node2 = NodeIdentifierWithPredicates.of(NODENAME1, KEY1, new byte[]{ 1, 2 });
 
         assertEquals("hashCode", node1.hashCode(), node2.hashCode());
         assertTrue("equals", node1.equals(node2));
 
-        assertFalse("equals", node1.equals(new NodeIdentifierWithPredicates(NODENAME1, KEY1, new byte[]{1,3})));
-        assertFalse("equals", node1.equals(new NodeIdentifierWithPredicates(NODENAME1, KEY1, new byte[]{1})));
-        assertFalse("equals", node1.equals(new NodeIdentifierWithPredicates(NODENAME1, KEY1, new byte[]{1,2,3})));
+        assertFalse("equals", node1.equals(NodeIdentifierWithPredicates.of(NODENAME1, KEY1, new byte[]{ 1, 3})));
+        assertFalse("equals", node1.equals(NodeIdentifierWithPredicates.of(NODENAME1, KEY1, new byte[]{ 1 })));
+        assertFalse("equals", node1.equals(NodeIdentifierWithPredicates.of(NODENAME1, KEY1, new byte[]{ 1, 2, 3 })));
     }
 
     @Test

@@ -18,7 +18,7 @@ class UnorderedMapMixinContextNode extends AbstractMixinContextNode<NodeIdentifi
 
     UnorderedMapMixinContextNode(final ListSchemaNode list) {
         super(NodeIdentifier.create(list.getQName()), list);
-        this.innerNode = new ListItemContextNode(new NodeIdentifierWithPredicates(list.getQName()), list);
+        this.innerNode = new ListItemContextNode(NodeIdentifierWithPredicates.of(list.getQName()), list);
     }
 
     @Override
