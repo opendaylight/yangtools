@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -128,7 +127,7 @@ public final class TestingNormalizedNodeStructuresCreator {
 
     private static DataContainerChild<? extends PathArgument, ?> augmentC11AWithLf15_21Node() {
         return Builders.augmentationBuilder().withNodeIdentifier(
-            new AugmentationIdentifier(Collections.singleton(QName.create("ns:complex:json", "2014-08-11", "lf15_21"))))
+            new AugmentationIdentifier(ImmutableSet.of(QName.create("ns:complex:json", "2014-08-11", "lf15_21"))))
                 .withChild(lf15_21Node()).build();
     }
 
