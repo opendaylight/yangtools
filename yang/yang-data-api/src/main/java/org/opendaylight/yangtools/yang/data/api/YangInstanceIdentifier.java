@@ -708,6 +708,15 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      */
     public static final class AugmentationIdentifier implements PathArgument {
         private static final long serialVersionUID = -8122335594681936939L;
+
+        private static final LoadingCache<ImmutableSet<QName>, AugmentationIdentifier> CACHE = CacheBuilder.newBuilder()
+                .weakValues().build(new CacheLoader<ImmutableSet<QName>, AugmentationIdentifier>() {
+                    @Override
+                    public AugmentationIdentifier load(final ImmutableSet<QName> key) {
+                        return new AugmentationIdentifier(key);
+                    }
+                });
+
         private final ImmutableSet<QName> childNames;
 
         @Override
@@ -736,6 +745,29 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          */
         public AugmentationIdentifier(final Set<QName> childNames) {
             this.childNames = ImmutableSet.copyOf(childNames);
+        }
+
+        /**
+         * Return an AugmentationIdentifier for a particular set of QNames. Unlike the constructor, this factory method
+         * uses a global instance cache, resulting in object reuse for equal inputs.
+         *
+         * @param childNames Set of possible child nodes
+         * @return An {@link AugmentationIdentifier}
+         */
+        public static AugmentationIdentifier create(final ImmutableSet<QName> childNames) {
+            return CACHE.getUnchecked(childNames);
+        }
+
+        /**
+         * Return an AugmentationIdentifier for a particular set of QNames. Unlike the constructor, this factory method
+         * uses a global instance cache, resulting in object reuse for equal inputs.
+         *
+         * @param childNames Set of possible child nodes
+         * @return An {@link AugmentationIdentifier}
+         */
+        public static AugmentationIdentifier create(final Set<QName> childNames) {
+            final AugmentationIdentifier existing = CACHE.getIfPresent(childNames);
+            return existing != null ? existing : create(ImmutableSet.copyOf(childNames));
         }
 
         /**
