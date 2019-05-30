@@ -222,8 +222,8 @@ public class YangInstanceIdentifierTest {
         assertEquals(prefix + " class", NodeIdentifierWithPredicates.class, arg.getClass());
         NodeIdentifierWithPredicates node = (NodeIdentifierWithPredicates)arg;
         assertEquals(prefix + " node type", nodeName, node.getNodeType());
-        assertEquals(prefix + " key values map size", 1, node.getKeyValues().size());
-        Entry<QName, Object> entry = node.getKeyValues().entrySet().iterator().next();
+        assertEquals(prefix + " key values map size", 1, node.size());
+        Entry<QName, Object> entry = node.entrySet().iterator().next();
         assertEquals(prefix + " key values map entry key", key, entry.getKey());
         assertEquals(prefix + " key values map entry value", value, entry.getValue());
     }

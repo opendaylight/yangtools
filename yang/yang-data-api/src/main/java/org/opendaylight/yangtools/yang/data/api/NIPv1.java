@@ -37,7 +37,7 @@ final class NIPv1 implements Externalizable {
     @Override
     public void writeExternal(final ObjectOutput out) throws IOException {
         nip.getNodeType().writeTo(out);
-        out.writeObject(nip.getKeyValues());
+        out.writeObject(nip.asMap());
     }
 
     @Override
