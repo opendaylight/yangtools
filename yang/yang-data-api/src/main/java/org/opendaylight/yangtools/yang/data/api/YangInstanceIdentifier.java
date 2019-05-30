@@ -491,7 +491,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         protected int hashCodeImpl() {
-            return 31 + getNodeType().hashCode();
+            return nodeType.hashCode();
         }
 
         @Override
@@ -834,10 +834,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         protected int hashCodeImpl() {
-            final int prime = 31;
-            int result = super.hashCodeImpl();
-            result = prime * result + YangInstanceIdentifier.hashCode(value);
-            return result;
+            return 31 * super.hashCodeImpl() + YangInstanceIdentifier.hashCode(value);
         }
 
         @Override
