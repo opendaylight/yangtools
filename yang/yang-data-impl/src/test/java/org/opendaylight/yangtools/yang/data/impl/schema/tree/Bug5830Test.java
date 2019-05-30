@@ -149,14 +149,14 @@ public class Bug5830Test {
             throws DataValidationFailedException {
         final DataTree inMemoryDataTree = initDataTree(schemaContext);
         final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()
-                .withNodeIdentifier(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123")))
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, ImmutableMap.of(TASK_ID, "123")))
                 .withChild(ImmutableNodes.leafNode(TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data")).build();
 
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
                 YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK)
-                        .node(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123"))), taskEntryNode);
+                        .node(NodeIdentifierWithPredicates.of(TASK, ImmutableMap.of(TASK_ID, "123"))), taskEntryNode);
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
@@ -168,7 +168,7 @@ public class Bug5830Test {
         final DataTree inMemoryDataTree = initDataTree(schemaContext);
 
         final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()
-                .withNodeIdentifier(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123")))
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, ImmutableMap.of(TASK_ID, "123")))
                 .withChild(ImmutableNodes.leafNode(TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data"))
                 .withChild(createTaskDataContainer(false)).build();
@@ -176,7 +176,7 @@ public class Bug5830Test {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
                 YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK)
-                        .node(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123"))), taskEntryNode);
+                        .node(NodeIdentifierWithPredicates.of(TASK, ImmutableMap.of(TASK_ID, "123"))), taskEntryNode);
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
@@ -189,7 +189,7 @@ public class Bug5830Test {
         final DataTree inMemoryDataTree = initDataTree(schemaContext);
 
         final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()
-                .withNodeIdentifier(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123")))
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, ImmutableMap.of(TASK_ID, "123")))
                 .withChild(ImmutableNodes.leafNode(TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data"))
                 .withChild(createTaskDataContainer(true)).build();
@@ -197,7 +197,7 @@ public class Bug5830Test {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
                 YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK)
-                        .node(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123"))), taskEntryNode);
+                        .node(NodeIdentifierWithPredicates.of(TASK, ImmutableMap.of(TASK_ID, "123"))), taskEntryNode);
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
@@ -210,7 +210,7 @@ public class Bug5830Test {
         final DataTree inMemoryDataTree = initDataTree(schemaContext);
 
         final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()
-                .withNodeIdentifier(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123")))
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(TASK, ImmutableMap.of(TASK_ID, "123")))
                 .withChild(ImmutableNodes.leafNode(TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data"))
                 .withChild(createTaskDataMultipleContainer(withPresenceContianer)).build();
@@ -218,7 +218,7 @@ public class Bug5830Test {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
                 YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK)
-                        .node(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123"))), taskEntryNode);
+                        .node(NodeIdentifierWithPredicates.of(TASK, ImmutableMap.of(TASK_ID, "123"))), taskEntryNode);
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);

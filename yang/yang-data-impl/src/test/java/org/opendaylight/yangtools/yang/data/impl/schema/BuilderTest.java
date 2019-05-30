@@ -106,7 +106,7 @@ public class BuilderTest {
         mapEntryNodeColl.add(LIST_MAIN_CHILD_3);
         final Map<QName, Object> keys = new HashMap<>();
         keys.put(LIST_MAIN_CHILD_QNAME_1, 1);
-        final NodeIdentifierWithPredicates mapEntryPath = new NodeIdentifierWithPredicates(LIST_MAIN, keys);
+        final NodeIdentifierWithPredicates mapEntryPath = NodeIdentifierWithPredicates.of(LIST_MAIN, keys);
         final OrderedMapNode orderedMapNodeCreateNull = ImmutableOrderedMapNodeBuilder.create()
                 .withNodeIdentifier(NODE_IDENTIFIER_LIST)
                 .withChild(LIST_MAIN_CHILD_1)

@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 public class PathArgumentListTest {
@@ -113,8 +114,8 @@ public class PathArgumentListTest {
         final QName qNameLeaf = QName.create(qNameModule, "leaf-a");
         final Map<QName, Object> entryLeaf = new HashMap<>();
         entryLeaf.put(qNameList, "leaf");
-        final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeIdentifierWithPredicates =
-            new YangInstanceIdentifier.NodeIdentifierWithPredicates(qNameList , entryLeaf);
+        final NodeIdentifierWithPredicates nodeIdentifierWithPredicates = NodeIdentifierWithPredicates.of(qNameList,
+            entryLeaf);
         final YangInstanceIdentifier yangInstanceIdentifier = YangInstanceIdentifier.of(qNameRoot).node(qNameList)
                 .node(nodeIdentifierWithPredicates).node(qNameLeaf);
         final PathArgument pathArgumentToRoot = yangInstanceIdentifier.getAncestor(1).getPathArguments().iterator()

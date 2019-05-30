@@ -57,7 +57,7 @@ public abstract class ListEntryNodeDataWithSchema extends CompositeNodeDataWithS
         public void write(final NormalizedNodeStreamWriter writer, final NormalizedMetadataStreamWriter metaWriter)
                 throws IOException {
             writer.nextDataSchemaNode(getSchema());
-            final NodeIdentifierWithPredicates identifier = new NodeIdentifierWithPredicates(getSchema().getQName(),
+            final NodeIdentifierWithPredicates identifier = NodeIdentifierWithPredicates.of(getSchema().getQName(),
                 predicateTemplate.instantiateTransformed(keyValues, (key, node) -> node.getValue()));
 
             writer.startMapEntryNode(identifier, childSizeHint());

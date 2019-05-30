@@ -71,7 +71,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
         } else {
             predicates = ImmutableMap.of();
         }
-        return new NodeIdentifierWithPredicates(schema.getQName(), predicates);
+        return NodeIdentifierWithPredicates.of(schema.getQName(), predicates);
     }
 
     private Map<QName, Object> childrenToPredicates() {

@@ -60,12 +60,12 @@ final class YangInstanceIdentifierBuilder implements InstanceIdentifierBuilder {
 
     @Override
     public InstanceIdentifierBuilder nodeWithKey(final QName nodeType, final QName key, final Object value) {
-        return addArgument(new NodeIdentifierWithPredicates(nodeType, key, value));
+        return addArgument(NodeIdentifierWithPredicates.of(nodeType, key, value));
     }
 
     @Override
     public InstanceIdentifierBuilder nodeWithKey(final QName nodeType, final Map<QName, Object> keyValues) {
-        return addArgument(new NodeIdentifierWithPredicates(nodeType, keyValues));
+        return addArgument(NodeIdentifierWithPredicates.of(nodeType, keyValues));
     }
 
     @Override

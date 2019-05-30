@@ -82,8 +82,7 @@ public class NormalizedDataBuilderTest {
                         Builders.<Integer>leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"))
                                 .withValue(1).build())
                 .withChild(Builders.containerBuilder().withNodeIdentifier(getNodeIdentifier("containerInList")).build())
-                .withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(
                                 getNodeIdentifier("list").getNodeType(), Collections.singletonMap(
                                 getNodeIdentifier("uint32InList").getNodeType(), 1))).build();
 

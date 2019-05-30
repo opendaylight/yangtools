@@ -137,8 +137,7 @@ public class NormalizedNodeXmlTranslationTest {
         predicates.put(getNodeIdentifier("uint32InList").getNodeType(), 3L);
 
         final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> list1Builder = Builders
-                .mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(
+                .mapEntryBuilder().withNodeIdentifier(NodeIdentifierWithPredicates.of(
                                 getNodeIdentifier("list").getNodeType(), predicates));
         final NormalizedNodeBuilder<NodeIdentifier, Object, LeafNode<Object>> uint32InListBuilder = Builders
                 .leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"));

@@ -274,14 +274,14 @@ public class OrderedListTest {
     }
 
     private MapEntryNode createParentOrderedListEntry(final String keyValue, final String leafValue) {
-        return Builders.mapEntryBuilder().withNodeIdentifier(new NodeIdentifierWithPredicates(parentOrderedList,
+        return Builders.mapEntryBuilder().withNodeIdentifier(NodeIdentifierWithPredicates.of(parentOrderedList,
                 parentKeyLeaf, keyValue))
                 .withChild(Builders.leafBuilder().withNodeIdentifier(NodeIdentifier.create(parentOrdinaryLeaf))
                     .withValue(leafValue).build()).build();
     }
 
     private MapEntryNode createChildOrderedListEntry(final String keyValue, final String leafValue) {
-        return Builders.mapEntryBuilder().withNodeIdentifier(new NodeIdentifierWithPredicates(childOrderedList,
+        return Builders.mapEntryBuilder().withNodeIdentifier(NodeIdentifierWithPredicates.of(childOrderedList,
                 childKeyLeaf, keyValue))
                 .withChild(Builders.leafBuilder().withNodeIdentifier(NodeIdentifier.create(childOrdinaryLeaf))
                     .withValue(leafValue).build()).build();
@@ -290,12 +290,12 @@ public class OrderedListTest {
     private NodeIdentifierWithPredicates createParentOrderedListEntryPath(final String keyValue) {
         ImmutableMap.Builder<QName, Object> builder = ImmutableMap.builder();
         ImmutableMap<QName, Object> keys = builder.put(parentKeyLeaf, keyValue).build();
-        return new NodeIdentifierWithPredicates(parentOrderedList, keys);
+        return NodeIdentifierWithPredicates.of(parentOrderedList, keys);
     }
 
     private NodeIdentifierWithPredicates createChildOrderedListEntryPath(final String keyValue) {
         ImmutableMap.Builder<QName, Object> builder = ImmutableMap.builder();
         ImmutableMap<QName, Object> keys = builder.put(childKeyLeaf, keyValue).build();
-        return new NodeIdentifierWithPredicates(childOrderedList, keys);
+        return NodeIdentifierWithPredicates.of(childOrderedList, keys);
     }
 }

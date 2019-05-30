@@ -174,13 +174,13 @@ public class NormalizedNodesToXmlTest {
         // my-container-1
         MapNode myKeyedListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(myKeyedList))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(myKeyedList, myKeyLeaf, "listkeyvalue1"))
+                        NodeIdentifierWithPredicates.of(myKeyedList, myKeyLeaf, "listkeyvalue1"))
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeafInList1))
                                 .withValue("listleafvalue1").build())
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeafInList2))
                                 .withValue("listleafvalue2").build()).build())
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(myKeyedList, myKeyLeaf, "listkeyvalue2"))
+                        NodeIdentifierWithPredicates.of(myKeyedList, myKeyLeaf, "listkeyvalue2"))
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeafInList1))
                                 .withValue("listleafvalue12").build())
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeafInList2))
@@ -227,7 +227,7 @@ public class NormalizedNodesToXmlTest {
 
         MapNode myDoublyKeyedListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(myDoublyKeyedList))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(myDoublyKeyedList, keys))
+                        NodeIdentifierWithPredicates.of(myDoublyKeyedList, keys))
                         .withChild(Builders.leafBuilder().withNodeIdentifier(
                                 new NodeIdentifier(myLeafInList3)).withValue("listleafvalue1").build()).build())
                 .build();

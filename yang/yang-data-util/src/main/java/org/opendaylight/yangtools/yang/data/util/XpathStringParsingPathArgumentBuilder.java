@@ -153,7 +153,7 @@ final class XpathStringParsingPathArgumentBuilder implements Builder<List<PathAr
             final Object value = codec.deserializeKeyValue(keyNode.getDataSchemaNode(), keyValue);
             keyValues.put(key, value);
         }
-        return new NodeIdentifierWithPredicates(name, keyValues.build());
+        return NodeIdentifierWithPredicates.of(name, keyValues.build());
     }
 
 

@@ -284,13 +284,13 @@ public class XmlToNormalizedNodesTest {
         // my-container-1
         MapNode myKeyedListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_KEYED_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(MY_KEYED_LIST, MY_KEY_LEAF, "listkeyvalue1"))
+                        NodeIdentifierWithPredicates.of(MY_KEYED_LIST, MY_KEY_LEAF, "listkeyvalue1"))
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(MY_LEAF_IN_LIST_1))
                                 .withValue("listleafvalue1").build())
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(MY_LEAF_IN_LIST_2))
                                 .withValue("listleafvalue2").build()).build())
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(MY_KEYED_LIST, MY_KEY_LEAF, "listkeyvalue2"))
+                        NodeIdentifierWithPredicates.of(MY_KEYED_LIST, MY_KEY_LEAF, "listkeyvalue2"))
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(MY_LEAF_IN_LIST_1))
                                 .withValue("listleafvalue12").build())
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(MY_LEAF_IN_LIST_2))
@@ -338,7 +338,7 @@ public class XmlToNormalizedNodesTest {
         MapNode myDoublyKeyedListNode = Builders.mapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MY_DOUBLY_KEYED_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(MY_DOUBLY_KEYED_LIST, keys))
+                        NodeIdentifierWithPredicates.of(MY_DOUBLY_KEYED_LIST, keys))
                         .withChild(Builders.leafBuilder().withNodeIdentifier(
                                 new NodeIdentifier(MY_LEAF_IN_LIST_3)).withValue("listleafvalue1").build()).build())
                 .build();

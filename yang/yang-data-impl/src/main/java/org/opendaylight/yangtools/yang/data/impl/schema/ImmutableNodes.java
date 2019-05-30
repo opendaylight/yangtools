@@ -126,7 +126,7 @@ public final class ImmutableNodes {
     public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
             final QName nodeName, final QName keyName, final Object keyValue) {
         return ImmutableMapEntryNodeBuilder.create()
-                .withNodeIdentifier(new NodeIdentifierWithPredicates(nodeName, keyName, keyValue))
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(nodeName, keyName, keyValue))
                 .withChild(leafNode(keyName, keyValue));
     }
 

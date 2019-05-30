@@ -98,7 +98,7 @@ public class NormalizedNodeWriterTest {
         assertNotNull(orderedNormalizedNodeWriter.write(mockedYangModeledAnyXmlNode));
 
         final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
-        doReturn(new NodeIdentifierWithPredicates(myKeyedList, myKeyLeaf, "list-key-value-1"))
+        doReturn(NodeIdentifierWithPredicates.of(myKeyedList, myKeyLeaf, "list-key-value-1"))
                 .when(mockedMapEntryNode).getIdentifier();
         doReturn(Optional.empty()).when(mockedMapEntryNode).getChild(any(NodeIdentifier.class));
         assertNotNull(orderedNormalizedNodeWriter.write(mockedMapEntryNode));

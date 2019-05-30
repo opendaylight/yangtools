@@ -59,7 +59,7 @@ public class Bug8291Test {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
                 YangInstanceIdentifier.create(
-                        new NodeIdentifierWithPredicates(OUTER_LIST, ImmutableMap.of(OUTER_LIST_ID, 1))).node(
+                        NodeIdentifierWithPredicates.of(OUTER_LIST, ImmutableMap.of(OUTER_LIST_ID, 1))).node(
                         INNER_LIST), Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(INNER_LIST)).build());
 
         modificationTree.ready();
@@ -73,11 +73,11 @@ public class Bug8291Test {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         final MapEntryNode outerListMapEntry = Builders.mapEntryBuilder()
-                .withNodeIdentifier(new NodeIdentifierWithPredicates(OUTER_LIST, ImmutableMap.of(OUTER_LIST_ID, 1)))
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(OUTER_LIST, ImmutableMap.of(OUTER_LIST_ID, 1)))
                 .withChild(ImmutableNodes.leafNode(OUTER_LIST_ID, 1)).build();
 
-        modificationTree.write(YangInstanceIdentifier.create(new NodeIdentifierWithPredicates(OUTER_LIST, ImmutableMap
-                .of(OUTER_LIST_ID, 1))), outerListMapEntry);
+        modificationTree.write(YangInstanceIdentifier.create(NodeIdentifierWithPredicates.of(OUTER_LIST,
+                ImmutableMap.of(OUTER_LIST_ID, 1))), outerListMapEntry);
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);

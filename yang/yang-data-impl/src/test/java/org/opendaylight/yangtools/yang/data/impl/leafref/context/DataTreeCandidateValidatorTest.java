@@ -236,8 +236,7 @@ public class DataTreeCandidateValidatorTest {
 
         final Map<QName, Object> keys = new HashMap<>();
         keys.put(name, "New Project");
-        final NodeIdentifierWithPredicates mapEntryPath = new NodeIdentifierWithPredicates(
-                project, keys);
+        final NodeIdentifierWithPredicates mapEntryPath = NodeIdentifierWithPredicates.of(project, keys);
 
         final YangInstanceIdentifier leaderPath = YangInstanceIdentifier
                 .of(odl).node(project).node(mapEntryPath).node(lead);
@@ -283,8 +282,7 @@ public class DataTreeCandidateValidatorTest {
 
         final Map<QName, Object> keys = new HashMap<>();
         keys.put(name, "New Project");
-        final NodeIdentifierWithPredicates mapEntryPath = new NodeIdentifierWithPredicates(
-                project, keys);
+        final NodeIdentifierWithPredicates mapEntryPath = NodeIdentifierWithPredicates.of(project, keys);
 
         final YangInstanceIdentifier newOdlProjectMapEntryPath = YangInstanceIdentifier
                 .of(odl).node(project).node(mapEntryPath);
@@ -482,8 +480,7 @@ public class DataTreeCandidateValidatorTest {
             final String l3Val1, final String l3Val2, final String l3Val3) {
         final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder = Builders
                 .mapEntryBuilder();
-        mapEntryBuilder.withNodeIdentifier(new NodeIdentifierWithPredicates(
-                list3InChoice, k, keyVal));
+        mapEntryBuilder.withNodeIdentifier(NodeIdentifierWithPredicates.of(list3InChoice, k, keyVal));
 
         final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafSetBuilder = Builders
                 .leafSetBuilder();
@@ -543,7 +540,7 @@ public class DataTreeCandidateValidatorTest {
         final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder = Builders
                 .mapEntryBuilder();
 
-        mapEntryBuilder.withNodeIdentifier(new NodeIdentifierWithPredicates(
+        mapEntryBuilder.withNodeIdentifier(NodeIdentifierWithPredicates.of(
                 listInChoice, listInChoiceKey, keyVal));
 
         mapEntryBuilder.addChild(ImmutableNodes.leafNode(listInChoiceKey,

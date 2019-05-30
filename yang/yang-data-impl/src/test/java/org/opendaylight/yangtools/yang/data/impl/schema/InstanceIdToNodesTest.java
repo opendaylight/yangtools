@@ -42,7 +42,7 @@ public class InstanceIdToNodesTest {
 
     private final NodeIdentifier outerList = new NodeIdentifier(
             QName.create(NS, REVISION, "outer-list"));
-    private final NodeIdentifierWithPredicates outerListWithKey = new NodeIdentifierWithPredicates(
+    private final NodeIdentifierWithPredicates outerListWithKey = NodeIdentifierWithPredicates.of(
             QName.create(NS, REVISION, "outer-list"), ID, 1);
     private final NodeIdentifier choice = new NodeIdentifier(QName.create(NS, REVISION, "outer-choice"));
     private final NodeIdentifier leafFromCase = new NodeIdentifier(QName.create(NS, REVISION, "one"));
