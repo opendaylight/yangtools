@@ -142,7 +142,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             final NodeIdentifierWithPredicates arg = (NodeIdentifierWithPredicates) currentArg;
             final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> builder = Builders
                     .mapEntryBuilder().withNodeIdentifier(arg);
-            for (final Entry<QName, Object> keyValue : arg.getKeyValues().entrySet()) {
+            for (final Entry<QName, Object> keyValue : arg.entrySet()) {
                 builder.addChild(Builders.leafBuilder()
                         .withNodeIdentifier(NodeIdentifier.create(keyValue.getKey())).withValue(keyValue.getValue())
                         .build());

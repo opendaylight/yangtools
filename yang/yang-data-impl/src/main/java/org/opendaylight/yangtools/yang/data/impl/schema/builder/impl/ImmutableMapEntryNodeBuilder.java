@@ -103,7 +103,7 @@ public class ImmutableMapEntryNodeBuilder
 
     @Override
     public MapEntryNode build() {
-        for (final Entry<QName, Object> key : getNodeIdentifier().getKeyValues().entrySet()) {
+        for (final Entry<QName, Object> key : getNodeIdentifier().entrySet()) {
             final DataContainerChild<?, ?> childNode = getChild(childrenQNamesToPaths.get(key.getKey()));
 
             // We have enough information to fill-in missing leaf nodes, so let's do that

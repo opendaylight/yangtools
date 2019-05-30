@@ -630,7 +630,74 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             this(node, SharedSingletonMap.unorderedOf(key, value));
         }
 
+        /**
+         * Return predicates as a Map.
+         *
+         * @return Predicate map.
+         * @deprecated Map view is actively discouraged and should be considered deprecated. For replacement, please
+         *             see {@link #keySet()}, #entrySet()}, {@link #values()} and {@link #size()}. As a last resort,
+         *             please migrate to {@link #asMap()}.
+         */
+        @Deprecated
         public @NonNull Map<QName, Object> getKeyValues() {
+            return keyValues;
+        }
+
+        /**
+         * Return the set of predicates keys and values. Keys are guaranteeed to be unique.
+         *
+         * @return Predicate set.
+         */
+        @Beta
+        public @NonNull Set<Entry<QName, Object>> entrySet() {
+            return keyValues.entrySet();
+        }
+
+        /**
+         * Return the predicate key in the iteration order of {@link #entrySet()}.
+         *
+         * @return Predicate values.
+         */
+        @Beta
+        public @NonNull Set<QName> keySet() {
+            return keyValues.keySet();
+        }
+
+        /**
+         * Return the predicate values in the iteration order of {@link #entrySet()}.
+         *
+         * @return Predicate values.
+         */
+        @Beta
+        public @NonNull Collection<Object> values() {
+            return keyValues.values();
+        }
+
+        /**
+         * Return the number of predicates present.
+         *
+         * @return Thee number of predicates present.
+         */
+        @Beta
+        public int size() {
+            return keyValues.size();
+        }
+
+        /**
+         * A Map-like view of this identifier's predicates. While this method is deprecated, it is preferred to
+         * {@link #getKeyValues()}. The view is expected to be stable and effectively-immutable.
+         *
+         * @return Map of predicates.
+         * @deprecated This method in a provisional one. It can be used in the code base, but users requiring it should
+         *             contact <a href="mailto:yangtools-dev@lists.opendaylight.org">yangtools-dev</a> for migration
+         *             guidelines. Callers are strongly encouraged to explore {@link #entrySet()}, {@link #size()},
+         *             {@link #values()} and {@link #keySet()} as an alternative.
+         */
+        @Beta
+        @Deprecated
+        // FIXME: 4.0.0: evaluate the real usefulness of this. The problem here is Map.hashCode() and Map.equals(),
+        //               which limits our options.
+        public @NonNull Map<QName, Object> asMap() {
             return keyValues;
         }
 
@@ -641,6 +708,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             result = prime * result;
 
             for (Entry<QName, Object> entry : keyValues.entrySet()) {
+                // FIXME: 4.0.0: key and value expected to be non-null here
                 result += Objects.hashCode(entry.getKey()) + YangInstanceIdentifier.hashCode(entry.getValue());
             }
             return result;
