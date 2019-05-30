@@ -14,6 +14,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.Test;
@@ -105,7 +106,7 @@ public class NormalizedNodesTest {
 
         final AugmentationNode mockedAugmentationNode = mock(AugmentationNode.class);
         final QName listQName = QName.create("test-ns", "2016-09-16", "list-node");
-        final AugmentationIdentifier augNodeId = new AugmentationIdentifier(Collections.singleton(listQName));
+        final AugmentationIdentifier augNodeId = new AugmentationIdentifier(ImmutableSet.of(listQName));
         doReturn(augNodeId).when(mockedAugmentationNode).getIdentifier();
 
         final MapNode mockedMapNode = mock(MapNode.class);
