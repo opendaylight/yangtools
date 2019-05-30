@@ -110,7 +110,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
      * @param result {@link NormalizedNodeResult} object which will hold result value.
      * @return {@link NormalizedNodeStreamWriter} which will write item to supplied result holder.
      */
-    public static NormalizedNodeStreamWriter from(final NormalizedNodeResult result) {
+    public static @NonNull NormalizedNodeStreamWriter from(final NormalizedNodeResult result) {
         return result instanceof NormalizedNodeMetadataResult ? from((NormalizedNodeMetadataResult) result)
                 : new ImmutableNormalizedNodeStreamWriter(result);
     }
@@ -133,7 +133,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
      * @param result {@link NormalizedNodeResult} object which will hold result value.
      * @return {@link NormalizedNodeStreamWriter} which will write item to supplied result holder.
      */
-    public static NormalizedNodeStreamWriter from(final NormalizedNodeMetadataResult result) {
+    public static @NonNull NormalizedNodeStreamWriter from(final NormalizedNodeMetadataResult result) {
         return new ImmutableMetadataNormalizedNodeStreamWriter(result);
     }
 
