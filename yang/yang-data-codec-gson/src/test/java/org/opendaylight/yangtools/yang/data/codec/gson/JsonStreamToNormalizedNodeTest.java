@@ -17,11 +17,11 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBu
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -235,8 +235,8 @@ public class JsonStreamToNormalizedNodeTest {
         final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
         final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
 
-        final AugmentationIdentifier aug1Id = new AugmentationIdentifier(Collections.singleton(augmentChoice1QName));
-        final AugmentationIdentifier aug2Id = new AugmentationIdentifier(Collections.singleton(augmentChoice2QName));
+        final AugmentationIdentifier aug1Id = new AugmentationIdentifier(ImmutableSet.of(augmentChoice1QName));
+        final AugmentationIdentifier aug2Id = new AugmentationIdentifier(ImmutableSet.of(augmentChoice2QName));
         final NodeIdentifier augmentChoice1Id = new NodeIdentifier(augmentChoice1QName);
         final NodeIdentifier augmentChoice2Id = new NodeIdentifier(augmentChoice2QName);
         final NodeIdentifier containerId = new NodeIdentifier(containerQName);

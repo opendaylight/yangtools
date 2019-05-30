@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableSet;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,18 +38,16 @@ public class InstanceIdToNodesTest {
     private final NodeIdentifier outerContainer = new NodeIdentifier(QName.create(NS, REVISION, "outer-container"));
     private final NodeIdentifier augmentedLeaf = new NodeIdentifier(QName.create(NS, REVISION, "augmented-leaf"));
     private final AugmentationIdentifier augmentation = new AugmentationIdentifier(
-            Collections.singleton(augmentedLeaf.getNodeType()));
+            ImmutableSet.of(augmentedLeaf.getNodeType()));
 
-    private final NodeIdentifier outerList = new NodeIdentifier(
-            QName.create(NS, REVISION, "outer-list"));
+    private final NodeIdentifier outerList = new NodeIdentifier(QName.create(NS, REVISION, "outer-list"));
     private final NodeIdentifierWithPredicates outerListWithKey = new NodeIdentifierWithPredicates(
             QName.create(NS, REVISION, "outer-list"), ID, 1);
     private final NodeIdentifier choice = new NodeIdentifier(QName.create(NS, REVISION, "outer-choice"));
     private final NodeIdentifier leafFromCase = new NodeIdentifier(QName.create(NS, REVISION, "one"));
 
     private final NodeIdentifier leafList = new NodeIdentifier(QName.create(NS, REVISION, "ordered-leaf-list"));
-    private final NodeWithValue<?> leafListWithValue = new NodeWithValue<>(
-            leafList.getNodeType(), "abcd");
+    private final NodeWithValue<?> leafListWithValue = new NodeWithValue<>(leafList.getNodeType(), "abcd");
 
     @BeforeClass
     public static void setUp() {

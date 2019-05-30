@@ -15,11 +15,11 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
@@ -344,7 +344,7 @@ public class XmlToNormalizedNodesTest {
                 .build();
 
         AugmentationNode myDoublyKeyedListAugNode = Builders.augmentationBuilder().withNodeIdentifier(
-                new AugmentationIdentifier(Collections.singleton(MY_DOUBLY_KEYED_LIST)))
+                new AugmentationIdentifier(ImmutableSet.of(MY_DOUBLY_KEYED_LIST)))
                 .withChild(myDoublyKeyedListNode).build();
 
         ContainerNode myContainer3Node = Builders.containerBuilder().withNodeIdentifier(
@@ -352,7 +352,7 @@ public class XmlToNormalizedNodesTest {
                 .withChild(myDoublyKeyedListAugNode).build();
 
         AugmentationNode myContainer3AugNode = Builders.augmentationBuilder().withNodeIdentifier(
-                new AugmentationIdentifier(Collections.singleton(MY_CONTAINER_3)))
+                new AugmentationIdentifier(ImmutableSet.of(MY_CONTAINER_3)))
                 .withChild(myContainer3Node).build();
 
         ContainerNode outerContainerNode = Builders.containerBuilder().withNodeIdentifier(

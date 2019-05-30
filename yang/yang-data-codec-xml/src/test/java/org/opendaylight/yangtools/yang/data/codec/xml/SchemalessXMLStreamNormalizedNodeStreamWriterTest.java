@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -285,7 +285,7 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
                 .build();
 
         AugmentationNode myDoublyKeyedListAugNode = Builders.augmentationBuilder().withNodeIdentifier(
-                new AugmentationIdentifier(Collections.singleton(myDoublyKeyedList)))
+                new AugmentationIdentifier(ImmutableSet.of(myDoublyKeyedList)))
                 .withChild(myDoublyKeyedListNode).build();
 
         ContainerNode myContainer3Node = Builders.containerBuilder().withNodeIdentifier(
@@ -293,7 +293,7 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
                 .withChild(myDoublyKeyedListAugNode).build();
 
         AugmentationNode myContainer3AugNode = Builders.augmentationBuilder().withNodeIdentifier(
-                new AugmentationIdentifier(Collections.singleton(myContainer3)))
+                new AugmentationIdentifier(ImmutableSet.of(myContainer3)))
                 .withChild(myContainer3Node).build();
 
         ContainerNode outerContainerNode = Builders.containerBuilder().withNodeIdentifier(
