@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.io.IOException;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc7952.data.api.MetadataNormalizedAnydata;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
@@ -30,6 +31,14 @@ public final class ImmutableMetadataNormalizedAnydata extends ImmutableNormalize
             final NormalizedNode<?, ?> data, final NormalizedMetadata metadata) {
         super(schemaContext, contextNode, data);
         this.metadata = requireNonNull(metadata);
+    }
+
+    public static ImmutableNormalizedAnydata ofOptional(final SchemaContext schemaContext,
+            final DataSchemaNode contextNode, final NormalizedNode<?, ?> data,
+            final Optional<NormalizedMetadata> metadata) {
+        return metadata.isPresent()
+                ? new ImmutableMetadataNormalizedAnydata(schemaContext, contextNode, data, metadata.get())
+                        : new ImmutableNormalizedAnydata(schemaContext, contextNode, data);
     }
 
     @Override

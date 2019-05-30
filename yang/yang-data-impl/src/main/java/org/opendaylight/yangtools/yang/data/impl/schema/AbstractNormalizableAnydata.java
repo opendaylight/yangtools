@@ -11,14 +11,10 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
 import org.opendaylight.yangtools.rfc7952.data.util.ImmutableMetadataNormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNormalizationException;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizableAnydata;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -32,8 +28,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 @NonNullByDefault
 public abstract class AbstractNormalizableAnydata implements NormalizableAnydata {
     @Override
-    public final NormalizedAnydata normalizeTo(final SchemaContext schemaContext, final DataSchemaNode contextNode)
-            throws AnydataNormalizationException {
+    public final ImmutableNormalizedAnydata normalizeTo(final SchemaContext schemaContext,
+            final DataSchemaNode contextNode) throws AnydataNormalizationException {
         final NormalizedNodeMetadataResult result = new NormalizedNodeMetadataResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         try {
@@ -42,11 +38,8 @@ public abstract class AbstractNormalizableAnydata implements NormalizableAnydata
             throw new AnydataNormalizationException("Failed to normalize anydata", e);
         }
 
-        final NormalizedNode<?, ?> data = result.getResult();
-        final Optional<NormalizedMetadata> optMeta = result.getMetadata();
-        return optMeta.isPresent()
-                ? new ImmutableMetadataNormalizedAnydata(schemaContext, contextNode, data, optMeta.get())
-                        : new ImmutableNormalizedAnydata(schemaContext, contextNode, result.getResult());
+        return ImmutableMetadataNormalizedAnydata.ofOptional(schemaContext, contextNode, result.getResult(),
+            result.getMetadata());
     }
 
     @Override
