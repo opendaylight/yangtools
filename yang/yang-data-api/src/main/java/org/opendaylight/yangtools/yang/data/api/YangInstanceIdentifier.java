@@ -489,7 +489,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         protected int hashCodeImpl() {
-            return 31 + getNodeType().hashCode();
+            return nodeType.hashCode();
         }
 
         @Override
@@ -703,10 +703,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         protected int hashCodeImpl() {
-            final int prime = 31;
-            int result = super.hashCodeImpl();
-            result = prime * result;
-
+            int result = 31 * super.hashCodeImpl();
             for (Entry<QName, Object> entry : keyValues.entrySet()) {
                 // FIXME: 4.0.0: key and value expected to be non-null here
                 result += Objects.hashCode(entry.getKey()) + YangInstanceIdentifier.hashCode(entry.getValue());
@@ -778,10 +775,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         protected int hashCodeImpl() {
-            final int prime = 31;
-            int result = super.hashCodeImpl();
-            result = prime * result + YangInstanceIdentifier.hashCode(value);
-            return result;
+            return 31 * super.hashCodeImpl() + YangInstanceIdentifier.hashCode(value);
         }
 
         @Override
