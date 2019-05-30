@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -94,7 +95,7 @@ public class NormalizedDataBuilderTest {
         AugmentationNode augmentation = Builders
                 .augmentationBuilder()
                 .withNodeIdentifier(
-                        new AugmentationIdentifier(Collections.singleton(getQName("augmentUint32"))))
+                        new AugmentationIdentifier(ImmutableSet.of(getQName("augmentUint32"))))
                 .withChild(
                         Builders.<Integer>leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32"))
                                 .withValue(11).build()).build();
