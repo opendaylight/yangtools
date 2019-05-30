@@ -59,7 +59,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
             lastModule = qname.getModule();
 
             if (arg instanceof NodeIdentifierWithPredicates) {
-                for (Entry<QName, Object> entry : ((NodeIdentifierWithPredicates) arg).getKeyValues().entrySet()) {
+                for (Entry<QName, Object> entry : ((NodeIdentifierWithPredicates) arg).entrySet()) {
                     sb.append('[');
                     appendQName(sb, entry.getKey(), lastModule);
                     sb.append("='");

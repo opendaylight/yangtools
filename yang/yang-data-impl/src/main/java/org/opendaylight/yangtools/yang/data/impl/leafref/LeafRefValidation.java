@@ -413,7 +413,7 @@ public final class LeafRefValidation {
         }
 
         return mapEntry -> {
-            for (final Entry<QName, Object> entryKeyValue : mapEntry.getIdentifier().getKeyValues().entrySet()) {
+            for (final Entry<QName, Object> entryKeyValue : mapEntry.getIdentifier().entrySet()) {
                 final Set<?> allowedValues = keyValues.get(entryKeyValue.getKey());
                 if (allowedValues != null && !allowedValues.contains(entryKeyValue.getValue())) {
                     return false;

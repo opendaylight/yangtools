@@ -135,8 +135,7 @@ public final class NormalizedNodes {
 
     private static String toStringTree(final PathArgument identifier) {
         if (identifier instanceof NodeIdentifierWithPredicates) {
-            return identifier.getNodeType().getLocalName()
-                + ((NodeIdentifierWithPredicates) identifier).getKeyValues().values();
+            return identifier.getNodeType().getLocalName() + ((NodeIdentifierWithPredicates) identifier).values();
         } else if (identifier instanceof AugmentationIdentifier) {
             return "augmentation";
         } else {

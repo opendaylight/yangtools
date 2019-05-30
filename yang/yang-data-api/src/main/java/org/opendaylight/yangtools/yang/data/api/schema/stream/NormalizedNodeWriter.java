@@ -262,7 +262,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             final NormalizedNodeStreamWriter nnWriter = getWriter();
             nnWriter.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
 
-            final Set<QName> qnames = node.getIdentifier().getKeyValues().keySet();
+            final Set<QName> qnames = node.getIdentifier().keySet();
             // Write out all the key children
             for (final QName qname : qnames) {
                 final Optional<? extends NormalizedNode<?, ?>> child = node.getChild(new NodeIdentifier(qname));
