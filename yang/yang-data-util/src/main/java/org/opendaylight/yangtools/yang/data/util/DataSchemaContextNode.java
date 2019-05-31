@@ -7,12 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifiable;
@@ -42,6 +46,16 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
  * @param <T> Path Argument type
  */
 public abstract class DataSchemaContextNode<T extends PathArgument> implements Identifiable<T> {
+    private static final LoadingCache<AugmentationSchemaNode, AugmentationIdentifier> AUGMENTATION_IDENTIFIERS =
+            CacheBuilder.newBuilder().weakKeys().weakValues().build(
+                new CacheLoader<AugmentationSchemaNode, AugmentationIdentifier>() {
+                    @Override
+                    public AugmentationIdentifier load(final AugmentationSchemaNode key) {
+                        return AugmentationIdentifier.create(key.getChildNodes().stream().map(DataSchemaNode::getQName)
+                            .collect(ImmutableSet.toImmutableSet()));
+                    }
+                });
+
     private final DataSchemaNode dataSchemaNode;
     private final T identifier;
 
@@ -142,8 +156,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
      * @throws NullPointerException if {@code schema} is null
      */
     public static AugmentationIdentifier augmentationIdentifierFrom(final AugmentationSchemaNode schema) {
-        return new AugmentationIdentifier(schema.getChildNodes().stream().map(DataSchemaNode::getQName)
-            .collect(Collectors.toSet()));
+        return AUGMENTATION_IDENTIFIERS.getUnchecked(requireNonNull(schema));
     }
 
     /**
