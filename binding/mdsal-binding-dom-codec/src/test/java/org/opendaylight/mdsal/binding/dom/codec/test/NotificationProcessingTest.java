@@ -43,7 +43,7 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
                 .withChild(Builders.mapBuilder()
                     .withNodeIdentifier(NodeIdentifier.create(TopLevelList.QNAME))
                     .withChild(Builders.mapEntryBuilder()
-                        .withNodeIdentifier(new NodeIdentifierWithPredicates(TopLevelList.QNAME, NAME, "test"))
+                        .withNodeIdentifier(NodeIdentifierWithPredicates.of(TopLevelList.QNAME, NAME, "test"))
                         .build())
                     .build())
                 .build();

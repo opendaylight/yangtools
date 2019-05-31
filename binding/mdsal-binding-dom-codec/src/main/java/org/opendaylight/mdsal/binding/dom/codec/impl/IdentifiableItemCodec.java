@@ -61,7 +61,7 @@ abstract class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicat
 
         @Override
         NodeIdentifierWithPredicates serializeIdentifier(final QName qname, final Identifier<?> key) {
-            return new NodeIdentifierWithPredicates(qname, predicateTemplate.instantiateWithValue(
+            return NodeIdentifierWithPredicates.of(qname, predicateTemplate.instantiateWithValue(
                 keyContext.getAndSerialize(key)));
         }
     }
@@ -119,7 +119,7 @@ abstract class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicat
                 values[offset++] = valueCtx.getAndSerialize(key);
             }
 
-            return new NodeIdentifierWithPredicates(qname, predicateTemplate.instantiateWithValues(values));
+            return NodeIdentifierWithPredicates.of(qname, predicateTemplate.instantiateWithValues(values));
         }
     }
 

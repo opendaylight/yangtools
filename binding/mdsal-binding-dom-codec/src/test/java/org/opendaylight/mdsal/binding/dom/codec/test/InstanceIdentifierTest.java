@@ -60,7 +60,7 @@ public class InstanceIdentifierTest extends AbstractBindingCodecTest {
     public void testCamelCaseKeys() {
         final InstanceIdentifier<?> result = registry.fromYangInstanceIdentifier(YangInstanceIdentifier.create(
             NodeIdentifier.create(OspfStatLsdbBrief.QNAME),
-            new NodeIdentifierWithPredicates(OspfStatLsdbBrief.QNAME, ImmutableMap.of(
+            NodeIdentifierWithPredicates.of(OspfStatLsdbBrief.QNAME, ImmutableMap.of(
                 QName.create(OspfStatLsdbBrief.QNAME, "AreaIndex"), 1,
                 QName.create(OspfStatLsdbBrief.QNAME, "LsaType"), (short) 2,
                 QName.create(OspfStatLsdbBrief.QNAME, "LsId"), 3,

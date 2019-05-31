@@ -114,7 +114,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     public static final YangInstanceIdentifier BI_TOP_PATH = YangInstanceIdentifier.of(TOP_QNAME);
     public static final YangInstanceIdentifier BI_TOP_LEVEL_LIST_PATH = BI_TOP_PATH.node(TOP_LEVEL_LIST_QNAME);
     public static final YangInstanceIdentifier BI_TOP_LEVEL_LIST_FOO_PATH = BI_TOP_LEVEL_LIST_PATH
-            .node(new YangInstanceIdentifier.NodeIdentifierWithPredicates(TOP_LEVEL_LIST_QNAME,
+            .node(NodeIdentifierWithPredicates.of(TOP_LEVEL_LIST_QNAME,
                 TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE));
     public static final YangInstanceIdentifier BI_CHOICE_CONTAINER_PATH = YangInstanceIdentifier.of(
         CHOICE_CONTAINER_QNAME);
@@ -238,7 +238,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST,
             topLevelList(TOP_LEVEL_LIST_FOO_KEY));
         final MapEntryNode topLevelListNormalized = ImmutableMapEntryNodeBuilder.create()
-                .withNodeIdentifier(new NodeIdentifierWithPredicates(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME,
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME,
                     TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .build();
@@ -248,7 +248,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     @Test
     public void listWithKeysFromNormalized() {
         final MapEntryNode topLevelListNormalized = ImmutableMapEntryNodeBuilder.create()
-                .withNodeIdentifier(new NodeIdentifierWithPredicates(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME,
+                .withNodeIdentifier(NodeIdentifierWithPredicates.of(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME,
                     TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .build();
@@ -407,7 +407,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         assertNotNull(entryContainer.getKey());
 
         final NodeIdentifierWithPredicates nodeIdentifierWithPredicates4798 =
-                new NodeIdentifierWithPredicates(nestedListQname4798, nestedListKeyQname4798, "foo");
+                NodeIdentifierWithPredicates.of(nestedListQname4798, nestedListKeyQname4798, "foo");
         final YangInstanceIdentifier yangInstanceIdentifier4798 = YangInstanceIdentifier.of(
             containerIdentifierQname4798)
                 .node(choiceIdentifierQname4798)
@@ -486,7 +486,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         final TopLevelList topLevelList = new TopLevelListBuilder().withKey(TOP_LEVEL_LIST_FOO_KEY).setNestedList(
             nestedLists).build();
         final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = registry.toNormalizedNode(ii, topLevelList);
-        final MapEntryNode foo = mapEntryBuilder().withNodeIdentifier(new NodeIdentifierWithPredicates(
+        final MapEntryNode foo = mapEntryBuilder().withNodeIdentifier(NodeIdentifierWithPredicates.of(
                 TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(ImmutableOrderedMapNodeBuilder.create()
@@ -498,7 +498,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
     @Test
     public void orderedLisFromNormalized() {
-        final MapEntryNode foo = mapEntryBuilder().withNodeIdentifier(new NodeIdentifierWithPredicates(
+        final MapEntryNode foo = mapEntryBuilder().withNodeIdentifier(NodeIdentifierWithPredicates.of(
                 TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(ImmutableOrderedMapNodeBuilder.create()
