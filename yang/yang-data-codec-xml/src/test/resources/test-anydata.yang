@@ -4,5 +4,10 @@ module test-anydata {
     prefix ta;
 
     anydata foo;
+    container bar {
+        leaf message {
+            type string;
+        }
+    }
 }
 
