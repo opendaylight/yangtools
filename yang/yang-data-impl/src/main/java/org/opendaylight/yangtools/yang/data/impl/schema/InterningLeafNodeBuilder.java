@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Interner;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
@@ -26,15 +25,14 @@ final class InterningLeafNodeBuilder<T> extends ImmutableLeafNodeBuilder<T> {
         this.interner = requireNonNull(interner);
     }
 
-    static <T> @NonNull ImmutableLeafNodeBuilder<T> forSchema(final @Nullable DataSchemaNode schema) {
+    static <T> @Nullable InterningLeafNodeBuilder<T> forSchema(final @Nullable DataSchemaNode schema) {
         if (schema instanceof LeafSchemaNode) {
             final Optional<Interner<LeafNode<T>>> interner = LeafInterner.forSchema((LeafSchemaNode)schema);
             if (interner.isPresent()) {
                 return new InterningLeafNodeBuilder<>(interner.get());
             }
         }
-
-        return new ImmutableLeafNodeBuilder<>();
+        return null;
     }
 
     @Override
