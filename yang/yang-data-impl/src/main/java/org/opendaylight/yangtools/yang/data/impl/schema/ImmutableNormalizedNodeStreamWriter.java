@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAn
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
@@ -145,7 +146,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startLeafNode(final NodeIdentifier name) {
         checkDataNodeContainer();
-        enter(name, InterningLeafNodeBuilder.forSchema(nextSchema));
+        enter(name, leafNodeBuilder(nextSchema));
         nextSchema = null;
     }
 
@@ -162,7 +163,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         checkArgument(current instanceof ImmutableLeafSetNodeBuilder
             || current instanceof ImmutableOrderedLeafSetNodeBuilder || current instanceof NormalizedNodeResultBuilder,
             "LeafSetEntryNode is not valid for parent %s", current);
-        enter(name, ImmutableLeafSetEntryNodeBuilder.create());
+        enter(name, leafsetEntryNodeBuilder());
         nextSchema = null;
     }
 
@@ -325,6 +326,19 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         nextSchema = null;
         builders.clear();
         builders.push(builder);
+    }
+
+    private <T> ImmutableLeafNodeBuilder<T> leafNodeBuilder(final DataSchemaNode schema) {
+        final InterningLeafNodeBuilder<T> interning = InterningLeafNodeBuilder.forSchema(schema);
+        return interning != null ? interning : leafNodeBuilder();
+    }
+
+    <T> ImmutableLeafNodeBuilder<T> leafNodeBuilder() {
+        return new ImmutableLeafNodeBuilder<>();
+    }
+
+    <T> ImmutableLeafSetEntryNodeBuilder<T> leafsetEntryNodeBuilder() {
+        return ImmutableLeafSetEntryNodeBuilder.create();
     }
 
     private void checkDataNodeContainer() {
