@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Strings;
@@ -32,19 +31,6 @@ import org.slf4j.LoggerFactory;
  * class referencing this class should be {@link XMLStreamNormalizedNodeStreamWriter}.
  */
 final class StreamWriterFacade extends ValueWriter {
-    /**
-     * Simple namespace/localname holder, an alternative to QName.
-     */
-    private static final class NSName {
-        private final String uri;
-        private final String name;
-
-        NSName(final String uri, final String name) {
-            this.uri = requireNonNull(uri);
-            this.name = requireNonNull(name);
-        }
-    }
-
     private static final Logger LOG = LoggerFactory.getLogger(StreamWriterFacade.class);
     private static final Set<String> BROKEN_NAMESPACES = ConcurrentHashMap.newKeySet();
     private static final Set<String> LEGACY_ATTRIBUTES = ConcurrentHashMap.newKeySet();
@@ -54,7 +40,7 @@ final class StreamWriterFacade extends ValueWriter {
 
     // QName of an element we delayed emitting. This only happens if it is a naked element, without any attributes,
     // namespace declarations or value.
-    private Object openElement;
+    private QName openElement;
 
     StreamWriterFacade(final XMLStreamWriter writer) {
         this.writer = requireNonNull(writer);
@@ -95,39 +81,9 @@ final class StreamWriterFacade extends ValueWriter {
 
     private void flushElement() throws XMLStreamException {
         if (openElement != null) {
-            final String nsUri;
-            final String localName;
-            if (openElement instanceof QName) {
-                final QName qname = (QName) openElement;
-                nsUri = qname.getNamespace().toString();
-                localName = qname.getLocalName();
-            } else {
-                verify(openElement instanceof NSName);
-                final NSName nsname = (NSName) openElement;
-                nsUri = nsname.uri;
-                localName = nsname.name;
-            }
-            writer.writeStartElement(XMLConstants.DEFAULT_NS_PREFIX, localName, nsUri);
+            writer.writeStartElement(XMLConstants.DEFAULT_NS_PREFIX, openElement.getLocalName(),
+                openElement.getNamespace().toString());
             openElement = null;
-        }
-    }
-
-    void writeStartElement(final String namespace, final String localName) throws XMLStreamException {
-        flushElement();
-
-        final NamespaceContext context = writer.getNamespaceContext();
-        final boolean reuseNamespace;
-        if (context != null) {
-            reuseNamespace = namespace.equals(context.getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX));
-        } else {
-            reuseNamespace = XMLConstants.DEFAULT_NS_PREFIX.equals(writer.getPrefix(namespace));
-        }
-
-        if (!reuseNamespace) {
-            writer.writeStartElement(XMLConstants.DEFAULT_NS_PREFIX, localName, namespace);
-            writer.writeDefaultNamespace(namespace);
-        } else {
-            openElement = new NSName(namespace, localName);
         }
     }
 
@@ -153,20 +109,8 @@ final class StreamWriterFacade extends ValueWriter {
 
     void writeEndElement() throws XMLStreamException {
         if (openElement != null) {
-            final String nsUri;
-            final String localName;
-            if (openElement instanceof QName) {
-                final QName qname = (QName) openElement;
-                nsUri = qname.getNamespace().toString();
-                localName = qname.getLocalName();
-            } else {
-                verify(openElement instanceof NSName);
-                final NSName nsname = (NSName) openElement;
-                nsUri = nsname.uri;
-                localName = nsname.name;
-            }
-
-            writer.writeEmptyElement(XMLConstants.DEFAULT_NS_PREFIX, localName, nsUri);
+            writer.writeEmptyElement(XMLConstants.DEFAULT_NS_PREFIX, openElement.getLocalName(),
+                openElement.getNamespace().toString());
             openElement = null;
         } else {
             writer.writeEndElement();
