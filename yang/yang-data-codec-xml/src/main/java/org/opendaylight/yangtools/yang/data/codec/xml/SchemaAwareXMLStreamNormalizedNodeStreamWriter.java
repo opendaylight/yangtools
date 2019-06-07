@@ -88,7 +88,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
                 endElement();
             }
         } else if (schema instanceof ContainerSchemaNode || schema instanceof LeafSchemaNode
-                || schema instanceof AnyDataSchemaNode) {
+                || schema instanceof AnyDataSchemaNode || schema instanceof AnyXmlSchemaNode) {
             endElement();
         }
     }
