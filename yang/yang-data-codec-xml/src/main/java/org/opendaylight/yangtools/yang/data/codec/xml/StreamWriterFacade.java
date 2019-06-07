@@ -282,6 +282,7 @@ final class StreamWriterFacade extends ValueWriter {
     }
 
     void emitNormalizedAnydata(final NormalizedAnydata anydata) throws XMLStreamException {
+        flushElement();
         try {
             anydata.writeTo(XMLStreamNormalizedNodeStreamWriter.create(writer, anydata.getSchemaContext(),
                 new SingleChildDataNodeContainer(anydata.getContextNode())));
