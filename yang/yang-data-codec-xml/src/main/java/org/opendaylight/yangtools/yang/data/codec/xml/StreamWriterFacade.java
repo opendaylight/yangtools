@@ -182,10 +182,10 @@ final class StreamWriterFacade extends ValueWriter {
                     ++depth;
                     break;
                 case XMLStreamConstants.END_ELEMENT:
+                    --depth;
                     if (depth != 0) {
                         writer.writeEndElement();
                     }
-                    --depth;
                     break;
                 case XMLStreamConstants.CHARACTERS:
                     writer.writeCharacters(reader.getText());
@@ -237,10 +237,10 @@ final class StreamWriterFacade extends ValueWriter {
                     ++depth;
                     break;
                 case XMLStreamConstants.END_ELEMENT:
+                    --depth;
                     if (depth != 0) {
                         writer.writeEndElement();
                     }
-                    --depth;
                     break;
                 case XMLStreamConstants.PROCESSING_INSTRUCTION:
                     forwardProcessingInstruction(reader);

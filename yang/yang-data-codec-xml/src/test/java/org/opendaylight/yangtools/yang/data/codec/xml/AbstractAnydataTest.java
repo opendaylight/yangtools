@@ -26,6 +26,8 @@ import org.junit.BeforeClass;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
@@ -43,6 +45,9 @@ public abstract class AbstractAnydataTest {
     static final NodeIdentifier CONT_ANY_NODEID = NodeIdentifier.create(CONT_ANY_QNAME);
     static final NodeIdentifier CONT_LEAF_NODEID = NodeIdentifier.create(CONT_LEAF_QNAME);
 
+    static final LeafNode<?> CONT_LEAF = ImmutableLeafNodeBuilder.create().withNodeIdentifier(CONT_LEAF_NODEID)
+            .withValue("abc").build();
+
     static SchemaContext SCHEMA_CONTEXT;
 
     @BeforeClass
@@ -55,10 +60,14 @@ public abstract class AbstractAnydataTest {
         SCHEMA_CONTEXT = null;
     }
 
-    static DOMSourceAnydata toDOMSource(final String str) throws IOException, SAXException {
-        return new DOMSourceAnydata(new DOMSource(
-            // DOMSource must have a single document element, which we are ignoring
-            readXmlToDocument(toInputStream("<IGNORED>" + str + "</IGNORED>")).getDocumentElement()));
+    static DOMSourceAnydata toDOMSource(final String str) {
+        try {
+            return new DOMSourceAnydata(new DOMSource(
+                // DOMSource must have a single document element, which we are ignoring
+                readXmlToDocument(toInputStream("<IGNORED>" + str + "</IGNORED>")).getDocumentElement()));
+        } catch (IOException | SAXException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     static InputStream toInputStream(final String str) {
