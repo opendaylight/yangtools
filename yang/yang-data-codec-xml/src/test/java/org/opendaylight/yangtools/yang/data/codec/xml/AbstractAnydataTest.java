@@ -34,7 +34,14 @@ import org.xml.sax.SAXException;
 
 public abstract class AbstractAnydataTest {
     static final QName FOO_QNAME = QName.create("test-anydata", "foo");
+    static final QName CONT_QNAME = QName.create(FOO_QNAME, "cont");
+    static final QName CONT_ANY_QNAME = QName.create(FOO_QNAME, "cont-any");
+    static final QName CONT_LEAF_QNAME = QName.create(FOO_QNAME, "cont-leaf");
+
     static final NodeIdentifier FOO_NODEID = NodeIdentifier.create(FOO_QNAME);
+    static final NodeIdentifier CONT_NODEID = NodeIdentifier.create(CONT_QNAME);
+    static final NodeIdentifier CONT_ANY_NODEID = NodeIdentifier.create(CONT_ANY_QNAME);
+    static final NodeIdentifier CONT_LEAF_NODEID = NodeIdentifier.create(CONT_LEAF_QNAME);
 
     static SchemaContext SCHEMA_CONTEXT;
 
@@ -58,7 +65,7 @@ public abstract class AbstractAnydataTest {
         return new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8));
     }
 
-    private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
+    static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
         final Document doc = UntrustedXML.newDocumentBuilder().parse(xmlContent);
         doc.getDocumentElement().normalize();
         return doc;

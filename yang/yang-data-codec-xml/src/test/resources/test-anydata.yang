@@ -4,5 +4,13 @@ module test-anydata {
     prefix ta;
 
     anydata foo;
+
+    container cont {
+        anydata cont-any;
+
+        leaf cont-leaf {
+            type string;
+        }
+    }
 }
 
