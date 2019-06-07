@@ -33,6 +33,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
@@ -40,7 +41,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnydataNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
+import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
 import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -63,7 +64,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     }
 
     @Test
-    public void testDOMAnydata() throws XMLStreamException, IOException, SAXException {
+    public void testDOMAnydata() throws XMLStreamException, IOException {
         final StringWriter writer = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(writer);
 
@@ -200,7 +201,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
     }
 
     @Test
-    public void testSiblingSerialize() throws IOException, SAXException, XMLStreamException {
+    public void testSiblingSerialize() throws IOException, XMLStreamException {
         final StringWriter writer = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(writer);
 
@@ -211,12 +212,33 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         normalizedNodeWriter.write(ImmutableContainerNodeBuilder.create().withNodeIdentifier(CONT_NODEID)
             .withChild(ImmutableAnydataNodeBuilder.create(DOMSourceAnydata.class).withNodeIdentifier(CONT_ANY_NODEID)
                 .withValue(toDOMSource("<bar xmlns=\"test-anydata\"/>")).build())
-            .withChild(ImmutableLeafNodeBuilder.create().withNodeIdentifier(CONT_LEAF_NODEID).withValue("abc").build())
+            .withChild(CONT_LEAF)
             .build());
         normalizedNodeWriter.flush();
 
         final String serializedXml = writer.toString();
         assertEquals("<cont xmlns=\"test-anydata\"><cont-any><bar xmlns=\"test-anydata\"></bar></cont-any>"
                 + "<cont-leaf>abc</cont-leaf></cont>", serializedXml);
+    }
+
+    @Test
+    public void testNormalizedSerialize() throws IOException, XMLStreamException {
+        final StringWriter writer = new StringWriter();
+        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(writer);
+
+        final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(
+            xmlStreamWriter, SCHEMA_CONTEXT);
+        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
+            xmlNormalizedNodeStreamWriter);
+        normalizedNodeWriter.write(ImmutableContainerNodeBuilder.create().withNodeIdentifier(CONT_NODEID)
+            .withChild(ImmutableAnydataNodeBuilder.create(NormalizedAnydata.class).withNodeIdentifier(CONT_ANY_NODEID)
+                .withValue(new ImmutableNormalizedAnydata(SCHEMA_CONTEXT,
+                    SCHEMA_CONTEXT.findDataChildByName(CONT_QNAME).get(), ImmutableContainerNodeBuilder.create()
+                    .withNodeIdentifier(CONT_NODEID).build())).build())
+            .build());
+        normalizedNodeWriter.flush();
+
+        final String serializedXml = writer.toString();
+        assertEquals("<cont xmlns=\"test-anydata\"><cont-any><cont/></cont-any></cont>", serializedXml);
     }
 }
