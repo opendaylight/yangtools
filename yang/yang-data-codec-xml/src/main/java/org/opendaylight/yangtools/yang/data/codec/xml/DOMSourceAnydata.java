@@ -62,7 +62,7 @@ final class DOMSourceAnydata extends AbstractNormalizableAnydata {
             final XMLStreamReader reader = toStreamReader();
             reader.nextTag();
 
-            xmlParser.parse(reader).close();
+            xmlParser.parse(reader).flush();
         } catch (XMLStreamException | URISyntaxException | SAXException e) {
             throw new IOException("Failed to parse payload", e);
         }
