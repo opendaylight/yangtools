@@ -67,6 +67,9 @@ class YangModuleInfoTemplate {
     }
 
     def String generate() {
+        val Set<Module> submodules = new HashSet
+        collectSubmodules(submodules, module)
+
         val body = '''
             public final class «MODULE_INFO_CLASS_NAME» extends «ResourceYangModuleInfo.importedName» {
                 «val rev = module.revision»
@@ -83,7 +86,7 @@ class YangModuleInfoTemplate {
                     return «QName.importedName».create(NAME, localName).intern();
                 }
 
-                «classBody(module, MODULE_INFO_CLASS_NAME)»
+                «classBody(module, MODULE_INFO_CLASS_NAME, submodules)»
             }
         '''
         return '''
@@ -109,9 +112,17 @@ class YangModuleInfoTemplate {
 
     }
 
-    private def CharSequence classBody(Module m, String className) '''
+    private static def void collectSubmodules(Set<Module> dest, Module module) {
+        for (Module submodule : module.submodules) {
+            if (dest.add(submodule)) {
+                collectSubmodules(dest, submodule)
+            }
+        }
+    }
+
+    private def CharSequence classBody(Module m, String className, Set<Module> submodules) '''
         private «className»() {
-            «IF !m.imports.empty || !m.submodules.empty»
+            «IF !m.imports.empty || !submodules.empty»
                 «Set.importedName»<«YangModuleInfo.importedName»> set = new «HashSet.importedName»<>();
             «ENDIF»
             «IF !m.imports.empty»
@@ -132,12 +143,10 @@ class YangModuleInfoTemplate {
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»
-            «IF !m.submodules.empty»
-                «FOR submodule : m.submodules»
-                    set.add(«submodule.name.className»Info.getInstance());
-                «ENDFOR»
-            «ENDIF»
-            «IF m.imports.empty && m.submodules.empty»
+            «FOR submodule : submodules»
+                set.add(«submodule.name.className»Info.getInstance());
+            «ENDFOR»
+            «IF m.imports.empty && submodules.empty»
                 importedModules = «Collections.importedName».emptySet();
             «ELSE»
                 importedModules = «ImmutableSet.importedName».copyOf(set);
@@ -158,9 +167,7 @@ class YangModuleInfoTemplate {
         public «Set.importedName»<«YangModuleInfo.importedName»> getImportedModules() {
             return importedModules;
         }
-
-        «generateSubInfo(m)»
-
+        «generateSubInfo(submodules)»
     '''
 
     private def sourcePath(Module module) {
@@ -269,9 +276,10 @@ class YangModuleInfoTemplate {
         return builder.toString()
     }
 
-    private def generateSubInfo(Module module) '''
-        «FOR submodule : module.submodules»
+    private def generateSubInfo(Set<Module> submodules) '''
+        «FOR submodule : submodules»
             «val className = submodule.name.className»
+
             private static final class «className»Info extends «ResourceYangModuleInfo.importedName» {
                 «val rev = submodule.revision»
                 private final «QName.importedName» NAME = «QName.importedName».create("«
@@ -284,7 +292,7 @@ class YangModuleInfoTemplate {
                     return INSTANCE;
                 }
 
-                «classBody(submodule, className + "Info")»
+                «classBody(submodule, className + "Info", Collections.emptySet)»
             }
         «ENDFOR»
     '''
