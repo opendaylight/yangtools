@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -117,6 +118,8 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
                 return null;
             }
             newChild = new AnyXmlNodeDataWithSchema((AnyXmlSchemaNode) schema);
+        } else if (schema instanceof AnyDataSchemaNode) {
+            newChild = new AnydataNodeDataWithSchema((AnyDataSchemaNode) schema);
         } else {
             return null;
         }
