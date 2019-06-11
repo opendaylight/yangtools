@@ -233,8 +233,7 @@ public final class XmlParserStream implements Closeable, Flushable {
             } else if (parentNode instanceof LeafListSchemaNode) {
                 nodeDataWithSchema = new LeafListNodeDataWithSchema((LeafListSchemaNode) parentNode);
             } else if (parentNode instanceof AnyDataSchemaNode) {
-                nodeDataWithSchema = new AnydataNodeDataWithSchema((AnyDataSchemaNode) parentNode,
-                    DOMSourceAnydata.class);
+                nodeDataWithSchema = new AnydataNodeDataWithSchema((AnyDataSchemaNode) parentNode);
             } else {
                 throw new IllegalStateException("Unsupported schema node type " + parentNode.getClass() + ".");
             }
@@ -387,8 +386,10 @@ public final class XmlParserStream implements Closeable, Flushable {
         }
 
         if (parent instanceof AnydataNodeDataWithSchema) {
-            parent.setAttributes(getElementAttributes(in));
-            setValue((AnydataNodeDataWithSchema) parent, readAnyXmlValue(in), in.getNamespaceContext());
+            final AnydataNodeDataWithSchema anydata = (AnydataNodeDataWithSchema) parent;
+            anydata.setObjectModel(DOMSourceAnydata.class);
+            anydata.setAttributes(getElementAttributes(in));
+            setValue(anydata, readAnyXmlValue(in), in.getNamespaceContext());
             if (isNextEndDocument(in)) {
                 return;
             }
