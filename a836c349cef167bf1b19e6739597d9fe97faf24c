@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d2563b33_4b41e795",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/SharedSchemaContextFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 2833
+      },
+      "writtenOn": "2019-06-12T23:55:44Z",
+      "side": 1,
+      "message": "I observerd we are not putting the cotext in the cache like the code was doing before. Is that intentional OR should we put the cotext in the cache in the exception block",
+      "revId": "a836c349cef167bf1b19e6739597d9fe97faf24c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
