@@ -17,7 +17,7 @@
     </parent>
 
     <artifactId>rfc6241-model-api</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
     <description>RFC6241 extensions for unbound metadata</description>

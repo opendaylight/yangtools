@@ -18,7 +18,7 @@
 
     <artifactId>yang-data-xpath-api</artifactId>
     <packaging>bundle</packaging>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.2-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
