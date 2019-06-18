@@ -9,16 +9,27 @@ package org.opendaylight.yangtools.concepts;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 
 /**
  * Utility registration handle. It is a convenience for register-style method which can return an AutoCloseable realized
  * by a subclass of this class. Invoking the close() method triggers unregistration of the state the method installed.
  */
 public abstract class AbstractRegistration implements Registration {
-    private static final AtomicIntegerFieldUpdater<AbstractRegistration> CLOSED_UPDATER =
-            AtomicIntegerFieldUpdater.newUpdater(AbstractRegistration.class, "closed");
-    private volatile int closed = 0;
+    private static final VarHandle CLOSED;
+
+    // All access needs to go through this handle
+    @SuppressWarnings("unused")
+    private int closed;
+
+    static {
+        try {
+            CLOSED = MethodHandles.lookup().findVarHandle(int.class, "closed", int.class);
+        } catch (ReflectiveOperationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     /**
      * Remove the state referenced by this registration. This method is guaranteed to be called at most once.
@@ -32,12 +43,13 @@ public abstract class AbstractRegistration implements Registration {
      * @return true if the registration was closed, false otherwise.
      */
     public final boolean isClosed() {
-        return closed != 0;
+        return (int) CLOSED.getAcquire(this) != 0;
     }
 
     @Override
     public final void close() {
-        if (CLOSED_UPDATER.compareAndSet(this, 0, 1)) {
+        // CAS is stronger than getAcquire()
+        if (CLOSED.compareAndSet(this, 0, 1)) {
             removeRegistration();
         }
     }
@@ -48,6 +60,6 @@ public abstract class AbstractRegistration implements Registration {
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("closed", closed);
+        return toStringHelper.add("closed", isClosed());
     }
 }
