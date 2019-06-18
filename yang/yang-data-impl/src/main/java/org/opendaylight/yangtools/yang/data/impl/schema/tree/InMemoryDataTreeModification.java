@@ -11,10 +11,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -31,8 +32,6 @@ import org.slf4j.LoggerFactory;
 
 final class InMemoryDataTreeModification extends AbstractCursorAware implements CursorAwareDataTreeModification,
         SchemaContextProvider {
-    private static final AtomicIntegerFieldUpdater<InMemoryDataTreeModification> SEALED_UPDATER =
-            AtomicIntegerFieldUpdater.newUpdater(InMemoryDataTreeModification.class, "sealed");
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
 
     private final RootApplyStrategy strategyTree;
@@ -40,7 +39,19 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     private final ModifiedNode rootNode;
     private final Version version;
 
-    private volatile int sealed = 0;
+    private static final VarHandle SEALED;
+
+    static {
+        try {
+            SEALED = MethodHandles.lookup().findVarHandle(int.class, "sealed", int.class);
+        } catch (ReflectiveOperationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    // All access needs to go through this handle
+    @SuppressWarnings("unused")
+    private int sealed;
 
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot,
             final RootApplyStrategy resolver) {
@@ -180,7 +191,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     private void checkSealed() {
-        checkState(sealed == 0, "Data Tree is sealed. No further modifications allowed.");
+        checkState(!isSealed(), "Data Tree is sealed. No further modifications allowed.");
     }
 
     @Override
@@ -190,7 +201,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public InMemoryDataTreeModification newModification() {
-        checkState(sealed == 1, "Attempted to chain on an unsealed modification");
+        checkState(isSealed(), "Attempted to chain on an unsealed modification");
 
         if (rootNode.getOperation() == LogicalOperation.NONE) {
             // Simple fast case: just use the underlying modification
@@ -215,7 +226,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     boolean isSealed() {
-        return sealed == 1;
+        return (int) SEALED.getAcquire(this) == 1;
     }
 
     private static void applyChildren(final DataTreeModificationCursor cursor, final ModifiedNode node) {
@@ -290,7 +301,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public void ready() {
-        final boolean wasRunning = SEALED_UPDATER.compareAndSet(this, 0, 1);
+        final boolean wasRunning = SEALED.compareAndSet(this, 0, 1);
         checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
 
         AbstractReadyIterator current = AbstractReadyIterator.create(rootNode, getStrategy());
