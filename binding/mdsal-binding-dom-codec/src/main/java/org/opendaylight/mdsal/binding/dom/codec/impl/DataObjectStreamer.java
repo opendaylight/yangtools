@@ -94,8 +94,10 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
             final Class<? extends DataContainer> caseClass = value.implementedInterface();
             writer.startChoiceNode(choiceClass, BindingStreamEventWriter.UNKNOWN_SIZE);
             final DataObjectSerializer caseStreamer = registry.getSerializer(caseClass.asSubclass(DataObject.class));
-            if (caseStreamer != null && tryCache(writer, (DataObject) value)) {
-                caseStreamer.serialize((DataObject) value, writer);
+            if (caseStreamer != null) {
+                if (tryCache(writer, (DataObject) value)) {
+                    caseStreamer.serialize((DataObject) value, writer);
+                }
             } else {
                 LOG.warn("No serializer for case {} is available in registry {}", caseClass, registry);
             }
@@ -202,7 +204,8 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
         }
     }
 
-    private static boolean tryCache(final BindingStreamEventWriter writer, final DataObject value) {
-        return writer instanceof BindingSerializer ? ((BindingSerializer) writer).serialize(value) == null : true;
+    @SuppressWarnings("unchecked")
+    private static <T extends DataObject> boolean tryCache(final BindingStreamEventWriter writer, final T value) {
+        return writer instanceof BindingSerializer ? ((BindingSerializer<?, T>) writer).serialize(value) == null : true;
     }
 }
