@@ -9,16 +9,27 @@ package org.opendaylight.yangtools.concepts;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 
 /**
  * Utility registration handle. It is a convenience for register-style method which can return an AutoCloseable realized
  * by a subclass of this class. Invoking the close() method triggers unregistration of the state the method installed.
  */
 public abstract class AbstractRegistration implements Registration {
-    private static final AtomicIntegerFieldUpdater<AbstractRegistration> CLOSED_UPDATER =
-            AtomicIntegerFieldUpdater.newUpdater(AbstractRegistration.class, "closed");
-    private volatile int closed = 0;
+    private static final VarHandle CLOSED;
+
+    // All access needs to go through this handle
+    @SuppressWarnings("unused")
+    private volatile byte closed;
+
+    static {
+        try {
+            CLOSED = MethodHandles.lookup().findVarHandle(AbstractRegistration.class, "closed", byte.class);
+        } catch (ReflectiveOperationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     /**
      * Remove the state referenced by this registration. This method is guaranteed to be called at most once.
@@ -32,12 +43,14 @@ public abstract class AbstractRegistration implements Registration {
      * @return true if the registration was closed, false otherwise.
      */
     public final boolean isClosed() {
-        return closed != 0;
+        return (byte) CLOSED.getAcquire(this) != 0;
     }
 
     @Override
     public final void close() {
-        if (CLOSED_UPDATER.compareAndSet(this, 0, 1)) {
+        // We want full setVolatile() memory semantics here, as all state before calling this method
+        // needs to be visible
+        if (CLOSED.compareAndSet(this, (byte) 0, (byte) 1)) {
             removeRegistration();
         }
     }
@@ -48,6 +61,6 @@ public abstract class AbstractRegistration implements Registration {
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("closed", closed);
+        return toStringHelper.add("closed", isClosed());
     }
 }
