@@ -54,7 +54,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
             return (A) aug.get(augmentationType);
         }
 
-        @SuppressWarnings({"unchecked","rawtypes"})
+        @SuppressWarnings("rawtypes")
         final Optional<DataContainerCodecContext<?, ?>> optAugCtx = codecContext().possibleStreamChild(
             (Class) augmentationType);
         if (optAugCtx.isPresent()) {
@@ -97,7 +97,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
 
     @Override
     final ToStringHelper codecAugmentedFillToString(final ToStringHelper helper) {
-        return super.codecAugmentedFillToString(helper).add("augmentations", augmentations());
+        return super.codecAugmentedFillToString(helper).add("augmentation", augmentations().values());
     }
 
     private static Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentations(
