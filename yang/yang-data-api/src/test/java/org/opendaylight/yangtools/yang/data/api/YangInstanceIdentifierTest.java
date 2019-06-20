@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableMap;
@@ -219,7 +221,7 @@ public class YangInstanceIdentifierTest {
             final PathArgument arg, final QName nodeName, final QName key, final Object value) {
 
         assertNotNull(prefix + " is null", arg);
-        assertEquals(prefix + " class", NodeIdentifierWithPredicates.class, arg.getClass());
+        assertThat(arg, instanceOf(NodeIdentifierWithPredicates.class));
         NodeIdentifierWithPredicates node = (NodeIdentifierWithPredicates)arg;
         assertEquals(prefix + " node type", nodeName, node.getNodeType());
         assertEquals(prefix + " key values map size", 1, node.size());
