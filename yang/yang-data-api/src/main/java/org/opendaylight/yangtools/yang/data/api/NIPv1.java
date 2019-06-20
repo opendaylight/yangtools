@@ -46,7 +46,7 @@ final class NIPv1 implements Externalizable {
     @Override
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         final QName qname = QName.readFrom(in);
-        nip = new NodeIdentifierWithPredicates((Map<QName, Object>) in.readObject(), qname);
+        nip = NodeIdentifierWithPredicates.of(qname, (Map<QName, Object>) in.readObject());
     }
 
     private Object readResolve() {
