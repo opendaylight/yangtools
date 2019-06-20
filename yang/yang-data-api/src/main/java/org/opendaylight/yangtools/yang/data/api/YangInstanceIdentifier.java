@@ -23,6 +23,7 @@ import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,6 +45,7 @@ import org.opendaylight.yangtools.concepts.Path;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.SharedSingletonMap;
+import org.opendaylight.yangtools.util.SingletonSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
@@ -569,38 +571,117 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * Composite path argument identifying a {@link org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode} leaf
      * overall data tree.
      */
-    public static final class NodeIdentifierWithPredicates extends AbstractPathArgument {
+    public abstract static class NodeIdentifierWithPredicates extends AbstractPathArgument {
+        private static final class Singleton extends NodeIdentifierWithPredicates {
+            private static final long serialVersionUID = 1L;
+
+            private final @NonNull QName key;
+            private final @NonNull Object value;
+
+            private Singleton(final QName node, final Entry<QName, Object> entry) {
+                this(node, entry.getKey(), entry.getValue());
+            }
+
+            Singleton(final QName node, final QName key, final Object value) {
+                super(node);
+                this.key = requireNonNull(key);
+                this.value = requireNonNull(value);
+            }
+
+            Singleton(final QName node, final Map<QName, Object> keyValues) {
+                this(node, keyValues.entrySet().iterator().next());
+            }
+
+            @Override
+            public SingletonSet<Entry<QName, Object>> entrySet() {
+                return SingletonSet.of(new SimpleImmutableEntry<>(key, value));
+            }
+
+            @Override
+            public SingletonSet<QName> keySet() {
+                return SingletonSet.of(key);
+            }
+
+            @Override
+            public SingletonSet<Object> values() {
+                return SingletonSet.of(value);
+            }
+
+            @Override
+            public int size() {
+                return 1;
+            }
+
+            @Override
+            public ImmutableMap<QName, Object> asMap() {
+                return ImmutableMap.of(key, value);
+            }
+        }
+
+        private static final class Regular extends NodeIdentifierWithPredicates {
+            private static final long serialVersionUID = 1L;
+
+            private final @NonNull Map<QName, Object> keyValues;
+
+            Regular(final QName node, final Map<QName, Object> keyValues) {
+                super(node);
+                this.keyValues = requireNonNull(keyValues);
+            }
+
+            @Override
+            public Set<Entry<QName, Object>> entrySet() {
+                return keyValues.entrySet();
+            }
+
+            @Override
+            public Set<QName> keySet() {
+                return keyValues.keySet();
+            }
+
+            @Override
+            public Collection<Object> values() {
+                return keyValues.values();
+            }
+
+            @Override
+            public int size() {
+                return keyValues.size();
+            }
+
+            @Override
+            public Map<QName, Object> asMap() {
+                return keyValues;
+            }
+        }
+
         private static final long serialVersionUID = -4787195606494761540L;
 
-        private final @NonNull Map<QName, Object> keyValues;
-
-        // Exposed for NIPv1
-        NodeIdentifierWithPredicates(final Map<QName, Object> keyValues, final QName node) {
+        NodeIdentifierWithPredicates(final QName node) {
             super(node);
-            this.keyValues = requireNonNull(keyValues);
         }
 
         public static @NonNull NodeIdentifierWithPredicates of(final QName node) {
-            return new NodeIdentifierWithPredicates(ImmutableMap.of(), node);
+            return new Regular(node, ImmutableMap.of());
         }
 
         public static @NonNull NodeIdentifierWithPredicates of(final QName node, final Map<QName, Object> keyValues) {
-            // Retains ImmutableMap for empty maps. For larger sizes uses a shared key set.
-            return new NodeIdentifierWithPredicates(ImmutableOffsetMap.unorderedCopyOf(keyValues), node);
+            return keyValues.size() == 1 ? new Singleton(node, keyValues)
+                    // Retains ImmutableMap for empty maps. For larger sizes uses a shared key set.
+                    : new Regular(node, ImmutableOffsetMap.unorderedCopyOf(keyValues));
         }
 
         public static @NonNull NodeIdentifierWithPredicates of(final QName node,
                 final ImmutableOffsetMap<QName, Object> keyValues) {
-            return new NodeIdentifierWithPredicates(keyValues, node);
+            return keyValues.size() == 1 ? new Singleton(node, keyValues) : new Regular(node, keyValues);
         }
 
         public static @NonNull NodeIdentifierWithPredicates of(final QName node,
                 final SharedSingletonMap<QName, Object> keyValues) {
-            return new NodeIdentifierWithPredicates(keyValues, node);
+            return new Regular(node, keyValues);
         }
 
         public static @NonNull NodeIdentifierWithPredicates of(final QName node, final QName key, final Object value) {
-            return of(node, SharedSingletonMap.unorderedOf(key, value));
+            return new Singleton(node, key, value);
         }
 
         /**
@@ -609,9 +690,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @return Predicate set.
          */
         @Beta
-        public @NonNull Set<Entry<QName, Object>> entrySet() {
-            return keyValues.entrySet();
-        }
+        public abstract @NonNull Set<Entry<QName, Object>> entrySet();
 
         /**
          * Return the predicate key in the iteration order of {@link #entrySet()}.
@@ -619,9 +698,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @return Predicate values.
          */
         @Beta
-        public @NonNull Set<QName> keySet() {
-            return keyValues.keySet();
-        }
+        public abstract @NonNull Set<QName> keySet();
 
         /**
          * Return the predicate values in the iteration order of {@link #entrySet()}.
@@ -629,23 +706,18 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @return Predicate values.
          */
         @Beta
-        public @NonNull Collection<Object> values() {
-            return keyValues.values();
-        }
+        public abstract @NonNull Collection<Object> values();
 
         /**
          * Return the number of predicates present.
          *
-         * @return Thee number of predicates present.
+         * @return The number of predicates present.
          */
         @Beta
-        public int size() {
-            return keyValues.size();
-        }
+        public abstract int size();
 
         /**
-         * A Map-like view of this identifier's predicates. While this method is deprecated, it is preferred to
-         * {@link #getKeyValues()}. The view is expected to be stable and effectively-immutable.
+         * A Map-like view of this identifier's predicates. The view is expected to be stable and effectively-immutable.
          *
          * @return Map of predicates.
          * @deprecated This method in a provisional one. It can be used in the code base, but users requiring it should
@@ -657,9 +729,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         @Deprecated
         // FIXME: 4.0.0: evaluate the real usefulness of this. The problem here is Map.hashCode() and Map.equals(),
         //               which limits our options.
-        public @NonNull Map<QName, Object> asMap() {
-            return keyValues;
-        }
+        public abstract @NonNull Map<QName, Object> asMap();
 
         @Override
         protected int hashCodeImpl() {
@@ -667,7 +737,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             int result = super.hashCodeImpl();
             result = prime * result;
 
-            for (Entry<QName, Object> entry : keyValues.entrySet()) {
+            for (Entry<QName, Object> entry : entrySet()) {
                 // FIXME: 4.0.0: key and value expected to be non-null here
                 result += Objects.hashCode(entry.getKey()) + YangInstanceIdentifier.hashCode(entry.getValue());
             }
@@ -687,11 +757,11 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             if (keyValues == otherKeyValues) {
                 return true;
             }
-            if (keyValues.size() != otherKeyValues.size()) {
+            if (size() != size()) {
                 return false;
             }
 
-            for (Entry<QName, Object> entry : keyValues.entrySet()) {
+            for (Entry<QName, Object> entry : entrySet()) {
                 if (!otherKeyValues.containsKey(entry.getKey())
                         || !Objects.deepEquals(entry.getValue(), otherKeyValues.get(entry.getKey()))) {
 
