@@ -604,19 +604,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         /**
-         * Return predicates as a Map.
-         *
-         * @return Predicate map.
-         * @deprecated Map view is actively discouraged and should be considered deprecated. For replacement, please
-         *             see {@link #keySet()}, #entrySet()}, {@link #values()} and {@link #size()}. As a last resort,
-         *             please migrate to {@link #asMap()}.
-         */
-        @Deprecated
-        public @NonNull Map<QName, Object> getKeyValues() {
-            return keyValues;
-        }
-
-        /**
          * Return the set of predicates keys and values. Keys are guaranteeed to be unique.
          *
          * @return Predicate set.
@@ -667,8 +654,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         /**
-         * A Map-like view of this identifier's predicates. While this method is deprecated, it is preferred to
-         * {@link #getKeyValues()}. The view is expected to be stable and effectively-immutable.
+         * A Map-like view of this identifier's predicates. The view is expected to be stable and effectively-immutable.
          *
          * @return Map of predicates.
          * @deprecated This method in a provisional one. It can be used in the code base, but users requiring it should
