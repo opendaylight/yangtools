@@ -23,6 +23,7 @@ import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,6 +45,7 @@ import org.opendaylight.yangtools.concepts.Path;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.SharedSingletonMap;
+import org.opendaylight.yangtools.util.SingletonSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
@@ -567,38 +569,155 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * Composite path argument identifying a {@link org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode} leaf
      * overall data tree.
      */
-    public static final class NodeIdentifierWithPredicates extends AbstractPathArgument {
+    public abstract static class NodeIdentifierWithPredicates extends AbstractPathArgument {
+        private static final class Singleton extends NodeIdentifierWithPredicates {
+            private static final long serialVersionUID = 1L;
+
+            private final @NonNull QName key;
+            private final @NonNull Object value;
+
+            Singleton(final QName node, final QName key, final Object value) {
+                super(node);
+                this.key = requireNonNull(key);
+                this.value = requireNonNull(value);
+            }
+
+            @Override
+            public SingletonSet<Entry<QName, Object>> entrySet() {
+                return SingletonSet.of(new SimpleImmutableEntry<>(key, value));
+            }
+
+            @Override
+            public SingletonSet<QName> keySet() {
+                return SingletonSet.of(key);
+            }
+
+            @Override
+            public SingletonSet<Object> values() {
+                return SingletonSet.of(value);
+            }
+
+            @Override
+            public int size() {
+                return 1;
+            }
+
+            @Override
+            public ImmutableMap<QName, Object> asMap() {
+                return ImmutableMap.of(key, value);
+            }
+
+            @Override
+            boolean equalMapping(final NodeIdentifierWithPredicates other) {
+                final Singleton single = (Singleton) other;
+                return key.equals(single.key) && Objects.deepEquals(value, single.value);
+            }
+
+            @Override
+            Object keyValue(final QName qname) {
+                return key.equals(qname) ? value : null;
+            }
+        }
+
+        private static final class Regular extends NodeIdentifierWithPredicates {
+            private static final long serialVersionUID = 1L;
+
+            private final @NonNull Map<QName, Object> keyValues;
+
+            Regular(final QName node, final Map<QName, Object> keyValues) {
+                super(node);
+                this.keyValues = requireNonNull(keyValues);
+            }
+
+            @Override
+            public Set<Entry<QName, Object>> entrySet() {
+                return keyValues.entrySet();
+            }
+
+            @Override
+            public Set<QName> keySet() {
+                return keyValues.keySet();
+            }
+
+            @Override
+            public Collection<Object> values() {
+                return keyValues.values();
+            }
+
+            @Override
+            public int size() {
+                return keyValues.size();
+            }
+
+            @Override
+            public Map<QName, Object> asMap() {
+                return keyValues;
+            }
+
+            @Override
+            Object keyValue(final QName qname) {
+                return keyValues.get(qname);
+            }
+
+            @Override
+            boolean equalMapping(final NodeIdentifierWithPredicates other) {
+                final Map<QName, Object> otherKeyValues = ((Regular) other).keyValues;
+                // TODO: benchmark to see if just calling equals() on the two maps is not faster
+                if (keyValues == otherKeyValues) {
+                    return true;
+                }
+                if (keyValues.size() != otherKeyValues.size()) {
+                    return false;
+                }
+
+                for (Entry<QName, Object> entry : entrySet()) {
+                    final Object otherValue = otherKeyValues.get(entry.getKey());
+                    if (otherValue == null || !Objects.deepEquals(entry.getValue(), otherValue)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
         private static final long serialVersionUID = -4787195606494761540L;
 
-        private final @NonNull Map<QName, Object> keyValues;
-
-        // Exposed for NIPv1
-        NodeIdentifierWithPredicates(final Map<QName, Object> keyValues, final QName node) {
+        NodeIdentifierWithPredicates(final QName node) {
             super(node);
-            this.keyValues = requireNonNull(keyValues);
         }
 
         public static @NonNull NodeIdentifierWithPredicates of(final QName node) {
-            return new NodeIdentifierWithPredicates(ImmutableMap.of(), node);
+            return new Regular(node, ImmutableMap.of());
+        }
+
+        public static @NonNull NodeIdentifierWithPredicates of(final QName node, final QName key, final Object value) {
+            return new Singleton(node, key, value);
+        }
+
+        public static @NonNull NodeIdentifierWithPredicates of(final QName node, final Entry<QName, Object> entry) {
+            return of(node, entry.getKey(), entry.getValue());
         }
 
         public static @NonNull NodeIdentifierWithPredicates of(final QName node, final Map<QName, Object> keyValues) {
-            // Retains ImmutableMap for empty maps. For larger sizes uses a shared key set.
-            return new NodeIdentifierWithPredicates(ImmutableOffsetMap.unorderedCopyOf(keyValues), node);
+            return keyValues.size() == 1 ? of(keyValues, node)
+                    // Retains ImmutableMap for empty maps. For larger sizes uses a shared key set.
+                    : new Regular(node, ImmutableOffsetMap.unorderedCopyOf(keyValues));
         }
 
         public static @NonNull NodeIdentifierWithPredicates of(final QName node,
                 final ImmutableOffsetMap<QName, Object> keyValues) {
-            return new NodeIdentifierWithPredicates(keyValues, node);
+            return keyValues.size() == 1 ? of(keyValues, node) : new Regular(node, keyValues);
         }
 
+        @Deprecated
         public static @NonNull NodeIdentifierWithPredicates of(final QName node,
                 final SharedSingletonMap<QName, Object> keyValues) {
-            return new NodeIdentifierWithPredicates(keyValues, node);
+            return of(node, keyValues.getEntry());
         }
 
-        public static @NonNull NodeIdentifierWithPredicates of(final QName node, final QName key, final Object value) {
-            return of(node, SharedSingletonMap.unorderedOf(key, value));
+        private static @NonNull NodeIdentifierWithPredicates of(final Map<QName, Object> keyValues, final QName node) {
+            return of(node, keyValues.entrySet().iterator().next());
         }
 
         /**
@@ -607,9 +726,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @return Predicate set.
          */
         @Beta
-        public @NonNull Set<Entry<QName, Object>> entrySet() {
-            return keyValues.entrySet();
-        }
+        public abstract @NonNull Set<Entry<QName, Object>> entrySet();
 
         /**
          * Return the predicate key in the iteration order of {@link #entrySet()}.
@@ -617,9 +734,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @return Predicate values.
          */
         @Beta
-        public @NonNull Set<QName> keySet() {
-            return keyValues.keySet();
-        }
+        public abstract @NonNull Set<QName> keySet();
 
         /**
          * Return the predicate values in the iteration order of {@link #entrySet()}.
@@ -627,29 +742,25 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @return Predicate values.
          */
         @Beta
-        public @NonNull Collection<Object> values() {
-            return keyValues.values();
+        public abstract @NonNull Collection<Object> values();
+
+        @Beta
+        public final @Nullable Object getValue(final QName key) {
+            return keyValue(requireNonNull(key));
         }
 
         @Beta
-        public @Nullable Object getValue(final QName key) {
-            return keyValues.get(requireNonNull(key));
-        }
-
-        @Beta
-        public <T> @Nullable T getValue(final QName key, final Class<T> valueClass) {
+        public final <T> @Nullable T getValue(final QName key, final Class<T> valueClass) {
             return valueClass.cast(getValue(key));
         }
 
         /**
          * Return the number of predicates present.
          *
-         * @return Thee number of predicates present.
+         * @return The number of predicates present.
          */
         @Beta
-        public int size() {
-            return keyValues.size();
-        }
+        public abstract int size();
 
         /**
          * A Map-like view of this identifier's predicates. The view is expected to be stable and effectively-immutable.
@@ -664,63 +775,39 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         @Deprecated
         // FIXME: 4.0.0: evaluate the real usefulness of this. The problem here is Map.hashCode() and Map.equals(),
         //               which limits our options.
-        public @NonNull Map<QName, Object> asMap() {
-            return keyValues;
-        }
+        public abstract @NonNull Map<QName, Object> asMap();
 
         @Override
-        protected int hashCodeImpl() {
-            final int prime = 31;
-            int result = super.hashCodeImpl();
-            result = prime * result;
-
-            for (Entry<QName, Object> entry : keyValues.entrySet()) {
-                // FIXME: 4.0.0: key and value expected to be non-null here
-                result += Objects.hashCode(entry.getKey()) + YangInstanceIdentifier.hashCode(entry.getValue());
+        protected final int hashCodeImpl() {
+            int result = 31 * super.hashCodeImpl();
+            for (Entry<QName, Object> entry : entrySet()) {
+                result += entry.getKey().hashCode() + YangInstanceIdentifier.hashCode(entry.getValue());
             }
             return result;
         }
 
         @Override
         @SuppressWarnings("checkstyle:equalsHashCode")
-        public boolean equals(final Object obj) {
-            if (!super.equals(obj)) {
-                return false;
-            }
+        public final boolean equals(final Object obj) {
+            return super.equals(obj) && equalMapping((NodeIdentifierWithPredicates) obj);
+        }
 
-            final Map<QName, Object> otherKeyValues = ((NodeIdentifierWithPredicates) obj).keyValues;
+        abstract boolean equalMapping(NodeIdentifierWithPredicates other);
 
-            // TODO: benchmark to see if just calling equals() on the two maps is not faster
-            if (keyValues == otherKeyValues) {
-                return true;
-            }
-            if (keyValues.size() != otherKeyValues.size()) {
-                return false;
-            }
+        abstract @Nullable Object keyValue(@NonNull QName qname);
 
-            for (Entry<QName, Object> entry : keyValues.entrySet()) {
-                if (!otherKeyValues.containsKey(entry.getKey())
-                        || !Objects.deepEquals(entry.getValue(), otherKeyValues.get(entry.getKey()))) {
-
-                    return false;
-                }
-            }
-
-            return true;
+        @Override
+        public final String toString() {
+            return super.toString() + '[' + asMap() + ']';
         }
 
         @Override
-        public String toString() {
-            return super.toString() + '[' + keyValues + ']';
+        public final String toRelativeString(final PathArgument previous) {
+            return super.toRelativeString(previous) + '[' + asMap() + ']';
         }
 
         @Override
-        public String toRelativeString(final PathArgument previous) {
-            return super.toRelativeString(previous) + '[' + keyValues + ']';
-        }
-
-        @Override
-        Object writeReplace() {
+        final Object writeReplace() {
             return new NIPv2(this);
         }
     }
