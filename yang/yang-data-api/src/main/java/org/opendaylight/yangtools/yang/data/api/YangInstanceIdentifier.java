@@ -581,53 +581,26 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         public static @NonNull NodeIdentifierWithPredicates of(final QName node) {
-            return new NodeIdentifierWithPredicates(node);
-        }
-
-        @Deprecated
-        public NodeIdentifierWithPredicates(final QName node) {
-            super(node);
-            this.keyValues = ImmutableMap.of();
+            return new NodeIdentifierWithPredicates(ImmutableMap.of(), node);
         }
 
         public static @NonNull NodeIdentifierWithPredicates of(final QName node, final Map<QName, Object> keyValues) {
-            return new NodeIdentifierWithPredicates(node, keyValues);
-        }
-
-        @Deprecated
-        public NodeIdentifierWithPredicates(final QName node, final Map<QName, Object> keyValues) {
-            super(node);
             // Retains ImmutableMap for empty maps. For larger sizes uses a shared key set.
-            this.keyValues = ImmutableOffsetMap.unorderedCopyOf(keyValues);
+            return new NodeIdentifierWithPredicates(ImmutableOffsetMap.unorderedCopyOf(keyValues), node);
         }
 
         public static @NonNull NodeIdentifierWithPredicates of(final QName node,
                 final ImmutableOffsetMap<QName, Object> keyValues) {
-            return new NodeIdentifierWithPredicates(node, keyValues);
-        }
-
-        @Deprecated
-        public NodeIdentifierWithPredicates(final QName node, final ImmutableOffsetMap<QName, Object> keyValues) {
-            this(keyValues, node);
+            return new NodeIdentifierWithPredicates(keyValues, node);
         }
 
         public static @NonNull NodeIdentifierWithPredicates of(final QName node,
                 final SharedSingletonMap<QName, Object> keyValues) {
-            return new NodeIdentifierWithPredicates(node, keyValues);
-        }
-
-        @Deprecated
-        public NodeIdentifierWithPredicates(final QName node, final SharedSingletonMap<QName, Object> keyValues) {
-            this(keyValues, node);
+            return new NodeIdentifierWithPredicates(keyValues, node);
         }
 
         public static @NonNull NodeIdentifierWithPredicates of(final QName node, final QName key, final Object value) {
             return of(node, SharedSingletonMap.unorderedOf(key, value));
-        }
-
-        @Deprecated
-        public NodeIdentifierWithPredicates(final QName node, final QName key, final Object value) {
-            this(node, SharedSingletonMap.unorderedOf(key, value));
         }
 
         /**
