@@ -143,9 +143,13 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
         return new Unordered<>(e.getKey(), e.getValue());
     }
 
+    public final Entry<K, V> getEntry() {
+        return new SimpleImmutableEntry<>(keySet.getElement(), value);
+    }
+
     @Override
     public final @NonNull SingletonSet<Entry<K, V>> entrySet() {
-        return SingletonSet.of(new SimpleImmutableEntry<>(keySet.getElement(), value));
+        return SingletonSet.of(getEntry());
     }
 
     @Override
