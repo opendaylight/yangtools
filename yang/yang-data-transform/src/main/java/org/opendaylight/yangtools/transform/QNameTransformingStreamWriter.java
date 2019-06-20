@@ -186,9 +186,9 @@ public abstract class QNameTransformingStreamWriter extends ForwardingNormalized
 
     private NodeIdentifierWithPredicates transform(final NodeIdentifierWithPredicates identifier) {
         Map<QName, Object> keyValues = new HashMap<>();
-        for (Map.Entry<QName, Object> original : identifier.getKeyValues().entrySet()) {
+        for (Map.Entry<QName, Object> original : identifier.entrySet()) {
             keyValues.put(transform(original.getKey()), original.getValue());
         }
-        return new NodeIdentifierWithPredicates(transform(identifier.getNodeType()), keyValues);
+        return NodeIdentifierWithPredicates.of(transform(identifier.getNodeType()), keyValues);
     }
 }
