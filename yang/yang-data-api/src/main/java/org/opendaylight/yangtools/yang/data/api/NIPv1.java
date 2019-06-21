@@ -19,7 +19,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 
 /**
  * Externalizable proxy for {@link NodeIdentifierWithPredicates}.
+ *
+ * @deprecated Since 3.0.3 in favor of {@link NIPv2}.
  */
+@Deprecated
 final class NIPv1 implements Externalizable {
     private static final long serialVersionUID = 1L;
 
