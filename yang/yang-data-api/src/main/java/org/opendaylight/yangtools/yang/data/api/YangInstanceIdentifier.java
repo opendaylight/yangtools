@@ -793,7 +793,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         final Object writeReplace() {
-            return new NIPv1(this);
+            return new NIPv2(this);
         }
     }
 
