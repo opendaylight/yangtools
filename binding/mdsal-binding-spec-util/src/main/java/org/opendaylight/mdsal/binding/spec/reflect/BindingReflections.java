@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,6 +68,15 @@ public final class BindingReflections {
             .weakKeys()
             .expireAfterAccess(EXPIRATION_TIME, TimeUnit.SECONDS)
             .build(new ClassToQNameLoader());
+
+    private static final LoadingCache<ClassLoader, ImmutableSet<YangModuleInfo>> MODULE_INFO_CACHE =
+            CacheBuilder.newBuilder().weakKeys().weakValues().build(
+                new CacheLoader<ClassLoader, ImmutableSet<YangModuleInfo>>() {
+                    @Override
+                    public ImmutableSet<YangModuleInfo> load(final ClassLoader key) {
+                        return loadModuleInfos(key);
+                    }
+                });
 
     private BindingReflections() {
         throw new UnsupportedOperationException("Utility class.");
@@ -331,9 +341,10 @@ public final class BindingReflections {
      * When {@link YangModuleInfo} is available, all dependencies are recursively collected into returning set by
      * collecting results of {@link YangModuleInfo#getImportedModules()}.
      *
-     * @param loader
-     *            Classloader for which {@link YangModuleInfo} should be
-     *            retrieved.
+     * <p>
+     * Consider using {@link #cacheModuleInfos(ClassLoader)} if the classloader is known to be immutable.
+     *
+     * @param loader Classloader for which {@link YangModuleInfo} should be retrieved.
      * @return Set of {@link YangModuleInfo} available for supplied classloader.
      */
     public static ImmutableSet<YangModuleInfo> loadModuleInfos(final ClassLoader loader) {
@@ -346,6 +357,27 @@ public final class BindingReflections {
             collectYangModuleInfo(bindingProvider.getModuleInfo(), moduleInfoSet);
         }
         return moduleInfoSet.build();
+    }
+
+    /**
+     * Loads {@link YangModuleInfo} instances available on supplied {@link ClassLoader}, assuming the set of available
+     * information does not change. Subsequent accesses may return cached values.
+     *
+     * <p>
+     * {@link YangModuleInfo} are discovered using {@link ServiceLoader} for {@link YangModelBindingProvider}.
+     * {@link YangModelBindingProvider} are simple classes which holds only pointers to actual instance
+     * {@link YangModuleInfo}.
+     *
+     * <p>
+     * When {@link YangModuleInfo} is available, all dependencies are recursively collected into returning set by
+     * collecting results of {@link YangModuleInfo#getImportedModules()}.
+     *
+     * @param loader Class loader for which {@link YangModuleInfo} should be retrieved.
+     * @return Set of {@link YangModuleInfo} available for supplied classloader.
+     */
+    @Beta
+    public static ImmutableSet<YangModuleInfo> cacheModuleInfos(final ClassLoader loader) throws ExecutionException {
+        return MODULE_INFO_CACHE.get(loader);
     }
 
     private static void collectYangModuleInfo(final YangModuleInfo moduleInfo,
