@@ -135,6 +135,12 @@ module types {
          }
     }
 
+    leaf leaf-leafref-deref {
+      type leafref {
+        path "deref(../container-test)/leaf-test";
+      }
+    }
+
     container container-test {
         leaf leaf-test {
             type int8;
