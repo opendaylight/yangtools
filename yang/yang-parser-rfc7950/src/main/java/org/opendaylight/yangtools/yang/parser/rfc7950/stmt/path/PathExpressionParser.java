@@ -20,6 +20,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathParser.Absolute_pathContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathParser.Deref_exprContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathParser.Descendant_pathContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathParser.Node_identifierContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathParser.Path_argContext;
@@ -77,15 +78,32 @@ class PathExpressionParser {
 
         final ParseTree childPath = path.getChild(0);
         final YangLocationPath location;
-        if (childPath instanceof Absolute_pathContext) {
-            location = parseAbsolute(ctx, pathArg, (Absolute_pathContext) childPath);
-        } else if (childPath instanceof Relative_pathContext) {
-            location = parseRelative(ctx, pathArg, (Relative_pathContext) childPath);
+        if (childPath.getChild(0) instanceof Absolute_pathContext) {
+            location = parseAbsolute(ctx, pathArg, (Absolute_pathContext) childPath.getChild(0));
+        } else if (childPath.getChild(0) instanceof Relative_pathContext) {
+            location = parseRelative(ctx, pathArg, (Relative_pathContext) childPath.getChild(0));
+        } else if (childPath instanceof Deref_exprContext) {
+            location = parseDeref(ctx, pathArg, (Deref_exprContext) childPath);
         } else {
             throw new IllegalStateException("Unsupported child " + childPath);
         }
 
         return new ParsedPathExpression(location, pathArg);
+    }
+
+    private static Relative parseDeref(final StmtContext<?, ?, ?> ctx, final String pathArg,
+                                      final Deref_exprContext deref) {
+        final List<Step> steps = new ArrayList<>();
+
+        final int relativeChildren = deref.getChildCount();
+        verify(relativeChildren % 2 == 1, "Unexpected child count %s", relativeChildren);
+        for (int i = 0; i < relativeChildren / 2; ++i) {
+            steps.add(YangXPathAxis.PARENT.asStep());
+        }
+        final Relative_pathContext descendant = getChild(deref, relativeChildren - 1,
+                Relative_pathContext.class);
+
+        return parseRelative(ctx, pathArg, descendant, steps);
     }
 
     private static Absolute parseAbsolute(final StmtContext<?, ?, ?> ctx, final String pathArg,
@@ -96,15 +114,19 @@ class PathExpressionParser {
     }
 
     private static Relative parseRelative(final StmtContext<?, ?, ?> ctx, final String pathArg,
-            final Relative_pathContext relative) {
+                                          final Relative_pathContext relative) {
         final List<Step> steps = new ArrayList<>();
-
         final int relativeChildren = relative.getChildCount();
         verify(relativeChildren % 2 == 1, "Unexpected child count %s", relativeChildren);
         for (int i = 0; i < relativeChildren / 2; ++i) {
             steps.add(YangXPathAxis.PARENT.asStep());
         }
+        return parseRelative(ctx, pathArg, relative, steps);
+    }
 
+    private static Relative parseRelative(final StmtContext<?, ?, ?> ctx, final String pathArg,
+            final Relative_pathContext relative, final List<Step> steps) {
+        final int relativeChildren = relative.getChildCount();
         final Descendant_pathContext descendant = getChild(relative, relativeChildren - 1,
             Descendant_pathContext.class);
         final Node_identifierContext qname = getChild(descendant, 0, Node_identifierContext.class);

@@ -135,6 +135,12 @@ module types {
          }
     }
 
+   leaf flavor {
+     type leafref {
+       path "deref(../../../ext-cpd/int-virtual-link-desc)/../desc-flavor/id";
+     }
+   }
+
     container container-test {
         leaf leaf-test {
             type int8;
