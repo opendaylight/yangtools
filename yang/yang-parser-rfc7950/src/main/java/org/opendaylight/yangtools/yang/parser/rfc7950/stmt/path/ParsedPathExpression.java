@@ -14,7 +14,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.util.AbstractPathExpression;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 
-final class ParsedPathExpression extends AbstractPathExpression {
+class ParsedPathExpression extends AbstractPathExpression {
     private final @NonNull YangLocationPath location;
 
     ParsedPathExpression(final YangLocationPath location, final String originalString) {
@@ -23,7 +23,7 @@ final class ParsedPathExpression extends AbstractPathExpression {
     }
 
     @Override
-    public YangLocationPath getLocation() {
+    public final YangLocationPath getLocation() {
         return location;
     }
 
