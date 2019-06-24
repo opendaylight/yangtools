@@ -322,6 +322,33 @@ public class EffectiveStatementTypeTest {
     }
 
     @Test
+    public void testLeafrefWithDeref() {
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-leafref-deref"));
+        assertNotNull(currentLeaf.getType());
+
+        final LeafrefTypeDefinition leafrefEff = ((LeafrefSpecificationEffectiveStatement)
+                ((LeafEffectiveStatement) currentLeaf).effectiveSubstatements().iterator().next())
+                .getTypeDefinition();
+
+        assertEquals("deref(../container-test)/leaf-test",
+                leafrefEff.getPathStatement().getOriginalString());
+        assertNull(leafrefEff.getBaseType());
+        assertEquals(Optional.empty(), leafrefEff.getUnits());
+        assertEquals(Optional.empty(), leafrefEff.getDefaultValue());
+        assertNotNull(leafrefEff.toString());
+        assertEquals("leafref", leafrefEff.getQName().getLocalName());
+        assertEquals(Status.CURRENT, leafrefEff.getStatus());
+        assertNotNull(leafrefEff.getUnknownSchemaNodes());
+        assertEquals("leafref", leafrefEff.getPath().getLastComponent().getLocalName());
+        assertFalse(leafrefEff.getDescription().isPresent());
+        assertFalse(leafrefEff.getReference().isPresent());
+        assertNotNull(leafrefEff.hashCode());
+        assertFalse(leafrefEff.equals(null));
+        assertFalse(leafrefEff.equals("test"));
+        assertTrue(leafrefEff.equals(leafrefEff));
+    }
+
+    @Test
     public void testIntAll() {
         currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-int8"));
         assertNotNull(currentLeaf.getType());
