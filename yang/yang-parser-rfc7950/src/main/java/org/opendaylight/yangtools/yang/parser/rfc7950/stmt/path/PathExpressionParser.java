@@ -75,7 +75,7 @@ class PathExpressionParser {
         final Path_argContext path = SourceExceptionParser.parse(lexer, parser, parser::path_arg,
             ctx.getStatementSourceReference());
 
-        final ParseTree childPath = path.getChild(0);
+        final ParseTree childPath = path.getChild(0).getChild(0);
         final YangLocationPath location;
         if (childPath instanceof Absolute_pathContext) {
             location = parseAbsolute(ctx, pathArg, (Absolute_pathContext) childPath);
