@@ -10,9 +10,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.util.AbstractPathExpression;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Relative;
 
 final class UnparsedPathExpression extends AbstractPathExpression {
     private final RuntimeException cause;
@@ -31,11 +33,20 @@ final class UnparsedPathExpression extends AbstractPathExpression {
 
     @Override
     public YangLocationPath getLocation() {
-        throw new UnsupportedOperationException("Expression '" + getOriginalString() + "' was not parsed", cause);
+        throw newUOE();
+    }
+
+    @Override
+    public Optional<Relative> getDerefArgument() {
+        throw newUOE();
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         return super.addToStringAttributes(helper.add("absolute", absolute)).add("cause", cause);
+    }
+
+    private UnsupportedOperationException newUOE() {
+        return new UnsupportedOperationException("Expression '" + getOriginalString() + "' was not parsed", cause);
     }
 }

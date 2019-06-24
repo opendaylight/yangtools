@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangFunction;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.QNameStep;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Relative;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
 
@@ -55,6 +57,15 @@ public interface PathExpression extends Immutable {
      *         strongly encouraged to perform proper parsing.
      */
     YangLocationPath getLocation();
+
+    /**
+     * Returns the initial node dereference, if present.
+     *
+     * @return location path to dereference and use as path prefix
+     */
+    default Optional<Relative> getDerefArgument() {
+        return Optional.empty();
+    }
 
     /**
      * Returns <code>true</code> if the XPapth starts in root of YANG model, otherwise returns <code>false</code>.
