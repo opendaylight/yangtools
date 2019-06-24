@@ -10,25 +10,25 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.util.AbstractPathExpression;
-import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 
+@NonNullByDefault
 final class ParsedPathExpression extends AbstractPathExpression {
-    private final @NonNull YangLocationPath location;
+    private final Steps steps;
 
-    ParsedPathExpression(final YangLocationPath location, final String originalString) {
+    ParsedPathExpression(final Steps steps, final String originalString) {
         super(originalString);
-        this.location = requireNonNull(location);
+        this.steps = requireNonNull(steps);
     }
 
     @Override
-    public YangLocationPath getLocation() {
-        return location;
+    public Steps getSteps() {
+        return steps;
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return super.addToStringAttributes(helper.add("location", location));
+        return super.addToStringAttributes(helper.add("steps", steps));
     }
 }

@@ -7,13 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangFunction;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.QNameStep;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Relative;
+import org.opendaylight.yangtools.yang.xpath.api.YangPathExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
 
@@ -39,6 +46,93 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
 @Beta
 @NonNullByDefault
 public interface PathExpression extends Immutable {
+    abstract class Steps {
+        Steps() {
+            // Prevent external subclassing
+        }
+
+        @Override
+        public abstract int hashCode();
+
+        @Override
+        public abstract boolean equals(@Nullable Object obj);
+
+        @Override
+        public final String toString() {
+            return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+        }
+
+        abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
+    }
+
+    final class LocationPathSteps extends Steps {
+        private final YangLocationPath locationPath;
+
+        public LocationPathSteps(final YangLocationPath locationPath) {
+            this.locationPath = requireNonNull(locationPath);
+        }
+
+        public YangLocationPath getLocationPath() {
+            return locationPath;
+        }
+
+        @Override
+        public int hashCode() {
+            return locationPath.hashCode();
+        }
+
+        @Override
+        public boolean equals(final @Nullable Object obj) {
+            return this == obj
+                    || obj instanceof LocationPathSteps && locationPath.equals(((LocationPathSteps) obj).locationPath);
+        }
+
+        @Override
+        ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+            return helper.add("locationPath", locationPath);
+        }
+    }
+
+    final class DerefSteps extends Steps {
+        private final Relative derefArgument;
+        private final Relative relativePath;
+
+        public DerefSteps(final Relative derefArgument, final Relative relativePath) {
+            this.derefArgument = requireNonNull(derefArgument);
+            this.relativePath = requireNonNull(relativePath);
+        }
+
+        public Relative getDerefArgument() {
+            return derefArgument;
+        }
+
+        public Relative getRelativePath() {
+            return relativePath;
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * derefArgument.hashCode() + relativePath.hashCode();
+        }
+
+        @Override
+        public boolean equals(@Nullable final Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof DerefSteps)) {
+                return false;
+            }
+            final DerefSteps other = (DerefSteps) obj;
+            return derefArgument.equals(other.derefArgument) && relativePath.equals(other.relativePath);
+        }
+
+        @Override
+        ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+            return helper.add("derefArgument", derefArgument).add("relativePath", relativePath);
+        }
+    }
+
     /**
      * Returns the path expression formatted string as is defined in model. For example:
      * {@code /prefix:container/prefix:container::cond[when()=foo]/prefix:leaf}
@@ -48,13 +142,14 @@ public interface PathExpression extends Immutable {
     String getOriginalString();
 
     /**
-     * Return the {@link YangLocationPath} of this expression.
+     * Return the path of this expression, which can either be a {@link YangLocationPath} (compliant to RFC7950) or
+     * a {@link YangPathExpr} with filter being an invocation of {@link YangFunction#DEREF}.
      *
-     * @return The location path
+     * @return The path's steps
      * @throws UnsupportedOperationException if the implementation has not parsed the string. Implementations are
      *         strongly encouraged to perform proper parsing.
      */
-    YangLocationPath getLocation();
+    Steps getSteps();
 
     /**
      * Returns <code>true</code> if the XPapth starts in root of YANG model, otherwise returns <code>false</code>.
@@ -62,6 +157,7 @@ public interface PathExpression extends Immutable {
      * @return <code>true</code> if the XPapth starts in root of YANG model, otherwise returns <code>false</code>
      */
     default boolean isAbsolute() {
-        return getLocation().isAbsolute();
+        final Steps steps = getSteps();
+        return steps instanceof LocationPathSteps && ((LocationPathSteps) steps).getLocationPath().isAbsolute();
     }
 }

@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 
 /**
  * A simple XPathExpression implementation.
@@ -22,20 +23,21 @@ import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 @Deprecated
 @NonNullByDefault
 public final class PathExpressionImpl extends AbstractPathExpression {
-    private final @Nullable YangLocationPath location;
+    private final @Nullable Steps steps;
     private final boolean absolute;
 
     @SuppressFBWarnings(value = "NP_STORE_INTO_NONNULL_FIELD", justification = "Non-grok on SpotBugs part")
     public PathExpressionImpl(final String xpath, final boolean absolute) {
         super(xpath);
         this.absolute = absolute;
-        this.location = null;
+        this.steps = null;
     }
 
-    public PathExpressionImpl(final String xpath, final YangLocationPath location) {
+    public PathExpressionImpl(final String xpath, final Steps steps) {
         super(xpath);
-        this.absolute = location.isAbsolute();
-        this.location = location;
+        this.steps = requireNonNull(steps);
+        this.absolute = steps instanceof LocationPathSteps
+                && ((LocationPathSteps) steps).getLocationPath().isAbsolute();
     }
 
     @Override
@@ -44,16 +46,16 @@ public final class PathExpressionImpl extends AbstractPathExpression {
     }
 
     @Override
-    public YangLocationPath getLocation() {
-        final YangLocationPath loc = location;
+    public Steps getSteps() {
+        final Steps loc = steps;
         if (loc == null) {
-            throw new UnsupportedOperationException("Location has not been provided");
+            throw new UnsupportedOperationException("Steps have not been provided");
         }
         return loc;
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return super.addToStringAttributes(helper.add("absolute", absolute).add("location", location));
+        return super.addToStringAttributes(helper.add("absolute", absolute).add("steps", steps));
     }
 }
