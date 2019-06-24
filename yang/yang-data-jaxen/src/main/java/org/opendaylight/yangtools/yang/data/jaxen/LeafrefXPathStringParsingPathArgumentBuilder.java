@@ -126,7 +126,7 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
 
             keyValues.put(key, keyValue);
         }
-        return new NodeIdentifierWithPredicates(name, keyValues.build());
+        return NodeIdentifierWithPredicates.of(name, keyValues.build());
     }
 
     private Object nextCurrentFunctionPathValue() {

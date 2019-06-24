@@ -168,7 +168,7 @@ public class EnumValueXPathFunctionTest {
 
         final MapNode alarmListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(ALARM))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(ALARM, SEVERITY, keyLeafValue))
+                        NodeIdentifierWithPredicates.of(ALARM, SEVERITY, keyLeafValue))
                         .withChild(ordinaryLeafNode).build()).build();
 
         final ContainerNode myContainerNode = Builders.containerBuilder().withNodeIdentifier(
@@ -181,7 +181,7 @@ public class EnumValueXPathFunctionTest {
         final ImmutableMap<QName, Object> keys = builder.put(SEVERITY, keyLeafValue).build();
 
         final YangInstanceIdentifier path = YangInstanceIdentifier.of(ALARM)
-                .node(new NodeIdentifierWithPredicates(ALARM, keys)).node(SEVERITY);
+                .node(NodeIdentifierWithPredicates.of(ALARM, keys)).node(SEVERITY);
         return path;
     }
 }

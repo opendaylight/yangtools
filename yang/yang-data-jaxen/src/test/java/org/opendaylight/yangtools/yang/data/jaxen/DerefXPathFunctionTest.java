@@ -182,14 +182,14 @@ public class DerefXPathFunctionTest {
     private static ContainerNode buildMyContainerNodeForIIdTest(final LeafNode<?> referencedLeafNode) {
         final Map<QName, Object> keyValues = ImmutableMap.of(KEY_LEAF_A, "key-value-a", KEY_LEAF_B, "key-value-b");
         final YangInstanceIdentifier iidPath = YangInstanceIdentifier.of(MY_CONTAINER).node(MY_LIST)
-                .node(new NodeIdentifierWithPredicates(MY_LIST, keyValues)).node(REFERENCED_LEAF);
+                .node(NodeIdentifierWithPredicates.of(MY_LIST, keyValues)).node(REFERENCED_LEAF);
 
         final LeafNode<?> iidLeafNode = Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(IID_LEAF))
                 .withValue(iidPath).build();
 
         final MapNode myListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(MY_LIST, keyValues))
+                        NodeIdentifierWithPredicates.of(MY_LIST, keyValues))
                         .withChild(iidLeafNode)
                         .withChild(referencedLeafNode).build())
                 .build();
@@ -202,7 +202,7 @@ public class DerefXPathFunctionTest {
     private static YangInstanceIdentifier buildPathToIIdLeafNode() {
         final Map<QName, Object> keyValues = ImmutableMap.of(KEY_LEAF_A, "key-value-a", KEY_LEAF_B, "key-value-b");
         final YangInstanceIdentifier path = YangInstanceIdentifier.of(MY_LIST)
-                .node(new NodeIdentifierWithPredicates(MY_LIST, keyValues)).node(IID_LEAF);
+                .node(NodeIdentifierWithPredicates.of(MY_LIST, keyValues)).node(IID_LEAF);
         return path;
     }
 
@@ -223,7 +223,7 @@ public class DerefXPathFunctionTest {
 
         final MapNode myListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(MY_LIST, keyValues))
+                        NodeIdentifierWithPredicates.of(MY_LIST, keyValues))
                         .withChild(referencedLeafNode).build())
                 .build();
 
@@ -261,7 +261,7 @@ public class DerefXPathFunctionTest {
 
         final MapNode myListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(MY_LIST, keyValues))
+                        NodeIdentifierWithPredicates.of(MY_LIST, keyValues))
                         .withChild(referencedLeafListNode).build())
                 .build();
 

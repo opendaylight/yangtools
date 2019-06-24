@@ -272,7 +272,7 @@ public class DerivedFromXPathFunctionTest {
 
         final MapNode myListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(MY_LIST, KEY_LEAF, "key-value"))
+                        NodeIdentifierWithPredicates.of(MY_LIST, KEY_LEAF, "key-value"))
                         .withChild(idrefLeafNode).build()).build();
 
         final ContainerNode myContainerNode = Builders.containerBuilder().withNodeIdentifier(
@@ -285,7 +285,7 @@ public class DerivedFromXPathFunctionTest {
         final ImmutableMap<QName, Object> keys = builder.put(KEY_LEAF, "key-value").build();
 
         final YangInstanceIdentifier path = YangInstanceIdentifier.of(MY_LIST)
-                .node(new NodeIdentifierWithPredicates(MY_LIST, keys)).node(IDREF_LEAF);
+                .node(NodeIdentifierWithPredicates.of(MY_LIST, keys)).node(IDREF_LEAF);
         return path;
     }
 }

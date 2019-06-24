@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.jaxen;
 
 import static org.junit.Assert.assertEquals;
@@ -36,6 +35,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathDocument;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathExpression;
@@ -182,14 +182,12 @@ public class JaxenTest {
             final Map<QName, Object> keys1 = new HashMap<>();
             keys1.put(leafAQName, "bar");
 
-            final YangInstanceIdentifier.NodeIdentifierWithPredicates mapEntryPath1 = new YangInstanceIdentifier
-                    .NodeIdentifierWithPredicates(listAQName , keys1);
+            final NodeIdentifierWithPredicates mapEntryPath1 = NodeIdentifierWithPredicates.of(listAQName , keys1);
 
             final Map<QName, Object> keys2 = new HashMap<>();
             keys2.put(leafBQName, "two");
 
-            final YangInstanceIdentifier.NodeIdentifierWithPredicates mapEntryPath2 = new YangInstanceIdentifier
-                    .NodeIdentifierWithPredicates(listBQName , keys2);
+            final NodeIdentifierWithPredicates mapEntryPath2 = NodeIdentifierWithPredicates.of(listBQName , keys2);
 
             testYangInstanceIdentifier = YangInstanceIdentifier.of(listAQName).node(mapEntryPath1)
                     .node(listBQName).node(mapEntryPath2).node(leafBQName);

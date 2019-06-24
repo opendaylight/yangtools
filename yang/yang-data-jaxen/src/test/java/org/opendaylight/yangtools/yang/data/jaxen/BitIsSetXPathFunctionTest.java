@@ -199,7 +199,7 @@ public class BitIsSetXPathFunctionTest {
 
         final MapNode myListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(MY_LIST, FLAGS, keyLeafValue))
+                        NodeIdentifierWithPredicates.of(MY_LIST, FLAGS, keyLeafValue))
                         .withChild(ordinaryLeafNode).build()).build();
 
         final ContainerNode myContainerNode = Builders.containerBuilder().withNodeIdentifier(
@@ -213,7 +213,7 @@ public class BitIsSetXPathFunctionTest {
         final ImmutableMap<QName, Object> keys = builder.put(FLAGS, keyLeafValue).build();
 
         final YangInstanceIdentifier path = YangInstanceIdentifier.of(MY_LIST)
-                .node(new NodeIdentifierWithPredicates(MY_LIST, keys)).node(FLAGS);
+                .node(NodeIdentifierWithPredicates.of(MY_LIST, keys)).node(FLAGS);
         return path;
     }
 }
