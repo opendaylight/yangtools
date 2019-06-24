@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -376,8 +375,8 @@ public final class BindingReflections {
      * @return Set of {@link YangModuleInfo} available for supplied classloader.
      */
     @Beta
-    public static ImmutableSet<YangModuleInfo> cacheModuleInfos(final ClassLoader loader) throws ExecutionException {
-        return MODULE_INFO_CACHE.get(loader);
+    public static ImmutableSet<YangModuleInfo> cacheModuleInfos(final ClassLoader loader) {
+        return MODULE_INFO_CACHE.getUnchecked(loader);
     }
 
     private static void collectYangModuleInfo(final YangModuleInfo moduleInfo,
