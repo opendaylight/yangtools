@@ -54,6 +54,10 @@ public class YangFunctionCallExpr implements YangExpr {
         return new YangFunctionCallExpr(name);
     }
 
+    public static YangFunctionCallExpr of(final QName name, final YangExpr argument) {
+        return new WithArgs(name, ImmutableList.of(argument));
+    }
+
     public static YangFunctionCallExpr of(final QName name, final List<YangExpr> arguments) {
         return arguments.isEmpty() ? of(name) : new WithArgs(name, arguments);
     }

@@ -97,7 +97,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     private final int hash;
 
     /**
-     * Cached legacy path, filled-in when {@link #getPath()} or {@link #getPathTowardsRoot()}
+     * Cached legacy path, filled-in when {@link #getSteps()} or {@link #getPathTowardsRoot()}
      * is invoked.
      */
     private volatile ImmutableList<QName> legacyPath;
