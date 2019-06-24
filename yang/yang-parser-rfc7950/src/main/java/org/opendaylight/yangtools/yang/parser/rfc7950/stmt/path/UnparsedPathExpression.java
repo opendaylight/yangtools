@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.opendaylight.yangtools.yang.model.util.AbstractPathExpression;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
-import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 
 final class UnparsedPathExpression extends AbstractPathExpression {
     private final RuntimeException cause;
@@ -30,7 +29,7 @@ final class UnparsedPathExpression extends AbstractPathExpression {
     }
 
     @Override
-    public YangLocationPath getLocation() {
+    public Steps getSteps() {
         throw new UnsupportedOperationException("Expression '" + getOriginalString() + "' was not parsed", cause);
     }
 
