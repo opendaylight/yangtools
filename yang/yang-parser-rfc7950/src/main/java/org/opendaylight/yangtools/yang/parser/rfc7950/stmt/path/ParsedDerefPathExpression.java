@@ -11,31 +11,26 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.util.AbstractPathExpression;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Relative;
 
-class ParsedPathExpression extends AbstractPathExpression {
-    private final @NonNull YangLocationPath location;
+@NonNullByDefault
+final class ParsedDerefPathExpression extends ParsedPathExpression {
+    private final Relative derefArgument;
 
-    ParsedPathExpression(final YangLocationPath location, final String originalString) {
-        super(originalString);
-        this.location = requireNonNull(location);
-    }
-
-    @Override
-    public final YangLocationPath getLocation() {
-        return location;
+    ParsedDerefPathExpression(final Relative derefArgument, final Relative location, final String originalString) {
+        super(location, originalString);
+        this.derefArgument = requireNonNull(derefArgument);
     }
 
     @Override
     public Optional<YangLocationPath> getDerefArgument() {
-        return Optional.empty();
+        return Optional.of(derefArgument);
     }
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return super.addToStringAttributes(helper.add("location", location));
+        return super.addToStringAttributes(helper.add("derefArgument", derefArgument));
     }
-
 }
