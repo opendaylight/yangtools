@@ -106,8 +106,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingC
                 InstanceIdentifier.create(Top.class).child(TopLevelList.class, TOP_FOO_KEY));
         final PathArgument lastPathArgument = yangInstanceIdentifier.getLastPathArgument();
         assertTrue(lastPathArgument instanceof NodeIdentifierWithPredicates);
-        assertTrue(((NodeIdentifierWithPredicates) lastPathArgument).getKeyValues().containsValue(
-            TOP_LEVEL_LIST_KEY_VALUE));
+        assertTrue(((NodeIdentifierWithPredicates) lastPathArgument).values().contains(TOP_LEVEL_LIST_KEY_VALUE));
         assertEquals(TopLevelList.QNAME, lastPathArgument.getNodeType());
     }
 

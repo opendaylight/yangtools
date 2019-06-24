@@ -161,7 +161,7 @@ abstract class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicat
     @SuppressWarnings("checkstyle:illegalCatch")
     final @NonNull Identifier<?> deserializeIdentifier(final NodeIdentifierWithPredicates input) {
         try {
-            return deserializeIdentifier(input.getKeyValues());
+            return deserializeIdentifier(input.asMap());
         } catch (Throwable e) {
             Throwables.throwIfUnchecked(e);
             throw new IllegalStateException("Failed to deserialize " + input, e);
