@@ -68,7 +68,7 @@ public class InMemoryDataTreeBenchmark {
 
     private static final NodeIdentifierWithPredicates[] OUTER_LIST_IDS = Streams.mapWithIndex(
         IntStream.range(0, OUTER_LIST_100K),
-        (i, index) -> new NodeIdentifierWithPredicates(BenchmarkModel.OUTER_LIST_QNAME, BenchmarkModel.ID_QNAME, i))
+        (i, index) -> NodeIdentifierWithPredicates.of(BenchmarkModel.OUTER_LIST_QNAME, BenchmarkModel.ID_QNAME, i))
             .collect(Collectors.toList()).toArray(new NodeIdentifierWithPredicates[0]);
 
     private static final YangInstanceIdentifier[] OUTER_LIST_PATHS = Arrays.stream(OUTER_LIST_IDS)
