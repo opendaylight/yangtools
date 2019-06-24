@@ -4,7 +4,11 @@ options {
     tokenVocab = LeafRefPathLexer;
 }
 
-path_arg : (absolute_path | relative_path) EOF;
+path_arg : (deref_expr | path_str) EOF;
+
+deref_expr : deref_function_invocation SEP? SLASH SEP? relative_path;
+
+path_str : absolute_path | relative_path;
 
 absolute_path : (SLASH node_identifier (path_predicate)*)+;
 
@@ -24,7 +28,9 @@ node_identifier : (prefix COLON)? identifier;
 
 current_function_invocation : CURRENT_KEYWORD SEP? LEFT_PARENTHESIS SEP? RIGHT_PARENTHESIS;
 
+deref_function_invocation : DEREF_KEYWORD SEP? LEFT_PARENTHESIS SEP? relative_path SEP? RIGHT_PARENTHESIS;
+
 prefix : identifier;
 
-identifier: IDENTIFIER | CURRENT_KEYWORD;
+identifier: IDENTIFIER | CURRENT_KEYWORD | DEREF_KEYWORD;
 
