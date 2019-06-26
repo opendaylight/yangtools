@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamConstants;
@@ -44,6 +46,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
+import org.opendaylight.yangtools.rfc8528.model.api.SharedMountPointResolver;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -127,15 +131,18 @@ public final class XmlParserStream implements Closeable, Flushable {
     private final Map<String, Optional<QNameModule>> resolvedNamespaces = new HashMap<>();
     // Cache of nsUri Strings to QNameModules, as inferred from document
     private final Map<String, QNameModule> rawNamespaces = new HashMap<>();
+    private final SharedMountPointResolver sharedMountPoints;
     private final NormalizedNodeStreamWriter writer;
     private final XmlCodecFactory codecs;
     private final DataSchemaNode parentNode;
     private final boolean strictParsing;
 
     private XmlParserStream(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
-            final DataSchemaNode parentNode, final boolean strictParsing) {
+            final DataSchemaNode parentNode, final SharedMountPointResolver sharedMountPoints,
+            final boolean strictParsing) {
         this.writer = requireNonNull(writer);
         this.codecs = requireNonNull(codecs);
+        this.sharedMountPoints = requireNonNull(sharedMountPoints);
         this.parentNode = parentNode;
         this.strictParsing = strictParsing;
     }
@@ -154,7 +161,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     }
 
     /**
-     * Construct a new {@link XmlParserStream}.
+     * Construct a new {@link XmlParserStream} using a no-op {@link SharedMountPointResolver}.
      *
      * @param writer Output writer
      * @param codecs Shared codecs
@@ -167,6 +174,25 @@ public final class XmlParserStream implements Closeable, Flushable {
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
             final SchemaNode parentNode, final boolean strictParsing) {
+        return create(writer, codecs, parentNode, SharedMountPointResolver.noop(), strictParsing);
+    }
+
+    /**
+     * Construct a new {@link XmlParserStream}.
+     *
+     * @param writer Output writer
+     * @param codecs Shared codecs
+     * @param parentNode Parent root node
+     * @param sharedMountPoints resolver for looking up shared mount point schema
+     * @param strictParsing parsing mode
+     *            if set to true, the parser will throw an exception if it encounters unknown child nodes
+     *            (nodes, that are not defined in the provided SchemaContext) in containers and lists
+     *            if set to false, the parser will skip unknown child nodes
+     * @return A new stream instance
+     */
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
+            final SchemaNode parentNode, final SharedMountPointResolver sharedMountPoints,
+            final boolean strictParsing) {
         final DataSchemaNode parent;
         if (parentNode instanceof DataSchemaNode) {
             parent = (DataSchemaNode) parentNode;
@@ -175,7 +201,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         } else {
             throw new IllegalArgumentException("Illegal parent node " + parentNode);
         }
-        return new XmlParserStream(writer, codecs, parent, strictParsing);
+        return new XmlParserStream(writer, codecs, parent, sharedMountPoints, strictParsing);
     }
 
     /**
@@ -450,10 +476,9 @@ public final class XmlParserStream implements Closeable, Flushable {
                             e);
                     }
 
-                    final Deque<DataSchemaNode> childDataSchemaNodes =
-                            ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName, nsUri);
-
-                    if (childDataSchemaNodes.isEmpty()) {
+                    final Deque<DataSchemaNode> childDataSchemaNodes = findMatchingNodes(parentSchema, xmlElementName,
+                        nsUri);
+                    if (childDataSchemaNodes == null) {
                         if (!strictParsing) {
                             LOG.debug("Skipping unknown node ns=\"{}\" localName=\"{}\" at path {}", elementNS,
                                 xmlElementName, parentSchema.getPath());
@@ -481,6 +506,40 @@ public final class XmlParserStream implements Closeable, Flushable {
             default:
                 break;
         }
+    }
+
+    private Deque<DataSchemaNode> findMatchingNodes(final DataSchemaNode parentSchema, final String xmlElementName,
+            final URI nsUri) {
+        // Find all elements matching current parent
+        final Deque<DataSchemaNode> direct = ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema,
+            xmlElementName, nsUri);
+        if (!direct.isEmpty()) {
+            return direct;
+        }
+
+        final Stream<MountPointSchemaNode> mountStream;
+        if (parentSchema instanceof ContainerSchemaNode) {
+            mountStream = MountPointSchemaNode.streamAll((ContainerSchemaNode) parentSchema);
+        } else if (parentSchema instanceof ListSchemaNode) {
+            mountStream = MountPointSchemaNode.streamAll((ListSchemaNode) parentSchema);
+        } else {
+            // Mount point cannot be present
+            return null;
+        }
+
+        final Deque<DataSchemaNode> mounted = new ArrayDeque<>();
+        mountStream.forEachOrdered(mount -> {
+            LOG.debug("Considering mount definition {}", mount);
+
+            final Optional<? extends SchemaContext> mountContext = sharedMountPoints.resolveLabel(mount.getQName());
+            mountContext.ifPresent(schemaContext -> {
+                LOG.debug("Mount definition {} resolved to {}", mount, schemaContext);
+                mounted.addAll(ParserStreamUtils.findSchemaNodeByNameAndNamespace(schemaContext,
+                    xmlElementName, nsUri));
+            });
+        });
+
+        return mounted.isEmpty() ? null : mounted;
     }
 
     private static boolean isNextEndDocument(final XMLStreamReader in) throws XMLStreamException {
