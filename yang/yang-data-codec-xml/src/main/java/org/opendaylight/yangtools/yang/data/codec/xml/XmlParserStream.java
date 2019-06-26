@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamConstants;
@@ -44,9 +45,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
+import org.opendaylight.yangtools.rfc8528.model.api.YangLibraryConstants;
+import org.opendaylight.yangtools.rfc8528.model.api.YangLibraryConstants.ContainerName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.util.AbstractMountPointDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnydataNodeDataWithSchema;
@@ -57,6 +62,7 @@ import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.MountPointData;
 import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
@@ -452,21 +458,47 @@ public final class XmlParserStream implements Closeable, Flushable {
 
                     final Deque<DataSchemaNode> childDataSchemaNodes =
                             ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName, nsUri);
+                    if (!childDataSchemaNodes.isEmpty()) {
+                        // We have a match, proceed with it
+                        read(in, ((CompositeNodeDataWithSchema<?>) parent).addChild(childDataSchemaNodes), rootElement);
+                        continue;
+                    }
 
-                    if (childDataSchemaNodes.isEmpty()) {
-                        if (!strictParsing) {
-                            LOG.debug("Skipping unknown node ns=\"{}\" localName=\"{}\" at path {}", elementNS,
-                                xmlElementName, parentSchema.getPath());
-                            skipUnknownNode(in);
-                            continue;
+                    if (parent instanceof AbstractMountPointDataWithSchema) {
+                        // Parent can potentially hold a mount point, let's see if there is a label present
+                        final Stream<MountPointSchemaNode> mountStream;
+                        if (parentSchema instanceof ContainerSchemaNode) {
+                            mountStream = MountPointSchemaNode.streamAll((ContainerSchemaNode) parentSchema);
+                        } else if (parentSchema instanceof ListSchemaNode) {
+                            mountStream = MountPointSchemaNode.streamAll((ListSchemaNode) parentSchema);
+                        } else {
+                            throw new XMLStreamException("Unhandled mount-aware schema " + parentSchema);
                         }
 
+                        final Optional<MountPointSchemaNode> optMountSchema = mountStream.findFirst();
+                        if (optMountSchema.isPresent()) {
+                            final QName label = optMountSchema.get().getQName();
+                            LOG.debug("Assuming node {} and namespace {} belongs to mount point {}", xmlElementName,
+                                nsUri, label);
+
+                            final MountPointData mountData =
+                                    ((AbstractMountPointDataWithSchema<?>) parent).getMountPointData(label);
+                            addMountPointChild(mountData, nsUri, xmlElementName,
+                                new DOMSourceAnydata(new DOMSource(readAnyXmlValue(in).getDocumentElement())));
+                            continue;
+                        }
+                    }
+
+                    // We have not handled the node -- let's decide what to do about that
+                    if (strictParsing) {
                         throw new XMLStreamException(String.format(
                             "Schema for node with name %s and namespace %s does not exist at %s", xmlElementName,
                             elementNS, parentSchema.getPath(), in.getLocation()));
                     }
 
-                    read(in, ((CompositeNodeDataWithSchema<?>) parent).addChild(childDataSchemaNodes), rootElement);
+                    LOG.debug("Skipping unknown node ns=\"{}\" localName=\"{}\" at path {}", elementNS, xmlElementName,
+                        parentSchema.getPath());
+                    skipUnknownNode(in);
                 }
                 break;
             case XMLStreamConstants.END_ELEMENT:
@@ -481,6 +513,21 @@ public final class XmlParserStream implements Closeable, Flushable {
             default:
                 break;
         }
+    }
+
+    private static void addMountPointChild(final MountPointData mount, final URI namespace, final String localName,
+            final DOMSourceAnydata data) {
+        if (YangLibraryConstants.MODULE_NAMESPACE.equals(namespace)) {
+            final Optional<ContainerName> optName = ContainerName.forLocalName(localName);
+            if (optName.isPresent()) {
+                mount.setContainer(optName.get(), data);
+                return;
+            }
+
+            LOG.warn("Encountered unknown element {} from YANG Library namespace", localName);
+        }
+
+        mount.addChild(data);
     }
 
     private static boolean isNextEndDocument(final XMLStreamReader in) throws XMLStreamException {
