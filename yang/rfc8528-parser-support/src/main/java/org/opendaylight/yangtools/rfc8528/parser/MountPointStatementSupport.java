@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.rfc8528.parser;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointEffectiveStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointStatement;
@@ -43,7 +44,7 @@ public final class MountPointStatementSupport
     private static final class Effective extends UnknownEffectiveStatementBase<QName, MountPointStatement>
             implements MountPointEffectiveStatement, MountPointSchemaNode {
 
-        private final SchemaPath path;
+        private final @NonNull SchemaPath path;
 
         Effective(final StmtContext<QName, MountPointStatement, ?> ctx) {
             super(ctx);
