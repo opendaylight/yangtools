@@ -37,7 +37,7 @@ import org.xml.sax.SAXException;
  * @author Robert Varga
  */
 @NonNullByDefault
-final class DOMSourceAnydata extends AbstractNormalizableAnydata {
+class DOMSourceAnydata extends AbstractNormalizableAnydata {
     private final DOMSource source;
 
     DOMSourceAnydata(final DOMSource source) {
