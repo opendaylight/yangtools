@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamConstants;
@@ -44,6 +45,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -454,6 +456,17 @@ public final class XmlParserStream implements Closeable, Flushable {
                             ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName, nsUri);
 
                     if (childDataSchemaNodes.isEmpty()) {
+                        final Stream<MountPointSchemaNode> mountPoints;
+                        if (parentSchema instanceof ContainerSchemaNode) {
+                            mountPoints = MountPointSchemaNode.streamAll((ContainerSchemaNode) parentSchema);
+                        } else if (parentSchema instanceof ListSchemaNode) {
+                            mountPoints = MountPointSchemaNode.streamAll((ListSchemaNode) parentSchema);
+                        } else {
+                            mountPoints = null;
+                        }
+
+                        // FIXME: try to recover based on mountpoint presence
+
                         if (!strictParsing) {
                             LOG.debug("Skipping unknown node ns=\"{}\" localName=\"{}\" at path {}", elementNS,
                                 xmlElementName, parentSchema.getPath());
