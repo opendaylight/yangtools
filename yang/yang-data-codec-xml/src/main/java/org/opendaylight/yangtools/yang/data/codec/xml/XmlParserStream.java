@@ -483,6 +483,29 @@ public final class XmlParserStream implements Closeable, Flushable {
         }
     }
 
+//    final Stream<MountPointSchemaNode> mountStream;
+//    if (parentSchema instanceof ContainerSchemaNode) {
+//        mountStream = MountPointSchemaNode.streamAll((ContainerSchemaNode) parentSchema);
+//    } else if (parentSchema instanceof ListSchemaNode) {
+//        mountStream = MountPointSchemaNode.streamAll((ListSchemaNode) parentSchema);
+//    } else {
+//        // Mount point cannot be present
+//        return null;
+//    }
+//
+//    final Deque<DataSchemaNode> mounted = new ArrayDeque<>();
+//    mountStream.forEachOrdered(mount -> {
+//        LOG.debug("Considering mount definition {}", mount);
+//
+//        final Optional<? extends SchemaContext> mountContext = sharedMountPoints.resolveLabel(mount.getQName());
+//        mountContext.ifPresent(schemaContext -> {
+//            LOG.debug("Mount definition {} resolved to {}", mount, schemaContext);
+//            mounted.addAll(ParserStreamUtils.findSchemaNodeByNameAndNamespace(schemaContext,
+//                xmlElementName, nsUri));
+//        });
+//    });
+//    return mounted.isEmpty() ? null : mounted;
+
     private static boolean isNextEndDocument(final XMLStreamReader in) throws XMLStreamException {
         return !in.hasNext() || in.next() == XMLStreamConstants.END_DOCUMENT;
     }
