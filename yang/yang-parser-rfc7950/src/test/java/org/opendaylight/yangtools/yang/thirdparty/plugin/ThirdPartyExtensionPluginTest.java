@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
+import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -36,14 +37,15 @@ public class ThirdPartyExtensionPluginTest {
 
         final SchemaContext schema = reactor.buildEffective();
         final DataSchemaNode dataChildByName = schema.getDataChildByName(QName.create(NS, REV, "root"));
-        assertTrue(dataChildByName instanceof ContainerSchemaNode);
+        assertThat(dataChildByName, isA(ContainerSchemaNode.class));
+
         final ContainerSchemaNode root = (ContainerSchemaNode) dataChildByName;
 
         final List<UnknownSchemaNode> unknownSchemaNodes = root.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
         final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.get(0);
-        assertTrue(unknownSchemaNode instanceof ThirdPartyExtensionEffectiveStatement);
+        assertThat(unknownSchemaNode, isA(ThirdPartyExtensionEffectiveStatement.class));
         final ThirdPartyExtensionEffectiveStatement thirdPartyExtensionStmt =
                 (ThirdPartyExtensionEffectiveStatement) unknownSchemaNode;
         assertEquals("Third-party namespace test.", thirdPartyExtensionStmt.getValueFromNamespace());

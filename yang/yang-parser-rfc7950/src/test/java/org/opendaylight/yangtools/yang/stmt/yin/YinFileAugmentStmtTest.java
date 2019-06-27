@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt.yin;
 
+import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
@@ -42,6 +44,6 @@ public class YinFileAugmentStmtTest extends AbstractYinModulesTest {
         assertEquals(1, augment.getChildNodes().size());
         final DataSchemaNode caseNode = augment.findDataChildByName(
             QName.create(testModule.getQNameModule(), "main-impl")).get();
-        assertTrue(caseNode instanceof CaseSchemaNode);
+        assertThat(caseNode, isA(CaseSchemaNode.class));
     }
 }

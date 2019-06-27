@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -40,20 +41,21 @@ public class Bug5437Test {
         SchemaPath leafRef2Path = SchemaPath.create(true, root, leafRef2);
         SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, leafRefPath);
         SchemaNode findDataSchemaNode2 = SchemaContextUtil.findDataSchemaNode(context, leafRef2Path);
-        assertTrue(findDataSchemaNode instanceof LeafSchemaNode);
-        assertTrue(findDataSchemaNode2 instanceof LeafSchemaNode);
+        assertThat(findDataSchemaNode, isA(LeafSchemaNode.class));
+        assertThat(findDataSchemaNode2, isA(LeafSchemaNode.class));
+
         LeafSchemaNode leafRefNode = (LeafSchemaNode) findDataSchemaNode;
         LeafSchemaNode leafRefNode2 = (LeafSchemaNode) findDataSchemaNode2;
 
-        assertTrue(leafRefNode.getType() instanceof LeafrefTypeDefinition);
-        assertTrue(leafRefNode2.getType() instanceof LeafrefTypeDefinition);
+        assertThat(leafRefNode.getType(), isA(LeafrefTypeDefinition.class));
+        assertThat(leafRefNode2.getType(), isA(LeafrefTypeDefinition.class));
 
         TypeDefinition<?> baseTypeForLeafRef = SchemaContextUtil.getBaseTypeForLeafRef(
                 (LeafrefTypeDefinition) leafRefNode.getType(), context, leafRefNode);
         TypeDefinition<?> baseTypeForLeafRef2 = SchemaContextUtil.getBaseTypeForLeafRef(
                 (LeafrefTypeDefinition) leafRefNode2.getType(), context, leafRefNode2);
 
-        assertTrue(baseTypeForLeafRef instanceof BinaryTypeDefinition);
-        assertTrue(baseTypeForLeafRef2 instanceof Int16TypeDefinition);
+        assertThat(baseTypeForLeafRef, isA(BinaryTypeDefinition.class));
+        assertThat(baseTypeForLeafRef2, isA(Int16TypeDefinition.class));
     }
 }

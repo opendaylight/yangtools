@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -53,7 +54,7 @@ public class Bug5884Test {
         while (iterator.hasNext()) {
             AugmentationSchemaNode allAugments = iterator.next();
             final DataSchemaNode currentChoice = allAugments.getChildNodes().iterator().next();
-            assertTrue(currentChoice instanceof CaseSchemaNode);
+            assertThat(currentChoice, isA(CaseSchemaNode.class));
         }
     }
 }

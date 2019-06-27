@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.stmt.yin;
 
+import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -69,7 +71,7 @@ public class YinFileStmtTest {
             fail("Reactor exception should have been thrown");
         } catch (ReactorException e) {
             final Throwable cause = e.getCause();
-            assertTrue(cause instanceof SourceException);
+            assertThat(cause, isA(SourceException.class));
             assertTrue(cause.getMessage().startsWith(
                 "Key argument 'testing-string testing-string' contains duplicates"));
         }

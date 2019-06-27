@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt.yin;
 
+import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
@@ -27,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileListStmtTest extends AbstractYinModulesTest {
-
     @Test
     public void testListAndLeaves() {
         final Module testModule = TestUtils.findModule(context, "config").get();
@@ -53,10 +54,9 @@ public class YinFileListStmtTest extends AbstractYinModulesTest {
         assertEquals("type", leaf.getQName().getLocalName());
 
         final TypeDefinition<?> leafType = leaf.getType();
-        assertTrue(leafType instanceof IdentityrefTypeDefinition);
+        assertThat(leafType, isA(IdentityrefTypeDefinition.class));
         assertEquals("module-type", ((IdentityrefTypeDefinition)leafType).getIdentities().iterator().next().getQName()
             .getLocalName());
         assertTrue(leaf.isMandatory());
     }
-
 }

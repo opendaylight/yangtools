@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -39,7 +41,7 @@ public class Bug4933Test {
             fail("ReactorException should be thrown.");
         } catch (ReactorException e) {
             final Throwable cause = e.getCause();
-            assertTrue(cause instanceof SourceException);
+            assertThat(cause, isA(SourceException.class));
             assertTrue(cause.getMessage().startsWith("String 'not_supported' is not valid deviate argument"));
         }
     }
