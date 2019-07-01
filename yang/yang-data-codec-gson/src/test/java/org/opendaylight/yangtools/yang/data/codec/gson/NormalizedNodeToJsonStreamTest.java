@@ -10,10 +10,12 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childArray;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childPrimitive;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveCont1;
+import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveCont2;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
@@ -24,14 +26,12 @@ import com.google.gson.JsonPrimitive;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Iterator;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
@@ -50,10 +50,9 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
     private static final QName EMPTY_LEAF = QName.create(CONT_1, "empty");
 
     @Test
-    public void leafNodeInContainer() throws IOException, URISyntaxException {
-        final Writer writer = new StringWriter();
-        final NormalizedNode<?, ?> leafNodeInContainer = TestingNormalizedNodeStructuresCreator.leafNodeInContainer();
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafNodeInContainer);
+    public void leafNodeInContainer() throws IOException {
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
+            TestingNormalizedNodeStructuresCreator.leafNodeInContainer());
         final JsonObject cont1 = resolveCont1(jsonOutput);
         assertNotNull(cont1);
 
@@ -64,11 +63,9 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
     }
 
     @Test
-    public void leafListNodeInContainerMultiline() throws IOException, URISyntaxException {
-        final Writer writer = new StringWriter();
-        final NormalizedNode<?, ?> leafListNodeInContainer = TestingNormalizedNodeStructuresCreator
-                .leafListNodeInContainerMultiline();
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafListNodeInContainer);
+    public void leafListNodeInContainerMultiline() throws IOException {
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
+            TestingNormalizedNodeStructuresCreator.leafListNodeInContainerMultiline());
         final JsonObject cont1 = resolveCont1(jsonOutput);
         assertNotNull(cont1);
         final JsonArray lflst11 = childArray(cont1, "complexjson:lflst11", "lflst11");
@@ -85,11 +82,9 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
     }
 
     @Test
-    public void leafNodeViaAugmentationInContainer() throws IOException, URISyntaxException {
-        final Writer writer = new StringWriter();
-        final NormalizedNode<?, ?> leafNodeViaAugmentationInContainer = TestingNormalizedNodeStructuresCreator
-                .leafNodeViaAugmentationInContainer();
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafNodeViaAugmentationInContainer);
+    public void leafNodeViaAugmentationInContainer() throws IOException {
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
+            TestingNormalizedNodeStructuresCreator.leafNodeViaAugmentationInContainer());
         final JsonObject cont1 = resolveCont1(jsonOutput);
         assertNotNull(cont1);
 
@@ -100,11 +95,9 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
     }
 
     @Test
-    public void leafListNodeInContainer() throws IOException, URISyntaxException {
-        final Writer writer = new StringWriter();
-        final NormalizedNode<?, ?> leafListNodeInContainer = TestingNormalizedNodeStructuresCreator
-                .leafListNodeInContainer();
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafListNodeInContainer);
+    public void leafListNodeInContainer() throws IOException {
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
+            TestingNormalizedNodeStructuresCreator.leafListNodeInContainer());
         final JsonObject cont1 = resolveCont1(jsonOutput);
         assertNotNull(cont1);
         final JsonArray lflst11 = childArray(cont1, "complexjson:lflst11", "lflst11");
@@ -120,11 +113,9 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
     }
 
     @Test
-    public void keyedListNodeInContainer() throws IOException, URISyntaxException {
-        final Writer writer = new StringWriter();
-        final NormalizedNode<?, ?> keyedListNodeInContainer = TestingNormalizedNodeStructuresCreator
-                .keyedListNodeInContainer();
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, keyedListNodeInContainer);
+    public void keyedListNodeInContainer() throws IOException {
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
+            TestingNormalizedNodeStructuresCreator.keyedListNodeInContainer());
         final JsonObject cont1 = resolveCont1(jsonOutput);
         assertNotNull(cont1);
         final JsonArray lst11 = childArray(cont1, "complexjson:lst11", "lst11");
@@ -153,11 +144,9 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
     }
 
     @Test
-    public void choiceNodeInContainer() throws IOException, URISyntaxException {
-        final Writer writer = new StringWriter();
-        final NormalizedNode<?, ?> choiceNodeInContainer = TestingNormalizedNodeStructuresCreator
-                .choiceNodeInContainer();
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, choiceNodeInContainer);
+    public void choiceNodeInContainer() throws IOException {
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
+            TestingNormalizedNodeStructuresCreator.choiceNodeInContainer());
         final JsonObject cont1 = resolveCont1(jsonOutput);
         assertNotNull(cont1);
         final JsonPrimitive lf13 = childPrimitive(cont1, "complexjson:lf13", "lf13");
@@ -176,12 +165,9 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
      * [ChoiceNodeImpl[qname=(ns:complex:json?revision=2014-08-11)choc11]]
      */
     @Test
-    public void caseNodeAugmentationInChoiceInContainer() throws IOException, URISyntaxException {
-        final Writer writer = new StringWriter();
-        final NormalizedNode<?, ?> caseNodeAugmentationInChoiceInContainer = TestingNormalizedNodeStructuresCreator
-                .caseNodeAugmentationInChoiceInContainer();
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer,
-                caseNodeAugmentationInChoiceInContainer);
+    public void caseNodeAugmentationInChoiceInContainer() throws IOException {
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
+            TestingNormalizedNodeStructuresCreator.caseNodeAugmentationInChoiceInContainer());
         final JsonObject cont1 = resolveCont1(jsonOutput);
         assertNotNull(cont1);
 
@@ -210,12 +196,9 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
      * [ChoiceNodeImpl[qname=(ns:complex:json?revision=2014-08-11)choc11]]
      */
     @Test
-    public void caseNodeExternalAugmentationInChoiceInContainer() throws IOException, URISyntaxException {
-        final Writer writer = new StringWriter();
-        final NormalizedNode<?, ?> caseNodeExternalAugmentationInChoiceInContainer =
-                TestingNormalizedNodeStructuresCreator.caseNodeExternalAugmentationInChoiceInContainer();
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer,
-                caseNodeExternalAugmentationInChoiceInContainer);
+    public void caseNodeExternalAugmentationInChoiceInContainer() throws IOException {
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
+            TestingNormalizedNodeStructuresCreator.caseNodeExternalAugmentationInChoiceInContainer());
         final JsonObject cont1 = resolveCont1(jsonOutput);
         assertNotNull(cont1);
 
@@ -246,11 +229,9 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
      * [ChoiceNodeImpl[qname=(ns:complex:json?revision=2014-08-11)choc11]]
      */
     @Test
-    public void choiceNodeAugmentationInContainer() throws IOException, URISyntaxException {
-        final Writer writer = new StringWriter();
-        final NormalizedNode<?, ?> choiceNodeAugmentationInContainer = TestingNormalizedNodeStructuresCreator
-                .choiceNodeAugmentationInContainer();
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, choiceNodeAugmentationInContainer);
+    public void choiceNodeAugmentationInContainer() throws IOException {
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
+            TestingNormalizedNodeStructuresCreator.choiceNodeAugmentationInContainer());
         final JsonObject cont1 = resolveCont1(jsonOutput);
         assertNotNull(cont1);
 
@@ -260,11 +241,9 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
     }
 
     @Test
-    public void unkeyedNodeInContainer() throws IOException, URISyntaxException {
-        final Writer writer = new StringWriter();
-        final NormalizedNode<?, ?> unkeyedNodeInContainer = TestingNormalizedNodeStructuresCreator
-                .unkeyedNodeInContainer();
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, unkeyedNodeInContainer);
+    public void unkeyedNodeInContainer() throws IOException {
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
+            TestingNormalizedNodeStructuresCreator.unkeyedNodeInContainer());
         final JsonObject cont1 = resolveCont1(jsonOutput);
         assertNotNull(cont1);
 
@@ -285,12 +264,11 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
     }
 
     @Test
-    public void emptyTypeTest() throws IOException, URISyntaxException {
-        final StringWriter writer = new StringWriter();
-        final ContainerNode emptyStructure = Builders.containerBuilder()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(CONT_1))
-                .addChild(ImmutableNodes.leafNode(EMPTY_LEAF, Empty.getInstance())).build();
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, emptyStructure);
+    public void emptyTypeTest() throws IOException {
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(CONT_1))
+            .addChild(ImmutableNodes.leafNode(EMPTY_LEAF, Empty.getInstance()))
+            .build());
         final JsonObject cont1 = resolveCont1(jsonOutput);
         final JsonElement emptyObj = cont1.get("empty");
         assertNotNull(emptyObj);
@@ -299,15 +277,39 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
         assertTrue(emptyObj.getAsJsonArray().get(0) instanceof JsonNull);
     }
 
-    private static String normalizedNodeToJsonStreamTransformation(final Writer writer,
-            final NormalizedNode<?, ?> inputStructure) throws IOException {
+    @Test
+    public void emptyNonPresenceContainerTest() throws IOException {
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
+            TestingNormalizedNodeStructuresCreator.topLevelContainer());
+        final JsonObject cont1 = resolveCont1(jsonOutput);
+        assertNull(cont1);
+    }
 
+    @Test
+    public void emptyNonPresenceContainerInContainerTest() throws IOException {
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
+            TestingNormalizedNodeStructuresCreator.emptyContainerInContainer());
+        final JsonObject cont1 = resolveCont1(jsonOutput);
+        assertNull(cont1);
+    }
+
+    @Test
+    public void emptyPresenceContainerTest() throws IOException {
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(
+            TestingNormalizedNodeStructuresCreator.cont2Node());
+        final JsonObject cont2 = resolveCont2(jsonOutput);
+        assertNotNull(cont2);
+    }
+
+    private static String normalizedNodeToJsonStreamTransformation(final NormalizedNode<?, ?> inputStructure)
+            throws IOException {
+        final Writer writer = new StringWriter();
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
             lhotkaCodecFactory, SchemaPath.ROOT, null, JsonWriterFactory.createJsonWriter(writer, 2));
-        final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
-        nodeWriter.write(inputStructure);
+        try (NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream)) {
+            nodeWriter.write(inputStructure);
+        }
 
-        nodeWriter.close();
         return writer.toString();
     }
 }

@@ -107,12 +107,18 @@ public final class TestUtils {
     }
 
     static JsonObject resolveCont1(final String jsonOutput) {
-        final JsonParser parser = new JsonParser();
-        final JsonElement rootElement = parser.parse(jsonOutput);
+        final JsonElement rootElement = new JsonParser().parse(jsonOutput);
         assertTrue(rootElement.isJsonObject());
         final JsonObject rootObject = rootElement.getAsJsonObject();
         final JsonObject cont1 = childObject(rootObject, "complexjson:cont1", "cont1");
         return cont1;
     }
 
+    static JsonObject resolveCont2(final String jsonOutput) {
+        final JsonElement rootElement = new JsonParser().parse(jsonOutput);
+        assertTrue(rootElement.isJsonObject());
+        final JsonObject rootObject = rootElement.getAsJsonObject();
+        final JsonObject cont2 = childObject(rootObject, "complexjson:cont2", "cont2");
+        return cont2;
+    }
 }
