@@ -306,7 +306,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         context = context.endNode(codecs.getSchemaContext(), writer);
 
         if (context instanceof JSONStreamWriterRootContext) {
-            context.emitEnd(writer);
+            context.endNode(codecs.getSchemaContext(), writer);
         }
     }
 

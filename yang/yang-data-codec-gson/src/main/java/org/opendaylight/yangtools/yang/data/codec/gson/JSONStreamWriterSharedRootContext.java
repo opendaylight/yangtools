@@ -13,7 +13,7 @@ import java.net.URI;
 
 final class JSONStreamWriterSharedRootContext extends JSONStreamWriterRootContext {
     JSONStreamWriterSharedRootContext(final URI namespace) {
-        super(namespace);
+        super(namespace, false);
     }
 
     @Override
