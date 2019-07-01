@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 final class JSONStreamWriterExclusiveRootContext extends JSONStreamWriterRootContext {
     JSONStreamWriterExclusiveRootContext(final URI namespace) {
-        super(namespace);
+        super(namespace, true);
     }
 
     @Override
