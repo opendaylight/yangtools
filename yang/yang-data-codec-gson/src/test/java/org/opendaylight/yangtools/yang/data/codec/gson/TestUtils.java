@@ -115,4 +115,12 @@ public final class TestUtils {
         return cont1;
     }
 
+    static JsonObject resolveCont2(final String jsonOutput) {
+        final JsonParser parser = new JsonParser();
+        final JsonElement rootElement = parser.parse(jsonOutput);
+        assertTrue(rootElement.isJsonObject());
+        final JsonObject rootObject = rootElement.getAsJsonObject();
+        final JsonObject cont2 = childObject(rootObject, "complexjson:cont2", "cont2");
+        return cont2;
+    }
 }
