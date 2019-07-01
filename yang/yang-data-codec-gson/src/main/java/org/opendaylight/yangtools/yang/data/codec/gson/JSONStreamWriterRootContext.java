@@ -14,7 +14,7 @@ import java.net.URI;
  * It holds the base namespace and can never be removed from the stack.
  */
 abstract class JSONStreamWriterRootContext extends JSONStreamWriterURIContext {
-    JSONStreamWriterRootContext(final URI namespace) {
-        super(null, namespace);
+    JSONStreamWriterRootContext(final URI namespace, final boolean mandatory) {
+        super(null, namespace, mandatory);
     }
 }
