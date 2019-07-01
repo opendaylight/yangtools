@@ -10,10 +10,12 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childArray;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childPrimitive;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveCont1;
+import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveCont2;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
@@ -312,6 +314,33 @@ public class NormalizedNodeToJsonStreamTest {
         assertTrue(emptyObj instanceof JsonArray);
         assertEquals(1, emptyObj.getAsJsonArray().size());
         assertTrue(emptyObj.getAsJsonArray().get(0) instanceof JsonNull);
+    }
+
+    @Test
+    public void emptyNonPresenceContainerTest() throws IOException {
+        final Writer writer = new StringWriter();
+        NormalizedNode<?, ?> emptyContainer = TestingNormalizedNodeStructuresCreator.topLevelContainer();
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, emptyContainer);
+        final JsonObject cont1 = resolveCont1(jsonOutput);
+        assertNull(cont1);
+    }
+
+    @Test
+    public void emptyNonPresenceContainerInContainerTest() throws IOException {
+        final Writer writer = new StringWriter();
+        NormalizedNode<?, ?> emptyContainer = TestingNormalizedNodeStructuresCreator.emptyContainerInContainer();
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, emptyContainer);
+        final JsonObject cont1 = resolveCont1(jsonOutput);
+        assertNull(cont1);
+    }
+
+    @Test
+    public void emptyPresenceContainerTest() throws IOException {
+        final Writer writer = new StringWriter();
+        NormalizedNode<?, ?> emptyContainer = TestingNormalizedNodeStructuresCreator.cont2Node();
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, emptyContainer);
+        final JsonObject cont2 = resolveCont2(jsonOutput);
+        assertNotNull(cont2);
     }
 
     private static String normalizedNodeToJsonStreamTransformation(final Writer writer,

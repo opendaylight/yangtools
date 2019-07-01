@@ -48,6 +48,12 @@ public final class TestingNormalizedNodeStructuresCreator {
         return cont1.build();
     }
 
+    static NormalizedNode<?, ?> cont2Node() {
+        DataContainerNodeBuilder<NodeIdentifier, ContainerNode> cont2 = Builders.containerBuilder();
+        cont2.withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "cont2")));
+        return cont2.build();
+    }
+
     private static DataContainerChild<? extends PathArgument, ?> lst12Node() {
         CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> lst12Builder = Builders.unkeyedListBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "lst12")));
@@ -287,5 +293,17 @@ public final class TestingNormalizedNodeStructuresCreator {
 
     public static NormalizedNode<?, ?> topLevelContainer() {
         return cont1Node();
+    }
+
+    public static NormalizedNode<?, ?> emptyContainerInContainer() {
+        DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> augmentBuilder =
+                Builders.augmentationBuilder().withNodeIdentifier(
+                new AugmentationIdentifier(ImmutableSet.of(
+                        QName.create("ns:complex:json", "2014-08-11", "cont11"))));
+        ContainerNode cont11 = Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "cont11")))
+                .build();
+        augmentBuilder.withChild(cont11);
+        return cont1Node(augmentBuilder.build());
     }
 }
