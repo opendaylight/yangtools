@@ -73,6 +73,10 @@ module complexjson {
         }
     }
 
+    container cont2 {
+        presence "presence container";
+    }
+
     augment "/cont1/choc12" {
         case c12B {
             leaf lf17 {
