@@ -60,6 +60,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
     private static Uint8 instanceFor(final byte value) {
         final int slot = Byte.toUnsignedInt(value);
 
+        // FIXME: 4.0.0: use VarHandles here
         Uint8 ret = CACHE[slot];
         if (ret == null) {
             synchronized (CACHE) {

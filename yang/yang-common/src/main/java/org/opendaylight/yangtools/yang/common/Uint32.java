@@ -97,17 +97,20 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
 
     private static Uint32 instanceFor(final int value) {
         final long longSlot = Integer.toUnsignedLong(value);
-        if (longSlot >= CACHE.length) {
-            for (Uint32 c : COMMON) {
-                if (c.value == value) {
-                    return c;
-                }
+        return longSlot < CACHE.length ? fromCache((int)longSlot, value) : fromCommon(value);
+    }
+
+    private static Uint32 fromCommon(final int value) {
+        for (Uint32 c : COMMON) {
+            if (c.value == value) {
+                return c;
             }
-
-            return LRU.getUnchecked(value);
         }
+        return LRU.getUnchecked(value);
+    }
 
-        final int slot = (int)longSlot;
+    private static Uint32 fromCache(final int slot, final int value) {
+        // FIXME: 4.0.0: use VarHandles here
         Uint32 ret = CACHE[slot];
         if (ret == null) {
             synchronized (CACHE) {
@@ -118,7 +121,6 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
                 }
             }
         }
-
         return ret;
     }
 

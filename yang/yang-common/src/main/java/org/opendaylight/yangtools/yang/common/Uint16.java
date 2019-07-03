@@ -95,16 +95,20 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
 
     private static Uint16 instanceFor(final short value) {
         final int slot = Short.toUnsignedInt(value);
-        if (slot >= CACHE.length) {
-            for (Uint16 c : COMMON) {
-                if (c.value == value) {
-                    return c;
-                }
+        return slot < CACHE.length ? fromCache(slot, value) : fromCommon(value);
+    }
+
+    private static Uint16 fromCommon(final short value) {
+        for (Uint16 c : COMMON) {
+            if (c.value == value) {
+                return c;
             }
-
-            return LRU.getUnchecked(value);
         }
+        return LRU.getUnchecked(value);
+    }
 
+    private static Uint16 fromCache(final int slot, final short value) {
+        // FIXME: 4.0.0: use VarHandles here
         Uint16 ret = CACHE[slot];
         if (ret == null) {
             synchronized (CACHE) {
@@ -115,7 +119,6 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
                 }
             }
         }
-
         return ret;
     }
 

@@ -99,16 +99,20 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
 
     private static Uint64 instanceFor(final long value) {
         final int slot = (int)value;
-        if (slot < 0 || slot >= CACHE.length) {
-            for (Uint64 c : COMMON) {
-                if (c.value == value) {
-                    return c;
-                }
+        return slot >= 0 && slot < CACHE.length ? fromCache(slot, value) : fromCommon(value);
+    }
+
+    private static Uint64 fromCommon(final long value) {
+        for (Uint64 c : COMMON) {
+            if (c.value == value) {
+                return c;
             }
-
-            return LRU.getUnchecked(value);
         }
+        return LRU.getUnchecked(value);
+    }
 
+    private static Uint64 fromCache(final int slot, final long value) {
+        // FIXME: 4.0.0: use VarHandles here
         Uint64 ret = CACHE[slot];
         if (ret == null) {
             synchronized (CACHE) {
@@ -119,7 +123,6 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
                 }
             }
         }
-
         return ret;
     }
 
