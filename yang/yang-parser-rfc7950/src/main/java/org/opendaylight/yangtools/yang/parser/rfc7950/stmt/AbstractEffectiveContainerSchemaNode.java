@@ -13,10 +13,13 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action.ActionNodeContainerBridge;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification.NotificationNodeContainerBridge;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class AbstractEffectiveContainerSchemaNode<D extends DeclaredStatement<QName>>
-        extends AbstractEffectiveSimpleDataNodeContainer<D> implements ContainerSchemaNode {
+        extends AbstractEffectiveSimpleDataNodeContainer<D>
+        implements ContainerSchemaNode, ActionNodeContainerBridge<QName, D>, NotificationNodeContainerBridge<QName, D> {
     private final ImmutableSet<MustDefinition> mustConstraints;
 
     protected AbstractEffectiveContainerSchemaNode(final StmtContext<QName, D, ?> ctx) {

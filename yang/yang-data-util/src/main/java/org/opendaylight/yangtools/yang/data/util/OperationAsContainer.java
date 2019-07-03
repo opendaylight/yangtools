@@ -162,8 +162,20 @@ public class OperationAsContainer extends ForwardingObject implements ContainerS
     }
 
     @Override
+    public Optional<ActionDefinition> findAction(final QName qname) {
+        requireNonNull(qname);
+        return Optional.empty();
+    }
+
+    @Override
     public final Set<NotificationDefinition> getNotifications() {
         return ImmutableSet.of();
+    }
+
+    @Override
+    public Optional<NotificationDefinition> findNotification(final QName qname) {
+        requireNonNull(qname);
+        return Optional.empty();
     }
 
     @Override

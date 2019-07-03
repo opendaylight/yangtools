@@ -63,57 +63,79 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public boolean isPresenceContainer() {
+        public final boolean isPresenceContainer() {
             return false;
         }
 
         @Override
-        public Set<UsesNode> getUses() {
+        public final Set<UsesNode> getUses() {
             return ImmutableSet.of();
         }
 
         @Override
-        public boolean isAugmenting() {
+        public final boolean isAugmenting() {
             return false;
         }
 
         @Override
-        public boolean isConfiguration() {
+        public final boolean isConfiguration() {
             return false;
         }
 
         @Override
-        public QName getQName() {
+        public final QName getQName() {
             return schemaNode.getQName();
         }
 
         @Override
-        public SchemaPath getPath() {
+        public final SchemaPath getPath() {
             return schemaNode.getPath();
         }
 
         @Override
-        public Optional<String> getDescription() {
+        public final Optional<String> getDescription() {
             return schemaNode.getDescription();
         }
 
         @Override
-        public Optional<String> getReference() {
+        public final Optional<String> getReference() {
             return schemaNode.getReference();
         }
 
         @Override
-        public Status getStatus() {
+        public final Status getStatus() {
             return schemaNode.getStatus();
         }
 
         @Override
-        public Collection<MustDefinition> getMustConstraints() {
+        public final Collection<MustDefinition> getMustConstraints() {
             return ImmutableList.of();
         }
 
         @Override
-        public Optional<RevisionAwareXPath> getWhenCondition() {
+        public final  Optional<RevisionAwareXPath> getWhenCondition() {
+            return Optional.empty();
+        }
+
+        @Override
+        public final Set<ActionDefinition> getActions() {
+            return ImmutableSet.of();
+        }
+
+        @Override
+        public final Optional<ActionDefinition> findAction(final QName qname) {
+            requireNonNull(qname);
+            return Optional.empty();
+        }
+
+        @Override
+        public final Set<NotificationDefinition> getNotifications() {
+            return ImmutableSet.of();
+        }
+
+        @Override
+        public final Optional<NotificationDefinition> findNotification(final QName qname) {
+            requireNonNull(qname);
             return Optional.empty();
         }
     }
@@ -174,16 +196,6 @@ public final class ContainerSchemaNodes {
         public boolean isAddedByUses() {
             return false;
         }
-
-        @Override
-        public Set<ActionDefinition> getActions() {
-            return ImmutableSet.of();
-        }
-
-        @Override
-        public Set<NotificationDefinition> getNotifications() {
-            return ImmutableSet.of();
-        }
     }
 
     private static final class NotificationContainerSchemaNode extends AbstractContainerSchemaNode {
@@ -195,11 +207,6 @@ public final class ContainerSchemaNodes {
             super(notification);
             this.notification = notification;
             mapNodes = Maps.uniqueIndex(notification.getChildNodes(), DataSchemaNode::getQName);
-        }
-
-        @Override
-        public Set<NotificationDefinition> getNotifications() {
-            return ImmutableSet.of(notification);
         }
 
         @Override
@@ -232,11 +239,6 @@ public final class ContainerSchemaNodes {
         public boolean isAddedByUses() {
             //FIXME: reference to https://bugs.opendaylight.org/show_bug.cgi?id=6897
             return false;
-        }
-
-        @Override
-        public Set<ActionDefinition> getActions() {
-            return ImmutableSet.of();
         }
     }
 }
