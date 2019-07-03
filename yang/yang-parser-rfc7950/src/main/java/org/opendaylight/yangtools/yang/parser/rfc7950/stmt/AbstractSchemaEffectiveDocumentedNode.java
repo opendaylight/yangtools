@@ -12,7 +12,12 @@ import com.google.common.collect.ImmutableMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
+import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
@@ -73,6 +78,27 @@ public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends Declare
             dataTreeNamespace = ImmutableMap.of();
             schemaTreeNamespace = ImmutableMap.of();
         }
+    }
+
+    /**
+     * This method provides a direct implementation of {@link ActionNodeContainer#findAction(QName)}, as that lookup
+     * is implied by Schema Tree lookup. 'action' identifier must never collide with another element, hence if we look
+     * it up and it ends up being an ActionDefinition, we have found a match.
+     */
+    public final @NonNull Optional<ActionDefinition> findAction(final QName qname) {
+        final SchemaTreeEffectiveStatement<?> schemaChild = schemaTreeNamespace.get(qname);
+        return schemaChild instanceof ActionDefinition ? Optional.of((ActionDefinition)schemaChild) : Optional.empty();
+    }
+
+    /**
+     * This method provides a direct implementation of {@link NotificationNodeContainer#findNotification(QName)}, as
+     * that lookup is implied by Schema Tree lookup. 'notification' identifier must never collide with another element,
+     * hence if we look it up and it ends up being an NotificationDefinition, we have found a match.
+     */
+    public final @NonNull Optional<NotificationDefinition> findNotification(final QName qname) {
+        final SchemaTreeEffectiveStatement<?> schemaChild = schemaTreeNamespace.get(qname);
+        return schemaChild instanceof NotificationDefinition ? Optional.of((NotificationDefinition)schemaChild)
+                : Optional.empty();
     }
 
     @Override
