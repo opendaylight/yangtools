@@ -134,7 +134,17 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     }
 
     @Override
+    public Optional<ActionDefinition> findAction(final QName qname) {
+        return delegate.findAction(qname);
+    }
+
+    @Override
     public Set<NotificationDefinition> getNotifications() {
         return delegate.getNotifications();
+    }
+
+    @Override
+    public Optional<NotificationDefinition> findNotification(final QName qname) {
+        return delegate.findNotification(qname);
     }
 }
