@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -186,6 +188,25 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
     @Override
     default Set<ActionDefinition> getActions() {
         return ImmutableSet.of();
+    }
+
+    @Override
+    default Optional<ActionDefinition> findAction(final QName qname) {
+        requireNonNull(qname);
+        return Optional.empty();
+    }
+
+    @Override
+    default Optional<NotificationDefinition> findNotification(final QName qname) {
+        final Optional<Set<NotificationDefinition>> defs = findModule(qname.getModule()).map(Module::getNotifications);
+        if (defs.isPresent()) {
+            for (NotificationDefinition def : defs.get()) {
+                if (qname.equals(def.getQName())) {
+                    return Optional.of(def);
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
