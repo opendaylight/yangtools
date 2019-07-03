@@ -155,9 +155,24 @@ public abstract class SchemaPath implements Immutable {
      *
      * @return A SchemaPath instance.
      */
-    public static SchemaPath create(final Iterable<QName> path, final boolean absolute) {
-        final SchemaPath parent = absolute ? ROOT : SAME;
-        return parent.createChild(path);
+    public static @NonNull SchemaPath create(final Iterable<QName> path, final boolean absolute) {
+        return (absolute ? ROOT : SAME).createChild(path);
+    }
+
+    /**
+     * Constructs new instance of this class with the concrete path.
+     *
+     * @param absolute
+     *            boolean value which specifies if the path is absolute or
+     *            relative
+     * @param element
+     *            a single QName which specifies exact path to the
+     *            module node
+     *
+     * @return A SchemaPath instance.
+     */
+    public static @NonNull SchemaPath create(final boolean absolute, final QName element) {
+        return (absolute ? ROOT : SAME).createChild(element);
     }
 
     /**
@@ -172,7 +187,7 @@ public abstract class SchemaPath implements Immutable {
      *
      * @return A SchemaPath instance.
      */
-    public static SchemaPath create(final boolean absolute, final QName... path) {
+    public static @NonNull SchemaPath create(final boolean absolute, final QName... path) {
         return create(Arrays.asList(path), absolute);
     }
 
