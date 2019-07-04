@@ -25,8 +25,6 @@ import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.Optional;
 import javax.xml.transform.dom.DOMSource;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -39,31 +37,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-public class AnyXmlSupportTest {
+public class AnyXmlSupportTest extends AbstractComplexJsonTest {
 
     private static final QName CONT_1 = QName.create("ns:complex:json", "2014-08-11", "cont1");
     private static final QName LF12_ANY = QName.create(CONT_1, "lf12-any");
     private static final QName LF13_ANY = QName.create(CONT_1, "lf13-any");
     private static final QName LF14_ANY = QName.create(CONT_1, "lf14-any");
-
-    private static SchemaContext schemaContext;
-
-    @BeforeClass
-    public static void setup() {
-        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/complexjson/yang");
-    }
-
-    @AfterClass
-    public static void cleanup() {
-        schemaContext = null;
-    }
 
     @Test
     public void anyXmlNodeWithSimpleValueInContainer() throws IOException, URISyntaxException {
@@ -72,8 +56,7 @@ public class AnyXmlSupportTest {
         // deserialization
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);
@@ -108,8 +91,7 @@ public class AnyXmlSupportTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);

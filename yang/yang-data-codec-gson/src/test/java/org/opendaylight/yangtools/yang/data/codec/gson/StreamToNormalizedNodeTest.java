@@ -26,27 +26,22 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StreamToNormalizedNodeTest {
+public class StreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     private static final Logger LOG = LoggerFactory.getLogger(StreamToNormalizedNodeTest.class);
-    private static SchemaContext schemaContext;
     private static String streamAsString;
 
     @BeforeClass
     public static void initialization() throws IOException, URISyntaxException {
-        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/complexjson/yang");
         streamAsString = loadTextFile(new File(StreamToNormalizedNodeTest.class.getResource(
                 "/complexjson/complex-json.json").toURI()));
     }
 
     @AfterClass
     public static void cleanup() {
-        schemaContext = null;
         streamAsString = null;
     }
 
@@ -62,8 +57,7 @@ public class StreamToNormalizedNodeTest {
         final LoggingNormalizedNodeStreamWriter logWriter = new LoggingNormalizedNodeStreamWriter();
 
         // JSON -> StreamWriter parser
-        try (JsonParserStream jsonHandler = JsonParserStream.create(logWriter,
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext))) {
+        try (JsonParserStream jsonHandler = JsonParserStream.create(logWriter, lhotkaCodecFactory)) {
             // Process multiple readers, flush()/close() as needed
             jsonHandler.parse(reader);
         }
@@ -85,8 +79,7 @@ public class StreamToNormalizedNodeTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         // JSON -> StreamWriter parser
-        try (JsonParserStream handler = JsonParserStream.create(streamWriter,
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext))) {
+        try (JsonParserStream handler = JsonParserStream.create(streamWriter, lhotkaCodecFactory)) {
             handler.parse(new JsonReader(new StringReader(streamAsString)));
         }
 
@@ -108,8 +101,7 @@ public class StreamToNormalizedNodeTest {
         // StreamWriter which outputs JSON strings
         // StreamWriter which outputs JSON strings
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), SchemaPath.ROOT, null,
-            JsonWriterFactory.createJsonWriter(writer, 2));
+            lhotkaCodecFactory, SchemaPath.ROOT, null, JsonWriterFactory.createJsonWriter(writer, 2));
 
         // NormalizedNode -> StreamWriter
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);

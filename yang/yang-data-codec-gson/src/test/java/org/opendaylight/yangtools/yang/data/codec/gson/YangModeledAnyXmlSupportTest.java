@@ -50,12 +50,15 @@ import org.xml.sax.SAXException;
 public class YangModeledAnyXmlSupportTest {
 
     private static SchemaContext schemaContext;
+    private static JSONCodecFactory lhotkaCodecFactory;
     private static ContainerNode data;
 
     @BeforeClass
     public static void init() throws XMLStreamException, URISyntaxException, IOException, ParserConfigurationException,
             SAXException {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/yang-modeled-anyxml/yang");
+        lhotkaCodecFactory = JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext);
+
         final Module bazModule = schemaContext.findModules("baz").iterator().next();
         final ContainerSchemaNode bazCont = (ContainerSchemaNode) bazModule.findDataChildByName(
                 QName.create(bazModule.getQNameModule(), "baz")).get();
@@ -79,6 +82,7 @@ public class YangModeledAnyXmlSupportTest {
 
     @AfterClass
     public static void cleanup() {
+        lhotkaCodecFactory = null;
         schemaContext = null;
         data = null;
     }
@@ -88,8 +92,7 @@ public class YangModeledAnyXmlSupportTest {
         final String inputJson = loadTextFile("/yang-modeled-anyxml/json/baz.json");
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, lhotkaCodecFactory);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
 
@@ -115,8 +118,7 @@ public class YangModeledAnyXmlSupportTest {
             final NormalizedNode<?, ?> inputStructure) throws IOException {
 
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), SchemaPath.ROOT, null,
-            JsonWriterFactory.createJsonWriter(writer, 2));
+            lhotkaCodecFactory, SchemaPath.ROOT, null, JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(inputStructure);
 
