@@ -27,8 +27,6 @@ import java.io.Writer;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Iterator;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -39,30 +37,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * Each test tests whether json output obtained after transformation contains is corect. The transformation takes
  * normalized node data structure and transform it to json output. To make it easier validate json output it is loaded
  * via gson as structure of json elements which are walked and compared with awaited values.
  */
-public class NormalizedNodeToJsonStreamTest {
+public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
 
     private static final QName CONT_1 = QName.create("ns:complex:json", "2014-08-11", "cont1");
     private static final QName EMPTY_LEAF = QName.create(CONT_1, "empty");
-    private static SchemaContext schemaContext;
-
-    @BeforeClass
-    public static void initialization() {
-        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/complexjson/yang");
-    }
-
-    @AfterClass
-    public static void cleanup() {
-        schemaContext = null;
-    }
 
     @Test
     public void leafNodeInContainer() throws IOException, URISyntaxException {
@@ -318,8 +303,7 @@ public class NormalizedNodeToJsonStreamTest {
             final NormalizedNode<?, ?> inputStructure) throws IOException {
 
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), SchemaPath.ROOT, null,
-            JsonWriterFactory.createJsonWriter(writer, 2));
+            lhotkaCodecFactory, SchemaPath.ROOT, null, JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(inputStructure);
 
