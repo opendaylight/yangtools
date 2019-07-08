@@ -60,6 +60,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -68,7 +69,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> extends
-        AbstractSchemaEffectiveDocumentedNode<String, D> implements Module, MutableStatement {
+        AbstractSchemaEffectiveDocumentedNode<String, D> implements Module, MutableStatement,
+        NotificationNodeContainerCompat<String, D> {
     private final String name;
     private final String prefix;
     private final YangVersion yangVersion;

@@ -33,6 +33,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
+import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -40,7 +42,9 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 final class AugmentEffectiveStatementImpl
         extends AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
-        implements AugmentEffectiveStatement, AugmentationSchemaNode, NamespaceRevisionAware {
+        implements AugmentEffectiveStatement, AugmentationSchemaNode, NamespaceRevisionAware,
+            ActionNodeContainerCompat<SchemaNodeIdentifier, AugmentStatement>,
+            NotificationNodeContainerCompat<SchemaNodeIdentifier, AugmentStatement> {
     private final SchemaPath targetPath;
     private final URI namespace;
     private final Revision revision;

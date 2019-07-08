@@ -33,6 +33,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
+import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSimpleDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -46,7 +48,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 // FIXME: 4.0.0: hide this class
 @Deprecated
 public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<ListStatement>
-        implements ListEffectiveStatement, ListSchemaNode, DerivableSchemaNode {
+        implements ListEffectiveStatement, ListSchemaNode, DerivableSchemaNode,
+            ActionNodeContainerCompat<QName, ListStatement>, NotificationNodeContainerCompat<QName, ListStatement> {
     private static final String ORDER_BY_USER_KEYWORD = "user";
 
     private final boolean userOrdered;

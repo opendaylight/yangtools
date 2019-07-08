@@ -22,13 +22,17 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
+import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class GroupingEffectiveStatementImpl
         extends AbstractEffectiveDocumentedDataNodeContainer<QName, GroupingStatement>
-        implements GroupingDefinition, GroupingEffectiveStatement {
+        implements GroupingDefinition, GroupingEffectiveStatement,
+            ActionNodeContainerCompat<QName, GroupingStatement>,
+            NotificationNodeContainerCompat<QName, GroupingStatement> {
     private final @NonNull QName qname;
     private final @NonNull SchemaPath path;
     private final boolean addedByUses;
