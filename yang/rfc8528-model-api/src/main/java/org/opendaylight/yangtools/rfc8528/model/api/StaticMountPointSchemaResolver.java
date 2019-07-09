@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @Beta
 @NonNullByDefault
-public interface StaticMountpointSchemaResolver extends MountPointSchemaResolver {
+public interface StaticMountPointSchemaResolver extends MountPointSchemaResolver {
 
     MountPointSchema getSchema();
 }
