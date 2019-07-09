@@ -5,17 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.rfc8528.model.api;
+package org.opendaylight.yangtools.rfc8528.data.api;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * An entity able to resolve the SchemaContext for embedded mount points. This interface should not be implemented
- * directly, but rather its domain specializations, like {@link StaticMountPointSchemaResolver} should be provided.
+ * A mount point with {@code schema-ref} inline, as defined in RFC8528.
  */
 @Beta
 @NonNullByDefault
-public interface MountPointSchemaResolver {
+public interface InlineMountPointNode extends MountPointNode {
 
 }
