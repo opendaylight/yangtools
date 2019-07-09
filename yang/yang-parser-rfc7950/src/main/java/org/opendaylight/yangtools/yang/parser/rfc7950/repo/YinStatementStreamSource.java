@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.rfc7950.repo.StatementSourceReferenceHandler.extractRef;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -20,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 import javax.xml.transform.TransformerException;
+import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -48,7 +48,8 @@ import org.w3c.dom.NodeList;
  * @author Robert Varga
  */
 @Beta
-public final class YinStatementStreamSource implements StatementStreamSource {
+public final class YinStatementStreamSource extends AbstractIdentifiable<SourceIdentifier>
+        implements StatementStreamSource {
     private static final Logger LOG = LoggerFactory.getLogger(YinStatementStreamSource.class);
     private static final LoadingCache<String, URI> URI_CACHE = CacheBuilder.newBuilder().weakValues().build(
         new CacheLoader<String, URI>() {
@@ -57,11 +58,10 @@ public final class YinStatementStreamSource implements StatementStreamSource {
                 return new URI(key);
             }
         });
-    private final SourceIdentifier identifier;
     private final Node root;
 
     private YinStatementStreamSource(final SourceIdentifier identifier, final Node root) {
-        this.identifier = requireNonNull(identifier);
+        super(identifier);
         this.root = requireNonNull(root);
     }
 
@@ -71,11 +71,6 @@ public final class YinStatementStreamSource implements StatementStreamSource {
 
     public static StatementStreamSource create(final YinDomSchemaSource source) {
         return new YinStatementStreamSource(source.getIdentifier(), source.getSource().getNode());
-    }
-
-    @Override
-    public SourceIdentifier getIdentifier() {
-        return identifier;
     }
 
     private static StatementDefinition getValidDefinition(final Node node, final StatementWriter writer,
@@ -247,10 +242,5 @@ public final class YinStatementStreamSource implements StatementStreamSource {
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule prefixes) {
         walkTree(writer, stmtDef);
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("identifier", getIdentifier()).toString();
     }
 }

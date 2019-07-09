@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Verify;
 import java.util.Map;
@@ -17,7 +16,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Identifiable;
+import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
@@ -33,7 +32,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
  * @param <V> Value type
  * @param <N> Namespace Type
  */
-public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, V>> implements Identifiable<Class<N>> {
+public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, V>>
+        extends AbstractIdentifiable<Class<N>> {
 
     public enum StorageNodeType {
         /**
@@ -107,10 +107,8 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
                 V value);
     }
 
-    private final @NonNull Class<N> identifier;
-
     protected NamespaceBehaviour(final Class<N> identifier) {
-        this.identifier = requireNonNull(identifier);
+        super(identifier);
     }
 
     /**
@@ -242,11 +240,6 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
      */
     public abstract void addTo(NamespaceStorageNode storage, K key, V value);
 
-    @Override
-    public Class<N> getIdentifier() {
-        return identifier;
-    }
-
     protected final V getFromLocalStorage(final NamespaceStorageNode storage, final K key) {
         return storage.getFromLocalStorage(getIdentifier(), key);
     }
@@ -341,15 +334,5 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
             current = current.getParentNamespaceStorage();
         }
         return current;
-    }
-
-    @Override
-    // FIXME: 3.0.0: make this final
-    public String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
-    }
-
-    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("identifier", identifier.getName());
     }
 }
