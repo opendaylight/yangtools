@@ -209,6 +209,11 @@
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>rfc8528-data-api</artifactId>
+                <version>3.0.3-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc8528-model-api</artifactId>
                 <version>3.0.3-SNAPSHOT</version>
             </dependency>
