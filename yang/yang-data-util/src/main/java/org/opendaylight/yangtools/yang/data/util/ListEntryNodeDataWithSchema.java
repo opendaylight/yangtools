@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * <p>
  * Represents a YANG list entry node.
  */
-public abstract class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema<ListSchemaNode> {
+public abstract class ListEntryNodeDataWithSchema extends AbstractMountPointDataWithSchema<ListSchemaNode> {
     private static final class Keyed extends ListEntryNodeDataWithSchema {
         private final Map<QName, SimpleNodeDataWithSchema<?>> keyValues = new HashMap<>();
         // This template results in Maps in schema definition order

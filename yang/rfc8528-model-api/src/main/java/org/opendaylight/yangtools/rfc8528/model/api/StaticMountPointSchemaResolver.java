@@ -20,5 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 @Beta
 public interface StaticMountPointSchemaResolver extends MountPointSchemaResolver, SchemaContextProvider {
     @Override
+    // FIXME: remove this override when SchemaContextProvider's method has sane semantics.
     @NonNull SchemaContext getSchemaContext();
 }
