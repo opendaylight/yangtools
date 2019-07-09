@@ -20,9 +20,9 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
-import org.opendaylight.yangtools.rfc8528.data.api.InlineMountPointSchemaResolver;
-import org.opendaylight.yangtools.rfc8528.data.api.InlineMountPointSchemaResolver.LibraryContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactoryResolver.Inline;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactoryResolver.Inline.LibraryContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointStreamWriter;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchema;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaResolver;
@@ -76,15 +76,15 @@ public final class MountPointData extends AbstractIdentifiable<MountPointIdentif
         final MountPointSchemaResolver resolver = optResolver.get();
         if (resolver instanceof StaticMountpointSchemaResolver) {
             writeTo(mountWriter, ((StaticMountpointSchemaResolver) resolver).getSchema());
-        } else if (resolver instanceof InlineMountPointSchemaResolver) {
-            writeInline(mountWriter, (InlineMountPointSchemaResolver) resolver);
+        } else if (resolver instanceof Inline) {
+            writeInline(mountWriter, (Inline) resolver);
         } else {
             throw new IOException("Unhandled resolver " + resolver);
         }
     }
 
-    private void writeInline(final @NonNull MountPointStreamWriter mountWriter,
-            final InlineMountPointSchemaResolver resolver) throws IOException {
+    private void writeInline(final @NonNull MountPointStreamWriter mountWriter, final Inline resolver)
+            throws IOException {
         for (Entry<ContainerName, MountPointChild> entry : yangLib.entrySet()) {
             final Optional<LibraryContext> optLibContext = resolver.findSchemaForLibrary(entry.getKey());
             if (!optLibContext.isPresent()) {
