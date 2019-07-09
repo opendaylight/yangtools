@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.util;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -18,24 +17,19 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.util.AbstractSchemaContextProvider;
 
 @Beta
 @NonNullByDefault
-public class ImmutableNormalizedAnydata implements NormalizedAnydata {
-    private final SchemaContext schemaContext;
+public class ImmutableNormalizedAnydata extends AbstractSchemaContextProvider implements NormalizedAnydata {
     private final DataSchemaNode contextNode;
     private final NormalizedNode<?, ?> data;
 
     public ImmutableNormalizedAnydata(final SchemaContext schemaContext, final DataSchemaNode contextNode,
             final NormalizedNode<?, ?> data) {
-        this.schemaContext = requireNonNull(schemaContext);
+        super(schemaContext);
         this.contextNode = requireNonNull(contextNode);
         this.data = requireNonNull(data);
-    }
-
-    @Override
-    public final SchemaContext getSchemaContext() {
-        return schemaContext;
     }
 
     @Override
@@ -59,11 +53,7 @@ public class ImmutableNormalizedAnydata implements NormalizedAnydata {
     }
 
     @Override
-    public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
-    }
-
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("schemaConteext", schemaContext).add("node", contextNode).add("data", data);
+        return super.addToStringAttributes(helper).add("node", contextNode).add("data", data);
     }
 }
