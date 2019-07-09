@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.Identifiable;
+import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -46,16 +46,9 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * Base strategy for converting an instance identifier into a normalized node structure.
  * Use provided static methods for generic YangInstanceIdentifier -> NormalizedNode translation in ImmutableNodes.
  */
-abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable<T> {
-    private final T identifier;
-
+abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractIdentifiable<T> {
     InstanceIdToNodes(final T identifier) {
-        this.identifier = identifier;
-    }
-
-    @Override
-    public final T getIdentifier() {
-        return identifier;
+        super(identifier);
     }
 
     /**

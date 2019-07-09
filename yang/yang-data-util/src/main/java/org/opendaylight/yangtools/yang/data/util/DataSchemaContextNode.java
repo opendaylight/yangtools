@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Identifiable;
+import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -42,22 +42,16 @@ import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
  *
  * @param <T> Path Argument type
  */
-public abstract class DataSchemaContextNode<T extends PathArgument> implements Identifiable<T> {
+public abstract class DataSchemaContextNode<T extends PathArgument> extends AbstractIdentifiable<T> {
     private final DataSchemaNode dataSchemaNode;
-    private final T identifier;
 
     protected DataSchemaContextNode(final T identifier, final SchemaNode schema) {
-        this.identifier = identifier;
+        super(identifier);
         if (schema instanceof DataSchemaNode) {
             this.dataSchemaNode = (DataSchemaNode) schema;
         } else {
             this.dataSchemaNode = null;
         }
-    }
-
-    @Override
-    public T getIdentifier() {
-        return identifier;
     }
 
     public boolean isMixin() {
@@ -71,7 +65,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
     public abstract boolean isLeaf();
 
     protected Set<QName> getQNameIdentifiers() {
-        return ImmutableSet.of(identifier.getNodeType());
+        return ImmutableSet.of(getIdentifier().getNodeType());
     }
 
     /**
