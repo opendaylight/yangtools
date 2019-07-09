@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
  * <p>
  * Represents a YANG container node.
  */
-public class ContainerNodeDataWithSchema extends CompositeNodeDataWithSchema<ContainerSchemaNode> {
+public class ContainerNodeDataWithSchema extends AbstractMountPointDataWithSchema<ContainerSchemaNode> {
 
     public ContainerNodeDataWithSchema(final ContainerSchemaNode schema) {
         super(schema);
