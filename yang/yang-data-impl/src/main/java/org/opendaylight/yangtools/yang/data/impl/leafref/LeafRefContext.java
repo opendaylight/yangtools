@@ -12,15 +12,14 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.AbstractSchemaContextProvider;
 
 // FIXME: 4.0.0 hide this class
-public final class LeafRefContext implements SchemaContextProvider {
+public final class LeafRefContext extends AbstractSchemaContextProvider {
 
     private final QName currentNodeQName;
     private final SchemaPath currentNodePath;
-    private final SchemaContext schemaContext;
     private final Module module;
 
     private final LeafRefPath leafRefTargetPath;
@@ -40,9 +39,9 @@ public final class LeafRefContext implements SchemaContextProvider {
     private volatile LeafRefPath leafRefNodePath = null;
 
     LeafRefContext(final LeafRefContextBuilder leafRefContextBuilder) {
+        super(leafRefContextBuilder.getSchemaContext());
         this.currentNodeQName = leafRefContextBuilder.getCurrentNodeQName();
         this.currentNodePath = leafRefContextBuilder.getCurrentNodePath();
-        this.schemaContext = leafRefContextBuilder.getSchemaContext();
         this.leafRefTargetPath = leafRefContextBuilder.getLeafRefTargetPath();
         this.absoluteLeafRefTargetPath = leafRefContextBuilder.getAbsoluteLeafRefTargetPath();
         this.leafRefTargetPathString = leafRefContextBuilder.getLeafRefTargetPathString();
@@ -112,11 +111,6 @@ public final class LeafRefContext implements SchemaContextProvider {
 
     public QName getNodeName() {
         return currentNodeQName;
-    }
-
-    @Override
-    public SchemaContext getSchemaContext() {
-        return schemaContext;
     }
 
     public LeafRefPath getAbsoluteLeafRefTargetPath() {
