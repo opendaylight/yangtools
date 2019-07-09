@@ -12,7 +12,9 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaResolver;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * A {@link NormalizedNodeStreamWriterExtension} exposed by stream writers which can handle mount point data, notably
@@ -30,4 +32,13 @@ public interface MountPointStreamWriter extends NormalizedNodeStreamWriterExtens
      * @throws NullPointerException if label is null
      */
     Optional<MountPointSchemaResolver> findMountPoint(@NonNull QName label);
+
+    /**
+     * Start a new mount point with a specific root context.
+     *
+     * @param label Mount point label
+     * @param mountContext SchemaContext associated with the context
+     * @return A new NormalizedNodeStreamWriter, or empty if the mount point data should be ignored
+     */
+    Optional<NormalizedNodeStreamWriter> startMountPoint(@NonNull QName label, @NonNull SchemaContext mountContext);
 }
