@@ -10,7 +10,11 @@ package org.opendaylight.yangtools.rfc8528.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
@@ -42,17 +46,22 @@ public final class YangLibraryConstants {
     public static final String MODULE_NAME = "ietf-yang-library";
 
     /**
-     * Top-level containers which hold YANG Library information.
+     * Top-level containers which hold YANG Library information, ordered by descending preference, with more modern
+     * and/or preferred entries first.
      */
     public enum ContainerName {
-        /**
-         * Container in RFC7895 (pre-NMDA) YANG Library.
-         */
-        RFC7895("modules-state"),
+        // Note: order this enum from most-preferred to least-preferred name
         /**
          * Container in RFC8525 (NMDA) YANG Library.
          */
-        RFC8525("yang-library");
+        RFC8525("yang-library"),
+        /**
+         * Container in RFC7895 (pre-NMDA) YANG Library.
+         */
+        RFC7895("modules-state");
+
+        private static final ImmutableMap<String, ContainerName> NAME_TO_ENUM = Maps.uniqueIndex(
+            Arrays.asList(values()), ContainerName::getLocalName);
 
         private final String localName;
 
@@ -62,6 +71,10 @@ public final class YangLibraryConstants {
 
         public String getLocalName() {
             return localName;
+        }
+
+        public static Optional<ContainerName> forLocalName(final String localName) {
+            return Optional.ofNullable(NAME_TO_ENUM.get(requireNonNull(localName)));
         }
     }
 
