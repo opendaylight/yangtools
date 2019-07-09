@@ -30,7 +30,7 @@ public abstract class AbstractIdentifier<T> implements Identifier {
         this.value = requireNonNull(value);
     }
 
-    public final @NonNull T getValue() {
+    protected final @NonNull T getValue() {
         return value;
     }
 
