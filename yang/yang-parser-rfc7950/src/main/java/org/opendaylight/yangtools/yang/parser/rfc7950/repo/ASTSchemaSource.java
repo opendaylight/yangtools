@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import java.util.Optional;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
@@ -31,19 +31,19 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  * basic semantic validation and we were able to extract dependency information.
  */
 @Beta
-public final class ASTSchemaSource implements SchemaSourceRepresentation {
+public final class ASTSchemaSource extends AbstractIdentifiable<SourceIdentifier>
+        implements SchemaSourceRepresentation {
     private final @NonNull YangModelDependencyInfo depInfo;
     private final @NonNull SemVerSourceIdentifier semVerId;
-    private final @NonNull SourceIdentifier identifier;
     private final @NonNull ParserRuleContext tree;
     private final @Nullable String symbolicName;
 
     private ASTSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull SemVerSourceIdentifier semVerId,
             final @NonNull ParserRuleContext tree, final @NonNull YangModelDependencyInfo depInfo,
             @Nullable final String symbolicName) {
+        super(identifier);
         this.depInfo = requireNonNull(depInfo);
         this.tree = requireNonNull(tree);
-        this.identifier = requireNonNull(identifier);
         this.semVerId = requireNonNull(semVerId);
         this.symbolicName = symbolicName;
     }
@@ -79,11 +79,6 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     }
 
     @Override
-    public SourceIdentifier getIdentifier() {
-        return identifier;
-    }
-
-    @Override
     public Optional<String> getSymbolicName() {
         return Optional.ofNullable(symbolicName);
     }
@@ -115,11 +110,6 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     //        on model.api types.
     public @NonNull YangModelDependencyInfo getDependencyInformation() {
         return depInfo;
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("identifier", identifier).toString();
     }
 
     private static @NonNull SourceIdentifier getSourceId(final @NonNull YangModelDependencyInfo depInfo) {

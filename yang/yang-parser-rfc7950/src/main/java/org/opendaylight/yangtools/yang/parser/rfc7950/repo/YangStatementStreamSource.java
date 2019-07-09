@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +24,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
+import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -46,7 +46,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
  * @author Robert Varga
  */
 @Beta
-public final class YangStatementStreamSource implements StatementStreamSource {
+public final class YangStatementStreamSource extends AbstractIdentifiable<SourceIdentifier>
+        implements StatementStreamSource {
     private static final ParseTreeListener MAKE_IMMUTABLE_LISTENER = new ParseTreeListener() {
         @Override
         public void enterEveryRule(final ParserRuleContext ctx) {
@@ -69,13 +70,12 @@ public final class YangStatementStreamSource implements StatementStreamSource {
         }
     };
 
-    private final SourceIdentifier identifier;
     private final StatementContext context;
     private final String sourceName;
 
     private YangStatementStreamSource(final SourceIdentifier identifier,  final StatementContext context,
             final String sourceName) {
-        this.identifier = requireNonNull(identifier);
+        super(identifier);
         this.context = requireNonNull(context);
         this.sourceName = sourceName;
     }
@@ -150,11 +150,6 @@ public final class YangStatementStreamSource implements StatementStreamSource {
         }.visit(context);
     }
 
-    @Override
-    public SourceIdentifier getIdentifier() {
-        return identifier;
-    }
-
     public ParserRuleContext getYangAST() {
         return context;
     }
@@ -180,10 +175,5 @@ public final class YangStatementStreamSource implements StatementStreamSource {
         ParseTreeWalker.DEFAULT.walk(MAKE_IMMUTABLE_LISTENER, result);
 
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("identifier", getIdentifier()).toString();
     }
 }

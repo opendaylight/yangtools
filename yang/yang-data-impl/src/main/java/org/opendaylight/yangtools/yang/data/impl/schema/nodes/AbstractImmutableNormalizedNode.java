@@ -7,22 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
-import static java.util.Objects.requireNonNull;
-
-import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public abstract class AbstractImmutableNormalizedNode<K extends PathArgument,V> implements NormalizedNode<K, V>,
-        Immutable {
-    private final @NonNull K nodeIdentifier;
-
+public abstract class AbstractImmutableNormalizedNode<K extends PathArgument, V> extends AbstractIdentifiable<K>
+        implements NormalizedNode<K, V>, Immutable {
     protected AbstractImmutableNormalizedNode(final K nodeIdentifier) {
-        this.nodeIdentifier = requireNonNull(nodeIdentifier, "nodeIdentifier");
+        super(nodeIdentifier);
     }
 
     @Override
@@ -31,17 +26,8 @@ public abstract class AbstractImmutableNormalizedNode<K extends PathArgument,V> 
     }
 
     @Override
-    public final K getIdentifier() {
-        return nodeIdentifier;
-    }
-
-    @Override
-    public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
-    }
-
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("nodeIdentifier", nodeIdentifier).add("value", getValue());
+        return super.addToStringAttributes(toStringHelper).add("value", getValue());
     }
 
     protected abstract boolean valueEquals(AbstractImmutableNormalizedNode<?, ?> other);
@@ -61,7 +47,7 @@ public abstract class AbstractImmutableNormalizedNode<K extends PathArgument,V> 
         }
 
         final AbstractImmutableNormalizedNode<?, ?> other = (AbstractImmutableNormalizedNode<?, ?>)obj;
-        if (!nodeIdentifier.equals(other.nodeIdentifier)) {
+        if (!getIdentifier().equals(other.getIdentifier())) {
             return false;
         }
 
@@ -70,8 +56,6 @@ public abstract class AbstractImmutableNormalizedNode<K extends PathArgument,V> 
 
     @Override
     public final int hashCode() {
-        int result = nodeIdentifier.hashCode();
-        result = 31 * result + valueHashCode();
-        return result;
+        return 31 * getIdentifier().hashCode() + valueHashCode();
     }
 }
