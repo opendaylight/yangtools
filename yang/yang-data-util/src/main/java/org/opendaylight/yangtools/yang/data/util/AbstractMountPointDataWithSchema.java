@@ -40,7 +40,7 @@ public abstract class AbstractMountPointDataWithSchema<T extends DataSchemaNode>
 
     public final MountPointData getMountPointData(final QName label) {
         if (mountedData != null) {
-            final QName existing = mountedData.getIdentifier();
+            final QName existing = mountedData.getIdentifier().getLabel();
             checkState(label.equals(existing), "Mismatched mount label {}, already have {}", label, existing);
         } else {
             mountedData = new MountPointData(label);
