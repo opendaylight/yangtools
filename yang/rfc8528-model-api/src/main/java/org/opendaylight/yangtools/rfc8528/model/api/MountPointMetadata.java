@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
  * required {@code ietf-yang-library} data, for example due to filtering.
  */
 @Beta
-public interface StaticMountPointSchemaResolver extends MountPointSchemaResolver, SchemaContextProvider {
+public interface MountPointMetadata extends MountPointMetadataResolver, SchemaContextProvider {
     @Override
     // FIXME: remove this override when SchemaContextProvider's method has sane semantics.
     @NonNull SchemaContext getSchemaContext();

@@ -12,10 +12,10 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * An entity able to resolve the SchemaContext for embedded mount points. This interface should not be implemented
- * directly, but rather its domain specializations, like {@link StaticMountPointSchemaResolver} should be provided.
+ * directly, but rather its domain specializations, like {@link MountPointMetadata} should be provided.
  */
 @Beta
 @NonNullByDefault
-public interface MountPointSchemaResolver {
+public interface MountPointMetadataResolver {
 
 }
