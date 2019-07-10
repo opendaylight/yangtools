@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.rfc8528.data.api;
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchema;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaResolver;
 import org.opendaylight.yangtools.rfc8528.model.api.YangLibraryConstants.ContainerName;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -20,33 +22,46 @@ import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
  * A resolver which can resolve the SchemaContext for use with mount point data based on the
  * {@code ietf-yang-library} content of the mountpoint itself. This process requires two steps:
  * <ul>
- *   <li>{@link #findContainerContext(ContainerName)} is invoked to acquire a SchemaContext in which to interpret
+ *   <li>{@link #findSchemaForLibrary(ContainerName)} is invoked to acquire a SchemaContext in which to interpret
  *       one of the possible {@code ietf-yang-library} top-level containers.
  *   </li>
  *   <li>The container is normalized based on the returned context by the user of this interface and then
- *       {@link #assembleSchemaContext(ContainerNode)} is invoked to acquire the SchemaContext which will be used
- *       to interpret the mount point data.
+ *       {@link LibraryContext#bindTo(ContainerNode)} is invoked to acquire the MountPointMetadata.
  *   </li>
  * </ul>
  */
 @Beta
-public interface DynamicMountPointSchemaResolver extends MountPointSchemaResolver {
+public interface InlineMountPointSchemaResolver extends MountPointSchemaResolver {
+    @NonNullByDefault
+    interface LibraryContext {
+        /**
+         * Return a SchemaContext capable of parsing the content of YANG Library.
+         *
+         * @return A SchemaContext instance
+         */
+        SchemaContext getLibraryContainerSchema();
+
+        /**
+         * Assemble the SchemaContext for specified normalized YANG Library top-level container.
+         *
+         * @param container Top-level YANG Library container
+         * @return An assembled SchemaContext
+         * @throws NullPointerException if container is null
+         * @throws YangParserException if the schema context cannot be assembled
+         */
+        MountPointSchema bindTo(ContainerNode container) throws YangParserException;
+    }
+
     /**
      * Return the schema in which YANG Library container content should be interpreted.
      *
-     * @param containerName Top-level YANG Library container name
-     * @return The SchemaContext to use when interpreting the specified YANG Library container, or empty
-     * @throws NullPointerException if container is null
-     */
-    Optional<SchemaContext> findContainerContext(@NonNull ContainerName containerName);
-
-    /**
-     * Assemble the SchemaContext for specified normalized YANG Library top-level container.
+     * <p>
+     * Note this schema is not guaranteed to contain any augmentations, hence parsing could fail.
      *
-     * @param container Top-level YANG Library container
-     * @return An assembled SchemaContext
+     * @param containerName Top-level YANG Library container name
+     * @return The LibraryContext to use when interpreting the specified YANG Library container, or empty
      * @throws NullPointerException if container is null
-     * @throws YangParserException if the schema context cannot be assembled
      */
-    @NonNull SchemaContext assembleSchemaContext(@NonNull ContainerNode container) throws YangParserException;
+    Optional<LibraryContext> findSchemaForLibrary(@NonNull ContainerName containerName);
+
 }
