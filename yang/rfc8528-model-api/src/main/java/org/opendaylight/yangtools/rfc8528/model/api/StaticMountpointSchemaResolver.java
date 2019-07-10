@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.rfc8528.model.api;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * A resolver which has static knowledge of the SchemaContext which should be used to interpret mount point data.
@@ -18,8 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
  * required {@code ietf-yang-library} data, for example due to filtering.
  */
 @Beta
-public interface StaticMountPointSchemaResolver extends MountPointSchemaResolver, SchemaContextProvider {
-    @Override
-    // FIXME: remove this override when SchemaContextProvider's method has sane semantics.
-    @NonNull SchemaContext getSchemaContext();
+@NonNullByDefault
+public interface StaticMountpointSchemaResolver extends MountPointSchemaResolver {
+
+    MountPointSchema getSchema();
 }

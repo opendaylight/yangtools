@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.rfc8528.data.api;
 
 import com.google.common.annotations.Beta;
+import java.io.IOException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchema;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaResolver;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * A {@link NormalizedNodeStreamWriterExtension} exposed by stream writers which can handle mount point data, notably
@@ -31,14 +31,14 @@ public interface MountPointStreamWriter extends NormalizedNodeStreamWriterExtens
      * @return An optional handler for mount point data
      * @throws NullPointerException if label is null
      */
-    Optional<MountPointSchemaResolver> findMountPoint(@NonNull QName label);
+    Optional<MountPointSchemaResolver> findMountPoint(@NonNull MountPointIdentifier label);
 
     /**
      * Start a new mount point with a specific root context.
      *
-     * @param label Mount point label
-     * @param mountContext SchemaContext associated with the context
-     * @return A new NormalizedNodeStreamWriter, or empty if the mount point data should be ignored
+     * @param mountSchema Mount point schema
+     * @return A new NormalizedNodeStreamWriter
+     * @throws IOException if an error occurs
      */
-    Optional<NormalizedNodeStreamWriter> startMountPoint(@NonNull QName label, @NonNull SchemaContext mountContext);
+    @NonNull NormalizedNodeStreamWriter startMountPoint(@NonNull MountPointSchema mountSchema) throws IOException;
 }
