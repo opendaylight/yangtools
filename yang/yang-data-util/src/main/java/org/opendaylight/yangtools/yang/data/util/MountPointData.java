@@ -21,6 +21,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.rfc8528.data.api.DynamicMountPointSchemaResolver;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointStreamWriter;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaResolver;
 import org.opendaylight.yangtools.rfc8528.model.api.StaticMountPointSchemaResolver;
@@ -38,14 +39,14 @@ import org.slf4j.LoggerFactory;
  * YANG Schema Mount-supported data attached to either a {@code list} item or a {@code container}.
  */
 @Beta
-public final class MountPointData extends AbstractIdentifiable<QName> {
+public final class MountPointData extends AbstractIdentifiable<MountPointIdentifier> {
     private static final Logger LOG = LoggerFactory.getLogger(MountPointData.class);
 
     private final Map<ContainerName, MountPointChild> yangLib = new EnumMap<>(ContainerName.class);
     private final List<MountPointChild> children = new ArrayList<>();
 
     MountPointData(final QName label) {
-        super(label);
+        super(MountPointIdentifier.of(label));
     }
 
     public void setContainer(final @NonNull ContainerName containerName, final @NonNull MountPointChild data) {
