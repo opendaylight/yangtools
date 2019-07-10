@@ -8,14 +8,13 @@
 package org.opendaylight.yangtools.rfc8528.model.api;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
-/**
- * An entity able to resolve the SchemaContext for embedded mount points. This interface should not be implemented
- * directly, but rather its domain specializations, like {@link StaticMountpointSchemaResolver} should be provided.
- */
 @Beta
-@NonNullByDefault
-public interface MountPointSchemaResolver {
-
+public interface MountPointSchema extends SchemaContextProvider {
+    @Override
+    // FIXME: remove this override when SchemaContextProvider's method has sane semantics.
+    @NonNull SchemaContext getSchemaContext();
 }
