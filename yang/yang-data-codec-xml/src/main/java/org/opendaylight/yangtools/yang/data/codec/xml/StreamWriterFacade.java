@@ -127,7 +127,7 @@ final class StreamWriterFacade extends ValueWriter {
         // attribute namespaces would be bound in the writer, so the resulting XML is efficient, but we cannot rely
         // on that having been done.
         if (BROKEN_NAMESPACES.add(str)) {
-            LOG.info("Namespace {} was not bound, please fix the caller", str, new Throwable());
+            LOG.debug("Namespace {} was not bound, please fix the caller", str, new Throwable());
         }
 
         return prefixes.encodePrefix(uri);
@@ -293,7 +293,7 @@ final class StreamWriterFacade extends ValueWriter {
 
     static void warnLegacyAttribute(final String localName) {
         if (LEGACY_ATTRIBUTES.add(localName)) {
-            LOG.info("Encountered annotation {} not bound to module. Please examine the call stack and fix this "
+            LOG.debug("Encountered annotation {} not bound to module. Please examine the call stack and fix this "
                     + "warning by defining a proper YANG annotation to cover it", localName,
                     new Throwable("Call stack"));
         }
