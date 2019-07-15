@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.rfc8528.data.api;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchema;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 
 @Beta
 @NonNullByDefault
 public interface MountPointNodeFactory extends MountPointSchema {
+
 
     MountPointNode createMountPoint(ContainerNode delegate);
 }
