@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ClassToInstanceMap;
 import java.io.IOException;
@@ -18,9 +16,7 @@ import org.opendaylight.yangtools.concepts.ObjectExtensions.Factory;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactory;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactoryResolver;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointSchemaResolver;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointStreamWriter;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchema;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.AnydataExtension;
@@ -46,15 +42,12 @@ public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends Immu
     }
 
     @Override
-    public final Optional<MountPointSchemaResolver> findMountPoint(final MountPointIdentifier label) {
+    public final Optional<MountPointNodeFactoryResolver> findMountPoint(final MountPointIdentifier label) {
         return findResolver(label).map(factory -> factory);
     }
 
     @Override
-    public final NormalizedNodeStreamWriter startMountPoint(final MountPointSchema mountSchema) {
-        checkArgument(mountSchema instanceof MountPointNodeFactory, "Unsupported schema %s", mountSchema);
-        final MountPointNodeFactory factory = (MountPointNodeFactory) mountSchema;
-
+    public final NormalizedNodeStreamWriter startMountPoint(final MountPointNodeFactory factory) {
         final NormalizedNodeResult mountResult = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter mountDelegate = ImmutableNormalizedNodeStreamWriter.from(mountResult);
 

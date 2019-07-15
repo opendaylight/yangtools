@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNode;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactory;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchema;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointSchema;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
