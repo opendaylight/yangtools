@@ -8,13 +8,18 @@
 package org.opendaylight.yangtools.rfc8528.data.api;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchema;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
 @Beta
 @NonNullByDefault
-public interface MountPointNodeFactory extends MountPointSchema {
+public interface MountPointNodeFactory extends SchemaContextProvider {
+    @Override
+    // FIXME: remove this override when SchemaContextProvider's method has sane semantics.
+    @NonNull SchemaContext getSchemaContext();
 
     MountPointNode createMountPoint(ContainerNode delegate);
 }
