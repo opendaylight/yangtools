@@ -21,12 +21,12 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactory;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactoryResolver;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactoryResolver.Inline;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactoryResolver.Inline.LibraryContext;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactoryResolver.SharedSchema;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointStreamWriter;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchema;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaResolver;
-import org.opendaylight.yangtools.rfc8528.model.api.StaticMountPointSchemaResolver;
 import org.opendaylight.yangtools.rfc8528.model.api.YangLibraryConstants.ContainerName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -67,15 +67,15 @@ public final class MountPointData extends AbstractIdentifiable<MountPointIdentif
             return;
         }
 
-        final Optional<MountPointSchemaResolver> optResolver = mountWriter.findMountPoint(getIdentifier());
+        final Optional<MountPointNodeFactoryResolver> optResolver = mountWriter.findMountPoint(getIdentifier());
         if (!optResolver.isPresent()) {
             LOG.debug("Mount point for {} is not present, ignoring it", getIdentifier());
             return;
         }
 
-        final MountPointSchemaResolver resolver = optResolver.get();
-        if (resolver instanceof StaticMountPointSchemaResolver) {
-            writeTo(mountWriter, ((StaticMountPointSchemaResolver) resolver).getSchema());
+        final MountPointNodeFactoryResolver resolver = optResolver.get();
+        if (resolver instanceof SharedSchema) {
+            writeTo(mountWriter, ((SharedSchema) resolver).getSchema());
         } else if (resolver instanceof Inline) {
             writeInline(mountWriter, (Inline) resolver);
         } else {
@@ -99,14 +99,14 @@ public final class MountPointData extends AbstractIdentifiable<MountPointIdentif
                 throw new IOException("Invalid non-container " + data);
             }
 
-            final MountPointSchema mountMeta;
+            final MountPointNodeFactory factory;
             try {
-                mountMeta = libContext.bindTo((ContainerNode) data);
+                factory = libContext.bindTo((ContainerNode) data);
             } catch (YangParserException e) {
                 throw new IOException("Failed to assemble context for " + data, e);
             }
 
-            writeTo(mountWriter, mountMeta);
+            writeTo(mountWriter, factory);
             return;
         }
 
@@ -114,7 +114,7 @@ public final class MountPointData extends AbstractIdentifiable<MountPointIdentif
     }
 
     private void writeTo(final @NonNull MountPointStreamWriter mountWriter,
-            final @NonNull MountPointSchema mountMeta) throws IOException {
+            final @NonNull MountPointNodeFactory mountMeta) throws IOException {
         try (NormalizedNodeStreamWriter writer = mountWriter.startMountPoint(mountMeta)) {
             for (MountPointChild child : children) {
                 child.writeTo(writer, mountMeta.getSchemaContext());

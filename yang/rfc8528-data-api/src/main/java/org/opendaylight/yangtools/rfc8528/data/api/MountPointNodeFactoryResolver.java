@@ -11,15 +11,17 @@ import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaResolver;
-import org.opendaylight.yangtools.rfc8528.model.api.StaticMountPointSchemaResolver;
 import org.opendaylight.yangtools.rfc8528.model.api.YangLibraryConstants.ContainerName;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 
+/**
+ * An entity able to resolve the SchemaContext for embedded mount points. This interface should not be implemented
+ * directly, but rather its domain specializations, like {@link Inline} and {@link SharedSchema} should be provided.
+ */
 @Beta
-public interface MountPointNodeFactoryResolver extends MountPointSchemaResolver {
+public interface MountPointNodeFactoryResolver {
     /**
      * A resolver which can resolve the SchemaContext for use with mount point data based on the
      * {@code ietf-yang-library} content of the mountpoint itself. This process requires two steps:
@@ -66,10 +68,14 @@ public interface MountPointNodeFactoryResolver extends MountPointSchemaResolver 
         Optional<LibraryContext> findSchemaForLibrary(@NonNull ContainerName containerName);
     }
 
+    /**
+     * A resolver which has static knowledge of the SchemaContext which should be used to interpret mount point data.
+     * Instances of this interface should be used in contexts where the mount point data is expected not to contain
+     * required {@code ietf-yang-library} data, for example due to filtering.
+     */
     @NonNullByDefault
-    interface SharedSchema extends MountPointNodeFactoryResolver, StaticMountPointSchemaResolver {
+    interface SharedSchema extends MountPointNodeFactoryResolver {
 
-        @Override
         MountPointNodeFactory getSchema();
     }
 }
