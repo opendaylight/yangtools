@@ -10,12 +10,11 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ClassToInstanceMap;
 import java.io.IOException;
-import java.util.Optional;
 import org.opendaylight.yangtools.concepts.ObjectExtensions;
 import org.opendaylight.yangtools.concepts.ObjectExtensions.Factory;
+import org.opendaylight.yangtools.rcf8528.data.util.ImmutableMountPointNode;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactory;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactoryResolver;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -42,12 +41,8 @@ public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends Immu
     }
 
     @Override
-    public final Optional<MountPointNodeFactoryResolver> findMountPoint(final MountPointIdentifier label) {
-        return findResolver(label).map(factory -> factory);
-    }
-
-    @Override
-    public final NormalizedNodeStreamWriter startMountPoint(final MountPointNodeFactory factory) {
+    public final NormalizedNodeStreamWriter startMountPoint(final MountPointIdentifier mountId,
+            final MountPointContext mountCtx) {
         final NormalizedNodeResult mountResult = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter mountDelegate = ImmutableNormalizedNodeStreamWriter.from(mountResult);
 
@@ -66,11 +61,8 @@ public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends Immu
                     throw new IOException("Unhandled mount data " + data);
                 }
 
-                writeChild(factory.createMountPoint((ContainerNode) data));
+                writeChild(ImmutableMountPointNode.of(mountId, mountCtx, (ContainerNode) data));
             }
         };
     }
-
-    // XXX: this resolver must end up returning MountPointNodeFactory
-    protected abstract Optional<MountPointNodeFactoryResolver> findResolver(MountPointIdentifier label);
 }

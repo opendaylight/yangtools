@@ -15,9 +15,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.AbstractMountPointChild;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.xml.sax.SAXException;
 
 /**
@@ -32,12 +32,11 @@ final class DOMSourceMountPointChild extends AbstractMountPointChild {
     }
 
     @Override
-    public void writeTo(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext)
-            throws IOException {
+    public void writeTo(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx) throws IOException {
 
         final XmlParserStream xmlParser;
         try {
-            xmlParser = XmlParserStream.create(writer, schemaContext, schemaContext);
+            xmlParser = XmlParserStream.create(writer, mountCtx, mountCtx.getSchemaContext());
         } catch (IllegalArgumentException e) {
             throw new IOException("Failed to instantiate XML parser", e);
         }
