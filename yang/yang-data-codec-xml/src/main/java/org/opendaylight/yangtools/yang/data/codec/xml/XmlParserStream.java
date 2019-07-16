@@ -44,6 +44,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointContextFactory;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.YangLibraryConstants;
 import org.opendaylight.yangtools.rfc8528.data.api.YangLibraryConstants.ContainerName;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointSchemaNode;
@@ -202,6 +205,26 @@ public final class XmlParserStream implements Closeable, Flushable {
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
             final SchemaNode parentNode, final boolean strictParsing) {
         return create(writer, XmlCodecFactory.create(schemaContext), parentNode, strictParsing);
+    }
+
+    /**
+     * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
+     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, SchemaNode)} instead and
+     * maintain a {@link XmlCodecFactory} to match the current {@link MountPointContext}.
+     */
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
+            final SchemaNode parentNode) {
+        return create(writer, mountCtx, parentNode, true);
+    }
+
+    /**
+     * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
+     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, SchemaNode)} instead and
+     * maintain a {@link XmlCodecFactory} to match the current {@link MountPointContext}.
+     */
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
+            final SchemaNode parentNode, final boolean strictParsing) {
+        return create(writer, XmlCodecFactory.create(mountCtx), parentNode, strictParsing);
     }
 
     /**
@@ -476,15 +499,21 @@ public final class XmlParserStream implements Closeable, Flushable {
                         }
 
                         if (optMount.isPresent()) {
-                            final QName label = optMount.get().getQName();
+                            final MountPointIdentifier mountId = MountPointIdentifier.of(optMount.get().getQName());
                             LOG.debug("Assuming node {} and namespace {} belongs to mount point {}", xmlElementName,
-                                nsUri, label);
+                                nsUri, mountId);
 
-                            final MountPointData mountData =
-                                    ((AbstractMountPointDataWithSchema<?>) parent).getMountPointData(label);
-                            addMountPointChild(mountData, nsUri, xmlElementName,
-                                new DOMSource(readAnyXmlValue(in).getDocumentElement()));
-                            continue;
+                            final Optional<MountPointContextFactory> optFactory = codecs.mountPointContext()
+                                    .findMountPoint(mountId);
+                            if (optFactory.isPresent()) {
+                                final MountPointData mountData = ((AbstractMountPointDataWithSchema<?>) parent)
+                                        .getMountPointData(mountId, optFactory.get());
+                                addMountPointChild(mountData, nsUri, xmlElementName,
+                                    new DOMSource(readAnyXmlValue(in).getDocumentElement()));
+                                continue;
+                            }
+
+                            LOG.debug("Mount point {} not attached", mountId);
                         }
                     }
 
