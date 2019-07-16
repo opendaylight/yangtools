@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
 @Beta
-public interface MountPointSchema extends SchemaContextProvider, Identifiable<MountPointIdentifier> {
+public interface MountPointMetadata extends SchemaContextProvider, Identifiable<MountPointIdentifier> {
     @Override
     // FIXME: remove this override when SchemaContextProvider's method has sane semantics.
     @NonNull SchemaContext getSchemaContext();

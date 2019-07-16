@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNode;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactory;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointSchema;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 public abstract class ImmutableMountPointNodeFactory extends AbstractIdentifiable<MountPointIdentifier>
         implements MountPointNodeFactory {
     private static final class Inline extends ImmutableMountPointNodeFactory {
-        Inline(final MountPointIdentifier identifier, final MountPointSchema delegate) {
+        Inline(final MountPointIdentifier identifier, final MountPointMetadata delegate) {
             super(identifier, delegate);
         }
 
@@ -35,7 +35,7 @@ public abstract class ImmutableMountPointNodeFactory extends AbstractIdentifiabl
     }
 
     private static final class SharedSchema extends ImmutableMountPointNodeFactory {
-        SharedSchema(final MountPointIdentifier identifier, final MountPointSchema delegate) {
+        SharedSchema(final MountPointIdentifier identifier, final MountPointMetadata delegate) {
             super(identifier, delegate);
         }
 
@@ -45,21 +45,21 @@ public abstract class ImmutableMountPointNodeFactory extends AbstractIdentifiabl
         }
     }
 
-    private final MountPointSchema delegate;
+    private final MountPointMetadata delegate;
 
-    ImmutableMountPointNodeFactory(final MountPointIdentifier identifier, final MountPointSchema delegate) {
+    ImmutableMountPointNodeFactory(final MountPointIdentifier identifier, final MountPointMetadata delegate) {
         super(identifier);
         this.delegate = requireNonNull(delegate);
     }
 
     public static ImmutableMountPointNodeFactory inlineFor(final MountPointIdentifier identifier,
-            final MountPointSchema delegate) {
+            final MountPointMetadata delegate) {
         return new Inline(identifier, delegate);
     }
 
 
     public static ImmutableMountPointNodeFactory sharedSchemaFor(final MountPointIdentifier identifier,
-            final MountPointSchema delegate) {
+            final MountPointMetadata delegate) {
         return new SharedSchema(identifier, delegate);
     }
 

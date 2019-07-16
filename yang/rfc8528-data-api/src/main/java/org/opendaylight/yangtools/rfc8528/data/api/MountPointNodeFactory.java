@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 
 @Beta
 @NonNullByDefault
-public interface MountPointNodeFactory extends MountPointSchema {
+public interface MountPointNodeFactory extends MountPointMetadata {
 
 
     MountPointNode createMountPoint(ContainerNode delegate);

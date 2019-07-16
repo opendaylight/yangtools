@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
@@ -24,14 +23,9 @@ import org.opendaylight.yangtools.rfc8528.data.api.MountPointChild;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactory;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactoryResolver;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactoryResolver.Inline;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactoryResolver.Inline.LibraryContext;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactoryResolver.SharedSchema;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointStreamWriter;
 import org.opendaylight.yangtools.rfc8528.data.api.YangLibraryConstants.ContainerName;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.slf4j.Logger;
@@ -83,50 +77,15 @@ public final class MountPointData extends AbstractIdentifiable<MountPointIdentif
         }
 
         final MountPointNodeFactoryResolver resolver = optResolver.get();
-        if (resolver instanceof SharedSchema) {
-            writeTo(mountWriter, ((SharedSchema) resolver).getSchema());
-        } else if (resolver instanceof Inline) {
-            writeInline(mountWriter, (Inline) resolver);
-        } else {
-            throw new IOException("Unhandled resolver " + resolver);
+        final MountPointNodeFactory mountMeta;
+        try {
+            mountMeta = optResolver.get().resolveMountPoint(yangLib, schemaMounts);
+        } catch (YangParserException e) {
+            throw new IOException("Failed to resolve mount point " + getIdentifier(), e);
         }
-    }
-
-    private void writeInline(final @NonNull MountPointStreamWriter mountWriter, final Inline resolver)
-            throws IOException {
-        for (Entry<ContainerName, MountPointChild> entry : yangLib.entrySet()) {
-            final Optional<LibraryContext> optLibContext = resolver.findSchemaForLibrary(entry.getKey());
-            if (!optLibContext.isPresent()) {
-                LOG.debug("YANG Library context for mount point {} container {} not found", getIdentifier(),
-                    entry.getKey());
-                continue;
-            }
-
-            final LibraryContext libContext = optLibContext.get();
-            final NormalizedNode<?, ?> data = entry.getValue().normalizeTo(libContext.getLibraryContainerSchema());
-            if (!(data instanceof ContainerNode)) {
-                throw new IOException("Invalid non-container " + data);
-            }
-
-            final MountPointNodeFactory factory;
-            try {
-                factory = libContext.bindTo((ContainerNode) data);
-            } catch (YangParserException e) {
-                throw new IOException("Failed to assemble context for " + data, e);
-            }
-
-            writeTo(mountWriter, factory);
-            return;
-        }
-
-        LOG.warn("Failed to create a dynamic context for mount point {}, ignoring its data", getIdentifier());
-    }
-
-    private void writeTo(final @NonNull MountPointStreamWriter mountWriter,
-            final @NonNull MountPointNodeFactory mountMeta) throws IOException {
-        try (NormalizedNodeStreamWriter writer = mountWriter.startMountPoint(mountMeta)) {
+        try (NormalizedNodeStreamWriter nestedWriter = mountWriter.startMountPoint(mountMeta)) {
             for (MountPointChild child : children) {
-                child.writeTo(writer, mountMeta.getSchemaContext());
+                child.writeTo(nestedWriter, mountMeta.getSchemaContext());
             }
         }
     }
