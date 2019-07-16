@@ -12,13 +12,15 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.annotations.Beta;
 import java.io.IOException;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointContextFactory;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
  * A {@link CompositeNodeDataWithSchema} which can hold mount-point data. This data is manipulated through
- * {@link #getMountPointData(QName)}.
+ * {@link #getMountPointData(QName, MountPointContextFactory)}.
  */
 @Beta
 public abstract class AbstractMountPointDataWithSchema<T extends DataSchemaNode>
@@ -38,12 +40,13 @@ public abstract class AbstractMountPointDataWithSchema<T extends DataSchemaNode>
         }
     }
 
-    public final MountPointData getMountPointData(final QName label) {
+    public final MountPointData getMountPointData(final MountPointIdentifier label,
+            final MountPointContextFactory factory) {
         if (mountedData != null) {
             final QName existing = mountedData.getIdentifier().getLabel();
             checkState(label.equals(existing), "Mismatched mount label {}, already have {}", label, existing);
         } else {
-            mountedData = new MountPointData(label);
+            mountedData = new MountPointData(label, factory);
         }
         return mountedData;
     }

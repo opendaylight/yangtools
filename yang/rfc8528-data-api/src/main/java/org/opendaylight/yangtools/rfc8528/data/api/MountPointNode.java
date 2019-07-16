@@ -15,28 +15,32 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MixinNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
 /**
- * Common NormalizedNode representation of a YANG mount point. This interface is not meant to be implemented directly,
- * but rather used through its specializations like {@link InlineMountPointNode} and {@link SharedSchemaMountPointNode}.
+ * Common NormalizedNode representation of a YANG mount point.
  *
  * <p>
- * Furthermore, these nodes are not meant to be stored in a {@link DataTree} and most NormalizedNode utilities will be
- * confused when they see them. The purpose of this interface is making data interchange between mount point-aware
- * components more seamless.
+ * These nodes are not meant to be stored in a DataTree and most NormalizedNode utilities will be confused when
+ * they see them. The purpose of this interface is making data interchange between mount point-aware components more
+ * seamless.
+ */
+/*
+ * FIXME: 4.0.0: The above is not quite right. DataTree instances should be able to handle mount points and correctly
+ *               handle them, provided they get enough support from MountPointContext.
  */
 @Beta
-public interface MountPointNode extends SchemaContextProvider, MixinNode, DataContainerNode<MountPointIdentifier>,
+public interface MountPointNode extends MixinNode, DataContainerNode<MountPointIdentifier>,
         DataContainerChild<MountPointIdentifier, Collection<DataContainerChild<? extends PathArgument, ?>>> {
     @Override
     default QName getNodeType() {
         return getIdentifier().getLabel();
     }
 
-    @Override
-    // FIXME: remove this override when SchemaContextProvider's method has sane semantics.
-    @NonNull SchemaContext getSchemaContext();
+    @NonNull MountPointContext getMountPointContext();
+
+    /*
+     * FIXME: consider whether this interface should contain some information based on 'parent-reference':
+     *        - List<YangXPathExpression.QualifiedBound> getParentReference()
+     *        - the node-set required to maintain referential integrity in the subtree of this node
+     */
 }

@@ -8,8 +8,12 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import java.util.List;
+import org.opendaylight.yangtools.rcf8528.data.util.EmptyMountPointContext;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
@@ -46,9 +50,25 @@ import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
  */
 @Beta
 public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
+    private final MountPointContext mountCtx;
 
-    private XmlCodecFactory(final SchemaContext context) {
-        super(context, new SharedCodecCache<>());
+    private XmlCodecFactory(final MountPointContext mountCtx) {
+        super(mountCtx.getSchemaContext(), new SharedCodecCache<>());
+        this.mountCtx = requireNonNull(mountCtx);
+    }
+
+    MountPointContext mountPointContext() {
+        return mountCtx;
+    }
+
+    /**
+     * Instantiate a new codec factory attached to a particular context.
+     *
+     * @param context MountPointContext to which the factory should be bound
+     * @return A codec factory instance.
+     */
+    public static XmlCodecFactory create(final MountPointContext context) {
+        return new XmlCodecFactory(context);
     }
 
     /**
@@ -58,7 +78,7 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
      * @return A codec factory instance.
      */
     public static XmlCodecFactory create(final SchemaContext context) {
-        return new XmlCodecFactory(context);
+        return create(new EmptyMountPointContext(context));
     }
 
     @Override
