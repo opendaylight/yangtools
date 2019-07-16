@@ -26,11 +26,11 @@ public interface MountPointChild {
      * Stream this child into a writer, with the help of a SchemaContext.
      *
      * @param writer Writer to emit the child into
-     * @param schemaContext SchemaContext for normalization purposes
+     * @param mountCtx MountPointContext for normalization purposes
      * @throws IOException if an underlying error occurs
      * @throws NullPointerException if any of the arguments is null
      */
-    void writeTo(NormalizedNodeStreamWriter writer, SchemaContext schemaContext) throws IOException;
+    void writeTo(NormalizedNodeStreamWriter writer, MountPointContext mountCtx) throws IOException;
 
     /**
      * Normalized this child to a particular SchemaContext.
