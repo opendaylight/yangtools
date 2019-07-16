@@ -14,65 +14,46 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.rfc8528.data.api.InlineMountPointNode;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNode;
-import org.opendaylight.yangtools.rfc8528.data.api.SharedSchemaMountPointNode;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.util.AbstractIdentifiableSchemaContextProvider;
 
 @Beta
-public abstract class ImmutableMountPointNode<M extends MountPointNode, T extends ImmutableMountPointNode<M, T>>
-        extends AbstractIdentifiableSchemaContextProvider<MountPointIdentifier> implements MountPointNode, Immutable {
-    @NonNullByDefault
-    private static final class Inline extends ImmutableMountPointNode<InlineMountPointNode, Inline>
-            implements InlineMountPointNode {
+public final class ImmutableMountPointNode extends AbstractIdentifiable<MountPointIdentifier>
+        implements MountPointNode, Immutable {
 
-        Inline(final MountPointIdentifier identifier, final SchemaContext schemaContext, final ContainerNode delegate) {
-            super(identifier, schemaContext, delegate);
-        }
-    }
-
-    @NonNullByDefault
-    private static final class SharedSchema extends ImmutableMountPointNode<SharedSchemaMountPointNode, SharedSchema>
-            implements SharedSchemaMountPointNode {
-
-        SharedSchema(final MountPointIdentifier identifier, final SchemaContext schemaContext,
-                final ContainerNode delegate) {
-            super(identifier, schemaContext, delegate);
-        }
-    }
-
+    private final @NonNull MountPointContext mountCtx;
     private final @NonNull ContainerNode delegate;
 
     ImmutableMountPointNode(final @NonNull MountPointIdentifier identifier,
-            final @NonNull SchemaContext schemaContext, final @NonNull ContainerNode delegate) {
-        super(schemaContext, identifier);
+            final @NonNull MountPointContext mountCtx, final @NonNull ContainerNode delegate) {
+        super(identifier);
+        this.mountCtx = requireNonNull(mountCtx);
         this.delegate = requireNonNull(delegate);
     }
 
-    public static @NonNull InlineMountPointNode inlineOf(final @NonNull MountPointIdentifier identifier,
-            final @NonNull SchemaContext schemaContext, final @NonNull ContainerNode delegate) {
-        return new Inline(identifier, schemaContext, delegate);
-    }
-
-    public static @NonNull SharedSchemaMountPointNode sharedSchemaOf(final @NonNull MountPointIdentifier identifier,
-            final @NonNull SchemaContext schemaContext, final @NonNull ContainerNode delegate) {
-        return new SharedSchema(identifier, schemaContext, delegate);
+    public static @NonNull ImmutableMountPointNode of(final @NonNull MountPointIdentifier identifier,
+            final @NonNull MountPointContext mountCtx, final @NonNull ContainerNode delegate) {
+        return new ImmutableMountPointNode(identifier, mountCtx, delegate);
     }
 
     @Override
-    public final Collection<DataContainerChild<? extends PathArgument, ?>> getValue() {
+    public MountPointContext getMountPointContext() {
+        return mountCtx;
+    }
+
+    @Override
+    public Collection<DataContainerChild<? extends PathArgument, ?>> getValue() {
         return delegate.getValue();
     }
 
     @Override
-    public final Optional<DataContainerChild<? extends PathArgument, ?>> getChild(final PathArgument child) {
+    public Optional<DataContainerChild<? extends PathArgument, ?>> getChild(final PathArgument child) {
         return delegate.getChild(child);
     }
 
