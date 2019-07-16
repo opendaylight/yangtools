@@ -46,6 +46,8 @@ public final class MountPointData extends AbstractIdentifiable<MountPointIdentif
     private final Map<ContainerName, MountPointChild> yangLib = new EnumMap<>(ContainerName.class);
     private final List<MountPointChild> children = new ArrayList<>();
 
+    private MountPointChild schemaMounts;
+
     MountPointData(final QName label) {
         super(MountPointIdentifier.of(label));
     }
@@ -53,6 +55,12 @@ public final class MountPointData extends AbstractIdentifiable<MountPointIdentif
     public void setContainer(final @NonNull ContainerName containerName, final @NonNull MountPointChild data) {
         final MountPointChild prev = yangLib.putIfAbsent(containerName, requireNonNull(data));
         checkState(prev == null, "Attempted to duplicate container %s data %s with %s", containerName, prev, data);
+        addChild(data);
+    }
+
+    public void setSchemaMounts(final @NonNull MountPointChild data) {
+        checkState(schemaMounts == null, "Attempted to reset schema-mounts from %s to %s", schemaMounts, data);
+        schemaMounts = requireNonNull(data);
         addChild(data);
     }
 
