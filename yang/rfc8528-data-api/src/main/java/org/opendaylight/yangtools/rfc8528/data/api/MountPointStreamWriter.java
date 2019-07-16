@@ -9,8 +9,7 @@ package org.opendaylight.yangtools.rfc8528.data.api;
 
 import com.google.common.annotations.Beta;
 import java.io.IOException;
-import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 
@@ -20,23 +19,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
  * structure.
  */
 @Beta
+@NonNullByDefault
 public interface MountPointStreamWriter extends NormalizedNodeStreamWriterExtension {
-    /**
-     * Attempt to acquire a {@link MountPointNodeFactoryResolver} to resolve schemas for the purposes of interpreting
-     * this mount point. An empty result indicates the mount point is not attached.
-     *
-     * @param label Mount point label, as defined via the use of {@code mount-point} statement
-     * @return An optional handler for mount point data
-     * @throws NullPointerException if label is null
-     */
-    Optional<MountPointNodeFactoryResolver> findMountPoint(@NonNull MountPointIdentifier label);
 
     /**
-     * Start a new mount point with a specific root context.
+     * Start a new mount point with a specific mount poitn context context.
      *
-     * @param factory Mount point schema
+     * @param mountId Mount point identifier
+     * @param mountCtx Mount point context
      * @return A new NormalizedNodeStreamWriter
      * @throws IOException if an error occurs
      */
-    @NonNull NormalizedNodeStreamWriter startMountPoint(@NonNull MountPointNodeFactory factory) throws IOException;
+    NormalizedNodeStreamWriter startMountPoint(MountPointIdentifier mountId, MountPointContext mountCtx)
+            throws IOException;
 }
