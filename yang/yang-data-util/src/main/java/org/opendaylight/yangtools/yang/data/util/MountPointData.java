@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointChild;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactory;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNodeFactoryResolver;
