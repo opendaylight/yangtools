@@ -177,7 +177,7 @@ abstract class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicat
         for (@SuppressWarnings("rawtypes") final Constructor constr : clazz.getConstructors()) {
             final Class<?>[] parameters = constr.getParameterTypes();
             if (!clazz.equals(parameters[0])) {
-                // It is not copy constructor;
+                // It is not copy constructor...
                 try {
                     return MethodHandles.publicLookup().unreflectConstructor(constr);
                 } catch (IllegalAccessException e) {

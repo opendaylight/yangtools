@@ -411,7 +411,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         }
 
         // Still no result, this can be caused by TCCL not being set up properly -- try the class's ClassLoader
-        // if it is present;
+        // if it is present
         final ClassLoader loader = childClass.getClassLoader();
         if (loader == null) {
             return null;
