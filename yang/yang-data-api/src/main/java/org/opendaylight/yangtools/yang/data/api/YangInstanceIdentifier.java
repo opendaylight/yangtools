@@ -673,6 +673,16 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             return keyValues.values();
         }
 
+        @Beta
+        public @Nullable Object getValue(final QName key) {
+            return keyValues.get(requireNonNull(key));
+        }
+
+        @Beta
+        public <T> @Nullable T getValue(final QName key, final Class<T> valueClass) {
+            return valueClass.cast(getValue(key));
+        }
+
         /**
          * Return the number of predicates present.
          *
