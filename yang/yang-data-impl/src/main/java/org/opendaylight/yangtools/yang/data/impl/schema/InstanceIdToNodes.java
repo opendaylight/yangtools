@@ -21,11 +21,13 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
+import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -92,14 +94,45 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractIdentif
         }
     }
 
-    private static final class AnyXmlNormalization extends InstanceIdToNodes<NodeIdentifier> {
-        AnyXmlNormalization(final AnyXmlSchemaNode schema) {
+    private abstract static class AbstractOpaqueNormalization extends InstanceIdToNodes<NodeIdentifier> {
+        AbstractOpaqueNormalization(final DataSchemaNode schema) {
             super(NodeIdentifier.create(schema.getQName()));
         }
 
         @Override
-        InstanceIdToNodes<?> getChild(final PathArgument child) {
+        final InstanceIdToNodes<?> getChild(final PathArgument child) {
             return null;
+        }
+
+        @Override
+        final boolean isMixin() {
+            return false;
+        }
+    }
+
+    private static final class AnydataNormalization extends AbstractOpaqueNormalization {
+        AnydataNormalization(final AnyDataSchemaNode schema) {
+            super(schema);
+        }
+
+        @Override
+        NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
+                final Optional<NormalizedNode<?, ?>> deepestChild) {
+            checkState(deepestChild.isPresent(), "Cannot instantiate anydata node without a value");
+            final NormalizedNode<?, ?> child = deepestChild.get();
+            checkState(child instanceof AnydataNode, "Invalid child %s", child);
+            return createAnydata((AnydataNode<?>) child);
+        }
+
+        private <T> AnydataNode<T> createAnydata(final AnydataNode<T> child) {
+            return Builders.anydataBuilder(child.getValueObjectModel()).withValue(child.getValue())
+            .withNodeIdentifier(getIdentifier()).build();
+        }
+    }
+
+    private static final class AnyXmlNormalization extends AbstractOpaqueNormalization {
+        AnyXmlNormalization(final AnyXmlSchemaNode schema) {
+            super(schema);
         }
 
         @Override
@@ -109,16 +142,11 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractIdentif
                     .withNodeIdentifier(getIdentifier());
             if (deepestChild.isPresent()) {
                 final NormalizedNode<?, ?> child = deepestChild.get();
-                checkState(child instanceof AnyXmlNode);
+                checkState(child instanceof AnyXmlNode, "Invalid child %s", child);
                 builder.withValue(((AnyXmlNode) child).getValue());
             }
 
             return builder.build();
-        }
-
-        @Override
-        boolean isMixin() {
-            return false;
         }
     }
 
@@ -183,6 +211,8 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractIdentif
             return new InstanceIdToCompositeNodes.ChoiceNodeNormalization((ChoiceSchemaNode) potential);
         } else if (potential instanceof LeafListSchemaNode) {
             return fromLeafListSchemaNode((LeafListSchemaNode) potential);
+        } else if (potential instanceof AnyDataSchemaNode) {
+            return new AnydataNormalization((AnyDataSchemaNode) potential);
         } else if (potential instanceof AnyXmlSchemaNode) {
             return new AnyXmlNormalization((AnyXmlSchemaNode) potential);
         }
