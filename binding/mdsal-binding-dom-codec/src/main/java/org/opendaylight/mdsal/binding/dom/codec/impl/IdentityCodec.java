@@ -7,16 +7,18 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Preconditions;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingIdentityCodec;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.common.QName;
 
-final class IdentityCodec implements Codec<QName, Class<?>> {
+final class IdentityCodec implements Codec<QName, Class<?>>, BindingIdentityCodec {
     private final BindingRuntimeContext context;
 
     IdentityCodec(final BindingRuntimeContext context) {
@@ -25,13 +27,27 @@ final class IdentityCodec implements Codec<QName, Class<?>> {
 
     @Override
     public Class<?> deserialize(final QName input) {
-        Preconditions.checkArgument(input != null, "Input must not be null.");
+        checkArgument(input != null, "Input must not be null.");
         return context.getIdentityClass(input);
     }
 
     @Override
     public QName serialize(final Class<?> input) {
-        Preconditions.checkArgument(BaseIdentity.class.isAssignableFrom(input));
+        checkArgument(BaseIdentity.class.isAssignableFrom(input), "%s is not an identity", input);
         return BindingReflections.findQName(input);
+    }
+
+    @Override
+    public Class<? extends BaseIdentity> toBinding(final QName qname) {
+        final Class<?> identity = context.getIdentityClass(requireNonNull(qname));
+        checkArgument(BaseIdentity.class.isAssignableFrom(identity), "%s resolves to non-identity %s", qname, identity);
+        return identity.asSubclass(BaseIdentity.class);
+    }
+
+    @Override
+    public QName fromBinding(final Class<? extends BaseIdentity> bindingClass) {
+        final QName qname = BindingReflections.getQName(bindingClass);
+        checkState(qname != null, "Failed to resolve QName of %s", bindingClass);
+        return qname;
     }
 }

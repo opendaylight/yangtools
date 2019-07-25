@@ -7,6 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
+import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -26,4 +28,15 @@ public interface BindingCodecTree {
     @Nullable BindingCodecTreeNode getSubtreeCodec(YangInstanceIdentifier path);
 
     @Nullable BindingCodecTreeNode getSubtreeCodec(SchemaPath path);
+
+    /**
+     * Get the BindingIdentityCodec associated with this tree.
+     *
+     * @return A BindingIdentityCodec instance.
+     */
+    // FIXME: 5.0.0: make this method non-default
+    @Beta
+    default @NonNull BindingIdentityCodec getIdentityCodec() {
+        throw new UnsupportedOperationException("Not implemented by " + getClass());
+    }
 }

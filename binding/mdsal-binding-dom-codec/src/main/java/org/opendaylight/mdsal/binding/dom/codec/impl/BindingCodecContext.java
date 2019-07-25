@@ -120,7 +120,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
 
     private final @NonNull CodecClassLoader loader = CodecClassLoader.create();
     private final InstanceIdentifierCodec instanceIdentifierCodec;
-    private final IdentityCodec identityCodec;
+    private final @NonNull IdentityCodec identityCodec;
     private final BindingNormalizedNodeCodecRegistry registry;
     private final BindingRuntimeContext context;
     private final SchemaRootCodecContext<?> root;
@@ -147,7 +147,8 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         return instanceIdentifierCodec;
     }
 
-    IdentityCodec getIdentityCodec() {
+    @Override
+    public IdentityCodec getIdentityCodec() {
         return identityCodec;
     }
 
