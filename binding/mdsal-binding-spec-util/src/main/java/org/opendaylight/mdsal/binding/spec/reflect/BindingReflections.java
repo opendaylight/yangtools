@@ -189,6 +189,7 @@ public final class BindingReflections {
         return Optional.empty();
     }
 
+    // FIXME: 4.0.0: check that the QName is actually resolved, i.e. guarantee @NonNull here
     public static QName getQName(final Class<? extends BaseIdentity> context) {
         return findQName(context);
     }
