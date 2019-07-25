@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * @author Robert Varga
  */
 @Beta
+// FIXME: 4.0.0: integrate this into NormalizedNodeStreamWriter
 public interface AnydataExtension extends NormalizedNodeStreamWriterExtension {
     /**
      * Start emitting a new anydata node identified by name.
