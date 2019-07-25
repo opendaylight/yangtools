@@ -36,6 +36,9 @@ public abstract class AbstractNormalizableAnydata implements NormalizableAnydata
         } catch (IOException e) {
             throw new AnydataNormalizationException("Failed to normalize anydata", e);
         }
+        if (result.getResult() == null) {
+            throw new AnydataNormalizationException("No anydata content found to normalize");
+        }
 
         return ImmutableMetadataNormalizedAnydata.ofOptional(inference, result.getResult(), result.getMetadata());
     }
