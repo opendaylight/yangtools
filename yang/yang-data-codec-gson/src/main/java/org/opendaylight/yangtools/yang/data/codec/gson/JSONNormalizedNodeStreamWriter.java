@@ -13,13 +13,16 @@ import static org.w3c.dom.Node.ELEMENT_NODE;
 import static org.w3c.dom.Node.TEXT_NODE;
 
 import com.google.common.collect.ClassToInstanceMap;
-import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.regex.Pattern;
 import javax.xml.transform.dom.DOMSource;
 import org.checkerframework.checker.regex.qual.Regex;
+import org.opendaylight.yangtools.concepts.ObjectExtensions;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
+import org.opendaylight.yangtools.rfc8528.data.api.MountPointStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -34,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -48,7 +52,8 @@ import org.w3c.dom.Text;
  * <p>
  * Values of leaf and leaf-list are NOT translated according to codecs.
  */
-public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter, AnydataExtension {
+public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter, AnydataExtension,
+        MountPointStreamWriter {
     private static final class Exclusive extends JSONNormalizedNodeStreamWriter {
         Exclusive(final JSONCodecFactory codecFactory, final SchemaTracker tracker, final JsonWriter writer,
                 final JSONStreamWriterRootContext rootContext) {
@@ -80,6 +85,10 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      * are marked as 'presence'.
      */
     private static final boolean DEFAULT_EMIT_EMPTY_CONTAINERS = true;
+
+    static final ObjectExtensions.Factory<JSONNormalizedNodeStreamWriter, NormalizedNodeStreamWriter,
+        NormalizedNodeStreamWriterExtension> EXTENSIONS_BUILDER = ObjectExtensions.factory(
+            JSONNormalizedNodeStreamWriter.class, AnydataExtension.class, MountPointStreamWriter.class);
 
     @Regex
     private static final String NUMBER_STRING = "-?\\d+(\\.\\d+)?";
@@ -208,7 +217,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     @Override
     public ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(AnydataExtension.class, this);
+        return EXTENSIONS_BUILDER.newInstance(this);
     }
 
     @Override
@@ -292,7 +301,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
-    public boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
+    public final boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
         if (NormalizedAnydata.class.isAssignableFrom(objectModel)) {
             tracker.startAnydataNode(name);
             context.emittingChild(codecs.getSchemaContext(), writer);
@@ -301,6 +310,14 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         }
 
         return false;
+    }
+
+    @Override
+    public final NormalizedNodeStreamWriter startMountPoint(final MountPointIdentifier mountId,
+            final MountPointContext mountCtx) throws IOException {
+        final SchemaContext ctx = mountCtx.getSchemaContext();
+        return new Nested(codecs.rebaseTo(ctx), SchemaTracker.create(ctx), writer,
+            new JSONStreamWriterSharedRootContext(context.getNamespace()));
     }
 
     @Override
