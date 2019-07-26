@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.spec.reflect;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
@@ -33,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.checkerframework.checker.regex.qual.Regex;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Action;
@@ -189,9 +191,10 @@ public final class BindingReflections {
         return Optional.empty();
     }
 
-    // FIXME: 4.0.0: check that the QName is actually resolved, i.e. guarantee @NonNull here
-    public static QName getQName(final Class<? extends BaseIdentity> context) {
-        return findQName(context);
+    public static @NonNull QName getQName(final Class<? extends BaseIdentity> bindingClass) {
+        final Optional<QName> qname = CLASS_TO_QNAME.getUnchecked(requireNonNull(bindingClass));
+        checkState(qname.isPresent(), "Failed to resolve QName of %s", bindingClass);
+        return qname.get();
     }
 
     /**

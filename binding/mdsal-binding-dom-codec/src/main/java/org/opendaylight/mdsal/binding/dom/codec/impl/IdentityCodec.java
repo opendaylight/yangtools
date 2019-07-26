@@ -8,7 +8,6 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingIdentityCodec;
@@ -46,8 +45,6 @@ final class IdentityCodec implements Codec<QName, Class<?>>, BindingIdentityCode
 
     @Override
     public QName fromBinding(final Class<? extends BaseIdentity> bindingClass) {
-        final QName qname = BindingReflections.getQName(bindingClass);
-        checkState(qname != null, "Failed to resolve QName of %s", bindingClass);
-        return qname;
+        return BindingReflections.getQName(bindingClass);
     }
 }
