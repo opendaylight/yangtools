@@ -7,29 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-abstract class AbstractLeafNodeContext<T extends PathArgument> extends DataSchemaContextNode<T> {
+abstract class AbstractLeafNodeContext<T extends PathArgument, S extends DataSchemaNode>
+        extends AbstractLeafContextNode<T, S> {
 
-    protected AbstractLeafNodeContext(final T identifier, final DataSchemaNode potential) {
+    AbstractLeafNodeContext(final T identifier, final S potential) {
         super(identifier, potential);
     }
 
     @Override
-    public DataSchemaContextNode<?> getChild(final PathArgument child) {
-        return null;
-    }
-
-    @Override
-    public DataSchemaContextNode<?> getChild(final QName child) {
-        return null;
-    }
-
-    @Override
-    public boolean isLeaf() {
+    public final boolean isLeaf() {
         return true;
     }
-
 }
