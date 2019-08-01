@@ -29,7 +29,6 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNo
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeWriterFactory;
-import org.opendaylight.mdsal.binding.dom.codec.gen.impl.DataObjectSerializerGenerator;
 import org.opendaylight.mdsal.binding.dom.codec.util.AbstractBindingLazyContainerNode;
 import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
@@ -67,25 +66,18 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         BindingCodecTreeFactory, BindingNormalizedNodeWriterFactory, BindingNormalizedNodeSerializer {
     private static final Logger LOG = LoggerFactory.getLogger(BindingNormalizedNodeCodecRegistry.class);
 
-    private final DataObjectSerializerGenerator generator;
-
     private static final AtomicReferenceFieldUpdater<BindingNormalizedNodeCodecRegistry, BindingCodecContext> UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(BindingNormalizedNodeCodecRegistry.class, BindingCodecContext.class,
                 "codecContext");
     private volatile BindingCodecContext codecContext;
 
     public BindingNormalizedNodeCodecRegistry() {
-        this.generator = null;
+
     }
 
     public BindingNormalizedNodeCodecRegistry(final BindingRuntimeContext codecContext) {
         this();
         onBindingRuntimeContextUpdated(codecContext);
-    }
-
-    @Deprecated
-    public BindingNormalizedNodeCodecRegistry(final DataObjectSerializerGenerator generator) {
-        this.generator = requireNonNull(generator);
     }
 
     @Override
@@ -106,11 +98,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         }
 
         final BindingCodecContext updated = new BindingCodecContext(context, this);
-        if (UPDATER.compareAndSet(this, current, updated)) {
-            if (generator != null) {
-                generator.onBindingRuntimeContextUpdated(context);
-            }
-        } else {
+        if (!UPDATER.compareAndSet(this, current, updated)) {
             LOG.warn("Concurrent update of runtime context (expected={} current={}) detected at ", current,
                 codecContext, new Throwable());
         }
