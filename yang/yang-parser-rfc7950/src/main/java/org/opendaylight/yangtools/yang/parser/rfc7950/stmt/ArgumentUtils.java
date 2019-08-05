@@ -23,6 +23,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.NonNull;
+import org.gaul.modernizer_maven_annotations.SuppressModernizer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -153,6 +154,8 @@ public final class ArgumentUtils {
         XPATH_FACTORY.remove();
     }
 
+    // FIXME: remove suppression when we have release=9
+    @SuppressModernizer
     private static String addPrefixToYangXPathFunctions(final String path, final StmtContext<?, ?, ?> ctx) {
         if (ctx.getRootVersion() == YangVersion.VERSION_1_1) {
             // FIXME once Java 9 is available, change this to StringBuilder as Matcher.appendReplacement() and

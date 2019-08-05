@@ -18,6 +18,11 @@
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
+    <properties>
+        <!-- FIXME: workaround for MJAVADOC-586 -->
+        <maven.compiler.release>8</maven.compiler.release>
+    </properties>
+
     <build>
         <plugins>
             <plugin>

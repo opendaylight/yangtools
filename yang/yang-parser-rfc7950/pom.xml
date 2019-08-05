@@ -21,6 +21,11 @@
     <name>${project.artifactId}</name>
     <description>RFC6020/RFC7950 parser support</description>
 
+    <properties>
+        <!-- FIXME: workaround for MJAVADOC-586 -->
+        <maven.compiler.release>8</maven.compiler.release>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
