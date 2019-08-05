@@ -392,7 +392,8 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         return f;
     }
 
-    private static void setField(final @NonNull ImmutableOffsetMap<?, ?> map, final @NonNull Field field,
+    // FIXME: SpotBugs does not understand nestmates?
+    static void setField(final @NonNull ImmutableOffsetMap<?, ?> map, final @NonNull Field field,
             final Object value) throws IOException {
         try {
             field.set(map, value);
