@@ -363,6 +363,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         return hash;
     }
 
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
+            justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static int hashCode(final Object value) {
         if (value == null) {
             return 0;
