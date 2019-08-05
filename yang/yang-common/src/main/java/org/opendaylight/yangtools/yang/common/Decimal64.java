@@ -128,6 +128,13 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
             return Variant.ofFirst(new Decimal64(fracLen, intPart, fracPart, negative));
         }
+
+        private static int toInt(final char ch, final int index) {
+            if (ch < '0' || ch > '9') {
+                throw new NumberFormatException("Illegal character at offset " + index);
+            }
+            return ch - '0';
+        }
     }
 
     private static final CanonicalValueSupport<Decimal64> SUPPORT = new Support();
@@ -386,12 +393,5 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
     private long fracPart() {
         return Math.abs(value % SCALE[scaleOffset]);
-    }
-
-    private static int toInt(final char ch, final int index) {
-        if (ch < '0' || ch > '9') {
-            throw new NumberFormatException("Illegal character at offset " + index);
-        }
-        return ch - '0';
     }
 }
