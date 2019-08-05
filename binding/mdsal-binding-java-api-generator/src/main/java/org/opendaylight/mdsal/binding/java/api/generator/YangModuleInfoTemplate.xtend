@@ -25,6 +25,7 @@ import java.util.Set
 import java.util.TreeMap
 import java.util.function.Function
 import org.eclipse.xtend.lib.annotations.Accessors
+import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.api.WildcardType
@@ -42,6 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext
  * this class provides a static {@code createQName(String)} method, which is used by co-generated code to initialize
  * QNAME constants.
  */
+@SuppressModernizer
 class YangModuleInfoTemplate {
     static val Comparator<Optional<Revision>> REVISION_COMPARATOR =
         [ Optional<Revision> first, Optional<Revision> second | Revision.compare(first, second) ]

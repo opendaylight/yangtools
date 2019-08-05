@@ -23,6 +23,7 @@ import java.util.Collections
 import java.util.List
 import java.util.Map
 import java.util.regex.Pattern
+import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.Enumeration
@@ -38,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 /**
  * Template for generating JAVA class.
  */
+@SuppressModernizer
 class ClassTemplate extends BaseTemplate {
 
     protected val List<GeneratedProperty> properties

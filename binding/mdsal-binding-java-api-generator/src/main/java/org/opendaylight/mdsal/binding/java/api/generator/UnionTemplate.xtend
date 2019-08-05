@@ -14,6 +14,7 @@ import static org.opendaylight.mdsal.binding.model.util.Types.getOuterClassName;
 
 import java.util.Arrays
 import java.util.Base64;
+import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.Type
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 /**
  * Template for generating JAVA class.
  */
+@SuppressModernizer
 class UnionTemplate extends ClassTemplate {
     /**
      * Creates instance of this class with concrete <code>genType</code>.

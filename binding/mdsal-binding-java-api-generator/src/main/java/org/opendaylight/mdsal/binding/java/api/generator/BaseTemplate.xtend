@@ -19,6 +19,7 @@ import java.util.Locale
 import java.util.Map.Entry
 import java.util.StringTokenizer
 import java.util.regex.Pattern
+import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
@@ -46,6 +47,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement
 import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter
 
+@SuppressModernizer
 abstract class BaseTemplate extends JavaFileTemplate {
     static final char NEW_LINE = '\n'
     static final char SPACE = ' '

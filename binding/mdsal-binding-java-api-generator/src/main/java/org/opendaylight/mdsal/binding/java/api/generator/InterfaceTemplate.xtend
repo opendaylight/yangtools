@@ -13,6 +13,7 @@ import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMappin
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isNonnullMethodName
 
 import java.util.List
+import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.Enumeration
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.binding.CodeHelpers
 /**
  * Template for generating JAVA interfaces.
  */
+ @SuppressModernizer
 class InterfaceTemplate extends BaseTemplate {
     /**
      * List of constant instances which are generated as JAVA public static final attributes.
