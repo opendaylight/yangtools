@@ -300,8 +300,6 @@
 
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                    <!-- FIXME: remove override once odlparent ships 3.1.0+ -->
-                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
