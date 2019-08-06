@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNull;
+import org.gaul.modernizer_maven_annotations.SuppressModernizer;
 
 /**
  * An unmodifiable view over a {@link Collection}. Unlike the view returned via
@@ -59,6 +60,7 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
      * @return An unmodifiable view of the collection
      * @throws NullPointerException if {@code collection} is null
      */
+    @SuppressModernizer
     public static <T> @NonNull Collection<T> create(final @NonNull Collection<T> collection) {
         if (collection instanceof UnmodifiableCollection || collection instanceof ImmutableCollection
                 || Collections.EMPTY_LIST == collection || Collections.EMPTY_SET == collection
