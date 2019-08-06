@@ -387,15 +387,11 @@ abstract class BaseTemplate extends JavaFileTemplate {
             val nextElement = tokenizer.nextToken
 
             if (lineBuilder.length != 0 && lineBuilder.length + nextElement.length > 80) {
-                // FIXME: what tricks are we playing here? Equality probably does not trigger ever
-                //        and then the setLength()/append() combo does not work, either
-                if (lineBuilder.charAt(lineBuilder.length - 1) == ' ') {
-                    lineBuilder.setLength(0)
-                    lineBuilder.append(lineBuilder.substring(0, lineBuilder.length - 1))
+                if (lineBuilder.charAt(lineBuilder.length - 1) == SPACE) {
+                    lineBuilder.setLength(lineBuilder.length - 1)
                 }
-                if (lineBuilder.charAt(0) == ' ') {
-                    lineBuilder.setLength(0)
-                    lineBuilder.append(lineBuilder.substring(1))
+                if (lineBuilder.length != 0 && lineBuilder.charAt(0) == SPACE) {
+                    lineBuilder.deleteCharAt(0)
                 }
 
                 sb.append(lineBuilder).append(NEW_LINE)
