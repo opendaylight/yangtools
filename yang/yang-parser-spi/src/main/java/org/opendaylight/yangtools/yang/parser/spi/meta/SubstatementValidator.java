@@ -5,10 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
@@ -174,18 +174,18 @@ public final class SubstatementValidator {
         private final int min;
         private final int max;
 
-        private Cardinality(final int min, final int max) {
-            Preconditions.checkArgument(min >= 0, "Min %s cannot be less than 0!");
-            Preconditions.checkArgument(min <= max, "Min %s can not be greater than max %s!", min, max);
+        Cardinality(final int min, final int max) {
+            checkArgument(min >= 0, "Min %s cannot be less than 0!", min);
+            checkArgument(min <= max, "Min %s can not be greater than max %s!", min, max);
             this.min = min;
             this.max = max;
         }
 
-        private int getMax() {
+        int getMax() {
             return max;
         }
 
-        private int getMin() {
+        int getMin() {
             return min;
         }
     }
