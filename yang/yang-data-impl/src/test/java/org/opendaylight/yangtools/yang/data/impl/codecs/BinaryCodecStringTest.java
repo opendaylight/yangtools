@@ -5,14 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.codecs;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
 
-import com.google.common.io.BaseEncoding;
+import java.util.Base64;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
@@ -29,7 +28,7 @@ public class BinaryCodecStringTest {
     public void testSerialize() {
         BinaryCodec<String> codec = getCodec(BaseTypes.binaryType(), BinaryCodec.class);
 
-        assertEquals("serialize", BaseEncoding.base64().encode(new byte[] { 1, 2, 3, 4 }),
+        assertEquals("serialize", Base64.getEncoder().encodeToString(new byte[] { 1, 2, 3, 4 }),
                       codec.serialize(new byte[] { 1, 2, 3, 4 }));
         assertEquals("serialize", "", codec.serialize(null));
     }
@@ -40,7 +39,7 @@ public class BinaryCodecStringTest {
         BinaryCodec<String> codec = getCodec(BaseTypes.binaryType(), BinaryCodec.class);
 
         assertArrayEquals("deserialize", new byte[] {1, 2, 3, 4 },
-                      codec.deserialize(BaseEncoding.base64().encode(new byte[] { 1, 2, 3, 4 })));
+                      codec.deserialize(Base64.getEncoder().encodeToString(new byte[] { 1, 2, 3, 4 })));
         assertEquals("deserialize", null, codec.deserialize(null));
     }
 }

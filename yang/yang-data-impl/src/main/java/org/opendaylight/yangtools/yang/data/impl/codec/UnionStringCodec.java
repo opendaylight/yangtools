@@ -5,10 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import com.google.common.io.BaseEncoding;
+import java.util.Base64;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.UnionCodec;
@@ -33,7 +32,7 @@ final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeD
     @Override
     public String serialize(final Object data) {
         if (data instanceof byte[]) {
-            return BaseEncoding.base64().encode((byte[]) data);
+            return Base64.getEncoder().encodeToString((byte[]) data);
         }
         return Objects.toString(data, "");
     }
