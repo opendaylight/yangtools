@@ -44,14 +44,4 @@ public interface PrefixToModule extends IdentifierNamespace<String, QNameModule>
      * @throws URISyntaxException if the input string is not valid URI
      */
     @Nullable QNameModule getByNamespace(String namespace) throws URISyntaxException;
-
-    /**
-     * Pre-linkage map does not consider revision-dates of modules and it contains module namespaces only.
-     *
-     * @return true if it is the pre-linkage map.
-     *
-     * @deprecated This property is bound to the currently-executing stage and so should be statically-wired.
-     */
-    @Deprecated
-    boolean isPreLinkageMap();
 }
