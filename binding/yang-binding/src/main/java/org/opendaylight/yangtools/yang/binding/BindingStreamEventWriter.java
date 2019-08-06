@@ -271,6 +271,8 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *            and should not fail writing of child events, if there are more
      *            events than count.
      * @throws IllegalArgumentException
+     *             If emitted node is invalid in current context or was emitted
+     *             multiple times.
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
@@ -295,6 +297,8 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *            and should not fail writing of child events, if there are more
      *            events than count.
      * @throws IllegalArgumentException
+     *             If emitted node is invalid in current context or was emitted
+     *             multiple times.
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.

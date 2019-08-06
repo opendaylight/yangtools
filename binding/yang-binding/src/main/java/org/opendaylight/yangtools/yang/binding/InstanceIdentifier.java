@@ -810,16 +810,14 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
 
     public interface InstanceIdentifierBuilder<T extends DataObject> extends Builder<InstanceIdentifier<T>> {
         /**
-         * Append the specified container as a child of the current InstanceIdentifier referenced by the builder.
-         *
-         * This method should be used when you want to build an instance identifier by appending top-level
-         * elements
-         *
-         * Example,
+         * Append the specified container as a child of the current InstanceIdentifier referenced by the builder. This
+         * method should be used when you want to build an instance identifier by appending top-level elements, for
+         * example
          * <pre>
          *     InstanceIdentifier.builder().child(Nodes.class).build();
          * </pre>
          *
+         * <p>
          * NOTE :- The above example is only for illustration purposes InstanceIdentifier.builder() has been deprecated
          * and should not be used. Use InstanceIdentifier.builder(Nodes.class) instead
          *
@@ -831,11 +829,9 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
         <N extends ChildOf<? super T>> @NonNull InstanceIdentifierBuilder<N> child(Class<N> container);
 
         /**
-         * Append the specified container as a child of the current InstanceIdentifier referenced by the builder.
-         *
-         * This method should be used when you want to build an instance identifier by appending a container node
-         * to the identifier and the {@code container} is defined in a {@code grouping} used in a {@code case}
-         * statement.
+         * Append the specified container as a child of the current InstanceIdentifier referenced by the builder. This
+         * method should be used when you want to build an instance identifier by appending a container node to the
+         * identifier and the {@code container} is defined in a {@code grouping} used in a {@code case} statement.
          *
          * @param caze Choice case class
          * @param container Container to append
@@ -848,10 +844,9 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
                 @NonNull InstanceIdentifierBuilder<N> child(Class<C> caze, Class<N> container);
 
         /**
-         * Append the specified listItem as a child of the current InstanceIdentifier referenced by the builder.
-         *
-         * This method should be used when you want to build an instance identifier by appending a specific list element
-         * to the identifier
+         * Append the specified listItem as a child of the current InstanceIdentifier referenced by the builder. This
+         * method should be used when you want to build an instance identifier by appending a specific list element to
+         * the identifier.
          *
          * @param listItem List to append
          * @param listKey List key
@@ -864,10 +859,9 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
                 @NonNull InstanceIdentifierBuilder<N> child(Class<N> listItem, K listKey);
 
         /**
-         * Append the specified listItem as a child of the current InstanceIdentifier referenced by the builder.
-         *
-         * This method should be used when you want to build an instance identifier by appending a specific list element
-         * to the identifier and the {@code list} is defined in a {@code grouping} used in a {@code case} statement.
+         * Append the specified listItem as a child of the current InstanceIdentifier referenced by the builder. This
+         * method should be used when you want to build an instance identifier by appending a specific list element to
+         * the identifier and the {@code list} is defined in a {@code grouping} used in a {@code case} statement.
          *
          * @param caze Choice case class
          * @param listItem List to append

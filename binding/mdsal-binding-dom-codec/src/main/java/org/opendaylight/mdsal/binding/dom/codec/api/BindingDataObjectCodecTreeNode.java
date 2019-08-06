@@ -37,7 +37,7 @@ public interface BindingDataObjectCodecTreeNode<T extends DataObject> extends Bi
      * Returns child context as if it was walked by {@link BindingStreamEventWriter}. This means that to enter case,
      * one must issue getChild(ChoiceClass).getChild(CaseClass).
      *
-     * @param childClass Child class by Biding Stream navigation
+     * @param childClass Child class by Binding Stream navigation
      * @return Context of child
      * @throws IllegalArgumentException
      *             If supplied child class is not valid in specified context.
@@ -53,7 +53,7 @@ public interface BindingDataObjectCodecTreeNode<T extends DataObject> extends Bi
      * augmentation and cases, that may return {@link BindingCodecTreeNode} even if augmentation interface containing
      * same data was supplied and does not represent augmentation of this node.
      *
-     * @param childClass
+     * @param childClass Child class by Binding Stream navigation
      * @return Context of child or Optional.empty is supplied class is not
      *         applicable in context.
      */
