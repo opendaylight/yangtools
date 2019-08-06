@@ -23,15 +23,16 @@ import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
-import org.osgi.util.tracker.BundleTrackerCustomizer;
+import org.osgi.util.tracker.BundleTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Tracks bundles and attempts to retrieve YangModuleInfo, which is then fed into ModuleInfoRegistry.
  */
-final class ModuleInfoBundleTracker implements BundleTrackerCustomizer<Collection<ObjectRegistration<YangModuleInfo>>> {
+final class ModuleInfoBundleTracker extends BundleTracker<Collection<ObjectRegistration<YangModuleInfo>>> {
     private static final Logger LOG = LoggerFactory.getLogger(ModuleInfoBundleTracker.class);
     // FIXME: this should be in a place shared with maven-sal-api-gen-plugin
     private static final String MODULE_INFO_PROVIDER_PATH_PREFIX = "META-INF/services/";
@@ -43,15 +44,24 @@ final class ModuleInfoBundleTracker implements BundleTrackerCustomizer<Collectio
 
     private final OsgiModuleInfoRegistry moduleInfoRegistry;
 
-    private volatile boolean starting = true;
+    private volatile boolean deferUpdates = true;
 
-    ModuleInfoBundleTracker(final OsgiModuleInfoRegistry moduleInfoRegistry) {
+    ModuleInfoBundleTracker(final BundleContext context, final OsgiModuleInfoRegistry moduleInfoRegistry) {
+        super(context, Bundle.RESOLVED | Bundle.STARTING | Bundle.STOPPING | Bundle.ACTIVE, null);
         this.moduleInfoRegistry = requireNonNull(moduleInfoRegistry);
     }
 
-    void finishStart() {
-        starting = false;
+    @Override
+    public void open() {
+        super.open();
+        deferUpdates = false;
         moduleInfoRegistry.updateService();
+    }
+
+    @Override
+    public void close() {
+        deferUpdates = true;
+        super.close();
     }
 
     @Override
@@ -91,7 +101,7 @@ final class ModuleInfoBundleTracker implements BundleTrackerCustomizer<Collectio
             registrations.add(moduleInfoRegistry.registerModuleInfo(moduleInfo));
         }
 
-        if (!starting) {
+        if (!deferUpdates) {
             moduleInfoRegistry.updateService();
         }
 

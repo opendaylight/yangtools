@@ -8,14 +8,10 @@
 package org.opendaylight.mdsal.binding.dom.codec.osgi.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.opendaylight.mdsal.binding.dom.codec.osgi.BindingRuntimeContextService;
 import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
-import org.opendaylight.yangtools.concepts.ObjectRegistration;
-import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -24,7 +20,7 @@ import org.osgi.util.tracker.BundleTracker;
 public final class Activator implements BundleActivator {
     private final List<ServiceRegistration<?>> registrations = new ArrayList<>(2);
 
-    private BundleTracker<Collection<ObjectRegistration<YangModuleInfo>>> moduleInfoResolvedBundleTracker = null;
+    private BundleTracker<?> moduleInfoResolvedBundleTracker = null;
     private SimpleBindingRuntimeContextService service = null;
 
     @Override
@@ -37,11 +33,8 @@ public final class Activator implements BundleActivator {
         final OsgiModuleInfoRegistry registry = new OsgiModuleInfoRegistry(moduleInfoBackedContext,
                 moduleInfoBackedContext, service);
 
-        final ModuleInfoBundleTracker moduleInfoTracker = new ModuleInfoBundleTracker(registry);
-        moduleInfoResolvedBundleTracker = new BundleTracker<>(context, Bundle.RESOLVED | Bundle.STARTING
-                | Bundle.STOPPING | Bundle.ACTIVE, moduleInfoTracker);
+        moduleInfoResolvedBundleTracker = new ModuleInfoBundleTracker(context, registry);
         moduleInfoResolvedBundleTracker.open();
-        moduleInfoTracker.finishStart();
 
         service.open();
         registrations.add(context.registerService(BindingRuntimeContextService.class, service, null));
