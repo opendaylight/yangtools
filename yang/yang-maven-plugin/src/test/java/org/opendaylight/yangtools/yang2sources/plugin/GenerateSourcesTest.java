@@ -17,9 +17,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -113,8 +113,7 @@ public class GenerateSourcesTest {
                 Function<Module, Optional<String>> moduleResourcePathResolver) throws IOException {
             called++;
             outputDir = outputBaseDir;
-            return Lists.newArrayList();
+            return new ArrayList<>();
         }
     }
-
 }
