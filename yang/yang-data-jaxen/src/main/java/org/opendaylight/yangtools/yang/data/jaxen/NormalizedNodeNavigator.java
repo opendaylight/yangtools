@@ -13,7 +13,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Verify;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
-import com.google.common.io.BaseEncoding;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
@@ -165,7 +165,7 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
             //       allocations.
             if (value instanceof byte[]) {
                 // Binary
-                return BaseEncoding.base64().encode((byte[]) value);
+                return Base64.getEncoder().encodeToString((byte[]) value);
             }
             if (value instanceof Set) {
                 // Bits
