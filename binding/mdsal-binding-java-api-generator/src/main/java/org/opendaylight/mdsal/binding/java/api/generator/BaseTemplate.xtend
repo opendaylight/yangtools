@@ -363,8 +363,8 @@ abstract class BaseTemplate extends JavaFileTemplate {
         var boolean isFirstElementOnNewLineEmptyChar = false;
 
         formattedText = encodeJavadocSymbols(formattedText)
-        formattedText = NL_MATCHER.removeFrom(formattedText)
-        formattedText = TAB_MATCHER.removeFrom(formattedText)
+        formattedText = NL_MATCHER.replaceFrom(formattedText, ' ')
+        formattedText = TAB_MATCHER.replaceFrom(formattedText, ' ')
         formattedText = SPACES_PATTERN.matcher(formattedText).replaceAll(" ")
 
         val StringTokenizer tokenizer = new StringTokenizer(formattedText, " ", true);
