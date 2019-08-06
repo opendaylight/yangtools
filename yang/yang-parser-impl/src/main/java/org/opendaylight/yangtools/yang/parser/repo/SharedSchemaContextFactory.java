@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.eclipse.jdt.annotation.NonNull;
+import org.gaul.modernizer_maven_annotations.SuppressModernizer;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
@@ -151,6 +152,7 @@ final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
         return ImmutableList.copyOf(uniqueSourceIdentifiers);
     }
 
+    @SuppressModernizer
     private static final class SourceIdMismatchDetector implements Function<List<ASTSchemaSource>,
             List<ASTSchemaSource>> {
         private final List<SourceIdentifier> sourceIdentifiers;
