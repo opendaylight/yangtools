@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.io.BaseEncoding;
+import java.util.Base64;
 import java.util.Optional;
 import javax.xml.bind.DatatypeConverter;
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
@@ -62,7 +62,7 @@ public abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[],
 
     @Override
     public String serialize(final byte[] data) {
-        return data == null ? "" : BaseEncoding.base64().encode(data);
+        return data == null ? "" : Base64.getEncoder().encodeToString(data);
     }
 
     @Override
