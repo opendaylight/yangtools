@@ -16,6 +16,6 @@ public class ShortRangeGeneratorTest {
     @Test
     @Deprecated
     public void convertTest() {
-        assertTrue(new ShortRangeGenerator().convert(1L).equals(new Long(1L).shortValue()));
+        assertTrue(new ShortRangeGenerator().convert(1L).equals(Long.valueOf(1).shortValue()));
     }
 }

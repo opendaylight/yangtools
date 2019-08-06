@@ -16,6 +16,6 @@ public class LongRangeGeneratorTest {
     @Test
     @Deprecated
     public void convertTest() {
-        assertTrue(new LongRangeGenerator().convert(1).equals(new Integer(1).longValue()));
+        assertTrue(new LongRangeGenerator().convert(1).equals(Integer.valueOf(1).longValue()));
     }
 }

@@ -16,6 +16,6 @@ public class ByteRangeGeneratorTest {
     @Test
     @Deprecated
     public void convertTest() {
-        assertTrue(new ByteRangeGenerator().convert(1L).equals(new Long(1L).byteValue()));
+        assertTrue(new ByteRangeGenerator().convert(1L).equals(Long.valueOf(1).byteValue()));
     }
 }

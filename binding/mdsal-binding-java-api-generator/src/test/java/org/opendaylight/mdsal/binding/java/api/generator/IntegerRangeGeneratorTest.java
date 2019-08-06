@@ -16,6 +16,6 @@ public class IntegerRangeGeneratorTest {
     @Test
     @Deprecated
     public void convertTest() {
-        assertTrue(new IntegerRangeGenerator().convert(1L).equals(new Long(1L).intValue()));
+        assertTrue(new IntegerRangeGenerator().convert(1L).equals(Long.valueOf(1).intValue()));
     }
 }
