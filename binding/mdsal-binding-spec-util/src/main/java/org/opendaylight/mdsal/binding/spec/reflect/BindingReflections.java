@@ -471,7 +471,7 @@ public final class BindingReflections {
                 return ClassLoaderUtils.callWithClassLoader(method.getDeclaringClass().getClassLoader(), () -> {
                     return ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType()).flatMap(
                         result -> result instanceof Class && DataContainer.class.isAssignableFrom((Class) result)
-                            ? Optional.of((Class) result) : Optional.empty());
+                            ? Optional.of((Class<? extends DataContainer>) result) : Optional.empty());
                 });
             } catch (Exception e) {
                 /*
