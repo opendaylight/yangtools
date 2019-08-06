@@ -17,7 +17,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -27,6 +26,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -124,7 +124,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     private static Collection<Module> getImportedModules(final Map<ModuleId, Module> allModules,
             final Set<Module> baseModules, final TreeMultimap<String, Module> nameToModulesAll) {
 
-        List<Module> relatedModules = Lists.newLinkedList();
+        List<Module> relatedModules = new LinkedList<>();
 
         for (Module module : baseModules) {
             for (ModuleImport moduleImport : module.getImports()) {

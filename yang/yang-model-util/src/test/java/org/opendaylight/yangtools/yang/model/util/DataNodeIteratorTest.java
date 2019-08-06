@@ -84,11 +84,11 @@ public class DataNodeIteratorTest {
     @Test
     public void createDataNodeIteratorWith() {
         assertFalse("Has no next", dataNodeIterator.hasNext());
-        assertEquals("Should be empty list", Collections.EMPTY_LIST, dataNodeIterator.allChoices());
-        assertEquals("Should be empty list", Collections.EMPTY_LIST, dataNodeIterator.allContainers());
-        assertEquals("Should be empty list", Collections.EMPTY_LIST, dataNodeIterator.allTypedefs());
-        assertEquals("Should be empty list", Collections.EMPTY_LIST, dataNodeIterator.allGroupings());
-        assertEquals("Should be empty list", Collections.EMPTY_LIST, dataNodeIterator.allLists());
+        assertEquals("Should be empty list", Collections.emptyList(), dataNodeIterator.allChoices());
+        assertEquals("Should be empty list", Collections.emptyList(), dataNodeIterator.allContainers());
+        assertEquals("Should be empty list", Collections.emptyList(), dataNodeIterator.allTypedefs());
+        assertEquals("Should be empty list", Collections.emptyList(), dataNodeIterator.allGroupings());
+        assertEquals("Should be empty list", Collections.emptyList(), dataNodeIterator.allLists());
     }
 
     @Test
