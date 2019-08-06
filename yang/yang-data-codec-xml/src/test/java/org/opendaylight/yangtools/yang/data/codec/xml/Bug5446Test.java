@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.io.BaseEncoding;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
+import java.util.Base64;
 import java.util.Optional;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -70,7 +70,7 @@ public class Bug5446Test extends XMLTestCase {
 
         Object value = ipAdress.getValue();
         assertTrue(value instanceof byte[]);
-        assertEquals("fwAAAQ==", BaseEncoding.base64().encode((byte[]) value));
+        assertEquals("fwAAAQ==", Base64.getEncoder().encodeToString((byte[]) value));
 
         DOMResult serializationResult = writeNormalizedNode(docNode, schemaContext);
         assertNotNull(serializationResult);
@@ -87,8 +87,7 @@ public class Bug5446Test extends XMLTestCase {
     }
 
     private static ContainerNode createDocNode() {
-        LeafNode<byte[]> ipAddress = ImmutableNodes.leafNode(IP_ADDRESS_QNAME, BaseEncoding.base64()
-                .decode("fwAAAQ=="));
+        LeafNode<byte[]> ipAddress = ImmutableNodes.leafNode(IP_ADDRESS_QNAME, Base64.getDecoder().decode("fwAAAQ=="));
         ContainerNode root = ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
                 .withChild(ipAddress).build();
         return ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(ROOT_QNAME)).withChild(root)

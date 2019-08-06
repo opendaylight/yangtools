@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.io.BaseEncoding;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
@@ -21,6 +20,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Base64;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -87,8 +87,7 @@ public class Bug5446Test {
     }
 
     private static ContainerNode createRootNode() {
-        LeafNode<byte[]> ipAddress = ImmutableNodes.leafNode(IP_ADDRESS_QNAME,
-            BaseEncoding.base64().decode("fwAAAQ=="));
+        LeafNode<byte[]> ipAddress = ImmutableNodes.leafNode(IP_ADDRESS_QNAME, Base64.getDecoder().decode("fwAAAQ=="));
         return ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
                 .withChild(ipAddress).build();
     }
