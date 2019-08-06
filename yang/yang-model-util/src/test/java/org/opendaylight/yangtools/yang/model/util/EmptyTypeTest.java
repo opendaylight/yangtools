@@ -33,7 +33,7 @@ public class EmptyTypeTest {
         assertFalse(emptyType.getReference().isPresent());
         assertEquals("Units", Optional.empty(), emptyType.getUnits());
         assertFalse(emptyType.getDescription().isPresent());
-        assertEquals("UnknownSchemaNodes", Collections.EMPTY_LIST, emptyType.getUnknownSchemaNodes());
+        assertEquals("UnknownSchemaNodes", Collections.emptyList(), emptyType.getUnknownSchemaNodes());
         assertTrue("toString", emptyType.toString().contains("empty"));
     }
 }

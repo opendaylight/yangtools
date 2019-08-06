@@ -299,9 +299,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         final Collection<ModifierImpl> currentPhaseModifiers = modifiers.get(phase);
 
         boolean hasProgressed = tryToProgress(currentPhaseModifiers);
-
-        checkNotNull(this.root, "Malformed source. Valid root element is missing.");
-        final boolean phaseCompleted = root.tryToCompletePhase(phase);
+        final boolean phaseCompleted = requireNonNull(root, "Malformed source. Valid root element is missing.")
+                .tryToCompletePhase(phase);
 
         hasProgressed |= tryToProgress(currentPhaseModifiers);
 
