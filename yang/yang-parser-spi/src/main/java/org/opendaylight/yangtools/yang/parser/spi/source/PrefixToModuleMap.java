@@ -19,16 +19,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 public class PrefixToModuleMap implements PrefixToModule {
     private final Map<String, QNameModule> prefixToModuleMap = new HashMap<>();
     private final Map<URI, QNameModule> namespaceToModuleMap = new HashMap<>();
-    private final boolean preLinkageMap;
-
-    public PrefixToModuleMap() {
-        this(false);
-    }
-
-    @Deprecated
-    public PrefixToModuleMap(final boolean preLinkageMap) {
-        this.preLinkageMap = preLinkageMap;
-    }
 
     public void put(final String prefix, final QNameModule module) {
         prefixToModuleMap.put(prefix, module);
@@ -43,11 +33,5 @@ public class PrefixToModuleMap implements PrefixToModule {
     @Override
     public QNameModule getByNamespace(final String namespace) throws URISyntaxException {
         return namespaceToModuleMap.get(new URI(namespace));
-    }
-
-    @Override
-    @Deprecated
-    public boolean isPreLinkageMap() {
-        return preLinkageMap;
     }
 }
