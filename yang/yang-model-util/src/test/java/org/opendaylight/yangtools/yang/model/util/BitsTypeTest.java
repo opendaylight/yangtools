@@ -50,7 +50,7 @@ public class BitsTypeTest {
         assertEquals(Optional.empty(), bitsType.getDefaultValue());
         assertEquals("getPath should equal schemaPath", schemaPath, bitsType.getPath());
         assertEquals("Status should be CURRENT", Status.CURRENT, bitsType.getStatus());
-        assertEquals("Should be empty list", Collections.EMPTY_LIST, bitsType.getUnknownSchemaNodes());
+        assertEquals("Should be empty list", Collections.emptyList(), bitsType.getUnknownSchemaNodes());
         assertEquals("Values should be [enumPair]", Collections.singletonList(bit), bitsType.getBits());
 
         assertEquals("Hash code of bitsType should be equal",

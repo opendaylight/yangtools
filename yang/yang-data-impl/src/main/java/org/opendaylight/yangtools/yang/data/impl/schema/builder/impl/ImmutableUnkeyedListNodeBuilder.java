@@ -141,12 +141,12 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
 
         @Override
         protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
-            return Collections.EMPTY_LIST.equals(other.getValue());
+            return Collections.emptyList().equals(other.getValue());
         }
 
         @Override
         protected int valueHashCode() {
-            return Collections.EMPTY_LIST.hashCode();
+            return 1;
         }
     }
 

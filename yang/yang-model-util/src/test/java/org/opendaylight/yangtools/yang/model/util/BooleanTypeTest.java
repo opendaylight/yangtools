@@ -36,6 +36,6 @@ public class BooleanTypeTest {
         assertEquals("Base type is null", null, boolType.getBaseType());
         assertEquals(Optional.empty(), boolType.getDefaultValue());
         assertEquals("Status CURRENT", Status.CURRENT, boolType.getStatus());
-        assertEquals("Should contain empty list", Collections.EMPTY_LIST, boolType.getUnknownSchemaNodes());
+        assertEquals("Should contain empty list", Collections.emptyList(), boolType.getUnknownSchemaNodes());
     }
 }
