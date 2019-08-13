@@ -12,8 +12,7 @@ import javax.xml.transform.dom.DOMSource;
 /**
  * An AnyxmlNode with data in {@link DOMSource} format.
  */
-// FIXME: 4.0.0: YANGTOOLS-976: rename to DOMSourceAnyxmlNode
-public interface AnyXmlNode extends AnyxmlNode<DOMSource> {
+public interface DOMSourceAnyxmlNode extends AnyxmlNode<DOMSource> {
     @Override
     default Class<DOMSource> getValueObjectModel() {
         return DOMSource.class;

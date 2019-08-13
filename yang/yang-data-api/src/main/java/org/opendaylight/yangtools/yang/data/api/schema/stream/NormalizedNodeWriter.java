@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.UNKNOWN_SIZE;
 
@@ -19,11 +20,12 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -145,12 +147,19 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             writer.scalarValue(nodeAsLeaf.getValue());
             writer.endNode();
             return true;
-        } else if (node instanceof AnyXmlNode) {
-            final AnyXmlNode anyXmlNode = (AnyXmlNode)node;
-            writer.startAnyxmlNode(anyXmlNode.getIdentifier());
-            writer.domSourceValue(anyXmlNode.getValue());
-            writer.endNode();
-            return true;
+        } else if (node instanceof AnyxmlNode) {
+            final AnyxmlNode<?> anyxmlNode = (AnyxmlNode<?>)node;
+            final Class<?> model = anyxmlNode.getValueObjectModel();
+            if (DOMSource.class.isAssignableFrom(model)) {
+                final Object value = node.getValue();
+                verify(value instanceof DOMSource, "Inconsistent anyxml node %s", anyxmlNode);
+                writer.startAnyxmlNode(anyxmlNode.getIdentifier());
+                writer.domSourceValue((DOMSource) value);
+                writer.endNode();
+                return true;
+            }
+
+            LOG.debug("Ignoring unhandled anyxml node {}", anyxmlNode);
         } else if (node instanceof AnydataNode) {
             final AnydataExtension ext = writer.getExtensions().getInstance(AnydataExtension.class);
             if (ext != null) {

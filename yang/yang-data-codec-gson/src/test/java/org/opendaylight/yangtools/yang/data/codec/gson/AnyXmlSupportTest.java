@@ -30,8 +30,8 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -168,8 +168,8 @@ public class AnyXmlSupportTest extends AbstractComplexJsonTest {
         final ContainerNode cont1 = (ContainerNode) transformedInput;
         final DataContainerChild<? extends PathArgument, ?> child = cont1.getChild(new NodeIdentifier(anyxmlName))
                 .get();
-        assertTrue(child instanceof AnyXmlNode);
-        final AnyXmlNode anyXmlNode = (AnyXmlNode) child;
+        assertTrue(child instanceof DOMSourceAnyxmlNode);
+        final DOMSourceAnyxmlNode anyXmlNode = (DOMSourceAnyxmlNode) child;
         return anyXmlNode.getValue();
     }
 
