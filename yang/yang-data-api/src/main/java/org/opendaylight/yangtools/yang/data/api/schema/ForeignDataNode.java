@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * NormalizedNode model.
  *
  * <p>
- * This interface should not be implemented directly, but rather further specialized, like {@link AnyxmlNode}.
+ * This interface should not be implemented directly, but rather further specialized, like {@link AnyXmlNode}.
  *
  * @param <K> Local identifier of node
  * @param <V> Value type, uniquely identifying the object model used for values
@@ -26,8 +26,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 @Beta
 public interface ForeignDataNode<K extends PathArgument, V> extends DataContainerChild<K, V> {
     /**
-     * Return the object model class, which identifies it. For example {@link AnyXmlNode} uses {@link DOMSource} as
-     * its value object model.
+     * Return the object model class, which identifies it. For example {@link DOMSourceAnyXmlNode}
+     * uses {@link DOMSource} as its value object model.
      *
      * @return Object model class
      */
