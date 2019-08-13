@@ -13,11 +13,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
@@ -89,11 +89,11 @@ public final class Builders {
         return ImmutableLeafSetEntryNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static NormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder() {
+    public static NormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> anyXmlBuilder() {
         return ImmutableAnyXmlNodeBuilder.create();
     }
 
-    public static NormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder(
+    public static NormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> anyXmlBuilder(
             final AnyXmlSchemaNode schema) {
         return ImmutableAnyXmlNodeSchemaAwareBuilder.create(schema);
     }
