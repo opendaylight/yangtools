@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -147,8 +148,8 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             return true;
         } else if (node instanceof AnyXmlNode) {
             final AnyXmlNode anyXmlNode = (AnyXmlNode)node;
-            writer.startAnyxmlNode(anyXmlNode.getIdentifier());
-            writer.domSourceValue(anyXmlNode.getValue());
+            writer.startAnyxmlNode((NodeIdentifier) anyXmlNode.getIdentifier());
+            writer.domSourceValue((DOMSource) anyXmlNode.getValue());
             writer.endNode();
             return true;
         } else if (node instanceof AnydataNode) {
