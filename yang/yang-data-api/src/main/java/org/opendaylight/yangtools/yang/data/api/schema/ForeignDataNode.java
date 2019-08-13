@@ -26,8 +26,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 @Beta
 public interface ForeignDataNode<K extends PathArgument, V> extends DataContainerChild<K, V> {
     /**
-     * Return the object model class, which identifies it. For example {@link AnyXmlNode} uses {@link DOMSource} as
-     * its value object model.
+     * Return the object model class, which identifies it. For example {@link DOMSourceAnyxmlNode}
+     * uses {@link DOMSource} as its value object model.
      *
      * @return Object model class
      */
