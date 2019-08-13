@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
@@ -138,12 +138,13 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractIdentif
         @Override
         NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
                 final Optional<NormalizedNode<?, ?>> deepestChild) {
-            final NormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> builder = Builders.anyXmlBuilder()
+            final NormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> builder =
+                    Builders.anyXmlBuilder()
                     .withNodeIdentifier(getIdentifier());
             if (deepestChild.isPresent()) {
                 final NormalizedNode<?, ?> child = deepestChild.get();
-                checkState(child instanceof AnyXmlNode, "Invalid child %s", child);
-                builder.withValue(((AnyXmlNode) child).getValue());
+                checkState(child instanceof DOMSourceAnyxmlNode, "Invalid child %s", child);
+                builder.withValue(((DOMSourceAnyxmlNode) child).getValue());
             }
 
             return builder.build();
