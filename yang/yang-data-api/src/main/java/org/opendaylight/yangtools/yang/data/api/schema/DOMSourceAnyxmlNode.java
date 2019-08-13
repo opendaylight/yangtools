@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014 Cisco Systems, Inc. and others. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -12,8 +12,7 @@ import javax.xml.transform.dom.DOMSource;
 /**
  * An AnyxmlNode with data in {@link DOMSource} format.
  */
-// FIXME: 4.0.0: YANGTOOLS-976: rename to DOMSourceAnyxmlNode
-public interface AnyXmlNode extends AnyxmlNode<DOMSource> {
+public interface DOMSourceAnyxmlNode extends AnyxmlNode<DOMSource> {
     @Override
     default Class<DOMSource> getValueObjectModel() {
         return DOMSource.class;
