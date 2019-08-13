@@ -30,10 +30,10 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
@@ -87,7 +87,7 @@ public class NormalizedNodeWriterTest {
         doReturn("leaf-value-1").when(mockedLeafNode).getValue();
         assertNotNull(orderedNormalizedNodeWriter.write(mockedLeafNode));
 
-        final NormalizedNode<?, ?> mockedAnyXmlNode = mock(AnyXmlNode.class);
+        final NormalizedNode<?, ?> mockedAnyXmlNode = mock(DOMSourceAnyxmlNode.class);
         doReturn(new DOMSource()).when(mockedAnyXmlNode).getValue();
         assertNotNull(orderedNormalizedNodeWriter.write(mockedAnyXmlNode));
 

@@ -8,9 +8,10 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
-import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+
+import javax.xml.transform.dom.DOMSource;
 
 /**
  * A NormalizedNode holding a value in some foreign object model. The object model is identified by a single class,
@@ -26,8 +27,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 @Beta
 public interface ForeignDataNode<K extends PathArgument, V> extends DataContainerChild<K, V> {
     /**
-     * Return the object model class, which identifies it. For example {@link AnyXmlNode} uses {@link DOMSource} as
-     * its value object model.
+     * Return the object model class, which identifies it. For example {@link DOMSourceAnyxmlNode}
+     * uses {@link DOMSource} as its value object model.
      *
      * @return Object model class
      */
