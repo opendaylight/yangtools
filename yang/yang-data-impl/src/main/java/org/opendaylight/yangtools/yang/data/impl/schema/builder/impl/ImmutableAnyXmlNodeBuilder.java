@@ -10,24 +10,25 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyXmlNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
 
 public class ImmutableAnyXmlNodeBuilder
-        extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> {
+        extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyXmlNode> {
 
-    public static @NonNull NormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> create() {
+    public static @NonNull NormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyXmlNode> create() {
         return new ImmutableAnyXmlNodeBuilder();
     }
 
     @Override
-    public AnyXmlNode build() {
+    public DOMSourceAnyXmlNode build() {
         return new ImmutableXmlNode(getNodeIdentifier(), getValue());
     }
 
     private static final class ImmutableXmlNode
-            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, DOMSource> implements AnyXmlNode {
+            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, DOMSource>
+            implements DOMSourceAnyXmlNode {
 
         ImmutableXmlNode(final NodeIdentifier nodeIdentifier, final DOMSource value) {
             super(nodeIdentifier, value);
