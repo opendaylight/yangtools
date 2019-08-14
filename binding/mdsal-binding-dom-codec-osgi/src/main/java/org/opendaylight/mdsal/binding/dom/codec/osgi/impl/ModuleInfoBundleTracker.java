@@ -98,14 +98,14 @@ final class ModuleInfoBundleTracker extends BundleTracker<Collection<ObjectRegis
                 continue;
             }
 
-            registrations.add(moduleInfoRegistry.registerModuleInfo(moduleInfo));
+            registrations.add(moduleInfoRegistry.registerInfo(moduleInfo));
         }
 
         if (!deferUpdates) {
             moduleInfoRegistry.updateService();
         }
 
-        LOG.trace("Bundle {} resultend in registrations {}", bundle, registrations);
+        LOG.trace("Bundle {} resulted in registrations {}", bundle, registrations);
         return registrations;
     }
 
@@ -123,11 +123,17 @@ final class ModuleInfoBundleTracker extends BundleTracker<Collection<ObjectRegis
             return;
         }
 
-        for (ObjectRegistration<YangModuleInfo> reg : regs) {
-            try {
-                reg.close();
-            } catch (Exception e) {
-                LOG.warn("Unable to unregister YangModuleInfo {}", reg.getInstance(), e);
+        try {
+            regs.forEach(reg -> {
+                try {
+                    reg.close();
+                } catch (Exception e) {
+                    LOG.warn("Unable to unregister YangModuleInfo {}", reg.getInstance(), e);
+                }
+            });
+        } finally {
+            if (!deferUpdates) {
+                moduleInfoRegistry.updateService();
             }
         }
     }

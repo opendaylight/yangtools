@@ -42,6 +42,11 @@ final class OsgiModuleInfoRegistry implements ModuleInfoRegistry {
         this.runtimeContext = requireNonNull(runtimeContext);
     }
 
+    @Override
+    public ObjectRegistration<YangModuleInfo> registerModuleInfo(final YangModuleInfo yangModuleInfo) {
+        return new ObjectRegistrationWrapper(registerInfo(yangModuleInfo));
+    }
+
     @SuppressWarnings("checkstyle:illegalCatch")
     synchronized void updateService() {
         final SchemaContext context;
@@ -61,9 +66,8 @@ final class OsgiModuleInfoRegistry implements ModuleInfoRegistry {
         }
     }
 
-    @Override
-    public ObjectRegistration<YangModuleInfo> registerModuleInfo(final YangModuleInfo yangModuleInfo) {
-        return new ObjectRegistrationWrapper(moduleInfoRegistry.registerModuleInfo(yangModuleInfo));
+    ObjectRegistration<YangModuleInfo> registerInfo(final YangModuleInfo yangModuleInfo) {
+        return moduleInfoRegistry.registerModuleInfo(yangModuleInfo);
     }
 
     private class ObjectRegistrationWrapper implements ObjectRegistration<YangModuleInfo> {
