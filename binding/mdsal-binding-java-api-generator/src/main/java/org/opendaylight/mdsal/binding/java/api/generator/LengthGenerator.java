@@ -36,33 +36,31 @@ final class LengthGenerator {
 
         for (Range<Integer> l : constraints) {
             // We have to deal with restrictions being out of integer's range
-            final int min = l.lowerEndpoint().intValue();
-            final int max = l.upperEndpoint().intValue();
-
-            if (min > 0 || max < Integer.MAX_VALUE) {
-                final StringBuilder sb = new StringBuilder().append("length ");
-                if (min != max) {
-                    sb.append('>');
-                    if (min <= Integer.MAX_VALUE) {
-                        sb.append('=');
-                    }
-                    sb.append(' ').append(min);
-
-                    if (max < Integer.MAX_VALUE) {
-                        sb.append(" && length <= ").append(max);
-                    }
-                } else {
-                    // Single-value, use a direct comparison
-                    sb.append("== ").append(min);
-                }
-                ret.add(sb.toString());
-            } else {
+            final String expr = createExpression(l.lowerEndpoint().intValue(), l.upperEndpoint().intValue());
+            if (expr == null) {
                 // This range is implicitly capped by String/byte[] length returns
                 LOG.debug("Constraint {} implied by int type value domain, skipping", l);
+            } else {
+                ret.add(expr);
             }
         }
 
         return ret;
+    }
+
+    private static @Nullable String createExpression(final int min, final int max) {
+        if (min == max) {
+            return min < Integer.MAX_VALUE ? "length == " + min : null;
+        }
+        if (min > 0) {
+            final StringBuilder sb = new StringBuilder("length >= ").append(min);
+            if (max < Integer.MAX_VALUE) {
+                sb.append(" && length <= ").append(max);
+            }
+            return sb.toString();
+        }
+
+        return max < Integer.MAX_VALUE ? "length <= " + max : null;
     }
 
     private static String createLengthString(final LengthConstraint constraint) {
