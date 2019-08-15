@@ -164,14 +164,11 @@ abstract class BaseTemplate extends JavaFileTemplate {
      * @return string with comment in JAVA format
      */
     def protected CharSequence asJavadoc(String comment) {
-        if(comment === null) return ''
-        var txt = comment
-
-        txt = comment.trim
-        txt = formatToParagraph(txt)
-
+        if (comment === null) {
+            return ''
+        }
         return '''
-            «wrapToDocumentation(txt)»
+            «wrapToDocumentation(formatToParagraph(comment.trim))»
         '''
     }
 
