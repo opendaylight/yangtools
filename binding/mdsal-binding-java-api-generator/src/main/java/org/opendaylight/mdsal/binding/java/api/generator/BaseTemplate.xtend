@@ -15,6 +15,7 @@ import com.google.common.base.Splitter
 import com.google.common.collect.Iterables
 import java.util.Collection
 import java.util.List
+import java.util.Locale
 import java.util.Map.Entry
 import java.util.StringTokenizer
 import java.util.regex.Pattern
@@ -463,7 +464,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
            «ENDIF»
        «ENDIF»
 
-       «val fieldUpperCase = property.fieldName.toString.toUpperCase()»
+       «val fieldUpperCase = property.fieldName.toString.toUpperCase(Locale.ENGLISH)»
        «FOR currentConstant : type.getConstantDefinitions»
            «IF currentConstant.getName.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)
                && fieldUpperCase.equals(currentConstant.getName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length))»

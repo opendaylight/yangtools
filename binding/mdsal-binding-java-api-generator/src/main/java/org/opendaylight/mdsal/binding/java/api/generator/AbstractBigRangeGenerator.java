@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 
 import com.google.common.collect.Range;
 import java.lang.reflect.Array;
+import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
 import org.opendaylight.yangtools.yang.binding.CodeHelpers;
@@ -42,7 +43,7 @@ abstract class AbstractBigRangeGenerator<T extends Number & Comparable<T>> exten
     protected final String generateRangeCheckerImplementation(final String checkerName,
             final RangeConstraint<?> constraint, final Function<Class<?>, String> classImporter) {
         final Set<? extends Range<? extends Number>> constraints = constraint.getAllowedRanges().asRanges();
-        final String fieldName = checkerName.toUpperCase() + "_RANGES";
+        final String fieldName = checkerName.toUpperCase(Locale.ENGLISH) + "_RANGES";
         final StringBuilder sb = new StringBuilder();
 
         // Field to hold the Range objects in an array
