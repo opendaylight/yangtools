@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -84,6 +85,8 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
         QName.create(SchemaMountConstants.RFC8528_MODULE, "module").intern());
     private static final NodeIdentifier LABEL = NodeIdentifier.create(
         QName.create(SchemaMountConstants.RFC8528_MODULE, "label").intern());
+    private static final NodeIdentifier SCHEMA_REF = NodeIdentifier.create(
+        QName.create(SchemaMountConstants.RFC8528_MODULE, "schema-ref").intern());
     private static final NodeIdentifier INLINE = NodeIdentifier.create(
         QName.create(SchemaMountConstants.RFC8528_MODULE, "inline").intern());
     private static final NodeIdentifier SHARED_SCHEMA = NodeIdentifier.create(
@@ -133,18 +136,25 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
                     checkArgument(value instanceof Boolean, "Unexpected config leaf value %s", cfg);
                     return (Boolean) value;
                 }).orElse(Boolean.TRUE),
-                entry.getChild(SHARED_SCHEMA).map(sharedSchema -> {
-                    checkArgument(sharedSchema instanceof ContainerNode, "Unexpected shared-schema container %s",
-                        sharedSchema);
-                    return ((ContainerNode) sharedSchema).getChild(PARENT_REFERENCE).map(parentRef -> {
-                        // FIXME: decode
-                        return ImmutableSet.<String>of();
-                    }).orElseGet(ImmutableSet::of);
-                }).orElseGet(() -> {
-                    checkArgument(entry.getChild(INLINE).isPresent(), "Unhandled schema-ref type in %s", entry);
-                    return ImmutableSet.of();
-                }));
+                getSchema(entry.getChild(SCHEMA_REF)
+                    .orElseThrow(() -> new IllegalArgumentException("Missing schema-ref choice in " + entry))));
         }).collect(Collectors.toList()), this::createContextFactory);
+    }
+
+    private static ImmutableSet<String> getSchema(final DataContainerChild<?, ?> child) {
+        checkArgument(child instanceof ChoiceNode, "Unexpected schema-ref choice %s", child);
+        final ChoiceNode schemaRef = (ChoiceNode) child;
+
+        return schemaRef.getChild(SHARED_SCHEMA).map(sharedSchema -> {
+            checkArgument(sharedSchema instanceof ContainerNode, "Unexpected shared-schema container %s", sharedSchema);
+            return ((ContainerNode) sharedSchema).getChild(PARENT_REFERENCE).map(parentRef -> {
+                // FIXME: decode
+                return ImmutableSet.<String>of();
+            }).orElseGet(ImmutableSet::of);
+        }).orElseGet(() -> {
+            checkArgument(schemaRef.getChild(INLINE).isPresent(), "Unhandled schema-ref type in %s", schemaRef);
+            return ImmutableSet.of();
+        });
     }
 
     /**
