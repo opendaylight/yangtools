@@ -368,8 +368,8 @@ abstract class BaseTemplate extends JavaFileTemplate {
 
         val StringTokenizer tokenizer = new StringTokenizer(formattedText, " ", true);
 
-        while (tokenizer.hasMoreElements) {
-            val nextElement = tokenizer.nextElement.toString
+        while (tokenizer.hasMoreTokens) {
+            val nextElement = tokenizer.nextToken
 
             if (lineBuilder.length != 0 && lineBuilder.length + nextElement.length > 80) {
                 // FIXME: what tricks are we playing here? Equality probably does not trigger ever
@@ -386,7 +386,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
                 sb.append(lineBuilder).append(NEW_LINE)
                 lineBuilder.setLength(0)
 
-                if (nextElement.toString == ' ') {
+                if (nextElement == " ") {
                     isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
                 }
             }
