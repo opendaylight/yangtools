@@ -50,14 +50,10 @@ class InterfaceTemplate extends BaseTemplate {
      * Creates the instance of this class which is used for generating the interface file source
      * code from <code>genType</code>.
      *
-     * @throws IllegalArgumentException if <code>genType</code> equals <code>null</code>
+     * @throws NullPointerException if <code>genType</code> is <code>null</code>
      */
     new(GeneratedType genType) {
         super(genType)
-        if (genType === null) {
-            throw new IllegalArgumentException("Generated type reference cannot be NULL!")
-        }
-
         consts = genType.constantDefinitions
         methods = genType.methodDefinitions
         enums = genType.enumerations
