@@ -41,5 +41,4 @@ public interface NotificationManager<L, N> {
      * @throws RejectedExecutionException if a notification can't be queued for dispatching
      */
     void submitNotifications(L listener, Iterable<N> notifications);
-
 }
