@@ -46,12 +46,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
@@ -196,33 +195,18 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         return (ContainerNode) result.getResult();
     }
 
-    private static boolean isBindingRepresentable(final NormalizedNode<?, ?> data) {
-        if (data instanceof ChoiceNode) {
-            return false;
-        }
-        if (data instanceof LeafNode<?>) {
-            return false;
-        }
-        if (data instanceof LeafSetNode) {
-            return false;
-        }
-        if (data instanceof LeafSetEntryNode<?>) {
-            return false;
-        }
-        if (data instanceof MapNode) {
-            return false;
-        }
-        if (data instanceof UnkeyedListNode) {
-            return false;
-        }
-
-        return true;
+    private static boolean notBindingRepresentable(final NormalizedNode<?, ?> data) {
+        // ValueNode covers LeafNode and LeafSetEntryNode
+        return data instanceof ValueNode
+                || data instanceof MapNode || data instanceof UnkeyedListNode
+                || data instanceof ChoiceNode
+                || data instanceof LeafSetNode;
     }
 
     @Override
     public Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode(final YangInstanceIdentifier path,
             final NormalizedNode<?, ?> data) {
-        if (!isBindingRepresentable(data)) {
+        if (notBindingRepresentable(data)) {
             return null;
         }
 
