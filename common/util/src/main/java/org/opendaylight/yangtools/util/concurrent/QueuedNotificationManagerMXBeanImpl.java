@@ -12,9 +12,9 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 
 final class QueuedNotificationManagerMXBeanImpl implements QueuedNotificationManagerMXBean {
-    private final QueuedNotificationManager<?, ?> manager;
+    private final AbstractQueuedNotificationManager<?, ?, ?> manager;
 
-    QueuedNotificationManagerMXBeanImpl(final QueuedNotificationManager<?, ?> manager) {
+    QueuedNotificationManagerMXBeanImpl(final AbstractQueuedNotificationManager<?, ?, ?> manager) {
         this.manager = requireNonNull(manager);
     }
 
