@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.util.ForwardingIdentityObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -254,33 +255,6 @@ public abstract class QueuedNotificationManager<L, N> implements NotificationMan
 
     abstract L listenerFor(@NonNull Object key);
 
-    private static final class IdentityKey<L> {
-        private final @NonNull L listener;
-
-        IdentityKey(final L listener) {
-            this.listener = requireNonNull(listener);
-        }
-
-        @NonNull L getListener() {
-            return listener;
-        }
-
-        @Override
-        public int hashCode() {
-            return System.identityHashCode(listener);
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            return obj == this || obj instanceof IdentityKey && listener == ((IdentityKey<?>)obj).listener;
-        }
-
-        @Override
-        public String toString() {
-            return listener.toString();
-        }
-    }
-
     @NonNullByDefault
     private static final class Equals<L, N> extends QueuedNotificationManager<L, N> {
         Equals(final Executor executor, final BatchedInvoker<L, N> listenerInvoker, final int maxQueueCapacity,
@@ -307,15 +281,15 @@ public abstract class QueuedNotificationManager<L, N> implements NotificationMan
         }
 
         @Override
-        IdentityKey<L> keyFor(final L listener) {
-            return new IdentityKey<>(listener);
+        ForwardingIdentityObject<L> keyFor(final L listener) {
+            return ForwardingIdentityObject.of(listener);
         }
 
         @Override
         @SuppressWarnings("unchecked")
         L listenerFor(final Object key) {
-            verify(key instanceof IdentityKey);
-            return ((IdentityKey<L>)key).getListener();
+            verify(key instanceof ForwardingIdentityObject);
+            return ((ForwardingIdentityObject<L>)key).getDelegate();
         }
     }
 
