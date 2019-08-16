@@ -27,6 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import javax.annotation.concurrent.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.util.ForwardingIdentityObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +93,15 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
     private static final long GIVE_UP_NANOS = TimeUnit.MINUTES.toNanos(MAX_NOTIFICATION_OFFER_MINUTES);
     private static final long TASK_WAIT_NANOS = TimeUnit.MILLISECONDS.toNanos(10);
 
-    private final ConcurrentMap<ListenerKey<L>, NotificationTask> listenerCache = new ConcurrentHashMap<>();
+    /**
+     * We key by listener reference identity hashCode/equals.
+     * Since we don't know anything about the listener class implementations and we're mixing
+     * multiple listener class instances in the same map, this avoids any potential issue with an
+     * equals implementation that just blindly casts the other Object to compare instead of checking
+     * for instanceof.
+     */
+    private final ConcurrentMap<ForwardingIdentityObject<L>, NotificationTask> listenerCache =
+            new ConcurrentHashMap<>();
     private final @NonNull QueuedNotificationManagerMXBean mxBean = new QueuedNotificationManagerMXBeanImpl(this);
     private final @NonNull BatchedInvoker<L, N> listenerInvoker;
     private final @NonNull Executor executor;
@@ -193,7 +202,7 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
 
         LOG.trace("{}: submitNotifications for listener {}: {}", name, listener, notifications);
 
-        final ListenerKey<L> key = new ListenerKey<>(listener);
+        final ForwardingIdentityObject<L> key = ForwardingIdentityObject.of(listener);
 
         // Keep looping until we are either able to add a new NotificationTask or are able to
         // add our notifications to an existing NotificationTask. Eventually one or the other
@@ -265,40 +274,6 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
     }
 
     /**
-     * Used as the listenerCache map key. We key by listener reference identity hashCode/equals.
-     * Since we don't know anything about the listener class implementations and we're mixing
-     * multiple listener class instances in the same map, this avoids any potential issue with an
-     * equals implementation that just blindly casts the other Object to compare instead of checking
-     * for instanceof.
-     */
-    private static final class ListenerKey<L> {
-        private final @NonNull L listener;
-
-        ListenerKey(final L listener) {
-            this.listener = requireNonNull(listener);
-        }
-
-        @NonNull L getListener() {
-            return listener;
-        }
-
-        @Override
-        public int hashCode() {
-            return System.identityHashCode(listener);
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            return obj == this || obj instanceof ListenerKey<?> && listener == ((ListenerKey<?>) obj).listener;
-        }
-
-        @Override
-        public String toString() {
-            return listener.toString();
-        }
-    }
-
-    /**
      * Executor task for a single listener that queues notifications and sends them serially to the
      * listener.
      */
@@ -306,14 +281,15 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
         private final Lock lock = new ReentrantLock();
         private final Condition notEmpty = lock.newCondition();
         private final Condition notFull = lock.newCondition();
-        private final @NonNull ListenerKey<L> listenerKey;
+        private final @NonNull ForwardingIdentityObject<L> listenerKey;
 
         @GuardedBy("lock")
         private final Queue<N> queue = new ArrayDeque<>();
         @GuardedBy("lock")
         private boolean exiting;
 
-        NotificationTask(final @NonNull ListenerKey<L> listenerKey, final @NonNull Iterator<N> notifications) {
+        NotificationTask(final @NonNull ForwardingIdentityObject<L> listenerKey,
+                final @NonNull Iterator<N> notifications) {
             this.listenerKey = requireNonNull(listenerKey);
             while (notifications.hasNext()) {
                 queue.add(notifications.next());
@@ -438,7 +414,7 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
         private void invokeListener(final @NonNull Collection<N> notifications) {
             LOG.debug("{}: Invoking listener {} with notification: {}", name, listenerKey, notifications);
             try {
-                listenerInvoker.invokeListener(listenerKey.getListener(), notifications);
+                listenerInvoker.invokeListener(listenerKey.getDelegate(), notifications);
             } catch (Exception e) {
                 // We'll let a RuntimeException from the listener slide and keep sending any remaining notifications.
                 LOG.error("{}: Error notifying listener {} with {}", name, listenerKey, notifications, e);
