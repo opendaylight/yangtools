@@ -8,11 +8,8 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Equivalence;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
 import java.util.Collections;
@@ -29,8 +26,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.util.ForwardingIdentityObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * @param <L> the listener type
  * @param <N> the notification type
  */
-public abstract class QueuedNotificationManager<L, N> implements NotificationManager<L, N> {
+abstract class AbstractBatchingExecutor<K, L, N> {
     @FunctionalInterface
     public interface BatchedInvoker<L, N> {
         /**
@@ -63,7 +58,7 @@ public abstract class QueuedNotificationManager<L, N> implements NotificationMan
         void invokeListener(@NonNull L listener, @NonNull ImmutableList<N> notifications);
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(QueuedNotificationManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractBatchingExecutor.class);
 
     /**
      * Caps the maximum number of attempts to offer notification to a particular listener.  Each
@@ -73,49 +68,17 @@ public abstract class QueuedNotificationManager<L, N> implements NotificationMan
     private static final long GIVE_UP_NANOS = TimeUnit.MINUTES.toNanos(MAX_NOTIFICATION_OFFER_MINUTES);
     private static final long TASK_WAIT_NANOS = TimeUnit.MILLISECONDS.toNanos(10);
 
-    // FIXME: Object here is ugly :(
-    private final ConcurrentMap<Object, NotificationTask> listenerCache = new ConcurrentHashMap<>();
-    private final @NonNull QueuedNotificationManagerMXBean mxBean = new QueuedNotificationManagerMXBeanImpl(this);
-    private final @NonNull BatchedInvoker<L, N> listenerInvoker;
+    private final ConcurrentMap<K, NotificationTask> listenerCache = new ConcurrentHashMap<>();
     private final @NonNull Executor executor;
     private final @NonNull String name;
     private final int maxQueueCapacity;
 
-    QueuedNotificationManager(final @NonNull Executor executor, final @NonNull BatchedInvoker<L, N> listenerInvoker,
+    AbstractBatchingExecutor(final @NonNull Executor executor,
             final int maxQueueCapacity, final @NonNull String name) {
         checkArgument(maxQueueCapacity > 0, "Invalid maxQueueCapacity %s must be > 0", maxQueueCapacity);
         this.executor = requireNonNull(executor);
-        this.listenerInvoker = requireNonNull(listenerInvoker);
         this.maxQueueCapacity = maxQueueCapacity;
         this.name = requireNonNull(name);
-    }
-
-    /**
-     * Create a new notification manager.
-     *
-     * @param executor the {@link Executor} to use for notification tasks
-     * @param listenerInvoker the {@link BatchedInvoker} to use for invoking listeners
-     * @param maxQueueCapacity the capacity of each listener queue
-     * @param name the name of this instance for logging info
-     */
-    public static <L, N> QueuedNotificationManager<L, N> create(final @NonNull Executor executor,
-            final@NonNull  BatchedInvoker<L, N> listenerInvoker, final int maxQueueCapacity,
-            final @NonNull String name) {
-        return new Identity<>(executor, listenerInvoker, maxQueueCapacity, name);
-    }
-
-    /**
-     * Create a new notification manager using {@link Equivalence#equals()} as the listener equivalence.
-     *
-     * @param executor the {@link Executor} to use for notification tasks
-     * @param listenerInvoker the {@link BatchedInvoker} to use for invoking listeners
-     * @param maxQueueCapacity the capacity of each listener queue
-     * @param name the name of this instance for logging info
-     */
-    public static <L, N> QueuedNotificationManager<L, N> createWithEquals(final @NonNull Executor executor,
-            final@NonNull  BatchedInvoker<L, N> listenerInvoker, final int maxQueueCapacity,
-            final @NonNull String name) {
-        return new Equals<>(executor, listenerInvoker, maxQueueCapacity, name);
     }
 
     /**
@@ -123,15 +86,6 @@ public abstract class QueuedNotificationManager<L, N> implements NotificationMan
      */
     public final int getMaxQueueCapacity() {
         return maxQueueCapacity;
-    }
-
-    /**
-     * Return an {@link QueuedNotificationManagerMXBean} tied to this instance.
-     *
-     * @return An QueuedNotificationManagerMXBean object.
-     */
-    public final @NonNull QueuedNotificationManagerMXBean getMXBean() {
-        return mxBean;
     }
 
     /**
@@ -237,44 +191,6 @@ public abstract class QueuedNotificationManager<L, N> implements NotificationMan
     abstract @NonNull Object keyFor(@NonNull L listener);
 
     abstract L listenerFor(@NonNull Object key);
-
-    @NonNullByDefault
-    private static final class Equals<L, N> extends QueuedNotificationManager<L, N> {
-        Equals(final Executor executor, final BatchedInvoker<L, N> listenerInvoker, final int maxQueueCapacity,
-                final String name) {
-            super(executor, listenerInvoker, maxQueueCapacity, name);
-        }
-
-        @Override
-        Object keyFor(final L listener) {
-            return verifyNotNull(listener);
-        }
-
-        @Override
-        L listenerFor(final Object key) {
-            return (L) key;
-        }
-    }
-
-    @NonNullByDefault
-    private static final class Identity<L, N> extends QueuedNotificationManager<L, N> {
-        Identity(final Executor executor, final BatchedInvoker<L, N> listenerInvoker, final int maxQueueCapacity,
-                final String name) {
-            super(executor, listenerInvoker, maxQueueCapacity, name);
-        }
-
-        @Override
-        ForwardingIdentityObject<L> keyFor(final L listener) {
-            return ForwardingIdentityObject.of(listener);
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        L listenerFor(final Object key) {
-            verify(key instanceof ForwardingIdentityObject);
-            return ((ForwardingIdentityObject<L>)key).getDelegate();
-        }
-    }
 
     /**
      * Executor task for a single listener that queues notifications and sends them serially to the listener.
