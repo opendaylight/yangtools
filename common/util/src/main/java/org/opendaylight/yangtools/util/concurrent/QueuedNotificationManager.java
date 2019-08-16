@@ -8,8 +8,11 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.Equivalence;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
 import java.util.Collections;
@@ -26,6 +29,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * @param <L> the listener type
  * @param <N> the notification type
  */
-public final class QueuedNotificationManager<L, N> implements NotificationManager<L, N> {
+public abstract class QueuedNotificationManager<L, N> implements NotificationManager<L, N> {
     @FunctionalInterface
     public interface BatchedInvoker<L, N> {
         /**
@@ -68,16 +72,16 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
     private static final long GIVE_UP_NANOS = TimeUnit.MINUTES.toNanos(MAX_NOTIFICATION_OFFER_MINUTES);
     private static final long TASK_WAIT_NANOS = TimeUnit.MILLISECONDS.toNanos(10);
 
-    private final ConcurrentMap<ListenerKey<L>, NotificationTask> listenerCache = new ConcurrentHashMap<>();
+    // FIXME: Object here is ugly :(
+    private final ConcurrentMap<Object, NotificationTask> listenerCache = new ConcurrentHashMap<>();
     private final @NonNull QueuedNotificationManagerMXBean mxBean = new QueuedNotificationManagerMXBeanImpl(this);
     private final @NonNull BatchedInvoker<L, N> listenerInvoker;
     private final @NonNull Executor executor;
     private final @NonNull String name;
     private final int maxQueueCapacity;
 
-    private QueuedNotificationManager(final @NonNull Executor executor,
-            final @NonNull BatchedInvoker<L, N> listenerInvoker, final int maxQueueCapacity,
-            final @NonNull String name) {
+    QueuedNotificationManager(final @NonNull Executor executor, final @NonNull BatchedInvoker<L, N> listenerInvoker,
+            final int maxQueueCapacity, final @NonNull String name) {
         checkArgument(maxQueueCapacity > 0, "Invalid maxQueueCapacity %s must be > 0", maxQueueCapacity);
         this.executor = requireNonNull(executor);
         this.listenerInvoker = requireNonNull(listenerInvoker);
@@ -92,17 +96,48 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
      * @param listenerInvoker the {@link BatchedInvoker} to use for invoking listeners
      * @param maxQueueCapacity the capacity of each listener queue
      * @param name the name of this instance for logging info
+     *
+     * @deprecated Use {@link #createWithIdentity(Executor, BatchedInvoker, int, String)} instead.
      */
+    @Deprecated
     public static <L, N> QueuedNotificationManager<L, N> create(final @NonNull Executor executor,
             final@NonNull  BatchedInvoker<L, N> listenerInvoker, final int maxQueueCapacity,
             final @NonNull String name) {
-        return new QueuedNotificationManager<>(executor, listenerInvoker, maxQueueCapacity, name);
+        return createWithIdentity(executor, listenerInvoker, maxQueueCapacity, name);
+    }
+
+    /**
+     * Create a new notification manager using {@link Equivalence#equals()} as the listener equivalence.
+     *
+     * @param executor the {@link Executor} to use for notification tasks
+     * @param listenerInvoker the {@link BatchedInvoker} to use for invoking listeners
+     * @param maxQueueCapacity the capacity of each listener queue
+     * @param name the name of this instance for logging info
+     */
+    public static <L, N> QueuedNotificationManager<L, N> createWithEquals(final @NonNull Executor executor,
+            final@NonNull  BatchedInvoker<L, N> listenerInvoker, final int maxQueueCapacity,
+            final @NonNull String name) {
+        return new Equals<>(executor, listenerInvoker, maxQueueCapacity, name);
+    }
+
+    /**
+     * Create a new notification manager using {@link Equivalence#e()} as the listener equivalence.
+     *
+     * @param executor the {@link Executor} to use for notification tasks
+     * @param listenerInvoker the {@link BatchedInvoker} to use for invoking listeners
+     * @param maxQueueCapacity the capacity of each listener queue
+     * @param name the name of this instance for logging info
+     */
+    public static <L, N> QueuedNotificationManager<L, N> createWithIdentity(final @NonNull Executor executor,
+            final@NonNull  BatchedInvoker<L, N> listenerInvoker, final int maxQueueCapacity,
+            final @NonNull String name) {
+        return new Identity<>(executor, listenerInvoker, maxQueueCapacity, name);
     }
 
     /**
      * Returns the maximum listener queue capacity.
      */
-    public int getMaxQueueCapacity() {
+    public final int getMaxQueueCapacity() {
         return maxQueueCapacity;
     }
 
@@ -111,14 +146,14 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
      *
      * @return An QueuedNotificationManagerMXBean object.
      */
-    public @NonNull QueuedNotificationManagerMXBean getMXBean() {
+    public final @NonNull QueuedNotificationManagerMXBean getMXBean() {
         return mxBean;
     }
 
     /**
      * Returns the {@link Executor} to used for notification tasks.
      */
-    public @NonNull Executor getExecutor() {
+    public final @NonNull Executor getExecutor() {
         return executor;
     }
 
@@ -126,7 +161,7 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
      * @see org.opendaylight.yangtools.util.concurrent.NotificationManager#addNotification(L, N)
      */
     @Override
-    public void submitNotification(final L listener, final N notification) {
+    public final void submitNotification(final L listener, final N notification) {
         if (notification != null) {
             submitNotifications(listener, Collections.singletonList(notification));
         }
@@ -136,15 +171,15 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
      * @see org.opendaylight.yangtools.util.concurrent.NotificationManager#submitNotifications(L, java.util.Collection)
      */
     @Override
-    public void submitNotifications(final L listener, final Iterable<N> notifications) {
-
+    public final void submitNotifications(final L listener, final Iterable<N> notifications) {
         if (notifications == null || listener == null) {
             return;
         }
 
         LOG.trace("{}: submitNotifications for listener {}: {}", name, listener, notifications);
 
-        final ListenerKey<L> key = new ListenerKey<>(listener);
+        // FIXME: Object here is ugly
+        final Object key = keyFor(listener);
 
         // Keep looping until we are either able to add a new NotificationTask or are able to
         // add our notifications to an existing NotificationTask. Eventually one or the other
@@ -156,7 +191,7 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
                 NotificationTask task = listenerCache.get(key);
                 if (task == null) {
                     // No task found, try to insert a new one
-                    final NotificationTask newTask = new NotificationTask(key, it);
+                    final NotificationTask newTask = new NotificationTask(listener, key, it);
                     task = listenerCache.putIfAbsent(key, newTask);
                     if (task == null) {
                         // We were able to put our new task - now submit it to the executor and
@@ -175,7 +210,7 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
                 if (!completed) {
                     // Task is indicating it is exiting before it has consumed all the items and is exiting. Rather
                     // than spinning on removal, we try to replace it.
-                    final NotificationTask newTask = new NotificationTask(key, it);
+                    final NotificationTask newTask = new NotificationTask(listener, key, it);
                     if (listenerCache.replace(key, task, newTask)) {
                         runTask(listener, newTask);
                         break;
@@ -205,8 +240,8 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
      * Returns {@link ListenerNotificationQueueStats} instances for each current listener
      * notification task in progress.
      */
-    public List<ListenerNotificationQueueStats> getListenerNotificationQueueStats() {
-        return listenerCache.values().stream().map(t -> new ListenerNotificationQueueStats(t.listenerKey.toString(),
+    public final List<ListenerNotificationQueueStats> getListenerNotificationQueueStats() {
+        return listenerCache.values().stream().map(t -> new ListenerNotificationQueueStats(t.listener.toString(),
             t.size())).collect(Collectors.toList());
     }
 
@@ -215,17 +250,14 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
         executor.execute(task);
     }
 
-    /**
-     * Used as the listenerCache map key. We key by listener reference identity hashCode/equals.
-     * Since we don't know anything about the listener class implementations and we're mixing
-     * multiple listener class instances in the same map, this avoids any potential issue with an
-     * equals implementation that just blindly casts the other Object to compare instead of checking
-     * for instanceof.
-     */
-    private static final class ListenerKey<L> {
+    abstract @NonNull Object keyFor(@NonNull L listener);
+
+    abstract L listenerFor(@NonNull Object key);
+
+    private static final class IdentityKey<L> {
         private final @NonNull L listener;
 
-        ListenerKey(final L listener) {
+        IdentityKey(final L listener) {
             this.listener = requireNonNull(listener);
         }
 
@@ -240,7 +272,7 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
 
         @Override
         public boolean equals(final Object obj) {
-            return obj == this || obj instanceof ListenerKey<?> && listener == ((ListenerKey<?>) obj).listener;
+            return obj == this || obj instanceof IdentityKey && listener == ((IdentityKey<?>)obj).listener;
         }
 
         @Override
@@ -249,22 +281,64 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
         }
     }
 
+    @NonNullByDefault
+    private static final class Equals<L, N> extends QueuedNotificationManager<L, N> {
+        Equals(final Executor executor, final BatchedInvoker<L, N> listenerInvoker, final int maxQueueCapacity,
+                final String name) {
+            super(executor, listenerInvoker, maxQueueCapacity, name);
+        }
+
+        @Override
+        Object keyFor(final L listener) {
+            return verifyNotNull(listener);
+        }
+
+        @Override
+        L listenerFor(final Object key) {
+            return (L) key;
+        }
+    }
+
+    @NonNullByDefault
+    private static final class Identity<L, N> extends QueuedNotificationManager<L, N> {
+        Identity(final Executor executor, final BatchedInvoker<L, N> listenerInvoker, final int maxQueueCapacity,
+                final String name) {
+            super(executor, listenerInvoker, maxQueueCapacity, name);
+        }
+
+        @Override
+        IdentityKey<L> keyFor(final L listener) {
+            return new IdentityKey<>(listener);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        L listenerFor(final Object key) {
+            verify(key instanceof IdentityKey);
+            return ((IdentityKey<L>)key).getListener();
+        }
+    }
+
     /**
-     * Executor task for a single listener that queues notifications and sends them serially to the
-     * listener.
+     * Executor task for a single listener that queues notifications and sends them serially to the listener.
      */
     private class NotificationTask implements Runnable {
         private final Lock lock = new ReentrantLock();
         private final Condition notEmpty = lock.newCondition();
         private final Condition notFull = lock.newCondition();
-        private final @NonNull ListenerKey<L> listenerKey;
+
+        // FIXME: Object here is ugly
+        private final @NonNull Object listenerKey;
+        private final @NonNull L listener;
 
         @GuardedBy("lock")
         private final Queue<N> queue = new ArrayDeque<>();
         @GuardedBy("lock")
         private boolean exiting;
 
-        NotificationTask(final @NonNull ListenerKey<L> listenerKey, final @NonNull Iterator<N> notifications) {
+        NotificationTask(final @NonNull L listener, final @NonNull Object listenerKey,
+                final @NonNull Iterator<N> notifications) {
+            this.listener = requireNonNull(listener);
             this.listenerKey = requireNonNull(listenerKey);
             while (notifications.hasNext()) {
                 queue.add(notifications.next());
@@ -310,7 +384,7 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
                             LOG.warn("{}: Failed to offer notifications {} to the queue for listener {}. Exceeded"
                                 + "maximum allowable time of {} minutes; the listener is likely in an unrecoverable"
                                 + "state (deadlock or endless loop). ", name, ImmutableList.copyOf(notifications),
-                                listenerKey, MAX_NOTIFICATION_OFFER_MINUTES);
+                                listener, MAX_NOTIFICATION_OFFER_MINUTES);
                             return true;
                         }
 
@@ -345,7 +419,7 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
                     timeout = notEmpty.awaitNanos(timeout);
                 } catch (InterruptedException e) {
                     // The executor is probably shutting down so log as debug.
-                    LOG.debug("{}: Interrupted trying to remove from {} listener's queue", name, listenerKey);
+                    LOG.debug("{}: Interrupted trying to remove from {} listener's queue", name, listener);
                     return false;
                 }
             }
@@ -387,12 +461,12 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
 
         @SuppressWarnings("checkstyle:illegalCatch")
         private void invokeListener(final @NonNull ImmutableList<N> notifications) {
-            LOG.debug("{}: Invoking listener {} with notification: {}", name, listenerKey, notifications);
+            LOG.debug("{}: Invoking listener {} with notification: {}", name, listener, notifications);
             try {
-                listenerInvoker.invokeListener(listenerKey.getListener(), notifications);
+                listenerInvoker.invokeListener(listener, notifications);
             } catch (Exception e) {
                 // We'll let a RuntimeException from the listener slide and keep sending any remaining notifications.
-                LOG.error("{}: Error notifying listener {} with {}", name, listenerKey, notifications, e);
+                LOG.error("{}: Error notifying listener {} with {}", name, listener, notifications, e);
             }
         }
     }
