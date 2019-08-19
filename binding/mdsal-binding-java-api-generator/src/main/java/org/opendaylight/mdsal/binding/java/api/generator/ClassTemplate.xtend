@@ -506,20 +506,17 @@ class ClassTemplate extends BaseTemplate {
      *
      * @return string with the <code>equals()</code> method definition in JAVA format
      */
-    def protected generateEquals() '''
+    def private generateEquals() '''
         «IF !genTO.equalsIdentifiers.empty»
             @«Override.importedName»
-            public boolean equals(java.lang.Object obj) {
+            public final boolean equals(java.lang.Object obj) {
                 if (this == obj) {
                     return true;
                 }
-                if (obj == null) {
+                if (!(obj instanceof «type.name»)) {
                     return false;
                 }
-                if (getClass() != obj.getClass()) {
-                    return false;
-                }
-                «type.name» other = («type.name») obj;
+                final «type.name» other = («type.name») obj;
                 «FOR property : genTO.equalsIdentifiers»
                     «val fieldName = property.fieldName»
                     if (!«property.importedUtilClass».equals(«fieldName», other.«fieldName»)) {
