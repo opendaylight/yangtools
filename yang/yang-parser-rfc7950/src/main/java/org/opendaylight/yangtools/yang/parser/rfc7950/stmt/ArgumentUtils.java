@@ -23,7 +23,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.NonNull;
-import org.gaul.modernizer_maven_annotations.SuppressModernizer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -60,7 +59,7 @@ public final class ArgumentUtils {
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
 
     // XPathFactory is not thread-safe, rather than locking around a shared instance, we use a thread-local one.
-    private static final ThreadLocal<XPathFactory> XPATH_FACTORY = new ThreadLocal<XPathFactory>() {
+    private static final ThreadLocal<XPathFactory> XPATH_FACTORY = new ThreadLocal<>() {
         @Override
         protected XPathFactory initialValue() {
             return XPathFactory.newInstance();
@@ -154,13 +153,9 @@ public final class ArgumentUtils {
         XPATH_FACTORY.remove();
     }
 
-    // FIXME: remove suppression when we have release=9
-    @SuppressModernizer
     private static String addPrefixToYangXPathFunctions(final String path, final StmtContext<?, ?, ?> ctx) {
         if (ctx.getRootVersion() == YangVersion.VERSION_1_1) {
-            // FIXME once Java 9 is available, change this to StringBuilder as Matcher.appendReplacement() and
-            // Matcher.appendTail() will accept StringBuilder parameter in Java 9
-            final StringBuffer result = new StringBuffer();
+            final StringBuilder result = new StringBuilder();
             final String prefix = YANG_XPATH_FUNCTIONS_PREFIX + ":";
             final Matcher matcher = YANG_XPATH_FUNCTIONS_PATTERN.matcher(path);
             while (matcher.find()) {
