@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.util;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ForwardingMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.pantheon.triemap.ImmutableTrieMap;
@@ -25,39 +25,50 @@ import tech.pantheon.triemap.MutableTrieMap;
  * changes, we can cache it for future reference.
  */
 final class ReadOnlyTrieMap<K, V> extends ForwardingMap<K, V> {
-    @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<ReadOnlyTrieMap, ImmutableTrieMap> UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(ReadOnlyTrieMap.class, ImmutableTrieMap.class, "readOnly");
     private static final Logger LOG = LoggerFactory.getLogger(ReadOnlyTrieMap.class);
+    private static final VarHandle READ_ONLY;
+
+    static {
+        try {
+            READ_ONLY = MethodHandles.lookup().findVarHandle(ReadOnlyTrieMap.class, "readOnly", ImmutableTrieMap.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private final MutableTrieMap<K, V> readWrite;
     private final int size;
-    private volatile ImmutableTrieMap<K, V> readOnly;
+
+    // Used via the varhandle
+    @SuppressWarnings("unused")
+    private ImmutableTrieMap<K, V> readOnly;
 
     ReadOnlyTrieMap(final MutableTrieMap<K, V> map, final int size) {
         this.readWrite = requireNonNull(map);
         this.size = size;
     }
 
-    Map<K, V> toReadWrite() {
-        final Map<K, V> ret = new ReadWriteTrieMap<>(readWrite.mutableSnapshot(), size);
+    ReadWriteTrieMap<K, V> toReadWrite() {
+        final ReadWriteTrieMap<K, V> ret = new ReadWriteTrieMap<>(readWrite.mutableSnapshot(), size);
         LOG.trace("Converted read-only TrieMap {} to read-write {}", this, ret);
         return ret;
     }
 
     @Override
-    protected Map<K, V> delegate() {
-        ImmutableTrieMap<K, V> ret = readOnly;
-        if (ret == null) {
-            ret = readWrite.immutableSnapshot();
-            if (!UPDATER.compareAndSet(this, null, ret)) {
-                ret = readOnly;
-            }
-        }
-        return ret;
+    protected ImmutableTrieMap<K, V> delegate() {
+        final ImmutableTrieMap<K, V> ret = (ImmutableTrieMap<K, V>) READ_ONLY.getAcquire(this);
+        return ret != null ? ret : loadReadOnly();
     }
 
     @Override
     public int size() {
         return size;
+    }
+
+    @SuppressWarnings("unchecked")
+    private ImmutableTrieMap<K, V> loadReadOnly() {
+        final ImmutableTrieMap<K, V> ret = readWrite.immutableSnapshot();
+        final Object witness = READ_ONLY.compareAndExchangeRelease(this, null, ret);
+        return witness == null ? ret : (ImmutableTrieMap<K, V>) witness;
     }
 }
