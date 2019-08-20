@@ -80,8 +80,7 @@ public final class MapAdaptor {
     }
 
     /**
-     * Creates an initial snapshot. The backing map is selected according to
-     * the expected size.
+     * Creates an initial snapshot. The backing map is selected according to the expected size.
      *
      * @param expectedSize Expected map size
      * @return An empty mutable map.
@@ -103,6 +102,10 @@ public final class MapAdaptor {
 
     /**
      * Input is treated is supposed to be left unmodified, result must be mutable.
+     *
+     * @param input input map
+     * @return An isolated, read-write snapshot of input map
+     * @throws NullPointerException if input is null
      */
     @SuppressWarnings("static-method")
     public <K, V> Map<K, V> takeSnapshot(final Map<K, V> input) {
@@ -158,7 +161,8 @@ public final class MapAdaptor {
      * {@link #takeSnapshot(Map)} purposes.
      *
      * @param input non-optimized (read-write) map
-     * @return  optimized read-only map
+     * @return optimized read-only map
+     * @throws NullPointerException if input is null
      */
     public <K, V> Map<K, V> optimize(final Map<K, V> input) {
         if (input instanceof ReadOnlyTrieMap) {
