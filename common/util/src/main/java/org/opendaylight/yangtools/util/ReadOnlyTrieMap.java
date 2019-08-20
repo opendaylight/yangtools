@@ -41,7 +41,7 @@ final class ReadOnlyTrieMap<K, V> extends ForwardingMap<K, V> {
 
     // Used via the varhandle
     @SuppressWarnings("unused")
-    private ImmutableTrieMap<K, V> readOnly;
+    private volatile ImmutableTrieMap<K, V> readOnly = null;
 
     ReadOnlyTrieMap(final MutableTrieMap<K, V> map, final int size) {
         this.readWrite = requireNonNull(map);
