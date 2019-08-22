@@ -39,6 +39,14 @@
             <artifactId>value</artifactId>
         </dependency>
 
+        <!-- FIXME: we need a release of this -->
+        <dependency>
+            <groupId>org.gaul</groupId>
+            <artifactId>modernizer-maven-annotations</artifactId>
+            <version>1.8.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>mockito-configuration</artifactId>
@@ -49,19 +57,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Automatic-Module-Name>org.opendaylight.yangtools.util</Automatic-Module-Name>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
 </project>
