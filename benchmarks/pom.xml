@@ -20,6 +20,11 @@
     <artifactId>benchmarks</artifactId>
     <version>4.0.0-SNAPSHOT</version>
 
+    <properties>
+        <!-- JMH-generated code does not pass SB (very noisily)-->
+        <odlparent.spotbugs.skip>true</odlparent.spotbugs.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>

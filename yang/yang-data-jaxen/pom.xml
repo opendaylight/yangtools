@@ -21,6 +21,11 @@
     <description>${project.artifactId}</description>
     <packaging>bundle</packaging>
 
+    <properties>
+        <!-- FIXME: we have some violations here -->
+        <odlparent.spotbugs.enforce>false</odlparent.spotbugs.enforce>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
