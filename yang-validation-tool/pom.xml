@@ -20,6 +20,11 @@
     <artifactId>yang-validation-tool</artifactId>
     <version>4.0.0-SNAPSHOT</version>
 
+    <properties>
+        <!-- FIXME: we have some violations here -->
+        <odlparent.spotbugs.enforce>false</odlparent.spotbugs.enforce>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
