@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import java.util.concurrent.ThreadFactory;
+import javax.annotation.processing.Generated;
 import org.immutables.value.Value;
 import org.slf4j.Logger;
 
@@ -21,7 +23,9 @@ import org.slf4j.Logger;
  * @author Michael Vorburger.ch
  */
 @Value.Immutable
-@Value.Style(stagedBuilder = true)
+@Value.Style(stagedBuilder = true, allowedClasspathAnnotations = {
+        SuppressWarnings.class, Generated.class, SuppressFBWarnings.class,
+})
 public abstract class ThreadFactoryProvider {
 
     // This class is also available in infrautils (but yangtools cannot depend on infrautils)
