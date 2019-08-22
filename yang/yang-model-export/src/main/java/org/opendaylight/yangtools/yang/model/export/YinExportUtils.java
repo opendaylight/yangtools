@@ -11,11 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import java.io.OutputStream;
-import java.net.URI;
-import java.util.Map;
 import java.util.Optional;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
@@ -28,8 +24,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 
@@ -106,26 +100,6 @@ public final class YinExportUtils {
             "Submodule %s is not a SubmoduleEffectiveStatement", submodule);
         writeReaderToOutput(YinXMLEventReaderFactory.defaultInstance().createXMLEventReader(
             (ModuleEffectiveStatement) parentModule, (SubmoduleEffectiveStatement)submodule), output);
-    }
-
-    private static Map<String, URI> prefixToNamespace(final SchemaContext ctx, final Module module) {
-        final BiMap<String, URI> prefixMap = HashBiMap.create(module.getImports().size() + 1);
-        prefixMap.put(module.getPrefix(), module.getNamespace());
-        for (final ModuleImport imp : module.getImports()) {
-            final String prefix = imp.getPrefix();
-            final URI namespace = getModuleNamespace(ctx, imp.getModuleName());
-            prefixMap.put(prefix, namespace);
-        }
-        return prefixMap;
-    }
-
-    private static URI getModuleNamespace(final SchemaContext ctx, final String moduleName) {
-        for (final Module module : ctx.getModules()) {
-            if (moduleName.equals(module.getName())) {
-                return module.getNamespace();
-            }
-        }
-        throw new IllegalArgumentException("Module " + moduleName + "does not exists in provided schema context");
     }
 
     private static void writeReaderToOutput(final XMLEventReader reader, final OutputStream output)
