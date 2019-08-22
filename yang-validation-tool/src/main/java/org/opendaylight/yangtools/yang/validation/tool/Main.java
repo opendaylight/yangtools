@@ -19,6 +19,7 @@ public final class Main {
 
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     public static void main(final String[] args) {
         final Params params = ParamsUtil.parseArgs(args, Params.getParser());
 
