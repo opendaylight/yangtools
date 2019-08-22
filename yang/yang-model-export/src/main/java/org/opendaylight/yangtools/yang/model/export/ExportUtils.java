@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 
 import java.util.Map;
@@ -59,7 +58,10 @@ final class ExportUtils {
             }
         }
 
-        checkArgument(prefix != null, "Failed to find prefix for statement %s", stmtName);
+        if (prefix == null) {
+            throw new IllegalArgumentException("Failed to find prefix for statement " + stmtName);
+        }
+
         verify(!prefix.isEmpty(), "Empty prefix for statement %s", stmtName);
         return Optional.of(prefix);
     }
