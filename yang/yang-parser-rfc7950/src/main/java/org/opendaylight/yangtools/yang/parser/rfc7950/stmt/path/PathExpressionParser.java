@@ -100,7 +100,7 @@ class PathExpressionParser {
         final List<Step> steps = new ArrayList<>();
 
         final int relativeChildren = relative.getChildCount();
-        verify(relativeChildren % 2 == 1, "Unexpected child count %s", relativeChildren);
+        verify(relativeChildren % 2 != 0, "Unexpected child count %s", relativeChildren);
         for (int i = 0; i < relativeChildren / 2; ++i) {
             steps.add(YangXPathAxis.PARENT.asStep());
         }
