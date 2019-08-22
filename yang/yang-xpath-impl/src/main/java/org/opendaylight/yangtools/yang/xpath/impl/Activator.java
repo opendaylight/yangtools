@@ -11,7 +11,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
 
 /**
  * YANG XPath implementation activator. Publishes a {@link YangXPathParserFactory} implementation on bundle start.
@@ -19,18 +18,13 @@ import org.osgi.framework.ServiceRegistration;
  * @author Robert Varga
  */
 public final class Activator implements BundleActivator {
-    private @Nullable ServiceRegistration<YangXPathParserFactory> registration;
-
     @Override
     public void start(final @Nullable BundleContext context) throws Exception {
-        registration = context.registerService(YangXPathParserFactory.class, new AntlrXPathParserFactory(), null);
+        context.registerService(YangXPathParserFactory.class, new AntlrXPathParserFactory(), null);
     }
 
     @Override
     public void stop(final @Nullable BundleContext context) throws Exception {
-        if (registration != null) {
-            registration.unregister();
-            registration = null;
-        }
+        // No-op, framework will unregister our services
     }
 }
