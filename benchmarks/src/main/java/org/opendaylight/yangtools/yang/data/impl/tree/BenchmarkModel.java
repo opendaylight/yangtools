@@ -14,6 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
+ * Benchmark model constants.
+ *
  * @author Lukas Sedlak &lt;lsedlak@cisco.com&gt;
  */
 final class BenchmarkModel {
