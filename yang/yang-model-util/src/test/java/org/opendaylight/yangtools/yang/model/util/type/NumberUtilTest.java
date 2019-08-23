@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import static org.junit.Assert.assertEquals;
@@ -15,6 +14,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.function.Function;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.Uint64;
 
 public class NumberUtilTest {
 
@@ -49,11 +51,41 @@ public class NumberUtilTest {
     }
 
     @Test
-    public void testRangeCoveredForBigInteger() {
-        final BigInteger min = new BigInteger("100");
-        final BigInteger superMin = new BigInteger("50");
-        final BigInteger max = new BigInteger("200");
-        final BigInteger superMax = new BigInteger("300");
+    public void testRangeCoveredForUint8() {
+        final Uint64 min = Uint64.valueOf("100");
+        final Uint64 superMin = Uint64.valueOf("50");
+        final Uint64 max = Uint64.valueOf("200");
+        final Uint64 superMax = Uint64.valueOf("250");
+
+        assertTrue(NumberUtil.isRangeCovered(min, max, superMin, superMax));
+    }
+
+    @Test
+    public void testRangeCoveredForUint16() {
+        final Uint16 min = Uint16.valueOf("100");
+        final Uint16 superMin = Uint16.valueOf("50");
+        final Uint16 max = Uint16.valueOf("200");
+        final Uint16 superMax = Uint16.valueOf("300");
+
+        assertTrue(NumberUtil.isRangeCovered(min, max, superMin, superMax));
+    }
+
+    @Test
+    public void testRangeCoveredForUint32() {
+        final Uint32 min = Uint32.valueOf("100");
+        final Uint32 superMin = Uint32.valueOf("50");
+        final Uint32 max = Uint32.valueOf("200");
+        final Uint32 superMax = Uint32.valueOf("300");
+
+        assertTrue(NumberUtil.isRangeCovered(min, max, superMin, superMax));
+    }
+
+    @Test
+    public void testRangeCoveredForUint64() {
+        final Uint64 min = Uint64.valueOf("100");
+        final Uint64 superMin = Uint64.valueOf("50");
+        final Uint64 max = Uint64.valueOf("200");
+        final Uint64 superMax = Uint64.valueOf("300");
 
         assertTrue(NumberUtil.isRangeCovered(min, max, superMin, superMax));
     }
@@ -116,9 +148,10 @@ public class NumberUtilTest {
         assertEquals(bigDecNum, numberFunction.apply(doubleNum));
     }
 
-    @Test public void testConverterToBigInteger() {
-        final BigInteger bigIntNum = new BigInteger("20");
-        final Function<Number, BigInteger> numberFunction = NumberUtil.converterTo(BigInteger.class);
+    @Test
+    public void testConverterToUint64() {
+        final Uint64 bigIntNum = Uint64.valueOf("20");
+        final Function<Number, Uint64> numberFunction = NumberUtil.converterTo(Uint64.class);
         assertEquals(bigIntNum, numberFunction.apply(bigIntNum));
 
         final int intNum = 20;

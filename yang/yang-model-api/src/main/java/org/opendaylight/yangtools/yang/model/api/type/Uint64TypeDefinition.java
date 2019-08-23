@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import java.math.BigInteger;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Uint64;
 
 /**
  * Type definition derived from uint64 type.
  *
  * @author Robert Varga
  */
-public interface Uint64TypeDefinition extends RangeRestrictedTypeDefinition<Uint64TypeDefinition, BigInteger> {
+public interface Uint64TypeDefinition extends RangeRestrictedTypeDefinition<Uint64TypeDefinition, Uint64> {
 
     static int hashCode(final @NonNull Uint64TypeDefinition type) {
         return TypeDefinitions.hashCode(type);
