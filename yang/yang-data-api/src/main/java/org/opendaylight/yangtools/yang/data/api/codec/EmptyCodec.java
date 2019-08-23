@@ -7,13 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.common.Empty;
 
-public interface EmptyCodec<T> extends Codec<T, Empty> {
-    @Override
-    T serialize(Empty data);
+public interface EmptyCodec<T> extends IllegalArgumentCodec<T, Empty> {
 
-    @Override
-    Empty deserialize(T data);
 }

@@ -35,7 +35,8 @@ public final class TypeDefinitionAwareCodecTestHelper {
         return (T)codec;
     }
 
-    public static void deserializeWithExpectedIllegalArgEx(final Codec<String,?> codec, final String param) {
+    public static void deserializeWithExpectedIllegalArgEx(final Codec<String, ?, IllegalArgumentException> codec,
+            final String param) {
         try {
             codec.deserialize(param);
             fail("Expected IllegalArgumentException");
