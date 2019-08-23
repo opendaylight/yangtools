@@ -7,12 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 
-public interface LeafrefCodec<T> extends Codec<T,Object> {
-    @Override
-    T serialize(Object data);
+public interface LeafrefCodec<T> extends IllegalArgumentCodec<T, Object> {
 
-    @Override
-    Object deserialize(T data);
 }

@@ -8,15 +8,16 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Functions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import java.util.Objects;
-import java.util.Optional;
+import com.google.common.collect.Maps;
+import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.codec.EnumCodec;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 /**
  * Do not use this class outside of yangtools, its presence does not fall into the API stability contract.
@@ -26,41 +27,31 @@ public final class EnumStringCodec extends TypeDefinitionAwareCodec<String, Enum
         implements EnumCodec<String> {
     private final ImmutableMap<String, String> values;
 
-    private EnumStringCodec(final Optional<EnumTypeDefinition> typeDef) {
+    private EnumStringCodec(final @NonNull EnumTypeDefinition typeDef) {
         super(typeDef, String.class);
-        if (typeDef.isPresent()) {
-            final Builder<String, String> b = ImmutableMap.builder();
-            for (final EnumPair pair : typeDef.get().getValues()) {
-                // Intern the String to get wide reuse
-                final String v = pair.getName().intern();
-                b.put(v, v);
-            }
-            values = b.build();
-        } else {
-            values = null;
-        }
+
+        values = Maps.uniqueIndex(typeDef.getValues().stream()
+            // Intern the String to get wide reuse
+            .map(pair -> pair.getName().intern())
+            .collect(Collectors.toList()), Functions.identity());
     }
 
     public static EnumStringCodec from(final EnumTypeDefinition normalizedType) {
-        return new EnumStringCodec(Optional.of(normalizedType));
+        return new EnumStringCodec(requireNonNull(normalizedType));
     }
 
     @Override
-    public String deserialize(final String stringRepresentation) {
-        if (values == null) {
-            return stringRepresentation;
-        }
-
+    protected String deserializeImpl(final String product) {
         // Lookup the serialized string in the values. Returned string is the interned instance, which we want
         // to use as the result.
-        final String result = values.get(stringRepresentation);
-        checkArgument(result != null, "Invalid value '%s' for enum type. Allowed values are: %s", stringRepresentation,
+        final String result = values.get(product);
+        checkArgument(result != null, "Invalid value '%s' for enum type. Allowed values are: %s", product,
                 values.keySet());
         return result;
     }
 
     @Override
-    public String serialize(final String data) {
-        return Objects.toString(data, "");
+    protected String serializeImpl(final String input) {
+        return input;
     }
 }

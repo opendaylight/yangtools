@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
@@ -16,8 +17,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
@@ -35,35 +36,18 @@ public final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>,
     private final ImmutableSet<String> validBits;
 
     @SuppressWarnings("unchecked")
-    private BitsStringCodec(final Optional<BitsTypeDefinition> typeDef) {
+    private BitsStringCodec(final @NonNull BitsTypeDefinition typeDef) {
         super(typeDef, (Class<Set<String>>) (Class<?>) Set.class);
-        if (typeDef.isPresent()) {
-            validBits = ImmutableSet.copyOf(Collections2.transform(typeDef.get().getBits(), Bit::getName));
-        } else {
-            validBits = null;
-        }
+        validBits = ImmutableSet.copyOf(Collections2.transform(typeDef.getBits(), Bit::getName));
     }
 
     public static BitsStringCodec from(final BitsTypeDefinition type) {
-        return new BitsStringCodec(Optional.of(type));
+        return new BitsStringCodec(requireNonNull(type));
     }
 
     @Override
-    public String serialize(final Set<String> data) {
-        return data == null ? "" : JOINER.join(data);
-    }
-
-    @Override
-    public Set<String> deserialize(final String stringRepresentation) {
-        if (stringRepresentation == null) {
-            return ImmutableSet.of();
-        }
-
-        final Set<String> strings = ImmutableSet.copyOf(SPLITTER.split(stringRepresentation));
-        if (validBits == null) {
-            // No schema available, use what we have
-            return strings;
-        }
+    protected @NonNull Set<String> deserializeImpl(@NonNull final String product) {
+        final Set<String> strings = ImmutableSet.copyOf(SPLITTER.split(product));
 
         // Normalize strings to schema first, retaining definition order
         final List<String> sorted = new ArrayList<>(strings.size());
@@ -84,5 +68,10 @@ public final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>,
 
         // In case all valid bits have been specified, retain the set we have created for this codec
         return sorted.size() == validBits.size() ? validBits : ImmutableSet.copyOf(sorted);
+    }
+
+    @Override
+    protected String serializeImpl(final Set<String> input) {
+        return JOINER.join(input);
     }
 }
