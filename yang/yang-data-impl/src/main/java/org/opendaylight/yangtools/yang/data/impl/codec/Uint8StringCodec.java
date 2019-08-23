@@ -5,28 +5,24 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import java.util.Objects;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint8Codec;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 
 final class Uint8StringCodec extends AbstractIntegerStringCodec<Short, Uint8TypeDefinition> implements
         Uint8Codec<String> {
-
-    Uint8StringCodec(final Optional<Uint8TypeDefinition> typeDef) {
-        super(typeDef, extractRange(typeDef.orElse(null)), Short.class);
+    Uint8StringCodec(final Uint8TypeDefinition typeDef) {
+        super(typeDef, extractRange(typeDef), Short.class);
     }
 
     @Override
-    public String serialize(final Short data) {
-        return Objects.toString(data, "");
-    }
-
-    @Override
-    Short deserialize(final String stringRepresentation, final int base) {
+    protected Short deserialize(final String stringRepresentation, final int base) {
         return Short.valueOf(stringRepresentation, base);
+    }
+
+    @Override
+    protected String serializeImpl(final Short data) {
+        return data.toString();
     }
 }

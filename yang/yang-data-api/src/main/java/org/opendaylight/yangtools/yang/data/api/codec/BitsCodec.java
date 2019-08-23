@@ -8,12 +8,8 @@
 package org.opendaylight.yangtools.yang.data.api.codec;
 
 import java.util.Set;
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 
-public interface BitsCodec<T> extends Codec<T, Set<String>> {
-    @Override
-    T serialize(Set<String> data);
+public interface BitsCodec<T> extends IllegalArgumentCodec<T, Set<String>> {
 
-    @Override
-    Set<String> deserialize(T data);
 }

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 
 /**
  * FIXME: In Helium release this codec should be changed to
@@ -18,10 +18,6 @@ import org.opendaylight.yangtools.concepts.Codec;
  * @param <T>
  *          Output type of serialization.
  */
-public interface Uint16Codec<T> extends Codec<T,Integer> {
-    @Override
-    T serialize(Integer data);
+public interface Uint16Codec<T> extends IllegalArgumentCodec<T, Integer> {
 
-    @Override
-    Integer deserialize(T data);
 }
