@@ -7,23 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import java.math.BigInteger;
+import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint64Codec;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 
-final class Uint64StringCodec extends AbstractIntegerStringCodec<BigInteger, Uint64TypeDefinition> implements
+final class Uint64StringCodec extends AbstractIntegerStringCodec<Uint64, Uint64TypeDefinition> implements
         Uint64Codec<String> {
     Uint64StringCodec(final Uint64TypeDefinition typeDef) {
-        super(typeDef, extractRange(typeDef), BigInteger.class);
+        super(typeDef, extractRange(typeDef), Uint64.class);
     }
 
     @Override
-    protected BigInteger deserialize(final String stringRepresentation, final int base) {
-        return new BigInteger(stringRepresentation, base);
+    protected Uint64 deserialize(final String stringRepresentation, final int base) {
+        return Uint64.valueOf(stringRepresentation, base);
     }
 
     @Override
-    protected String serializeImpl(final BigInteger input) {
+    protected String serializeImpl(final Uint64 input) {
         return input.toString();
     }
 }

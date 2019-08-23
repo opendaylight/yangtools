@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import static org.junit.Assert.assertEquals;
@@ -116,7 +115,8 @@ public class NumberUtilTest {
         assertEquals(bigDecNum, numberFunction.apply(doubleNum));
     }
 
-    @Test public void testConverterToBigInteger() {
+    @Test
+    public void testConverterToBigInteger() {
         final BigInteger bigIntNum = new BigInteger("20");
         final Function<Number, BigInteger> numberFunction = NumberUtil.converterTo(BigInteger.class);
         assertEquals(bigIntNum, numberFunction.apply(bigIntNum));
