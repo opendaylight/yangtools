@@ -22,24 +22,19 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
  * @author Thomas Pantelis
  */
 public class BinaryCodecStringTest {
+    private static final byte[] FOUR_ELEMENTS = { 1, 2, 3, 4 };
 
     @SuppressWarnings("unchecked")
     @Test
     public void testSerialize() {
         BinaryCodec<String> codec = getCodec(BaseTypes.binaryType(), BinaryCodec.class);
-
-        assertEquals("serialize", Base64.getEncoder().encodeToString(new byte[] { 1, 2, 3, 4 }),
-                      codec.serialize(new byte[] { 1, 2, 3, 4 }));
-        assertEquals("serialize", "", codec.serialize(null));
+        assertEquals(Base64.getEncoder().encodeToString(FOUR_ELEMENTS), codec.serialize(FOUR_ELEMENTS));
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testDererialize() {
         BinaryCodec<String> codec = getCodec(BaseTypes.binaryType(), BinaryCodec.class);
-
-        assertArrayEquals("deserialize", new byte[] {1, 2, 3, 4 },
-                      codec.deserialize(Base64.getEncoder().encodeToString(new byte[] { 1, 2, 3, 4 })));
-        assertEquals("deserialize", null, codec.deserialize(null));
+        assertArrayEquals(FOUR_ELEMENTS, codec.deserialize(Base64.getEncoder().encodeToString(FOUR_ELEMENTS)));
     }
 }

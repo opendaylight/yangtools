@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
  *
  */
 public class BitsCodecStringTest {
-
     private  static BitsTypeDefinition toBitsTypeDefinition(final String... bits) {
         final BitsTypeBuilder b = BaseTypes.bitsTypeBuilder(mock(SchemaPath.class));
 
@@ -49,33 +48,25 @@ public class BitsCodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testSerialize() {
-
         BitsCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(toBitsTypeDefinition("foo"),
                 BitsCodec.class);
 
-        ImmutableSet<String> toSerialize = ImmutableSet.of("foo", "bar");
-
-        String serialized = codec.serialize(toSerialize);
+        String serialized = codec.serialize(ImmutableSet.of("foo", "bar"));
         assertNotNull(serialized);
         assertTrue(serialized.contains("foo"));
         assertTrue(serialized.contains("bar"));
 
-        assertEquals("serialize", "",
-                codec.serialize(ImmutableSet.of()));
-        assertEquals("serialize", "", codec.serialize(null));
+        assertEquals("", codec.serialize(ImmutableSet.of()));
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testDeserialize() {
-
         BitsCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(
             toBitsTypeDefinition("bit1", "bit2"), BitsCodec.class);
 
         assertEquals("deserialize", ImmutableSet.of("bit1", "bit2"), codec.deserialize("  bit1 bit2     "));
-
         assertEquals("deserialize", Collections.emptySet(), codec.deserialize(""));
-        assertEquals("deserialize", Collections.emptySet(), codec.deserialize(null));
 
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "bit1 bit3");
     }

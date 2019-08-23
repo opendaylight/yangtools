@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.codecs;
 
 import static org.junit.Assert.assertEquals;
@@ -20,14 +19,12 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
  * @author Thomas Pantelis
  */
 public class BooleanCodecStringTest {
-
     @SuppressWarnings("unchecked")
     @Test
     public void testSerialize() {
         BooleanCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.booleanType(),
             BooleanCodec.class);
 
-        assertEquals("serialize", "", codec.serialize(null));
         assertEquals("serialize", "true", codec.serialize(Boolean.TRUE));
         assertEquals("serialize", "false", codec.serialize(Boolean.FALSE));
     }
@@ -42,7 +39,6 @@ public class BooleanCodecStringTest {
         assertEquals("deserialize", Boolean.TRUE, codec.deserialize("TRUE"));
         assertEquals("deserialize", Boolean.FALSE, codec.deserialize("FALSE"));
         assertEquals("deserialize", Boolean.FALSE, codec.deserialize("false"));
-        assertEquals("deserialize", null, codec.deserialize(null));
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "foo");
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "");
     }

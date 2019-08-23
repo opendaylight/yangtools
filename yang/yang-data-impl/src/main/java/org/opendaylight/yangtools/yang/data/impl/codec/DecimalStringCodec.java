@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.math.BigDecimal;
-import java.util.Objects;
-import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 
@@ -22,24 +21,22 @@ import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 @Beta
 public final class DecimalStringCodec extends TypeDefinitionAwareCodec<BigDecimal, DecimalTypeDefinition>
         implements DecimalCodec<String> {
-
-    private DecimalStringCodec(final Optional<DecimalTypeDefinition> typeDef) {
+    private DecimalStringCodec(final DecimalTypeDefinition typeDef) {
         super(typeDef, BigDecimal.class);
     }
 
-    public static DecimalStringCodec from(final DecimalTypeDefinition type) {
-        return new DecimalStringCodec(Optional.of(type));
+    public static @NonNull DecimalStringCodec from(final DecimalTypeDefinition type) {
+        return new DecimalStringCodec(requireNonNull(type));
     }
 
     @Override
-    public String serialize(final BigDecimal data) {
-        return Objects.toString(data, "");
-    }
-
-    @Override
-    public BigDecimal deserialize(final String stringRepresentation) {
-        checkArgument(stringRepresentation != null, "Input cannot be null");
+    protected BigDecimal deserializeImpl(final String product) {
         // FIXME: run value validation
-        return new BigDecimal(stringRepresentation);
+        return new BigDecimal(product);
+    }
+
+    @Override
+    protected @NonNull String serializeImpl(@NonNull final BigDecimal input) {
+        return input.toString();
     }
 }

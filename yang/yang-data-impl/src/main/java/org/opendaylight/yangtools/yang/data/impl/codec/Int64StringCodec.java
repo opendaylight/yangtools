@@ -5,28 +5,24 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import java.util.Objects;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Int64Codec;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 
 final class Int64StringCodec extends AbstractIntegerStringCodec<Long, Int64TypeDefinition>
         implements Int64Codec<String> {
-
-    Int64StringCodec(final Optional<Int64TypeDefinition> typeDef) {
-        super(typeDef, extractRange(typeDef.orElse(null)), Long.class);
+    Int64StringCodec(final Int64TypeDefinition typeDef) {
+        super(typeDef, extractRange(typeDef), Long.class);
     }
 
     @Override
-    Long deserialize(final String stringRepresentation, final int base) {
+    protected Long deserialize(final String stringRepresentation, final int base) {
         return Long.valueOf(stringRepresentation, base);
     }
 
     @Override
-    public String serialize(final Long data) {
-        return Objects.toString(data, "");
+    protected String serializeImpl(final Long data) {
+        return data.toString();
     }
 }
