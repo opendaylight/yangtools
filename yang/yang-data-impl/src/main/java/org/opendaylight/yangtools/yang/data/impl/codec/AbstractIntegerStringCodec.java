@@ -14,10 +14,13 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.RangeSet;
-import java.math.BigInteger;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.Uint64;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
@@ -76,20 +79,20 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
         return new Int64StringCodec(type);
     }
 
-    public static @NonNull AbstractIntegerStringCodec<Short, Uint8TypeDefinition> from(final Uint8TypeDefinition type) {
+    public static @NonNull AbstractIntegerStringCodec<Uint8, Uint8TypeDefinition> from(final Uint8TypeDefinition type) {
         return new Uint8StringCodec(type);
     }
 
-    public static AbstractIntegerStringCodec<Integer, Uint16TypeDefinition> from(final Uint16TypeDefinition type) {
+    public static AbstractIntegerStringCodec<Uint16, Uint16TypeDefinition> from(final Uint16TypeDefinition type) {
         return new Uint16StringCodec(type);
     }
 
-    public static @NonNull AbstractIntegerStringCodec<Long, Uint32TypeDefinition> from(
+    public static @NonNull AbstractIntegerStringCodec<Uint32, Uint32TypeDefinition> from(
             final Uint32TypeDefinition type) {
         return new Uint32StringCodec(type);
     }
 
-    public static @NonNull AbstractIntegerStringCodec<BigInteger, Uint64TypeDefinition> from(
+    public static @NonNull AbstractIntegerStringCodec<Uint64, Uint64TypeDefinition> from(
             final Uint64TypeDefinition type) {
         return new Uint64StringCodec(type);
     }
