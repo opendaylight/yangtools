@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -29,12 +30,13 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
-public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> implements DataStringCodec<J> {
-    private final Class<J> inputClass;
-    private final T typeDefinition;
+public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> extends AbstractDataStringCodec<J> {
+    private final @NonNull Class<J> inputClass;
+    private final @Nullable T typeDefinition;
 
-    protected TypeDefinitionAwareCodec(final Optional<T> typeDefinition, final Class<J> outputClass) {
-        this.typeDefinition = typeDefinition.orElse(null);
+    // FIXME: reverse arguments
+    protected TypeDefinitionAwareCodec(final @Nullable T typeDefinition, final Class<J> outputClass) {
+        this.typeDefinition = typeDefinition;
         this.inputClass = requireNonNull(outputClass);
     }
 

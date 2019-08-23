@@ -5,27 +5,24 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import java.util.Objects;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Int32Codec;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 
 final class Int32StringCodec extends AbstractIntegerStringCodec<Integer, Int32TypeDefinition>
         implements Int32Codec<String> {
-    Int32StringCodec(final Optional<Int32TypeDefinition> typeDef) {
-        super(typeDef, extractRange(typeDef.orElse(null)), Integer.class);
+    Int32StringCodec(final Int32TypeDefinition typeDef) {
+        super(typeDef, extractRange(typeDef), Integer.class);
     }
 
     @Override
-    Integer deserialize(final String stringRepresentation, final int base) {
+    protected Integer deserialize(final String stringRepresentation, final int base) {
         return Integer.valueOf(stringRepresentation, base);
     }
 
     @Override
-    public String serialize(final Integer data) {
-        return Objects.toString(data, "");
+    protected String serializeImpl(final Integer data) {
+        return data.toString();
     }
 }

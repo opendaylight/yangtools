@@ -7,13 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.common.QName;
 
-public interface IdentityrefCodec<T>  extends Codec<T,QName> {
-    @Override
-    T serialize(QName data);
+public interface IdentityrefCodec<T>  extends IllegalArgumentCodec<T, QName> {
 
-    @Override
-    QName deserialize(T data);
 }

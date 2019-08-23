@@ -48,7 +48,6 @@ public class UnionCodecStringTest {
         assertEquals("serialize", "enum1", codec.serialize("enum1"));
         assertEquals("serialize", "123", codec.serialize("123"));
         assertEquals("serialize", "123", codec.serialize(123));
-        assertEquals("serialize", "", codec.serialize(null));
         assertEquals("serialize", "", codec.serialize(""));
     }
 

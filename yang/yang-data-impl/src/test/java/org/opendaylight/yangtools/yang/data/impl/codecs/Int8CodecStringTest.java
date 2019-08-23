@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.codecs;
 
 import static org.junit.Assert.assertEquals;
@@ -20,14 +19,12 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
  * @author Thomas Pantelis
  */
 public class Int8CodecStringTest {
-
     @SuppressWarnings("unchecked")
     @Test
     public void testSerialize() {
         Int8Codec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.int8Type(), Int8Codec.class);
 
         assertEquals("serialize", "10", codec.serialize(Byte.valueOf((byte) 10)));
-        assertEquals("serialize", "", codec.serialize(null));
     }
 
     @SuppressWarnings("unchecked")
@@ -51,6 +48,5 @@ public class Int8CodecStringTest {
 
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "1o");
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "");
-        TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, null);
     }
 }
