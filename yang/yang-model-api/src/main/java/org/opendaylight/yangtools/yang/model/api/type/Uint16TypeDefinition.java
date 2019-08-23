@@ -9,13 +9,14 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 /**
  * Type definition derived from uint16 type.
  *
  * @author Robert Varga
  */
-public interface Uint16TypeDefinition extends RangeRestrictedTypeDefinition<Uint16TypeDefinition, Integer> {
+public interface Uint16TypeDefinition extends RangeRestrictedTypeDefinition<Uint16TypeDefinition, Uint16> {
 
     static int hashCode(final @NonNull Uint16TypeDefinition type) {
         return TypeDefinitions.hashCode(type);
