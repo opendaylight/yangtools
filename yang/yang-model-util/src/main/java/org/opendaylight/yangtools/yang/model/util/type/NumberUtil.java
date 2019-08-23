@@ -11,9 +11,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.collect.ImmutableMap;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.function.Function;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.Uint64;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 final class NumberUtil {
     private static final Comparator<Number> NUMBER_COMPARATOR = (o1, o2) -> {
@@ -28,10 +31,16 @@ final class NumberUtil {
             return ((Integer)o1).compareTo((Integer) o2);
         } else if (o1 instanceof Long) {
             return ((Long)o1).compareTo((Long) o2);
+        } else if (o1 instanceof Uint8) {
+            return ((Uint8)o1).compareTo((Uint8) o2);
+        } else if (o1 instanceof Uint16) {
+            return ((Uint16)o1).compareTo((Uint16) o2);
+        } else if (o1 instanceof Uint32) {
+            return ((Uint32)o1).compareTo((Uint32) o2);
+        } else if (o1 instanceof Uint64) {
+            return ((Uint64)o1).compareTo((Uint64) o2);
         } else if (o1 instanceof BigDecimal) {
             return ((BigDecimal)o1).compareTo((BigDecimal) o2);
-        } else if (o1 instanceof BigInteger) {
-            return ((BigInteger)o1).compareTo((BigInteger) o2);
         } else {
             throw new IllegalArgumentException("Unsupported Number class " + o1.getClass());
         }
@@ -88,15 +97,53 @@ final class NumberUtil {
 
             return new BigDecimal(input.toString());
         });
-        b.put(BigInteger.class, input -> {
-            if (input instanceof BigInteger) {
+        b.put(Uint8.class, input -> {
+            if (input instanceof Uint8) {
                 return input;
             }
-            if (input instanceof Byte || input instanceof Short || input instanceof Integer || input instanceof Long) {
-                return BigInteger.valueOf(input.longValue());
+            // FIXME: revise this
+            if (input instanceof Byte || input instanceof Short || input instanceof Integer || input instanceof Long
+                    || input instanceof Uint16 || input instanceof Uint32 || input instanceof Uint64) {
+                return Uint8.valueOf(input.longValue());
             }
 
-            return new BigInteger(input.toString());
+            return Uint8.valueOf(input.toString());
+        });
+        b.put(Uint16.class, input -> {
+            if (input instanceof Uint16) {
+                return input;
+            }
+            // FIXME: revise this
+            if (input instanceof Byte || input instanceof Short || input instanceof Integer || input instanceof Long
+                    || input instanceof Uint8 || input instanceof Uint32 || input instanceof Uint64) {
+                return Uint16.valueOf(input.longValue());
+            }
+
+            return Uint16.valueOf(input.toString());
+        });
+        b.put(Uint32.class, input -> {
+            if (input instanceof Uint32) {
+                return input;
+            }
+            // FIXME: revise this
+            if (input instanceof Byte || input instanceof Short || input instanceof Integer || input instanceof Long
+                    || input instanceof Uint8 || input instanceof Uint16 || input instanceof Uint64) {
+                return Uint32.valueOf(input.longValue());
+            }
+
+            return Uint32.valueOf(input.toString());
+        });
+        b.put(Uint64.class, input -> {
+            if (input instanceof Uint64) {
+                return input;
+            }
+            // FIXME: revise this
+            if (input instanceof Byte || input instanceof Short || input instanceof Integer || input instanceof Long
+                    || input instanceof Uint8 || input instanceof Uint16 || input instanceof Uint32) {
+                return Uint64.valueOf(input.longValue());
+            }
+
+            return Uint64.valueOf(input.toString());
         });
         CONVERTERS = b.build();
     }

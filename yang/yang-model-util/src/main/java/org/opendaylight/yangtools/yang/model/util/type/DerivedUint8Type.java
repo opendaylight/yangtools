@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 
-final class DerivedUint8Type extends AbstractRangeRestrictedDerivedType<Uint8TypeDefinition, Short>
+final class DerivedUint8Type extends AbstractRangeRestrictedDerivedType<Uint8TypeDefinition, Uint8>
         implements Uint8TypeDefinition {
-
     DerivedUint8Type(final Uint8TypeDefinition baseType, final SchemaPath path,
             final Object defaultValue, final String description, final String reference, final Status status,
             final String units, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
