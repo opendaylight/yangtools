@@ -8,15 +8,13 @@
 package org.opendaylight.yangtools.yang.data.api.codec;
 
 import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 /**
- * FIXME: Should be changed to UnsignedByte.
+ * A codec between Uint8 and some other representation.
  *
- * @author ttkacik
- *
- * @param <T>
- *          Output type of serialization.
+ * @param <T> Output type of serialization.
  */
-public interface Uint8Codec<T> extends IllegalArgumentCodec<T, Short> {
+public interface Uint8Codec<T> extends IllegalArgumentCodec<T, Uint8> {
 
 }

@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwa
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint8Codec;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
@@ -26,7 +27,7 @@ public class Uint8CodecStringTest {
     public void testSerialize() {
         Uint8Codec<String> codec = getCodec(BaseTypes.uint8Type(), Uint8Codec.class);
 
-        assertEquals("serialize", "10", codec.serialize(Short.valueOf((short) 10)));
+        assertEquals("serialize", "10", codec.serialize(Uint8.valueOf((short) 10)));
     }
 
     @SuppressWarnings({ "unchecked" })
