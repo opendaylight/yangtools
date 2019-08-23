@@ -25,6 +25,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -99,8 +100,8 @@ public class YangParserWithContextTest {
         final Set<? extends Range<?>> ranges = dscpExt.getRangeConstraint().get().getAllowedRanges().asRanges();
         assertEquals(1, ranges.size());
         final Range<?> range = ranges.iterator().next();
-        assertEquals((short)0, range.lowerEndpoint());
-        assertEquals((short)63, range.upperEndpoint());
+        assertEquals(Uint8.valueOf(0), range.lowerEndpoint());
+        assertEquals(Uint8.valueOf(63), range.upperEndpoint());
     }
 
     @Test
