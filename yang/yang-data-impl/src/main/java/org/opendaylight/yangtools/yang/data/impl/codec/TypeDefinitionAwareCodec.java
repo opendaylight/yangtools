@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -51,44 +52,42 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         return (TypeDefinitionAwareCodec<Object, ?>) fromType(typeDefinition);
     }
 
-    public static TypeDefinitionAwareCodec<?, ?> fromType(final TypeDefinition<?> typeDefinition) {
-        final TypeDefinitionAwareCodec<?, ?> codec;
-
+    // FIXME: do we want an Optional or a throws instead of @Nullable here?
+    public static @Nullable TypeDefinitionAwareCodec<?, ?> fromType(final TypeDefinition<?> typeDefinition) {
         if (typeDefinition instanceof BinaryTypeDefinition) {
-            codec = BinaryStringCodec.from((BinaryTypeDefinition)typeDefinition);
+            return BinaryStringCodec.from((BinaryTypeDefinition)typeDefinition);
         } else if (typeDefinition instanceof BitsTypeDefinition) {
-            codec = BitsStringCodec.from((BitsTypeDefinition)typeDefinition);
+            return BitsStringCodec.from((BitsTypeDefinition)typeDefinition);
         } else if (typeDefinition instanceof BooleanTypeDefinition) {
-            codec = BooleanStringCodec.from((BooleanTypeDefinition)typeDefinition);
+            return BooleanStringCodec.from((BooleanTypeDefinition)typeDefinition);
         } else if (typeDefinition instanceof DecimalTypeDefinition) {
-            codec = DecimalStringCodec.from((DecimalTypeDefinition)typeDefinition);
+            return  DecimalStringCodec.from((DecimalTypeDefinition)typeDefinition);
         } else if (typeDefinition instanceof EmptyTypeDefinition) {
-            codec = EmptyStringCodec.INSTANCE;
+            return EmptyStringCodec.INSTANCE;
         } else if (typeDefinition instanceof EnumTypeDefinition) {
-            codec = EnumStringCodec.from((EnumTypeDefinition)typeDefinition);
+            return EnumStringCodec.from((EnumTypeDefinition)typeDefinition);
         } else if (typeDefinition instanceof Int8TypeDefinition) {
-            codec = AbstractIntegerStringCodec.from((Int8TypeDefinition) typeDefinition);
+            return AbstractIntegerStringCodec.from((Int8TypeDefinition) typeDefinition);
         } else if (typeDefinition instanceof Int16TypeDefinition) {
-            codec = AbstractIntegerStringCodec.from((Int16TypeDefinition) typeDefinition);
+            return AbstractIntegerStringCodec.from((Int16TypeDefinition) typeDefinition);
         } else if (typeDefinition instanceof Int32TypeDefinition) {
-            codec = AbstractIntegerStringCodec.from((Int32TypeDefinition) typeDefinition);
+            return AbstractIntegerStringCodec.from((Int32TypeDefinition) typeDefinition);
         } else if (typeDefinition instanceof Int64TypeDefinition) {
-            codec = AbstractIntegerStringCodec.from((Int64TypeDefinition) typeDefinition);
+            return AbstractIntegerStringCodec.from((Int64TypeDefinition) typeDefinition);
         } else if (typeDefinition instanceof StringTypeDefinition) {
-            codec = StringStringCodec.from((StringTypeDefinition)typeDefinition);
+            return StringStringCodec.from((StringTypeDefinition)typeDefinition);
         } else if (typeDefinition instanceof UnionTypeDefinition) {
-            codec = UnionStringCodec.from((UnionTypeDefinition)typeDefinition);
+            return UnionStringCodec.from((UnionTypeDefinition)typeDefinition);
         } else if (typeDefinition instanceof Uint8TypeDefinition) {
-            codec = AbstractIntegerStringCodec.from((Uint8TypeDefinition) typeDefinition);
+            return AbstractIntegerStringCodec.from((Uint8TypeDefinition) typeDefinition);
         } else if (typeDefinition instanceof Uint16TypeDefinition) {
-            codec = AbstractIntegerStringCodec.from((Uint16TypeDefinition) typeDefinition);
+            return AbstractIntegerStringCodec.from((Uint16TypeDefinition) typeDefinition);
         } else if (typeDefinition instanceof Uint32TypeDefinition) {
-            codec = AbstractIntegerStringCodec.from((Uint32TypeDefinition) typeDefinition);
+            return AbstractIntegerStringCodec.from((Uint32TypeDefinition) typeDefinition);
         } else if (typeDefinition instanceof Uint64TypeDefinition) {
-            codec = AbstractIntegerStringCodec.from((Uint64TypeDefinition) typeDefinition);
+            return AbstractIntegerStringCodec.from((Uint64TypeDefinition) typeDefinition);
         } else {
-            codec = null;
+            return null;
         }
-        return codec;
     }
 }
