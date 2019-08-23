@@ -8,13 +8,8 @@
 package org.opendaylight.yangtools.yang.data.api.codec;
 
 import java.math.BigDecimal;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 
-import org.opendaylight.yangtools.concepts.Codec;
+public interface DecimalCodec<T> extends IllegalArgumentCodec<T, BigDecimal> {
 
-public interface DecimalCodec<T>  extends Codec<T,BigDecimal> {
-    @Override
-    T serialize(BigDecimal data);
-
-    @Override
-    BigDecimal deserialize(T data);
 }

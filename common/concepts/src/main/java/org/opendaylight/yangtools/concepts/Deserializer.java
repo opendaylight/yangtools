@@ -10,18 +10,20 @@ package org.opendaylight.yangtools.concepts;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
- * The concept of a serializer, which produces an object from some input.
+ * The concept of a deserializer, which produces an object from some input.
  *
  * @param <P> Product type
  * @param <I> Input type
+ * @param <X> Error exception type
  */
-// FIXME: 4.0.0: we need error reporting, is this concept even useful?
-public interface Deserializer<P, I> {
+public interface Deserializer<P, I, X extends Exception> {
     /**
      * Produce an object base on input.
      *
      * @param input Input object
      * @return Product derived from input
+     * @throws NullPointerException if input is null
+     * @throws X when input is not valid
      */
-    @NonNull P deserialize(@NonNull I input);
+    @NonNull P deserialize(@NonNull I input) throws X;
 }

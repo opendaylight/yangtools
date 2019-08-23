@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2019 PANTHEEN.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
+import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
 
 // FIXME: 5.0.0: yang-data-api is tied to yang-model-api, hence it should be opinionated to export exceptions
 //               encapsulating YANG-based error information.
-public interface DataStringCodec<T> extends IllegalArgumentCodec<String, T> {
+@Beta
+public abstract class AbstractDataStringCodec<T> extends AbstractIllegalArgumentCodec<String, T>
+        implements DataStringCodec<T> {
 
-    @NonNull Class<T> getInputClass();
+    // FIXME: should we provide default getInputClass() implementation?
 }

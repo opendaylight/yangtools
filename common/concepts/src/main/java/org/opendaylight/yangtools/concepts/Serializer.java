@@ -9,7 +9,21 @@ package org.opendaylight.yangtools.concepts;
 
 import org.eclipse.jdt.annotation.NonNull;
 
-// FIXME: 4.0.0: we need error reporting, is this class even useful?
-public interface Serializer<P, I> {
-    @NonNull P serialize(@NonNull I input);
+/**
+ * An entity which is able to convert some input into a product.
+ *
+ * @param <P> Product type
+ * @param <I> Input type
+ * @param <X> Error exception type
+ */
+public interface Serializer<P, I, X extends Exception> {
+    /**
+     * Convert an input into a product.
+     *
+     * @param input Input
+     * @return A product
+     * @throws NullPointerException if input is null
+     * @throws X when input is not valid
+     */
+    @NonNull P serialize(@NonNull I input) throws X;
 }

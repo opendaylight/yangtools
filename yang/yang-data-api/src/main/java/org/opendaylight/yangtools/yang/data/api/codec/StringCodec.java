@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 
-public interface StringCodec<T> extends Codec<T, String> {
+public interface StringCodec<T> extends IllegalArgumentCodec<T, String> {
 
 }
