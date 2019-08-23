@@ -8,12 +8,13 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
+import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 
-final class DerivedUint16Type extends AbstractRangeRestrictedDerivedType<Uint16TypeDefinition, Integer>
+final class DerivedUint16Type extends AbstractRangeRestrictedDerivedType<Uint16TypeDefinition, Uint16>
         implements Uint16TypeDefinition {
 
     DerivedUint16Type(final Uint16TypeDefinition baseType, final SchemaPath path,
