@@ -7,21 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-import com.google.common.primitives.UnsignedLong;
 import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.yang.common.Uint32;
 
 /**
- * FIXME: Should be changed to {@link UnsignedLong}.
+ * A codec between Uint32 and some other representation.
  *
- * @author ttkacik
- *
- * @param <T>
- *          Output type of serialization.
+ * @param <T> Output type of serialization.
  */
-public interface Uint32Codec<T> extends Codec<T, Long> {
+public interface Uint32Codec<T> extends Codec<T, Uint32> {
     @Override
-    T serialize(Long data);
+    T serialize(Uint32 data);
 
     @Override
-    Long deserialize(T data);
+    Uint32 deserialize(T data);
 }
