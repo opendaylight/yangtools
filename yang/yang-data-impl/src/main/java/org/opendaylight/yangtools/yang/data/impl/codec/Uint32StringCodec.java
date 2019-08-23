@@ -7,17 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint32Codec;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 
-final class Uint32StringCodec extends AbstractIntegerStringCodec<Long, Uint32TypeDefinition> implements
+final class Uint32StringCodec extends AbstractIntegerStringCodec<Uint32, Uint32TypeDefinition> implements
         Uint32Codec<String> {
     Uint32StringCodec(final Uint32TypeDefinition typeDef) {
-        super(typeDef, extractRange(typeDef), Long.class);
+        super(typeDef, extractRange(typeDef), Uint32.class);
     }
 
     @Override
-    protected Long deserialize(final String stringRepresentation, final int base) {
-        return Long.valueOf(stringRepresentation, base);
+    protected Uint32 deserialize(final String stringRepresentation, final int base) {
+        return Uint32.valueOf(stringRepresentation, base);
     }
 }
