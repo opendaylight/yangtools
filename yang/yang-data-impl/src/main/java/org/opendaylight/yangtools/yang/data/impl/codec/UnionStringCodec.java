@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Base64;
-import java.util.Objects;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.UnionCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
@@ -18,33 +18,19 @@ import org.slf4j.LoggerFactory;
 
 final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeDefinition>
         implements UnionCodec<String> {
-
     private static final Logger LOG = LoggerFactory.getLogger(UnionStringCodec.class);
 
-    private UnionStringCodec(final Optional<UnionTypeDefinition> typeDef) {
-        super(typeDef, Object.class);
+    UnionStringCodec(final UnionTypeDefinition typeDef) {
+        super(requireNonNull(typeDef), Object.class);
     }
 
     static TypeDefinitionAwareCodec<?, UnionTypeDefinition> from(final UnionTypeDefinition normalizedType) {
-        return new UnionStringCodec(Optional.ofNullable(normalizedType));
-    }
-
-    @Override
-    public String serialize(final Object data) {
-        if (data instanceof byte[]) {
-            return Base64.getEncoder().encodeToString((byte[]) data);
-        }
-        return Objects.toString(data, "");
+        return new UnionStringCodec(normalizedType);
     }
 
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
-    public Object deserialize(final String stringRepresentation) {
-
-        if (!getTypeDefinition().isPresent()) {
-            return stringRepresentation;
-        }
-
+    protected Object deserializeImpl(final String stringRepresentation) {
         for (final TypeDefinition<?> type : getTypeDefinition().get().getTypes()) {
             final TypeDefinitionAwareCodec<Object, ?> typeAwareCodec = from(type);
             if (typeAwareCodec == null) {
@@ -64,5 +50,10 @@ final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeD
         }
 
         throw new IllegalArgumentException("Invalid value \"" + stringRepresentation + "\" for union type.");
+    }
+
+    @Override
+    protected String serializeImpl(final Object data) {
+        return data instanceof byte[] ? Base64.getEncoder().encodeToString((byte[]) data) : data.toString();
     }
 }

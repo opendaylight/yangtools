@@ -29,11 +29,10 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * prefix:name tuple. Typical uses are RESTCONF/JSON (module:name) and XML (prefix:name).
  */
 @Beta
-public abstract class AbstractStringInstanceIdentifierCodec extends AbstractNamespaceCodec
+public abstract class AbstractStringInstanceIdentifierCodec extends AbstractNamespaceCodec<YangInstanceIdentifier>
         implements InstanceIdentifierCodec<String> {
-
     @Override
-    public final String serialize(final YangInstanceIdentifier data) {
+    protected final String serializeImpl(final YangInstanceIdentifier data) {
         final StringBuilder sb = new StringBuilder();
         DataSchemaContextNode<?> current = getDataContextTree().getRoot();
         QNameModule lastModule = null;
@@ -60,16 +59,11 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
 
             if (arg instanceof NodeIdentifierWithPredicates) {
                 for (Entry<QName, Object> entry : ((NodeIdentifierWithPredicates) arg).entrySet()) {
-                    sb.append('[');
-                    appendQName(sb, entry.getKey(), lastModule);
-                    sb.append("='");
-                    sb.append(String.valueOf(entry.getValue()));
-                    sb.append("']");
+                    appendQName(sb.append('['), entry.getKey(), lastModule);
+                    sb.append("='").append(String.valueOf(entry.getValue())).append("']");
                 }
             } else if (arg instanceof NodeWithValue) {
-                sb.append("[.='");
-                sb.append(((NodeWithValue<?>) arg).getValue());
-                sb.append("']");
+                sb.append("[.='").append(((NodeWithValue<?>) arg).getValue()).append("']");
             }
         }
         return sb.toString();
@@ -100,7 +94,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
     }
 
     @Override
-    public final YangInstanceIdentifier deserialize(final String data) {
+    protected final YangInstanceIdentifier deserializeImpl(final String data) {
         XpathStringParsingPathArgumentBuilder builder = new XpathStringParsingPathArgumentBuilder(this,
             requireNonNull(data));
         return YangInstanceIdentifier.create(builder.build());
