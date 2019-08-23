@@ -14,10 +14,11 @@ import java.net.URI;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
-abstract class AbstractNamespaceCodec {
+abstract class AbstractNamespaceCodec<T> extends AbstractIllegalArgumentCodec<String, T> {
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
 
     /**
@@ -43,11 +44,10 @@ abstract class AbstractNamespaceCodec {
         return predicateStartIndex == -1 ? pathPart : pathPart.substring(0, predicateStartIndex);
     }
 
-    protected final StringBuilder appendQName(final StringBuilder sb, final QName qname) {
+    protected final @NonNull StringBuilder appendQName(final StringBuilder sb, final QName qname) {
         final String prefix = prefixForNamespace(qname.getNamespace());
         checkArgument(prefix != null, "Failed to map QName %s to prefix", qname);
-        sb.append(prefix).append(':').append(qname.getLocalName());
-        return sb;
+        return sb.append(prefix).append(':').append(qname.getLocalName());
     }
 
     /**

@@ -8,24 +8,21 @@
 
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import java.util.Objects;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Int8Codec;
 import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 
 final class Int8StringCodec extends AbstractIntegerStringCodec<Byte, Int8TypeDefinition> implements Int8Codec<String> {
-
-    Int8StringCodec(final Optional<Int8TypeDefinition> typeDef) {
-        super(typeDef, extractRange(typeDef.orElse(null)), Byte.class);
+    Int8StringCodec(final Int8TypeDefinition typeDef) {
+        super(typeDef, extractRange(typeDef), Byte.class);
     }
 
     @Override
-    Byte deserialize(final String stringRepresentation, final int base) {
+    protected Byte deserialize(final String stringRepresentation, final int base) {
         return Byte.valueOf(stringRepresentation, base);
     }
 
     @Override
-    public String serialize(final Byte data) {
-        return Objects.toString(data, "");
+    protected String serializeImpl(final Byte input) {
+        return input.toString();
     }
 }

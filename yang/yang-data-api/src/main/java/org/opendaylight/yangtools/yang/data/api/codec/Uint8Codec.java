@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 
 /**
  * FIXME: Should be changed to UnsignedByte.
@@ -17,10 +17,6 @@ import org.opendaylight.yangtools.concepts.Codec;
  * @param <T>
  *          Output type of serialization.
  */
-public interface Uint8Codec<T> extends Codec<T, Short> {
-    @Override
-    T serialize(Short data);
+public interface Uint8Codec<T> extends IllegalArgumentCodec<T, Short> {
 
-    @Override
-    Short deserialize(T data);
 }

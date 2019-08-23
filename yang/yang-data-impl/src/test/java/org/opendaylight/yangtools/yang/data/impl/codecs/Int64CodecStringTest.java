@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.codecs;
 
 import static org.junit.Assert.assertEquals;
@@ -27,9 +26,7 @@ public class Int64CodecStringTest {
     @Test
     public void testSerialize() {
         Int64Codec<String> codec = getCodec(BaseTypes.int64Type(), Int64Codec.class);
-
         assertEquals("serialize", "12345", codec.serialize(Long.valueOf(12345)));
-        assertEquals("serialize", "", codec.serialize(null));
     }
 
     @SuppressWarnings("unchecked")
@@ -53,6 +50,5 @@ public class Int64CodecStringTest {
 
         deserializeWithExpectedIllegalArgEx(codec, "1234o");
         deserializeWithExpectedIllegalArgEx(codec, "");
-        deserializeWithExpectedIllegalArgEx(codec, null);
     }
 }

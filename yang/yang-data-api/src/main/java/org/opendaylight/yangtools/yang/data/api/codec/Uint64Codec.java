@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.api.codec;
 
 import com.google.common.primitives.UnsignedLong;
 import java.math.BigInteger;
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 
 /**
  * FIXME: Should be changed to {@link UnsignedLong}.
@@ -19,10 +19,6 @@ import org.opendaylight.yangtools.concepts.Codec;
  * @param <T>
  *          Output type of serialization.
  */
-public interface Uint64Codec<T> extends Codec<T, BigInteger> {
-    @Override
-    T serialize(BigInteger data);
+public interface Uint64Codec<T> extends IllegalArgumentCodec<T, BigInteger> {
 
-    @Override
-    BigInteger deserialize(T data);
 }

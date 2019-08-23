@@ -7,7 +7,18 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-// FIXME: 4.0.0: is this concept useful?
-public interface Codec<P, I> extends Serializer<P, I>, Deserializer<I, P> {
+/**
+ * The concept of a combined {@link Serializer} and {@link Deserializer}, which produces an object from some input.
+ * Implementations should consider subclassing {@link AbstractCodec}.
+ *
+ * @param <P> Product type
+ * @param <I> Input type
+ * @param <X> Error exception type
+ */
+public interface Codec<P, I, X extends Exception> extends Serializer<P, I, X>, Deserializer<I, P, X> {
+    @Override
+    I deserialize(P input) throws X;
 
+    @Override
+    P serialize(I input) throws X;
 }

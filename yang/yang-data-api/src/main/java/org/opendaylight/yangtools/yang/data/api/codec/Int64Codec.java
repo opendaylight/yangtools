@@ -7,12 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 
-public interface Int64Codec<T> extends Codec<T,Long> {
-    @Override
-    T serialize(Long data);
+public interface Int64Codec<T> extends IllegalArgumentCodec<T, Long> {
 
-    @Override
-    Long deserialize(T data);
 }
