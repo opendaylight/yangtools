@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwa
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint16Codec;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
@@ -25,8 +26,7 @@ public class Uint16CodecStringTest {
     @Test
     public void testSerialize() {
         Uint16Codec<String> codec = getCodec(BaseTypes.uint16Type(), Uint16Codec.class);
-
-        assertEquals("serialize", "10", codec.serialize(Integer.valueOf(10)));
+        assertEquals("10", codec.serialize(Uint16.valueOf(10)));
     }
 
     @SuppressWarnings("unchecked")
@@ -38,9 +38,9 @@ public class Uint16CodecStringTest {
 
         Uint16Codec<String> codec = getCodec(BaseTypes.uint16Type(), Uint16Codec.class);
 
-        assertEquals("deserialize", codec.deserialize(hexa), Integer.valueOf("045c", 16));
-        assertEquals("deserialize", codec.deserialize(octal), Integer.valueOf(octal, 8));
-        assertEquals("deserialize", codec.deserialize(integer), Integer.valueOf(integer, 10));
+        assertEquals(Uint16.valueOf("045c", 16), codec.deserialize(hexa));
+        assertEquals(Uint16.valueOf(octal, 8), codec.deserialize(octal));
+        assertEquals(Uint16.valueOf(integer, 10), codec.deserialize(integer));
 
         deserializeWithExpectedIllegalArgEx(codec, "1o");
         deserializeWithExpectedIllegalArgEx(codec, "");

@@ -23,9 +23,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -48,6 +46,7 @@ import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -133,16 +132,14 @@ public class NormalizedNodeXmlTranslationTest {
         final CollectionNodeBuilder<MapEntryNode, MapNode> listBuilder = Builders.mapBuilder().withNodeIdentifier(
                 getNodeIdentifier("list"));
 
-        final Map<QName, Object> predicates = new HashMap<>();
-        predicates.put(getNodeIdentifier("uint32InList").getNodeType(), 3L);
-
         final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> list1Builder = Builders
                 .mapEntryBuilder().withNodeIdentifier(NodeIdentifierWithPredicates.of(
-                                getNodeIdentifier("list").getNodeType(), predicates));
+                                getNodeIdentifier("list").getNodeType(),
+                                getNodeIdentifier("uint32InList").getNodeType(), Uint32.valueOf(3)));
         final NormalizedNodeBuilder<NodeIdentifier, Object, LeafNode<Object>> uint32InListBuilder = Builders
                 .leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"));
 
-        list1Builder.withChild(uint32InListBuilder.withValue(3L).build());
+        list1Builder.withChild(uint32InListBuilder.withValue(Uint32.valueOf(3)).build());
 
         listBuilder.withChild(list1Builder.build());
         b.withChild(listBuilder.build());
