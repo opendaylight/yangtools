@@ -7,17 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint8Codec;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 
-final class Uint8StringCodec extends AbstractIntegerStringCodec<Short, Uint8TypeDefinition> implements
+final class Uint8StringCodec extends AbstractIntegerStringCodec<Uint8, Uint8TypeDefinition> implements
         Uint8Codec<String> {
     Uint8StringCodec(final Uint8TypeDefinition typeDef) {
-        super(typeDef, extractRange(typeDef), Short.class);
+        super(typeDef, extractRange(typeDef), Uint8.class);
     }
 
     @Override
-    protected Short deserialize(final String stringRepresentation, final int base) {
-        return Short.valueOf(stringRepresentation, base);
+    protected Uint8 deserialize(final String stringRepresentation, final int base) {
+        return Uint8.valueOf(stringRepresentation, base);
     }
 }
