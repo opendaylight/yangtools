@@ -9,15 +9,14 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 /**
  * Type definition derived from uint8 type.
  *
  * @author Robert Varga
  */
-public interface Uint8TypeDefinition extends RangeRestrictedTypeDefinition<Uint8TypeDefinition, Short> {
-
-
+public interface Uint8TypeDefinition extends RangeRestrictedTypeDefinition<Uint8TypeDefinition, Uint8> {
     static int hashCode(final @NonNull Uint8TypeDefinition type) {
         return TypeDefinitions.hashCode(type);
     }

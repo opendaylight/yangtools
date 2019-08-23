@@ -20,6 +20,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -79,9 +80,6 @@ public class Bug6112Test {
             QName.create("union:identityref:test", "2016-07-12", "leaf-value")));
 
         assertTrue(leafValue.isPresent());
-        Object value = leafValue.get().getValue();
-        assertTrue(value instanceof Short);
-        Short uint8Value = (Short) value;
-        assertEquals(1, uint8Value.shortValue());
+        assertEquals(Uint8.valueOf(1), leafValue.get().getValue());
     }
 }

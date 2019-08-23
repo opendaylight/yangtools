@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.data.impl.codecs;
 
 import static org.junit.Assert.assertEquals;
 
-import java.math.BigInteger;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint64Codec;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
@@ -25,7 +25,7 @@ public class Uint64CodecStringTest {
     public void testSerialize() {
         Uint64Codec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.uint64Type(),
             Uint64Codec.class);
-        assertEquals("serialize", "123456789", codec.serialize(BigInteger.valueOf(123456789)));
+        assertEquals("123456789", codec.serialize(Uint64.valueOf(123456789)));
     }
 
     @SuppressWarnings("unchecked")
@@ -38,9 +38,9 @@ public class Uint64CodecStringTest {
         Uint64Codec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.uint64Type(),
             Uint64Codec.class);
 
-        assertEquals("deserialize", codec.deserialize(hexa), new BigInteger("75EDC78edCBA", 16));
-        assertEquals("deserialize", codec.deserialize(octal), new BigInteger(octal, 8));
-        assertEquals("deserialize", codec.deserialize(integer), new BigInteger(integer, 10));
+        assertEquals(Uint64.valueOf("75EDC78edCBA", 16), codec.deserialize(hexa));
+        assertEquals(Uint64.valueOf(octal, 8), codec.deserialize(octal));
+        assertEquals(Uint64.valueOf(integer, 10), codec.deserialize(integer));
 
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "12345o");
         TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "");
