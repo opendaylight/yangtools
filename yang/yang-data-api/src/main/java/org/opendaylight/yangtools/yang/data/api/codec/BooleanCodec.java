@@ -7,12 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 
-public interface BooleanCodec<T> extends Codec<T,Boolean> {
-    @Override
-    T serialize(Boolean data);
+public interface BooleanCodec<T> extends IllegalArgumentCodec<T, Boolean> {
 
-    @Override
-    Boolean deserialize(T data);
 }

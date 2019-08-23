@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import java.util.Objects;
-import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 
@@ -21,27 +20,29 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 @Beta
 public final class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, BooleanTypeDefinition>
         implements BooleanCodec<String> {
-
-    private BooleanStringCodec(final Optional<BooleanTypeDefinition> typeDef) {
+    private BooleanStringCodec(final @NonNull BooleanTypeDefinition typeDef) {
         super(typeDef, Boolean.class);
     }
 
-    @Override
-    public String serialize(final Boolean data) {
-        return Objects.toString(data, "");
+    public static @NonNull BooleanStringCodec from(final BooleanTypeDefinition normalizedType) {
+        return new BooleanStringCodec(requireNonNull(normalizedType));
     }
 
     @Override
-    public Boolean deserialize(final String stringRepresentation) {
-        if (stringRepresentation == null) {
-            return null;
+    protected Boolean deserializeImpl(final String product) {
+        // FIXME: should forbid "TRUE" ?
+        if ("true".equalsIgnoreCase(product)) {
+            return Boolean.TRUE;
+        } else if ("false".equalsIgnoreCase(product)) {
+            return Boolean.FALSE;
+        } else {
+            throw new IllegalArgumentException("Invalid value '" + product + "' for boolean type. Allowed values are "
+                    + "'true' and 'false'");
         }
-        checkArgument("true".equalsIgnoreCase(stringRepresentation) || "false".equalsIgnoreCase(stringRepresentation),
-            "Invalid value '%s' for boolean type. Allowed values are true and false", stringRepresentation);
-        return Boolean.valueOf(stringRepresentation);
     }
 
-    public static BooleanStringCodec from(final BooleanTypeDefinition normalizedType) {
-        return new BooleanStringCodec(Optional.of(normalizedType));
+    @Override
+    protected String serializeImpl(final Boolean input) {
+        return input.toString();
     }
 }

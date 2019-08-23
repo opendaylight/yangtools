@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.Base64;
-import java.util.Optional;
 import javax.xml.bind.DatatypeConverter;
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -52,7 +51,7 @@ public abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[],
     }
 
     BinaryStringCodec(final BinaryTypeDefinition typeDef) {
-        super(Optional.of(typeDef), byte[].class);
+        super(requireNonNull(typeDef), byte[].class);
     }
 
     public static BinaryStringCodec from(final BinaryTypeDefinition type) {
@@ -61,19 +60,15 @@ public abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[],
     }
 
     @Override
-    public String serialize(final byte[] data) {
-        return data == null ? "" : Base64.getEncoder().encodeToString(data);
+    public final byte[] deserializeImpl(final String product) {
+        final byte[] ret = DatatypeConverter.parseBase64Binary(product);
+        validate(ret);
+        return ret;
     }
 
     @Override
-    public byte[] deserialize(final String stringRepresentation) {
-        if (stringRepresentation == null) {
-            return null;
-        }
-
-        final byte[] ret = DatatypeConverter.parseBase64Binary(stringRepresentation);
-        validate(ret);
-        return ret;
+    protected final String serializeImpl(final byte[] data) {
+        return Base64.getEncoder().encodeToString(data);
     }
 
     abstract void validate(byte[] value);

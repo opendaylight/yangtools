@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.codec;
 
 import com.google.common.primitives.UnsignedLong;
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 
 /**
  * FIXME: Should be changed to {@link UnsignedLong}.
@@ -18,10 +18,6 @@ import org.opendaylight.yangtools.concepts.Codec;
  * @param <T>
  *          Output type of serialization.
  */
-public interface Uint32Codec<T> extends Codec<T, Long> {
-    @Override
-    T serialize(Long data);
+public interface Uint32Codec<T> extends IllegalArgumentCodec<T, Long> {
 
-    @Override
-    Long deserialize(T data);
 }
