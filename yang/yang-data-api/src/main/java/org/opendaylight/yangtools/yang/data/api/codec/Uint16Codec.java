@@ -8,20 +8,17 @@
 package org.opendaylight.yangtools.yang.data.api.codec;
 
 import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.yang.common.Uint16;
 
 /**
- * FIXME: In Helium release this codec should be changed to
- *        an UnsignedShort (which needs to be defined somewhere).
+ * A codec between Uint16 and some other representation.
  *
- * @author ttkacik
- *
- * @param <T>
- *          Output type of serialization.
+ * @param <T> Output type of serialization.
  */
-public interface Uint16Codec<T> extends Codec<T,Integer> {
+public interface Uint16Codec<T> extends Codec<T, Uint16> {
     @Override
-    T serialize(Integer data);
+    T serialize(Uint16 data);
 
     @Override
-    Integer deserialize(T data);
+    Uint16 deserialize(T data);
 }

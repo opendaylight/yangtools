@@ -12,9 +12,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.RangeSet;
-import java.math.BigInteger;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.Uint64;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
@@ -71,19 +74,19 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
         return new Int64StringCodec(Optional.of(type));
     }
 
-    public static AbstractIntegerStringCodec<Short, Uint8TypeDefinition> from(final Uint8TypeDefinition type) {
+    public static AbstractIntegerStringCodec<Uint8, Uint8TypeDefinition> from(final Uint8TypeDefinition type) {
         return new Uint8StringCodec(Optional.of(type));
     }
 
-    public static AbstractIntegerStringCodec<Integer, Uint16TypeDefinition> from(final Uint16TypeDefinition type) {
+    public static AbstractIntegerStringCodec<Uint16, Uint16TypeDefinition> from(final Uint16TypeDefinition type) {
         return new Uint16StringCodec(Optional.of(type));
     }
 
-    public static AbstractIntegerStringCodec<Long, Uint32TypeDefinition> from(final Uint32TypeDefinition type) {
+    public static AbstractIntegerStringCodec<Uint32, Uint32TypeDefinition> from(final Uint32TypeDefinition type) {
         return new Uint32StringCodec(Optional.of(type));
     }
 
-    public static AbstractIntegerStringCodec<BigInteger, Uint64TypeDefinition> from(final Uint64TypeDefinition type) {
+    public static AbstractIntegerStringCodec<Uint64, Uint64TypeDefinition> from(final Uint64TypeDefinition type) {
         return new Uint64StringCodec(Optional.of(type));
     }
 

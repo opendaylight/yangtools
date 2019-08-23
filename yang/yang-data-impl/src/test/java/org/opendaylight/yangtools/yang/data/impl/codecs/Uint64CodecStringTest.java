@@ -5,13 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.codecs;
 
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigInteger;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint64Codec;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
@@ -28,7 +28,7 @@ public class Uint64CodecStringTest {
         Uint64Codec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.uint64Type(),
             Uint64Codec.class);
 
-        assertEquals("serialize", "123456789", codec.serialize(BigInteger.valueOf(123456789)));
+        assertEquals("serialize", "123456789", codec.serialize(Uint64.valueOf(123456789)));
         assertEquals("serialize", "", codec.serialize(null));
     }
 

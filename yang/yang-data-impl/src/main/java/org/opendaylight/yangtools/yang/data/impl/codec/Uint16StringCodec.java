@@ -5,27 +5,27 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import java.util.Objects;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint16Codec;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 
-final class Uint16StringCodec extends AbstractIntegerStringCodec<Integer, Uint16TypeDefinition> implements
+final class Uint16StringCodec extends AbstractIntegerStringCodec<Uint16, Uint16TypeDefinition> implements
         Uint16Codec<String> {
     Uint16StringCodec(final Optional<Uint16TypeDefinition> typeDef) {
-        super(typeDef, extractRange(typeDef.orElse(null)), Integer.class);
+        super(typeDef, extractRange(typeDef.orElse(null)), Uint16.class);
     }
 
     @Override
-    Integer deserialize(final String stringRepresentation, final int base) {
-        return Integer.valueOf(stringRepresentation, base);
+    Uint16 deserialize(final String stringRepresentation, final int base) {
+        return Uint16.valueOf(stringRepresentation, base);
     }
 
     @Override
-    public String serialize(final Integer data) {
+    public String serialize(final Uint16 data) {
         return Objects.toString(data, "");
     }
 }
