@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
@@ -45,9 +46,13 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
         this.type = requireNonNull(typeClass);
     }
 
-    static AbstractRangeGenerator<?> forType(final @NonNull Type type) {
+    static @NonNull AbstractRangeGenerator<?> forType(final @NonNull Type type) {
         final ConcreteType javaType = TypeUtils.getBaseYangType(type);
-        return GENERATORS.get(javaType.getFullyQualifiedName());
+        return forName(javaType.getFullyQualifiedName());
+    }
+
+    private static @NonNull AbstractRangeGenerator<?> forName(final String fqcn) {
+        return verifyNotNull(GENERATORS.get(fqcn), "Unhandled type %s", fqcn);
     }
 
     /**
@@ -83,7 +88,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
         final T ret = convert(value);
 
         // Check if the conversion lost any precision by performing conversion the other way around
-        final AbstractRangeGenerator<?> gen = GENERATORS.get(value.getClass().getName());
+        final AbstractRangeGenerator<?> gen = forName(value.getClass().getName());
         final Number check = gen.convert(ret);
         if (!value.equals(check)) {
             LOG.warn("Number class conversion from {} to {} truncated value {} to {}", value.getClass(), type, value,
