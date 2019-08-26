@@ -8,10 +8,8 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
 /**
@@ -34,7 +32,4 @@ public interface DataTreeSnapshot extends SchemaContextProvider {
      * @return A new data tree modification
      */
     DataTreeModification newModification();
-
-    @Override
-    @NonNull SchemaContext getSchemaContext();
 }

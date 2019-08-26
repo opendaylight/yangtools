@@ -48,10 +48,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
  */
 @Beta
 public interface MountPointContext extends SchemaContextProvider {
-    @Override
-    // FIXME: remove this override when SchemaContextProvider's method has sane semantics.
-    @NonNull SchemaContext getSchemaContext();
-
     /**
      * Attempt to acquire a {@link MountPointContextFactory} to resolve schemas for the purposes of interpreting
      * this mount point. An empty result indicates the mount point is not attached.

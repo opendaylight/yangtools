@@ -27,10 +27,6 @@ public interface EffectiveModelContextProvider extends SchemaContextProvider {
 
     @Override
     default SchemaContext getSchemaContext() {
-        try {
-            return getEffectiveModelContext();
-        } catch (IllegalStateException e) {
-            return null;
-        }
+        return getEffectiveModelContext();
     }
 }
