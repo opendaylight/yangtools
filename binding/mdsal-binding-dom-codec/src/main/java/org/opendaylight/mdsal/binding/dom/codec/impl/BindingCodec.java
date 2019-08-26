@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 /**
@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
  * only due to constraints imposed by current implementation.
  */
 // FIXME: this interface should not be necessary
-interface BindingCodec<P, I> extends BindingSerializer<P, I>, BindingDeserializer<I, P>, Codec<P, I> {
+interface BindingCodec<P, I> extends BindingSerializer<P, I>, BindingDeserializer<I, P>, IllegalArgumentCodec<P, I> {
 
     @Override
     P serialize(I input);

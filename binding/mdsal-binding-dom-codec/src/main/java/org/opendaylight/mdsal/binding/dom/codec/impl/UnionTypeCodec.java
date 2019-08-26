@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.mdsal.binding.yang.types.BaseYangTypes;
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
@@ -44,7 +44,8 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
                     final Method valueGetter = unionCls.getMethod(BindingMapping.GETTER_PREFIX
                         + BindingMapping.getClassName(subtype.getQName()));
                     final Class<?> valueType = valueGetter.getReturnType();
-                    final Codec<Object, Object> valueCodec = bindingCodecContext.getCodec(valueType, subtype);
+                    final IllegalArgumentCodec<Object, Object> valueCodec =
+                            bindingCodecContext.getCodec(valueType, subtype);
 
                     values.add(new UnionValueOptionContext(unionCls, valueType, valueGetter, valueCodec));
                 }
@@ -97,7 +98,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
 
         // prepare codec of union subtype according to return type of referenced
         // leaf
-        final Codec<Object, Object> valueCodec = bindingCodecContext.getCodec(returnType, subtype);
+        final IllegalArgumentCodec<Object, Object> valueCodec = bindingCodecContext.getCodec(returnType, subtype);
         values.add(new UnionValueOptionContext(unionCls, returnType, valueGetterParent, valueCodec));
     }
 

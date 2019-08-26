@@ -14,11 +14,11 @@ import com.google.common.base.Throwables;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 
 final class ValueContext {
     private static final MethodType OBJECT_METHOD = MethodType.methodType(Object.class, Object.class);
-    private final Codec<Object, Object> codec;
+    private final IllegalArgumentCodec<Object, Object> codec;
     private final MethodHandle getter;
     private final Class<?> identifier;
     private final String getterName;
@@ -27,7 +27,7 @@ final class ValueContext {
         getterName = leaf.getGetterName();
         try {
             getter = MethodHandles.publicLookup().unreflect(identifier.getMethod(getterName)).asType(OBJECT_METHOD);
-        } catch (IllegalAccessException | NoSuchMethodException | SecurityException e) {
+        } catch (IllegalAccessException | NoSuchMethodException e) {
             throw new IllegalStateException(String.format("Cannot find method %s in class %s", getterName, identifier),
                 e);
         }
