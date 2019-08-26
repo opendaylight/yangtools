@@ -9,13 +9,11 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
 import java.io.IOException;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
 /**
@@ -30,10 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 @Beta
 @NonNullByDefault
 public interface NormalizedAnydata extends Immutable, SchemaContextProvider {
-
-    @Override
-    // FIXME: remove this override when SchemaContextProvider's method has sane semantics.
-    @NonNull SchemaContext getSchemaContext();
 
     DataSchemaNode getContextNode();
 
