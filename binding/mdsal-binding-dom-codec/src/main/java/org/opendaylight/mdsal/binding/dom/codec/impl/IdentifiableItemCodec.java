@@ -53,8 +53,8 @@ abstract class IdentifiableItemCodec
         }
 
         @Override
-        Identifier<?> deserializeIdentifier(final Map<QName, Object> keyValues) throws Throwable {
-            return (Identifier<?>) ctor.invokeExact(keyContext.deserialize(keyValues.get(keyName)));
+        Identifier<?> deserializeIdentifierImpl(final NodeIdentifierWithPredicates nip) throws Throwable {
+            return (Identifier<?>) ctor.invokeExact(keyContext.deserialize(nip.getValue(keyName)));
         }
 
         @Override
@@ -98,11 +98,11 @@ abstract class IdentifiableItemCodec
         }
 
         @Override
-        Identifier<?> deserializeIdentifier(final Map<QName, Object> keyValues) throws Throwable {
+        Identifier<?> deserializeIdentifierImpl(final NodeIdentifierWithPredicates nip) throws Throwable {
             final Object[] bindingValues = new Object[keysInBindingOrder.size()];
             int offset = 0;
             for (final QName key : keysInBindingOrder) {
-                bindingValues[offset++] = keyValueContexts.get(key).deserialize(keyValues.get(key));
+                bindingValues[offset++] = keyValueContexts.get(key).deserialize(nip.getValue(key));
             }
 
             return (Identifier<?>) ctor.invokeExact(bindingValues);
@@ -158,7 +158,7 @@ abstract class IdentifiableItemCodec
     @SuppressWarnings("checkstyle:illegalCatch")
     final @NonNull Identifier<?> deserializeIdentifier(final NodeIdentifierWithPredicates input) {
         try {
-            return deserializeIdentifier(input.asMap());
+            return deserializeIdentifierImpl(input);
         } catch (Throwable e) {
             Throwables.throwIfUnchecked(e);
             throw new IllegalStateException("Failed to deserialize " + input, e);
@@ -166,7 +166,8 @@ abstract class IdentifiableItemCodec
     }
 
     @SuppressWarnings("checkstyle:illegalThrows")
-    abstract @NonNull Identifier<?> deserializeIdentifier(Map<QName, Object> keyValues) throws Throwable;
+    abstract @NonNull Identifier<?> deserializeIdentifierImpl(@NonNull NodeIdentifierWithPredicates nip)
+            throws Throwable;
 
     abstract @NonNull NodeIdentifierWithPredicates serializeIdentifier(QName qname, Identifier<?> key);
 
