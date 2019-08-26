@@ -20,9 +20,4 @@ final class Int8StringCodec extends AbstractIntegerStringCodec<Byte, Int8TypeDef
     protected Byte deserialize(final String stringRepresentation, final int base) {
         return Byte.valueOf(stringRepresentation, base);
     }
-
-    @Override
-    protected String serializeImpl(final Byte input) {
-        return input.toString();
-    }
 }

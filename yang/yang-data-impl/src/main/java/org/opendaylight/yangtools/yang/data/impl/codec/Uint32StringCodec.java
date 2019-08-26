@@ -20,9 +20,4 @@ final class Uint32StringCodec extends AbstractIntegerStringCodec<Long, Uint32Typ
     protected Long deserialize(final String stringRepresentation, final int base) {
         return Long.valueOf(stringRepresentation, base);
     }
-
-    @Override
-    protected String serializeImpl(final Long data) {
-        return data.toString();
-    }
 }

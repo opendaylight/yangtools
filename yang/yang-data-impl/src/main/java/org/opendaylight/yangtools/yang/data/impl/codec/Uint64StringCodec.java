@@ -21,9 +21,4 @@ final class Uint64StringCodec extends AbstractIntegerStringCodec<BigInteger, Uin
     protected BigInteger deserialize(final String stringRepresentation, final int base) {
         return new BigInteger(stringRepresentation, base);
     }
-
-    @Override
-    protected String serializeImpl(final BigInteger input) {
-        return input.toString();
-    }
 }

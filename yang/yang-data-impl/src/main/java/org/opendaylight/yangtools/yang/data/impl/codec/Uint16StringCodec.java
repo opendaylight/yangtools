@@ -20,9 +20,4 @@ final class Uint16StringCodec extends AbstractIntegerStringCodec<Integer, Uint16
     protected Integer deserialize(final String stringRepresentation, final int base) {
         return Integer.valueOf(stringRepresentation, base);
     }
-
-    @Override
-    protected String serializeImpl(final Integer input) {
-        return input.toString();
-    }
 }

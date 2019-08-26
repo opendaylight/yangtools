@@ -20,9 +20,4 @@ final class Int16StringCodec extends AbstractIntegerStringCodec<Short, Int16Type
     protected Short deserialize(final String stringRepresentation, final int base) {
         return Short.valueOf(stringRepresentation, base);
     }
-
-    @Override
-    protected String serializeImpl(final Short data) {
-        return data.toString();
-    }
 }

@@ -20,9 +20,4 @@ final class Uint8StringCodec extends AbstractIntegerStringCodec<Short, Uint8Type
     protected Short deserialize(final String stringRepresentation, final int base) {
         return Short.valueOf(stringRepresentation, base);
     }
-
-    @Override
-    protected String serializeImpl(final Short data) {
-        return data.toString();
-    }
 }

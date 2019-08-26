@@ -95,7 +95,7 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
     }
 
     @Override
-    public final N deserializeImpl(final String product) {
+    protected final N deserializeImpl(final String product) {
         final int base = provideBase(product);
         final String stringRepresentation = base != 16 ? product : X_MATCHER.removeFrom(product);
         final N deserialized = verifyNotNull(deserialize(stringRepresentation, base));
@@ -104,6 +104,11 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
                 deserialized, rangeConstraints);
         }
         return deserialized;
+    }
+
+    @Override
+    protected final String serializeImpl(final N input) {
+        return input.toString();
     }
 
     /**

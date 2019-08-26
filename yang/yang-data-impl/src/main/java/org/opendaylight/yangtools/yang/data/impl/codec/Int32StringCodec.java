@@ -20,9 +20,4 @@ final class Int32StringCodec extends AbstractIntegerStringCodec<Integer, Int32Ty
     protected Integer deserialize(final String stringRepresentation, final int base) {
         return Integer.valueOf(stringRepresentation, base);
     }
-
-    @Override
-    protected String serializeImpl(final Integer data) {
-        return data.toString();
-    }
 }

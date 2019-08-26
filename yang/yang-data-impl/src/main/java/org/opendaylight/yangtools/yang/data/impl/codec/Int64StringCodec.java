@@ -20,9 +20,4 @@ final class Int64StringCodec extends AbstractIntegerStringCodec<Long, Int64TypeD
     protected Long deserialize(final String stringRepresentation, final int base) {
         return Long.valueOf(stringRepresentation, base);
     }
-
-    @Override
-    protected String serializeImpl(final Long data) {
-        return data.toString();
-    }
 }
