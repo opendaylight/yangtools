@@ -15,29 +15,23 @@ import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathDocument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.util.AbstractSchemaContextProvider;
 
 @NonNullByDefault
-final class JaxenDocument implements XPathDocument, SchemaContextProvider {
+final class JaxenDocument extends AbstractSchemaContextProvider implements XPathDocument {
     private final DataSchemaContextNode<?> schema;
     private final NormalizedNode<?, ?> root;
-    private final SchemaContext context;
 
     JaxenDocument(final SchemaContext context, final DataSchemaContextTree tree,
-        final NormalizedNode<?, ?> root) {
+            final NormalizedNode<?, ?> root) {
+        super(context);
         this.root = requireNonNull(root);
-        this.context = requireNonNull(context);
         this.schema = requireNonNull(tree.getRoot().getChild(root.getIdentifier()));
     }
 
     @Override
     public NormalizedNode<?, ?> getRootNode() {
         return root;
-    }
-
-    @Override
-    public SchemaContext getSchemaContext() {
-        return context;
     }
 
     DataSchemaContextNode<?> getSchema() {

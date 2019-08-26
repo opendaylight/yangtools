@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
@@ -30,8 +29,7 @@ public abstract class AbstractSchemaContextProvider implements SchemaContextProv
     }
 
     @Override
-    // FIXME: remove @NonNull SchemaContextProvider's method has sane semantics
-    public final @NonNull SchemaContext getSchemaContext() {
+    public final SchemaContext getSchemaContext() {
         return schemaContext;
     }
 

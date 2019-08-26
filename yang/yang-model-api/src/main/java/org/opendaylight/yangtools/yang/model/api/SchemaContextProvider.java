@@ -7,9 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 // FIXME: document this API contract
 public interface SchemaContextProvider {
-
-    // FIXME: 4.0.0: This needs to return @NonNull
-    SchemaContext getSchemaContext();
+    /**
+     * Return the {@link SchemaContext} attached to this object.
+     *
+     * @return An SchemaContext instance.
+     * @throws IllegalStateException if the context is not available.
+     */
+    @NonNull SchemaContext getSchemaContext();
 }

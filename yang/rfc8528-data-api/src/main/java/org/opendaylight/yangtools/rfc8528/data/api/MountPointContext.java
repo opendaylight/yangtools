@@ -10,12 +10,12 @@ package org.opendaylight.yangtools.rfc8528.data.api;
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
 /**
  * A context of either an explicit (RFC8528 Schema Mount instance) or implicit (system root). It encapsulates a data
- * {@link SchemaContext} and information resident in {@code schema-mounts} within this hierarchy.
+ * {@link org.opendaylight.yangtools.yang.model.api.SchemaContext} and information resident in {@code schema-mounts}
+ * within this hierarchy.
  *
  * <p>
  * Note this interface should be part of yang-data-api, as it really defines how a NormalizedNode-containerized data
@@ -48,10 +48,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
  */
 @Beta
 public interface MountPointContext extends SchemaContextProvider {
-    @Override
-    // FIXME: remove this override when SchemaContextProvider's method has sane semantics.
-    @NonNull SchemaContext getSchemaContext();
-
     /**
      * Attempt to acquire a {@link MountPointContextFactory} to resolve schemas for the purposes of interpreting
      * this mount point. An empty result indicates the mount point is not attached.
