@@ -5,12 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.binding;
+package org.opendaylight.mdsal.binding.dom.codec.api;
 
+import com.google.common.annotations.Beta;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
-
+import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
+import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.Identifiable;
+import org.opendaylight.yangtools.yang.binding.Identifier;
 
 /**
  * Event Stream Writer for Binding Representation.
@@ -73,6 +78,7 @@ import java.io.IOException;
  * interface in OSGI and OSGI-like environment, since this package is only package which is imported by all generated
  * Binding DTOs and wired in OSGI.
  */
+@Beta
 public interface BindingStreamEventWriter extends Closeable, Flushable {
 
     /**

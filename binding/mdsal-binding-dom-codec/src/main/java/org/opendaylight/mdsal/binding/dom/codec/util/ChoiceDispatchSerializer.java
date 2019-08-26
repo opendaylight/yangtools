@@ -11,12 +11,12 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingStreamEventWriter;
+import org.opendaylight.mdsal.binding.dom.codec.impl.DataObjectSerializer;
+import org.opendaylight.mdsal.binding.dom.codec.impl.DataObjectSerializerImplementation;
+import org.opendaylight.mdsal.binding.dom.codec.impl.DataObjectSerializerRegistry;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.DataObjectSerializer;
-import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
-import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
