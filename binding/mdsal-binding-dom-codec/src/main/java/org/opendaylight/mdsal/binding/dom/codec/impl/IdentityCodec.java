@@ -13,11 +13,11 @@ import static java.util.Objects.requireNonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingIdentityCodec;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.common.QName;
 
-final class IdentityCodec implements Codec<QName, Class<?>>, BindingIdentityCodec {
+final class IdentityCodec extends AbstractIllegalArgumentCodec<QName, Class<?>> implements BindingIdentityCodec {
     private final BindingRuntimeContext context;
 
     IdentityCodec(final BindingRuntimeContext context) {
@@ -25,13 +25,12 @@ final class IdentityCodec implements Codec<QName, Class<?>>, BindingIdentityCode
     }
 
     @Override
-    public Class<?> deserialize(final QName input) {
-        checkArgument(input != null, "Input must not be null.");
+    protected Class<?> deserializeImpl(final QName input) {
         return context.getIdentityClass(input);
     }
 
     @Override
-    public QName serialize(final Class<?> input) {
+    protected QName serializeImpl(final Class<?> input) {
         checkArgument(BaseIdentity.class.isAssignableFrom(input), "%s is not an identity", input);
         return BindingReflections.findQName(input);
     }
