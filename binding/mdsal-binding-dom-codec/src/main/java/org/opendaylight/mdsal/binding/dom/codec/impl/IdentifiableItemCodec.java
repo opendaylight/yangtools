@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.ImmutableOffsetMapTemplate;
 import org.opendaylight.yangtools.util.SharedSingletonMapTemplate;
@@ -36,7 +36,8 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 /**
  * Codec support for extracting the {@link Identifiable#key()} method return from a MapEntryNode.
  */
-abstract class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
+abstract class IdentifiableItemCodec
+        extends AbstractIllegalArgumentCodec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
     private static final class SingleKey extends IdentifiableItemCodec {
         private static final MethodType CTOR_TYPE = MethodType.methodType(Identifier.class, Object.class);
 
@@ -147,14 +148,14 @@ abstract class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicat
     }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked", "checkstyle:illegalCatch" })
-    public final IdentifiableItem<?, ?> deserialize(final NodeIdentifierWithPredicates input) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    protected final IdentifiableItem<?, ?> deserializeImpl(final NodeIdentifierWithPredicates input) {
         final Identifier<?> identifier = deserializeIdentifier(input);
         return IdentifiableItem.of((Class) identifiable, (Identifier) identifier);
     }
 
     @Override
-    public final NodeIdentifierWithPredicates serialize(final IdentifiableItem<?, ?> input) {
+    protected final NodeIdentifierWithPredicates serializeImpl(final IdentifiableItem<?, ?> input) {
         return serializeIdentifier(qname, input.getKey());
     }
 
