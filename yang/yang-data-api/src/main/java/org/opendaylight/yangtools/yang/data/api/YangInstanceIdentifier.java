@@ -447,16 +447,12 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      */
     public interface PathArgument extends Comparable<PathArgument>, Immutable, Serializable {
         /**
-         * If applicable returns unique QName of data node as defined in YANG
-         * Schema.
-         *
-         * <p>
-         * This method may return null, if the corresponding schema node, does
-         * not have QName associated, such as in cases of augmentations.
+         * Returns unique QName of data node as defined in YANG Schema, if available.
          *
          * @return Node type
+         * @throws UnsupportedOperationException if node type is not applicable, for example in case of an augmentation.
          */
-        QName getNodeType();
+        @NonNull QName getNodeType();
 
         /**
          * Return the string representation of this object for use in context
@@ -480,7 +476,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         @Override
-        public final @NonNull QName getNodeType() {
+        public final QName getNodeType() {
             return nodeType;
         }
 
