@@ -16,7 +16,6 @@ import com.google.common.collect.Interners;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.concepts.Variant;
 
 /**
@@ -27,7 +26,6 @@ import org.opendaylight.yangtools.concepts.Variant;
 @Beta
 @NonNullByDefault
 public class Uint16 extends Number implements CanonicalValue<Uint16> {
-    @MetaInfServices(value = CanonicalValueSupport.class)
     public static final class Support extends AbstractCanonicalValueSupport<Uint16> {
         public Support() {
             super(Uint16.class);
