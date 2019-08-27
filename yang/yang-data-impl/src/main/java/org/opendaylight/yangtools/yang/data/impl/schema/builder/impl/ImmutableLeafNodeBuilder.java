@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -20,15 +21,18 @@ public class ImmutableLeafNodeBuilder<T>
         return new ImmutableLeafNodeBuilder<>();
     }
 
-    @Override
+    @Beta
     @SuppressWarnings("unchecked")
-    public LeafNode<T> build() {
-        final T value = getValue();
+    public static <T> @NonNull LeafNode<T> createNode(final NodeIdentifier identifier, final T value) {
         if (value instanceof byte[]) {
-            return (LeafNode<T>) new ImmutableBinaryLeafNode(getNodeIdentifier(), (byte[]) value);
+            return (LeafNode<T>) new ImmutableBinaryLeafNode(identifier, (byte[]) value);
         }
+        return new ImmutableLeafNode<>(identifier, value);
+    }
 
-        return new ImmutableLeafNode<>(getNodeIdentifier(), value);
+    @Override
+    public LeafNode<T> build() {
+        return createNode(getNodeIdentifier(), getValue());
     }
 
     private static final class ImmutableLeafNode<T>
