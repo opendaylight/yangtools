@@ -12,7 +12,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
-import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
@@ -54,8 +53,7 @@ public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNo
     private static final class ImmutableChoiceNode extends AbstractImmutableDataContainerNode<NodeIdentifier>
             implements ChoiceNode {
 
-        ImmutableChoiceNode(final NodeIdentifier nodeIdentifier,
-                final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children) {
+        ImmutableChoiceNode(final NodeIdentifier nodeIdentifier, final Map<PathArgument, Object> children) {
             super(children, nodeIdentifier);
         }
     }
