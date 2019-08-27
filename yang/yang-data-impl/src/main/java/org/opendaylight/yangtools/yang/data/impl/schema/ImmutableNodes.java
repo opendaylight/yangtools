@@ -105,10 +105,7 @@ public final class ImmutableNodes {
      * @return Leaf node with supplied identifier and value
      */
     public static <T> @NonNull LeafNode<T> leafNode(final NodeIdentifier name, final T value) {
-        return ImmutableLeafNodeBuilder.<T>create()
-                .withNodeIdentifier(name)
-                .withValue(value)
-                .build();
+        return ImmutableLeafNodeBuilder.createNode(name, value);
     }
 
     /**
