@@ -25,7 +25,6 @@ import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.ImmutableOffsetMapTemplate;
-import org.opendaylight.yangtools.util.SharedSingletonMapTemplate;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
@@ -41,7 +40,6 @@ abstract class IdentifiableItemCodec
     private static final class SingleKey extends IdentifiableItemCodec {
         private static final MethodType CTOR_TYPE = MethodType.methodType(Identifier.class, Object.class);
 
-        private final SharedSingletonMapTemplate<QName> predicateTemplate;
         private final ValueContext keyContext;
         private final MethodHandle ctor;
         private final QName keyName;
@@ -51,7 +49,6 @@ abstract class IdentifiableItemCodec
             super(schema, keyClass, identifiable);
             this.keyContext = requireNonNull(keyContext);
             this.keyName = requireNonNull(keyName);
-            predicateTemplate = SharedSingletonMapTemplate.ordered(keyName);
             ctor = getConstructor(keyClass).asType(CTOR_TYPE);
         }
 
@@ -62,8 +59,7 @@ abstract class IdentifiableItemCodec
 
         @Override
         NodeIdentifierWithPredicates serializeIdentifier(final QName qname, final Identifier<?> key) {
-            return NodeIdentifierWithPredicates.of(qname, predicateTemplate.instantiateWithValue(
-                keyContext.getAndSerialize(key)));
+            return NodeIdentifierWithPredicates.of(qname, keyName, keyContext.getAndSerialize(key));
         }
     }
 
