@@ -74,7 +74,7 @@ public class ImmutableAugmentationNodeBuilder
             extends AbstractImmutableDataContainerNode<AugmentationIdentifier> implements AugmentationNode {
 
         ImmutableAugmentationNode(final AugmentationIdentifier nodeIdentifier,
-                final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children) {
+                final Map<PathArgument, Object> children) {
             super(children, nodeIdentifier);
         }
     }
