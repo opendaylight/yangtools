@@ -78,7 +78,6 @@ public class ImmutableMapEntryNodeBuilder
         }
     }
 
-
     @Override
     public DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> withValue(
             final Collection<DataContainerChild<? extends PathArgument, ?>> withValue) {
@@ -124,7 +123,7 @@ public class ImmutableMapEntryNodeBuilder
             extends AbstractImmutableDataContainerNode<NodeIdentifierWithPredicates> implements MapEntryNode {
 
         ImmutableMapEntryNode(final NodeIdentifierWithPredicates nodeIdentifier,
-                final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children) {
+                final Map<PathArgument, Object> children) {
             super(children, nodeIdentifier);
         }
     }
