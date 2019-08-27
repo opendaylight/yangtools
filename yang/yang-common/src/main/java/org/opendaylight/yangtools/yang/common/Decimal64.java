@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.concepts.Variant;
 
 /**
@@ -29,7 +28,6 @@ import org.opendaylight.yangtools.concepts.Variant;
 @Beta
 @NonNullByDefault
 public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
-    @MetaInfServices(value = CanonicalValueSupport.class)
     public static final class Support extends AbstractCanonicalValueSupport<Decimal64> {
         public Support() {
             super(Decimal64.class);
