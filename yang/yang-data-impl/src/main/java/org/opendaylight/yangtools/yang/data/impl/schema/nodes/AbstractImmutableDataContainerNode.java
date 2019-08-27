@@ -18,10 +18,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
         extends AbstractImmutableNormalizedNode<K, Collection<DataContainerChild<? extends PathArgument, ?>>>
         implements DataContainerNode<K> {
-    private final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children;
+    private final Map<PathArgument, Object> children;
 
-    public AbstractImmutableDataContainerNode(
-            final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children, final K nodeIdentifier) {
+    protected AbstractImmutableDataContainerNode(final Map<PathArgument, Object> children, final K nodeIdentifier) {
         super(nodeIdentifier);
 
         this.children = ImmutableOffsetMap.unorderedCopyOf(children);
@@ -29,12 +28,12 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
 
     @Override
     public final Optional<DataContainerChild<? extends PathArgument, ?>> getChild(final PathArgument child) {
-        return Optional.ofNullable(children.get(child));
+        return LazyLeafOperations.findChild(children, child);
     }
 
     @Override
     public final Collection<DataContainerChild<? extends PathArgument, ?>> getValue() {
-        return children.values();
+        return LazyLeafOperations.getValue(children);
     }
 
     @Override
@@ -51,13 +50,12 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
      * DO NOT USE THIS METHOD.
      *
      * <p>
-     * This is an implementation-internal API and no outside users should use it. If you do,
-     * you are asking for trouble, as the returned object is not guaranteed to conform to
-     * java.util.Map interface.
+     * This is an implementation-internal API and no outside users should use it. If you do, you are asking for trouble,
+     * as the returned object is not guaranteed to conform to java.util.Map interface, nor is its contents well-defined.
      *
      * @return An unmodifiable view if this node's children.
      */
-    public final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> getChildren() {
+    public final Map<PathArgument, Object> getChildren() {
         return children;
     }
 
@@ -65,6 +63,5 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
     protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
         return other instanceof AbstractImmutableDataContainerNode<?> && children.equals(
                 ((AbstractImmutableDataContainerNode<?>) other).children);
-
     }
 }
