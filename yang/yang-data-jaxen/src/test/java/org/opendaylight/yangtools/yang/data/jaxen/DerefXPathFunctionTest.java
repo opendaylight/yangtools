@@ -8,6 +8,7 @@
 
 package org.opendaylight.yangtools.yang.data.jaxen;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -87,7 +88,7 @@ public class DerefXPathFunctionTest {
         final Object derefResult = derefFunction.call(normalizedNodeContext, ImmutableList.of());
         assertNotNull(derefResult);
         assertTrue(derefResult instanceof NormalizedNode<?, ?>);
-        assertSame(referencedLeafNode, derefResult);
+        assertEquals(referencedLeafNode, derefResult);
     }
 
     @Test
@@ -120,7 +121,7 @@ public class DerefXPathFunctionTest {
         Object derefResult = derefFunction.call(normalizedNodeContext, ImmutableList.of());
         assertNotNull(derefResult);
         assertTrue(derefResult instanceof NormalizedNode<?, ?>);
-        assertSame(referencedLeafNode, derefResult);
+        assertEquals(referencedLeafNode, derefResult);
 
         final YangInstanceIdentifier relLeafrefPath = YangInstanceIdentifier.of(MY_INNER_CONTAINER)
                 .node(REL_LEAFREF_LEAF);
@@ -129,7 +130,7 @@ public class DerefXPathFunctionTest {
         derefResult = derefFunction.call(normalizedNodeContext, ImmutableList.of());
         assertNotNull(derefResult);
         assertTrue(derefResult instanceof NormalizedNode<?, ?>);
-        assertSame(referencedLeafNode, derefResult);
+        assertEquals(referencedLeafNode, derefResult);
     }
 
     @Test
