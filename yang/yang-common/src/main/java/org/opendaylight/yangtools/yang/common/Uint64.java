@@ -51,7 +51,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
     /**
      * Cache of first 256 values.
      */
-    private static final Uint64[] CACHE = new Uint64[Uint8.MAX_VALUE_SHORT];
+    private static final Uint64[] CACHE = new Uint64[256];
     /**
      * Commonly encountered values.
      */

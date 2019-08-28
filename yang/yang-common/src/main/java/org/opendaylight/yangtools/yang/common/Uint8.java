@@ -41,8 +41,8 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
 
     private static final CanonicalValueSupport<Uint8> SUPPORT = new Support();
 
-    static final short MIN_VALUE_SHORT = 0;
-    static final short MAX_VALUE_SHORT = 255;
+    private static final short MIN_VALUE_SHORT = 0;
+    private static final short MAX_VALUE_SHORT = 255;
 
     private static final long serialVersionUID = 1L;
     private static final Uint8[] CACHE = new Uint8[MAX_VALUE_SHORT + 1];

@@ -50,7 +50,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
     /**
      * Cache of first 256 values.
      */
-    private static final Uint16[] CACHE = new Uint16[Uint8.MAX_VALUE_SHORT];
+    private static final Uint16[] CACHE = new Uint16[256];
 
     /**
      * Commonly encountered values.

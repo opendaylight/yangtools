@@ -51,7 +51,7 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
     /**
      * Cache of first 256 values.
      */
-    private static final Uint32[] CACHE = new Uint32[Uint8.MAX_VALUE_SHORT];
+    private static final Uint32[] CACHE = new Uint32[256];
     /**
      * Commonly encountered values.
      */
