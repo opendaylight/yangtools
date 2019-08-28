@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import java.util.List;
+import javax.management.MXBean;
 
 /**
  * MXBean interface for {@link QueuedNotificationManager} statistic metrics.
  *
  * @author Thomas Pantelis
  */
+@MXBean
 public interface QueuedNotificationManagerMXBean {
     /**
      * Returns a list of stat instances for each current listener notification task in progress.
