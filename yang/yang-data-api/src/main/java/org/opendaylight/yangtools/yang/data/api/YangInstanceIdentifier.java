@@ -95,7 +95,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      *
      * @deprecated Use {@link #empty()} instead.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static final @NonNull YangInstanceIdentifier EMPTY = FixedYangInstanceIdentifier.EMPTY_INSTANCE;
 
     private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, String> TOSTRINGCACHE_UPDATER =
