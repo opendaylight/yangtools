@@ -144,7 +144,7 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
         dataTree.validate(modification);
 
         final DataTreeCandidate candidate = dataTree.prepare(modification);
-        assertEquals(YangInstanceIdentifier.EMPTY, candidate.getRootPath());
+        assertEquals(YangInstanceIdentifier.empty(), candidate.getRootPath());
         final DataTreeCandidateNode node = candidate.getRootNode();
         assertEquals(ModificationType.UNMODIFIED, node.getModificationType());
 
@@ -170,7 +170,7 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
 
         // The entire transaction needs to fizzle to a no-op
         final DataTreeCandidate candidate = dataTree.prepare(modification);
-        assertEquals(YangInstanceIdentifier.EMPTY, candidate.getRootPath());
+        assertEquals(YangInstanceIdentifier.empty(), candidate.getRootPath());
         final DataTreeCandidateNode node = candidate.getRootNode();
         assertEquals(ModificationType.UNMODIFIED, node.getModificationType());
 

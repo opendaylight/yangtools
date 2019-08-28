@@ -34,7 +34,7 @@ public interface CursorAwareDataTreeSnapshot extends DataTreeSnapshot {
      * @throws IllegalStateException if there is another cursor currently open.
      */
     default DataTreeSnapshotCursor openCursor() {
-        return openCursor(YangInstanceIdentifier.EMPTY).get();
+        return openCursor(YangInstanceIdentifier.empty()).get();
     }
 
     @Override

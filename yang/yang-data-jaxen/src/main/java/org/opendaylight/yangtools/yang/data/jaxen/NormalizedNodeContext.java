@@ -70,7 +70,7 @@ final class NormalizedNodeContext extends Context {
     }
 
     YangInstanceIdentifier getPath() {
-        return (parent == null ? YangInstanceIdentifier.EMPTY : parent.getPath()).node(node.getIdentifier());
+        return (parent == null ? YangInstanceIdentifier.empty() : parent.getPath()).node(node.getIdentifier());
     }
 
     DataSchemaContextNode<?> getSchema() {
@@ -152,7 +152,7 @@ final class NormalizedNodeContext extends Context {
         return Iterators.transform(collection.iterator(), this::createChild);
     }
 
-    static NormalizedNodeContext cast(@Nullable Context context) {
+    static NormalizedNodeContext cast(@Nullable final Context context) {
         verify(context instanceof NormalizedNodeContext);
         return (@NonNull NormalizedNodeContext) context;
     }
