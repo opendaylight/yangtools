@@ -44,13 +44,13 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
 
     private static final CanonicalValueSupport<Uint16> SUPPORT = new Support();
     private static final long serialVersionUID = 1L;
-    private static final int MIN_VALUE = 0;
-    private static final int MAX_VALUE = 65535;
+    private static final int MIN_VALUE_INT = 0;
+    private static final int MAX_VALUE_INT = 65535;
 
     /**
      * Cache of first 256 values.
      */
-    private static final Uint16[] CACHE = new Uint16[Uint8.MAX_VALUE];
+    private static final Uint16[] CACHE = new Uint16[Uint8.MAX_VALUE_SHORT];
 
     /**
      * Commonly encountered values.
@@ -61,13 +61,16 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
         new Uint16((short)65535),
     };
 
+    public static final Uint16 MIN_VALUE = valueOf(MIN_VALUE_INT);
+    public static final Uint16 MAX_VALUE = valueOf(MAX_VALUE_INT);
+
     /**
      * Tunable weak LRU cache for other values. By default it holds {@value #DEFAULT_LRU_SIZE} entries. This can be
      * changed via {@value #LRU_SIZE_PROPERTY} system property.
      */
     private static final int DEFAULT_LRU_SIZE = 1024;
     private static final String LRU_SIZE_PROPERTY = "org.opendaylight.yangtools.yang.common.Uint16.LRU.size";
-    private static final int MAX_LRU_SIZE = MAX_VALUE + 1;
+    private static final int MAX_LRU_SIZE = MAX_VALUE_INT + 1;
     private static final int LRU_SIZE;
 
     static {
@@ -127,22 +130,24 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
     }
 
     public static Uint16 valueOf(final byte byteVal) {
-        checkArgument(byteVal >= MIN_VALUE, "Negative values are not allowed");
+        checkArgument(byteVal >= MIN_VALUE_INT, "Negative values are not allowed");
         return instanceFor(byteVal);
     }
 
     public static Uint16 valueOf(final short shortVal) {
-        checkArgument(shortVal >= MIN_VALUE, "Negative values are not allowed");
+        checkArgument(shortVal >= MIN_VALUE_INT, "Negative values are not allowed");
         return instanceFor(shortVal);
     }
 
     public static Uint16 valueOf(final int intVal) {
-        checkArgument(intVal >= MIN_VALUE && intVal <= MAX_VALUE, "Value %s is outside of allowed range", intVal);
+        checkArgument(intVal >= MIN_VALUE_INT && intVal <= MAX_VALUE_INT, "Value %s is outside of allowed range",
+                intVal);
         return instanceFor((short)(intVal & 0xffff));
     }
 
     public static Uint16 valueOf(final long longVal) {
-        checkArgument(longVal >= MIN_VALUE && longVal <= MAX_VALUE, "Value %s is outside of allowed range", longVal);
+        checkArgument(longVal >= MIN_VALUE_INT && longVal <= MAX_VALUE_INT, "Value %s is outside of allowed range",
+                longVal);
         return instanceFor((short)(longVal & 0xffff));
     }
 

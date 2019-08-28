@@ -46,12 +46,12 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
 
     private static final CanonicalValueSupport<Uint64> SUPPORT = new Support();
     private static final long serialVersionUID = 1L;
-    private static final long MIN_VALUE = 0;
+    private static final long MIN_VALUE_LONG = 0;
 
     /**
      * Cache of first 256 values.
      */
-    private static final Uint64[] CACHE = new Uint64[Uint8.MAX_VALUE];
+    private static final Uint64[] CACHE = new Uint64[Uint8.MAX_VALUE_SHORT];
     /**
      * Commonly encountered values.
      */
@@ -63,7 +63,11 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
         new Uint64(Integer.MAX_VALUE),
         new Uint64(Integer.MAX_VALUE + 1L),
         new Uint64(Long.MAX_VALUE),
+        new Uint64(-1L)
     };
+
+    public static final Uint64 MIN_VALUE = valueOf(MIN_VALUE_LONG);
+    public static final Uint64 MAX_VALUE = fromLongBits(-1);
 
     /**
      * Tunable weak LRU cache for other values. By default it holds {@value #DEFAULT_LRU_SIZE} entries. This can be
@@ -135,22 +139,22 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
     }
 
     public static Uint64 valueOf(final byte byteVal) {
-        checkArgument(byteVal >= MIN_VALUE, "Negative values are not allowed");
+        checkArgument(byteVal >= MIN_VALUE_LONG, "Negative values are not allowed");
         return instanceFor(byteVal);
     }
 
     public static Uint64 valueOf(final short shortVal) {
-        checkArgument(shortVal >= MIN_VALUE, "Negative values are not allowed");
+        checkArgument(shortVal >= MIN_VALUE_LONG, "Negative values are not allowed");
         return instanceFor(shortVal);
     }
 
     public static Uint64 valueOf(final int intVal) {
-        checkArgument(intVal >= MIN_VALUE, "Value %s is outside of allowed range", intVal);
+        checkArgument(intVal >= MIN_VALUE_LONG, "Value %s is outside of allowed range", intVal);
         return instanceFor(intVal);
     }
 
     public static Uint64 valueOf(final long longVal) {
-        checkArgument(longVal >= MIN_VALUE, "Value %s is outside of allowed range", longVal);
+        checkArgument(longVal >= MIN_VALUE_LONG, "Value %s is outside of allowed range", longVal);
         return instanceFor(longVal);
     }
 

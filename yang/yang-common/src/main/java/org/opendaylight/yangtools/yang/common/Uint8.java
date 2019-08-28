@@ -41,11 +41,14 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
 
     private static final CanonicalValueSupport<Uint8> SUPPORT = new Support();
 
-    static final short MIN_VALUE = 0;
-    static final short MAX_VALUE = 255;
+    static final short MIN_VALUE_SHORT = 0;
+    static final short MAX_VALUE_SHORT = 255;
 
     private static final long serialVersionUID = 1L;
-    private static final Uint8[] CACHE = new Uint8[MAX_VALUE + 1];
+    private static final Uint8[] CACHE = new Uint8[MAX_VALUE_SHORT + 1];
+
+    public static final Uint8 MIN_VALUE = valueOf(MIN_VALUE_SHORT);
+    public static final Uint8 MAX_VALUE = valueOf(MAX_VALUE_SHORT);
 
     private final byte value;
 
@@ -80,22 +83,25 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
     }
 
     public static Uint8 valueOf(final byte byteVal) {
-        checkArgument(byteVal >= MIN_VALUE, "Negative values are not allowed");
+        checkArgument(byteVal >= MIN_VALUE_SHORT, "Negative values are not allowed");
         return instanceFor(byteVal);
     }
 
     public static Uint8 valueOf(final short shortVal) {
-        checkArgument(shortVal >= MIN_VALUE && shortVal <= MAX_VALUE, "Value %s is outside of allowed range", shortVal);
+        checkArgument(shortVal >= MIN_VALUE_SHORT && shortVal <= MAX_VALUE_SHORT,
+                "Value %s is outside of allowed range", shortVal);
         return instanceFor((byte)(shortVal & 0xff));
     }
 
     public static Uint8 valueOf(final int intVal) {
-        checkArgument(intVal >= MIN_VALUE && intVal <= MAX_VALUE, "Value %s is outside of allowed range", intVal);
+        checkArgument(intVal >= MIN_VALUE_SHORT && intVal <= MAX_VALUE_SHORT,
+                "Value %s is outside of allowed range", intVal);
         return instanceFor((byte)(intVal & 0xff));
     }
 
     public static Uint8 valueOf(final long longVal) {
-        checkArgument(longVal >= MIN_VALUE && longVal <= MAX_VALUE, "Value %s is outside of allowed range", longVal);
+        checkArgument(longVal >= MIN_VALUE_SHORT && longVal <= MAX_VALUE_SHORT,
+                "Value %s is outside of allowed range", longVal);
         return instanceFor((byte)(longVal & 0xff));
     }
 

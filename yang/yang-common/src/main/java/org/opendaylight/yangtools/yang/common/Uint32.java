@@ -45,13 +45,13 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
 
     private static final CanonicalValueSupport<Uint32> SUPPORT = new Support();
     private static final long serialVersionUID = 1L;
-    private static final long MIN_VALUE = 0;
-    private static final long MAX_VALUE = 0xffffffffL;
+    private static final long MIN_VALUE_LONG = 0;
+    private static final long MAX_VALUE_LONG = 0xffffffffL;
 
     /**
      * Cache of first 256 values.
      */
-    private static final Uint32[] CACHE = new Uint32[Uint8.MAX_VALUE];
+    private static final Uint32[] CACHE = new Uint32[Uint8.MAX_VALUE_SHORT];
     /**
      * Commonly encountered values.
      */
@@ -61,7 +61,11 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
         new Uint32(65535),
         new Uint32(65536),
         new Uint32(Integer.MAX_VALUE),
+        new Uint32(-1)
     };
+
+    public static final Uint32 MIN_VALUE = valueOf(MIN_VALUE_LONG);
+    public static final Uint32 MAX_VALUE = valueOf(MAX_VALUE_LONG);
 
     /**
      * Tunable weak LRU cache for other values. By default it holds {@value #DEFAULT_LRU_SIZE} entries. This can be
@@ -133,22 +137,23 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
     }
 
     public static Uint32 valueOf(final byte byteVal) {
-        checkArgument(byteVal >= MIN_VALUE, "Negative values are not allowed");
+        checkArgument(byteVal >= MIN_VALUE_LONG, "Negative values are not allowed");
         return instanceFor(byteVal);
     }
 
     public static Uint32 valueOf(final short shortVal) {
-        checkArgument(shortVal >= MIN_VALUE, "Negative values are not allowed");
+        checkArgument(shortVal >= MIN_VALUE_LONG, "Negative values are not allowed");
         return instanceFor(shortVal);
     }
 
     public static Uint32 valueOf(final int intVal) {
-        checkArgument(intVal >= MIN_VALUE, "Value %s is outside of allowed range", intVal);
+        checkArgument(intVal >= MIN_VALUE_LONG, "Value %s is outside of allowed range", intVal);
         return instanceFor(intVal);
     }
 
     public static Uint32 valueOf(final long longVal) {
-        checkArgument(longVal >= MIN_VALUE && longVal <= MAX_VALUE, "Value %s is outside of allowed range", longVal);
+        checkArgument(longVal >= MIN_VALUE_LONG && longVal <= MAX_VALUE_LONG, "Value %s is outside of allowed range",
+                longVal);
         return instanceFor((int)longVal);
     }
 
