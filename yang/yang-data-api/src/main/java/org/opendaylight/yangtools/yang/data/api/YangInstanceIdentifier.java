@@ -86,18 +86,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 // FIXME: 4.0.0: this concept needs to be moved to yang-common, as parser components need the ability to refer
 //               to data nodes -- most notably XPath expressions and {@code default} statement arguments need to be able
 //               to represent these.
-// FIXME: Remove this suppression when we remove EMPTY
-@SuppressFBWarnings(value = "IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION",
-    justification = "Having EMPTY a constant is the trouble here")
 public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
-    /**
-     * An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual root of the YANG namespace.
-     *
-     * @deprecated Use {@link #empty()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public static final @NonNull YangInstanceIdentifier EMPTY = FixedYangInstanceIdentifier.EMPTY_INSTANCE;
-
     private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, String> TOSTRINGCACHE_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(YangInstanceIdentifier.class, String.class, "toStringCache");
     private static final long serialVersionUID = 4L;
