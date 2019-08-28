@@ -385,18 +385,18 @@ public class YangInstanceIdentifierTest {
             new NodeIdentifier(NODENAME2));
         assertEquals(fixed, serdes(fixed));
 
-        final YangInstanceIdentifier stacked = YangInstanceIdentifier.EMPTY.node(new NodeIdentifier(NODENAME1));
+        final YangInstanceIdentifier stacked = YangInstanceIdentifier.empty().node(new NodeIdentifier(NODENAME1));
         assertEquals(stacked, serdes(stacked));
 
-        final YangInstanceIdentifier empty = serdes(YangInstanceIdentifier.EMPTY);
-        assertSame(YangInstanceIdentifier.EMPTY, empty);
+        final YangInstanceIdentifier empty = serdes(YangInstanceIdentifier.empty());
+        assertSame(YangInstanceIdentifier.empty(), empty);
     }
 
     @Test
     public void testToOptimized() {
         final YangInstanceIdentifier fixed = YangInstanceIdentifier.create(new NodeIdentifier(NODENAME1),
             new NodeIdentifier(NODENAME2));
-        final YangInstanceIdentifier stacked = YangInstanceIdentifier.EMPTY.node(NodeIdentifier.create(NODENAME1))
+        final YangInstanceIdentifier stacked = YangInstanceIdentifier.empty().node(NodeIdentifier.create(NODENAME1))
                 .node(NodeIdentifier.create(NODENAME2));
 
         assertSame(fixed, fixed.toOptimized());
@@ -409,21 +409,21 @@ public class YangInstanceIdentifierTest {
     @Test
     public void testGetParent() {
         final YangInstanceIdentifier fixed = YangInstanceIdentifier.create(new NodeIdentifier(NODENAME1));
-        final YangInstanceIdentifier stacked = YangInstanceIdentifier.EMPTY.node(new NodeIdentifier(NODENAME1));
+        final YangInstanceIdentifier stacked = YangInstanceIdentifier.empty().node(new NodeIdentifier(NODENAME1));
         final YangInstanceIdentifier twoStacked = stacked.node(new NodeIdentifier(NODENAME2));
 
-        assertNull(YangInstanceIdentifier.EMPTY.getParent());
-        assertSame(YangInstanceIdentifier.EMPTY, fixed.getParent());
-        assertSame(YangInstanceIdentifier.EMPTY, stacked.getParent());
+        assertNull(YangInstanceIdentifier.empty().getParent());
+        assertSame(YangInstanceIdentifier.empty(), fixed.getParent());
+        assertSame(YangInstanceIdentifier.empty(), stacked.getParent());
         assertSame(stacked, twoStacked.getParent());
     }
 
     @Test
     public void testIsEmpty() {
         final YangInstanceIdentifier fixed = YangInstanceIdentifier.create(new NodeIdentifier(NODENAME1));
-        final YangInstanceIdentifier stacked = YangInstanceIdentifier.EMPTY.node(new NodeIdentifier(NODENAME1));
+        final YangInstanceIdentifier stacked = YangInstanceIdentifier.empty().node(new NodeIdentifier(NODENAME1));
 
-        assertTrue(YangInstanceIdentifier.EMPTY.isEmpty());
+        assertTrue(YangInstanceIdentifier.empty().isEmpty());
         assertFalse(fixed.isEmpty());
         assertFalse(stacked.isEmpty());
     }

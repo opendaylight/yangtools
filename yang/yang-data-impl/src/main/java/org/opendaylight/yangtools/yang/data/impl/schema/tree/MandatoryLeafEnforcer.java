@@ -47,7 +47,7 @@ final class MandatoryLeafEnforcer implements Immutable {
         }
 
         final Builder<YangInstanceIdentifier> builder = ImmutableList.builder();
-        findMandatoryNodes(builder, YangInstanceIdentifier.EMPTY, schema, treeConfig.getTreeType());
+        findMandatoryNodes(builder, YangInstanceIdentifier.empty(), schema, treeConfig.getTreeType());
         final ImmutableList<YangInstanceIdentifier> mandatoryNodes = builder.build();
         return mandatoryNodes.isEmpty() ? Optional.empty() : Optional.of(new MandatoryLeafEnforcer(mandatoryNodes));
     }
