@@ -128,7 +128,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
     /**
      * Check if this instance identifier has empty path arguments, e.g. it is
-     * empty and corresponds to {@link #EMPTY}.
+     * empty and corresponds to {@link #empty()}.
      *
      * @return True if this instance identifier is empty, false otherwise.
      */
@@ -147,7 +147,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * Return the conceptual parent {@link YangInstanceIdentifier}, which has
      * one item less in {@link #getPathArguments()}.
      *
-     * @return Parent {@link YangInstanceIdentifier}, or null if this object is {@link #EMPTY}.
+     * @return Parent {@link YangInstanceIdentifier}, or null if this object is {@link #empty()}.
      */
     public abstract @Nullable YangInstanceIdentifier getParent();
 
