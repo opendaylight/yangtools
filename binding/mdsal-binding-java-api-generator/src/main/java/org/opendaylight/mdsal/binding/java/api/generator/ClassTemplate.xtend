@@ -23,6 +23,7 @@ import java.util.Collections
 import java.util.List
 import java.util.Map
 import java.util.regex.Pattern
+import javax.management.ConstructorParameters
 import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.Constant
@@ -210,6 +211,7 @@ class ClassTemplate extends BaseTemplate {
 
     def protected allValuesConstructor() '''
     «IF genTO.typedef && !allProperties.empty && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
+        @«ConstructorParameters.importedName»("value")
         @«ConstructorProperties.importedName»("value")
     «ENDIF»
     public «type.name»(«allProperties.asArgumentsDeclaration») {
