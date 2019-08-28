@@ -86,9 +86,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 // FIXME: 4.0.0: this concept needs to be moved to yang-common, as parser components need the ability to refer
 //               to data nodes -- most notably XPath expressions and {@code default} statement arguments need to be able
 //               to represent these.
-// FIXME: FixedYangInstanceIdentifier needs YangInstanceIdentifier initialized, but that includes initializing
-//        this field. Figure out a way out of this pickle.
-@SuppressFBWarnings("IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION")
+// FIXME: Remove this suppression when we remove EMPTY
+@SuppressFBWarnings(value = "IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION",
+    justification = "Having EMPTY a constant is the trouble here")
 public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
     /**
      * An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual root of the YANG namespace.
@@ -128,7 +128,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
     /**
      * Check if this instance identifier has empty path arguments, e.g. it is
-     * empty and corresponds to {@link #EMPTY}.
+     * empty and corresponds to {@link #empty()}.
      *
      * @return True if this instance identifier is empty, false otherwise.
      */
@@ -147,7 +147,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * Return the conceptual parent {@link YangInstanceIdentifier}, which has
      * one item less in {@link #getPathArguments()}.
      *
-     * @return Parent {@link YangInstanceIdentifier}, or null if this object is {@link #EMPTY}.
+     * @return Parent {@link YangInstanceIdentifier}, or null if this object is {@link #empty()}.
      */
     public abstract @Nullable YangInstanceIdentifier getParent();
 
