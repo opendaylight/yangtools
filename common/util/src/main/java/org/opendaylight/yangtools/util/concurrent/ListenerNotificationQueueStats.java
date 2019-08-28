@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.util.concurrent;
 
 import static java.util.Objects.requireNonNull;
 
-import java.beans.ConstructorProperties;
+import javax.management.ConstructorParameters;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
@@ -24,7 +24,7 @@ public class ListenerNotificationQueueStats {
     private final String listenerClassName;
     private final int currentQueueSize;
 
-    @ConstructorProperties({ "listenerClassName", "currentQueueSize" })
+    @ConstructorParameters({ "listenerClassName", "currentQueueSize" })
     public ListenerNotificationQueueStats(final String listenerClassName, final int currentQueueSize) {
         this.listenerClassName = requireNonNull(listenerClassName);
         this.currentQueueSize = currentQueueSize;
