@@ -343,7 +343,8 @@ public class Bug4454Test {
         inMemoryDataTree.commit(prepare);
 
         // Empty list should have disappeared, along with the container, as we are not enforcing root
-        final NormalizedNode<?, ?> data = inMemoryDataTree.takeSnapshot().readNode(YangInstanceIdentifier.EMPTY).get();
+        final NormalizedNode<?, ?> data = inMemoryDataTree.takeSnapshot()
+                .readNode(YangInstanceIdentifier.empty()).get();
         assertTrue(data instanceof ContainerNode);
         assertEquals(0, ((ContainerNode) data).getValue().size());
     }

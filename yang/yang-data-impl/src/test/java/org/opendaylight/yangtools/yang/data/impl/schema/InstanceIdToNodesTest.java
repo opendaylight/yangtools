@@ -202,6 +202,6 @@ public class InstanceIdToNodesTest {
     @Test
     public void testEmptyInstanceIdentifier() {
         assertEquals(ImmutableNodes.containerNode(SchemaContext.NAME),
-            ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.EMPTY));
+            ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.empty()));
     }
 }

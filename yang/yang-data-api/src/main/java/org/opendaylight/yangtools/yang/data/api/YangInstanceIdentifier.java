@@ -92,7 +92,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
     /**
      * An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual root of the YANG namespace.
+     *
+     * @deprecated Use {@link #empty()} instead.
      */
+    @Deprecated
     public static final @NonNull YangInstanceIdentifier EMPTY = FixedYangInstanceIdentifier.EMPTY_INSTANCE;
 
     private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, String> TOSTRINGCACHE_UPDATER =
@@ -105,6 +108,16 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     // Package-private to prevent outside subclassing
     YangInstanceIdentifier(final int hash) {
         this.hash = hash;
+    }
+
+    /**
+     * Return An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual root of the YANG
+     * namespace.
+     *
+     * @return An empty YangInstanceIdentifier
+     */
+    public static @NonNull YangInstanceIdentifier empty() {
+        return FixedYangInstanceIdentifier.EMPTY_INSTANCE;
     }
 
     abstract @NonNull YangInstanceIdentifier createRelativeIdentifier(int skipFromRoot);
@@ -172,7 +185,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
     public static @NonNull YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
         if (Iterables.isEmpty(path)) {
-            return EMPTY;
+            return empty();
         }
 
         final HashCodeBuilder<PathArgument> hash = new HashCodeBuilder<>();
@@ -272,7 +285,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      */
     public Optional<YangInstanceIdentifier> relativeTo(final YangInstanceIdentifier ancestor) {
         if (this == ancestor) {
-            return Optional.of(EMPTY);
+            return Optional.of(empty());
         }
         if (ancestor.isEmpty()) {
             return Optional.of(this);
@@ -295,7 +308,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             return Optional.of(this);
         }
         if (!lit.hasNext()) {
-            return Optional.of(EMPTY);
+            return Optional.of(empty());
         }
 
         return Optional.of(createRelativeIdentifier(common));
