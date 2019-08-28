@@ -89,7 +89,7 @@ public class DataTreeConfiguration implements Immutable {
             case OPERATIONAL:
                 return DEFAULT_OPERATIONAL;
             default:
-                return new DataTreeConfiguration(treeType, YangInstanceIdentifier.EMPTY, false, true);
+                return new DataTreeConfiguration(treeType, YangInstanceIdentifier.empty(), false, true);
         }
     }
 
@@ -112,7 +112,7 @@ public class DataTreeConfiguration implements Immutable {
 
         public Builder(final TreeType treeType) {
             this.treeType = requireNonNull(treeType);
-            this.rootPath = YangInstanceIdentifier.EMPTY;
+            this.rootPath = YangInstanceIdentifier.empty();
         }
 
         public Builder setUniqueIndexes(final boolean uniqueIndexes) {
