@@ -88,16 +88,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 //               to represent these.
 // FIXME: FixedYangInstanceIdentifier needs YangInstanceIdentifier initialized, but that includes initializing
 //        this field. Figure out a way out of this pickle.
-@SuppressFBWarnings("IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION")
 public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
-    /**
-     * An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual root of the YANG namespace.
-     *
-     * @deprecated Use {@link #empty()} instead.
-     */
-    @Deprecated(forRemoval = true)
-    public static final @NonNull YangInstanceIdentifier EMPTY = FixedYangInstanceIdentifier.EMPTY_INSTANCE;
-
     private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, String> TOSTRINGCACHE_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(YangInstanceIdentifier.class, String.class, "toStringCache");
     private static final long serialVersionUID = 4L;
