@@ -15,5 +15,6 @@ package org.opendaylight.yangtools.concepts;
  * @author Tony Tkacik &lt;ttkacik@cisco.com&gt;
  */
 public interface Builder<P> extends CheckedBuilder<P, IllegalArgumentException> {
-
+    @Override
+    P build();
 }
