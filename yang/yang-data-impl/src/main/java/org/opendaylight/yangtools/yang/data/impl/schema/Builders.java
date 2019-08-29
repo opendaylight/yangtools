@@ -89,19 +89,16 @@ public final class Builders {
         return ImmutableLeafSetEntryNodeSchemaAwareBuilder.create(schema);
     }
 
-    // FIXME: 5.0.0 <T> should not be here
-    public static <T> NormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder() {
+    public static NormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder() {
         return ImmutableAnyXmlNodeBuilder.create();
     }
 
-    // FIXME: 5.0.0 <T> should not be here
-    public static <T> NormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder(
+    public static NormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder(
             final AnyXmlSchemaNode schema) {
         return ImmutableAnyXmlNodeSchemaAwareBuilder.create(schema);
     }
 
-    // FIXME: 5.0.0 <T> should not be here
-    public static <T> DataContainerNodeBuilder<NodeIdentifier, YangModeledAnyXmlNode> yangModeledAnyXmlBuilder(
+    public static DataContainerNodeBuilder<NodeIdentifier, YangModeledAnyXmlNode> yangModeledAnyXmlBuilder(
             final YangModeledAnyXmlSchemaNode schema) {
         return ImmutableYangModeledAnyXmlNodeBuilder.create(schema);
     }
