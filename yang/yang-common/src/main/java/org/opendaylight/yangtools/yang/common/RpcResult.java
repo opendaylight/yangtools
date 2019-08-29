@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import java.util.Collection;
+import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Represents a general result of a call, request, or operation.
@@ -15,7 +16,6 @@ import java.util.Collection;
  * @param <T> the result value type
  */
 public interface RpcResult<T> {
-
     /**
      * Returns whether or not processing of the call was successful.
      *
@@ -31,10 +31,7 @@ public interface RpcResult<T> {
     /**
      * Returns a set of errors and warnings which occurred during processing the call.
      *
-     * @return a Collection of {@link RpcError}
+     * @return a list of {@link RpcError}s
      */
-    // FIXME: 4.0.0: annotate with @NonNull
-    // FIXME: 4.0.0: the description says 'set' and the default implementations uses a list. RpcError does not define
-    //               equality and hence this should return a List
-    Collection<RpcError> getErrors();
+    @NonNull List<RpcError> getErrors();
 }
