@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 2019 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
+
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.Iterators;
+import java.util.AbstractCollection;
+import java.util.Iterator;
+import java.util.Map;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+
+// This is *almost* the same as Guava's TransformedCollection. The main difference is delegation of hashCode()/equals()
+// towards the backing map. This is needed because we do not retain a reference to this object and thus
+// NormalizedNode.getValue() does not compare as equal. When invoked twice and lazy leaves are in effect. Note that
+// Collection.equals() is undefined, but the expectation from users is that we will return the same view object, which
+// equals on identity.
+final class LazyValues extends AbstractCollection<DataContainerChild<?, ?>> {
+    private final Map<PathArgument, Object> map;
+
+    LazyValues(final Map<PathArgument, Object> map) {
+        this.map = requireNonNull(map);
+    }
+
+    @Override
+    public int size() {
+        return map.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
+
+    @Override
+    public Iterator<DataContainerChild<?, ?>> iterator() {
+        return Iterators.transform(map.entrySet().iterator(), entry -> {
+            final Object value = entry.getValue();
+            return value instanceof DataContainerChild ? (DataContainerChild<?, ?>) value
+                    : LazyLeafOperations.coerceLeaf(entry.getKey(), value);
+        });
+    }
+
+    @Override
+    public int hashCode() {
+        return map.hashCode();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return this == obj || obj instanceof LazyValues && map.equals(((LazyValues)obj).map);
+    }
+}
