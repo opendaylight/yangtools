@@ -11,10 +11,8 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -64,6 +62,16 @@ public final class LazyLeafOperations {
 
     }
 
+    /**
+     * A boolean flag indicating whether leaf nodes are being treated as expendable.
+     *
+     * @return True if NormalizedNode implementations in this artifact are treating leaf nodes as transient, i.e. do
+     *              not retain them.
+     */
+    public static boolean isEnabled() {
+        return EXPENDABLE;
+    }
+
     public static Optional<DataContainerChild<?, ?>> findChild(final Map<PathArgument, Object> map,
             final PathArgument key) {
         final Object value = map.get(key);
@@ -83,13 +91,14 @@ public final class LazyLeafOperations {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static @NonNull Collection<DataContainerChild<?, ?>> getValue(final Map<PathArgument, Object> map) {
-        return EXPENDABLE ? Collections2.transform(map.entrySet(), LazyLeafOperations::decodeEntry)
+        return EXPENDABLE ? new LazyValues(map)
                 // This is an ugly cast, but it is accurate IFF all modifications are done through this class
-                : (Collection) map.values();
+                : (Collection)map.values();
     }
 
-    private static @NonNull Object encodeExpendableChild(final DataContainerChild<?, ?> key) {
-        return key instanceof LeafNode ? ((LeafNode<?>) key).getValue() : requireNonNull(key);
+    static @NonNull LeafNode<?> coerceLeaf(final PathArgument key, final Object value) {
+        verify(key instanceof NodeIdentifier, "Unexpected value %s for child %s", value, key);
+        return ImmutableNodes.leafNode((NodeIdentifier) key, value);
     }
 
     private static @Nullable DataContainerChild<?, ?> decodeChild(final PathArgument key, final @NonNull Object value) {
@@ -101,20 +110,12 @@ public final class LazyLeafOperations {
         return value instanceof DataContainerChild ? (DataContainerChild<?, ?>) value  : coerceLeaf(key, value);
     }
 
+    private static @NonNull Object encodeExpendableChild(final DataContainerChild<?, ?> key) {
+        return key instanceof LeafNode ? ((LeafNode<?>) key).getValue() : requireNonNull(key);
+    }
+
     private static @NonNull DataContainerChild<?, ?> verifyCast(final @NonNull Object value) {
         verify(value instanceof DataContainerChild, "Unexpected child %s", value);
         return (DataContainerChild<?, ?>)value;
-    }
-
-    private static @NonNull DataContainerChild<? extends PathArgument, ?> decodeEntry(
-            final @NonNull Entry<PathArgument, Object> entry) {
-        final Object value = entry.getValue();
-        return value instanceof DataContainerChild ? (DataContainerChild<?, ?>) value
-                : coerceLeaf(entry.getKey(), value);
-    }
-
-    private static @NonNull LeafNode<?> coerceLeaf(final PathArgument key, final Object value) {
-        verify(key instanceof NodeIdentifier, "Unexpected value %s for child %s", value, key);
-        return ImmutableNodes.leafNode((NodeIdentifier) key, value);
     }
 }
