@@ -35,10 +35,13 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.LazyLeafOperations;
 
 public class CachingCodecTest extends AbstractBindingCodecTest {
 
@@ -52,8 +55,10 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
 
     private static final NodeIdentifier LEAF_ARG = new NodeIdentifier(QName.create(Cont.QNAME, "caching"));
     private static final InstanceIdentifier<Cont> CONT_PATH = InstanceIdentifier.create(Cont.class);
-    private static final Cont CONT_DATA = new ContBuilder().setCaching(new MyType(1)).setNonCaching("test").build();
-    private static final Cont CONT2_DATA = new ContBuilder().setCaching(new MyType(1)).setNonCaching("test2").build();
+
+    // Note: '400' is assumed to not be interned by the JVM here
+    private static final Cont CONT_DATA = new ContBuilder().setCaching(new MyType(400)).setNonCaching("test").build();
+    private static final Cont CONT2_DATA = new ContBuilder().setCaching(new MyType(400)).setNonCaching("test2").build();
 
     private BindingDataObjectCodecTreeNode<Top> topNode;
     private BindingDataObjectCodecTreeNode<Cont> contNode;
@@ -106,6 +111,9 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
 
     @Test
     public void testLeafCache() {
+        // The integers should be distinct
+        assertNotSame(CONT_DATA.getCaching().getValue(), CONT2_DATA.getCaching().getValue());
+
         final BindingNormalizedNodeCachingCodec<Cont> cachingCodec = createContCachingCodec(Cont.class, MyType.class);
         final NormalizedNode<?, ?> first = cachingCodec.serialize(CONT_DATA);
         final NormalizedNode<?, ?> second = cachingCodec.serialize(CONT2_DATA);
@@ -160,7 +168,18 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
 
     private static void verifyLeafItemSame(final NormalizedNode<?, ?> firstCont,
             final NormalizedNode<?, ?> secondCont) {
-        assertSame(((DataContainerNode<?>) firstCont).getChild(LEAF_ARG).get(),
-                ((DataContainerNode<?>) secondCont).getChild(LEAF_ARG).get());
+        final DataContainerChild<?, ?> first = ((DataContainerNode<?>) firstCont).getChild(LEAF_ARG).get();
+        assertTrue(first instanceof LeafNode);
+
+        final DataContainerChild<?, ?> second = ((DataContainerNode<?>) secondCont).getChild(LEAF_ARG).get();
+        assertTrue(second instanceof LeafNode);
+
+        if (LazyLeafOperations.isEnabled()) {
+            // The leaf nodes are transient, but the values should be the same
+            assertEquals(first, second);
+            assertSame(first.getValue(), second.getValue());
+        } else {
+            assertSame(first, second);
+        }
     }
 }
