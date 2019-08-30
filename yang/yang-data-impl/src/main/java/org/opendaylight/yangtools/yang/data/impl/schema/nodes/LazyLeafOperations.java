@@ -86,7 +86,7 @@ public final class LazyLeafOperations {
 
     public static void putChild(final Map<PathArgument, Object> map, final DataContainerChild<?, ?> child) {
         final DataContainerChild<?, ?> node = requireNonNull(child);
-        map.put(child.getIdentifier(), EXPENDABLE ? encodeExpendableChild(node) : node);
+        map.put(node.getIdentifier(), EXPENDABLE ? encodeExpendableChild(node) : node);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -110,8 +110,13 @@ public final class LazyLeafOperations {
         return value instanceof DataContainerChild ? (DataContainerChild<?, ?>) value  : coerceLeaf(key, value);
     }
 
-    private static @NonNull Object encodeExpendableChild(final DataContainerChild<?, ?> key) {
-        return key instanceof LeafNode ? ((LeafNode<?>) key).getValue() : requireNonNull(key);
+    private static @NonNull Object encodeExpendableChild(final @NonNull DataContainerChild<?, ?> node) {
+        return node instanceof LeafNode ? verifyEncode(((LeafNode<?>) node).getValue()) : node;
+    }
+
+    private static @NonNull Object verifyEncode(final @NonNull Object value) {
+        verify(!(value instanceof DataContainerChild), "Unexpected leaf value %s", value);
+        return value;
     }
 
     private static @NonNull DataContainerChild<?, ?> verifyCast(final @NonNull Object value) {
