@@ -137,6 +137,13 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
+    public boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) {
+        LOG.debug("{}{}(anydata)", ind(), name);
+        incIndent();
+        return true;
+    }
+
+    @Override
     public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) {
         LOG.debug("{}{}(yangModeledAnyXml)", ind(), name);
         incIndent();
@@ -158,6 +165,7 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
         LOG.debug("{}({})={}", ind(), requireNonNull(value).getClass().getSimpleName(), value);
     }
 
+    @Override
     public void domSourceValue(final DOMSource value) {
         scalarValue(value);
     }

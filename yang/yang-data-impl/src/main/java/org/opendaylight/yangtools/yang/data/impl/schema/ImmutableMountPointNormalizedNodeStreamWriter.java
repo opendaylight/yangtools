@@ -9,16 +9,14 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ClassToInstanceMap;
+import com.google.common.collect.ImmutableClassToInstanceMap;
 import java.io.IOException;
-import org.opendaylight.yangtools.concepts.ObjectExtensions;
-import org.opendaylight.yangtools.concepts.ObjectExtensions.Factory;
 import org.opendaylight.yangtools.rcf8528.data.util.ImmutableMountPointNode;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.AnydataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ForwardingNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
@@ -27,17 +25,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 @Beta
 public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends ImmutableNormalizedNodeStreamWriter
         implements MountPointStreamWriter {
-    private static final Factory<ImmutableMountPointNormalizedNodeStreamWriter, ?, NormalizedNodeStreamWriterExtension>
-        EXTENSIONS_FACTORY = ObjectExtensions.factory(ImmutableMountPointNormalizedNodeStreamWriter.class,
-            AnydataExtension.class, MountPointStreamWriter.class);
-
     protected ImmutableMountPointNormalizedNodeStreamWriter(final NormalizedNodeResult result) {
         super(result);
     }
 
     @Override
     public final ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
-        return EXTENSIONS_FACTORY.newInstance(this);
+        return ImmutableClassToInstanceMap.of(MountPointStreamWriter.class, this);
     }
 
     @Override
