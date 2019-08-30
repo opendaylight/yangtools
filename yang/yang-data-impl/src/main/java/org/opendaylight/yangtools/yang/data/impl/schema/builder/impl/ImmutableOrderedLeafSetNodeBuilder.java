@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -146,6 +148,21 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
         @Override
         public Collection<LeafSetEntryNode<T>> getValue() {
             return UnmodifiableCollection.create(children.values());
+        }
+
+        @Override
+        public Iterator<LeafSetEntryNode<T>> childIterator() {
+            return Iterators.unmodifiableIterator(children.values().iterator());
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return children.isEmpty();
+        }
+
+        @Override
+        public int size() {
+            return children.size();
         }
     }
 

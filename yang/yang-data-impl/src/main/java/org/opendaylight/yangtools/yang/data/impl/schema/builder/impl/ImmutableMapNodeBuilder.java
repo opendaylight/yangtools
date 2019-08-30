@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -128,6 +130,21 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
         @Override
         public Collection<MapEntryNode> getValue() {
             return UnmodifiableCollection.create(children.values());
+        }
+
+        @Override
+        public Iterator<MapEntryNode> childIterator() {
+            return Iterators.unmodifiableIterator(children.values().iterator());
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return children.isEmpty();
+        }
+
+        @Override
+        public int size() {
+            return children.size();
         }
 
         @Override

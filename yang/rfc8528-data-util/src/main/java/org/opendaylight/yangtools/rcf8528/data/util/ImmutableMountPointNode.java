@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractIdentifiable;
@@ -55,6 +56,21 @@ public final class ImmutableMountPointNode extends AbstractIdentifiable<MountPoi
     @Override
     public Optional<DataContainerChild<? extends PathArgument, ?>> getChild(final PathArgument child) {
         return delegate.getChild(child);
+    }
+
+    @Override
+    public Iterator<DataContainerChild<? extends PathArgument, ?>> childIterator() {
+        return delegate.childIterator();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return delegate.isEmpty();
+    }
+
+    @Override
+    public int size() {
+        return delegate.size();
     }
 
     @Override

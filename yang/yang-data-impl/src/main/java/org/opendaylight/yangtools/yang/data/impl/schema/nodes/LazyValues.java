@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.AbstractCollection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
@@ -40,7 +39,7 @@ final class LazyValues extends AbstractCollection<DataContainerChild<?, ?>> {
 
     @Override
     public Iterator<DataContainerChild<?, ?>> iterator() {
-        return new Iter(map.entrySet().iterator());
+        return new LazyChildIterator(map);
     }
 
     @Override
@@ -51,26 +50,5 @@ final class LazyValues extends AbstractCollection<DataContainerChild<?, ?>> {
     @Override
     public boolean equals(final Object obj) {
         return this == obj || obj instanceof LazyValues && map.equals(((LazyValues)obj).map);
-    }
-
-    private static final class Iter implements Iterator<DataContainerChild<?, ?>> {
-        private final Iterator<Entry<PathArgument, Object>> iterator;
-
-        Iter(final Iterator<Entry<PathArgument, Object>> iterator) {
-            this.iterator = requireNonNull(iterator);
-        }
-
-        @Override
-        public boolean hasNext() {
-            return iterator.hasNext();
-        }
-
-        @Override
-        public DataContainerChild<?, ?> next() {
-            final Entry<PathArgument, Object> entry = iterator.next();
-            final Object value = entry.getValue();
-            return value instanceof DataContainerChild ? (DataContainerChild<?, ?>) value
-                    : LazyLeafOperations.coerceLeaf(entry.getKey(), value);
-        }
     }
 }
