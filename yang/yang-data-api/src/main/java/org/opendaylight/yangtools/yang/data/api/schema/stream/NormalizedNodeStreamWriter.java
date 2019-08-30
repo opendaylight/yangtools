@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
@@ -300,7 +301,17 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
      */
     void startAugmentationNode(AugmentationIdentifier identifier) throws IOException;
 
-    ////
+    /**
+     * Start emitting a new anydata node identified by name.
+     *
+     * @param name The name of the anydata element
+     * @param objectModel The object model of anydata content
+     * @return True if the specified object model is supported by this extension and the process of emitting the node
+     *         has started. False if the object model is not supported and the node has not started to be emitted.
+     * @throws IOException if an underlying IO error occurs
+     */
+    @Beta
+    boolean startAnydataNode(NodeIdentifier name, Class<?> objectModel) throws IOException;
 
     /**
      * Emits a start of anyxml node event.
