@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ClassToInstanceMap;
+import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.util.Map.Entry;
@@ -19,14 +20,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.concepts.ObjectExtensions;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.AnydataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
@@ -51,14 +50,9 @@ import org.w3c.dom.Node;
  * removed in a future version.
  */
 public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamWriter,
-        NormalizedMetadataStreamWriter, AnydataExtension {
+        NormalizedMetadataStreamWriter {
     private static final Logger LOG = LoggerFactory.getLogger(XMLStreamNormalizedNodeStreamWriter.class);
     private static final Set<String> BROKEN_ATTRIBUTES = ConcurrentHashMap.newKeySet();
-
-    @SuppressWarnings("rawtypes")
-    static final ObjectExtensions.Factory<XMLStreamNormalizedNodeStreamWriter, NormalizedNodeStreamWriter,
-        NormalizedNodeStreamWriterExtension> EXTENSIONS_BUILDER = ObjectExtensions.factory(
-            XMLStreamNormalizedNodeStreamWriter.class, NormalizedMetadataStreamWriter.class, AnydataExtension.class);
 
     private final @NonNull StreamWriterFacade facade;
 
@@ -118,7 +112,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
 
     @Override
     public final ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
-        return EXTENSIONS_BUILDER.newInstance(this);
+        return ImmutableClassToInstanceMap.of(NormalizedMetadataStreamWriter.class, this);
     }
 
     abstract void startAnydata(NodeIdentifier name);

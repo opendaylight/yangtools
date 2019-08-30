@@ -13,13 +13,13 @@ import static org.w3c.dom.Node.ELEMENT_NODE;
 import static org.w3c.dom.Node.TEXT_NODE;
 
 import com.google.common.collect.ClassToInstanceMap;
+import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.regex.Pattern;
 import javax.xml.transform.dom.DOMSource;
 import org.checkerframework.checker.regex.qual.Regex;
-import org.opendaylight.yangtools.concepts.ObjectExtensions;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointStreamWriter;
@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydata;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.AnydataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
@@ -52,7 +51,7 @@ import org.w3c.dom.Text;
  * <p>
  * Values of leaf and leaf-list are NOT translated according to codecs.
  */
-public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter, AnydataExtension,
+public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter,
         MountPointStreamWriter {
     private static final class Exclusive extends JSONNormalizedNodeStreamWriter {
         Exclusive(final JSONCodecFactory codecFactory, final SchemaTracker tracker, final JsonWriter writer,
@@ -85,10 +84,6 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      * are marked as 'presence'.
      */
     private static final boolean DEFAULT_EMIT_EMPTY_CONTAINERS = true;
-
-    static final ObjectExtensions.Factory<JSONNormalizedNodeStreamWriter, NormalizedNodeStreamWriter,
-        NormalizedNodeStreamWriterExtension> EXTENSIONS_BUILDER = ObjectExtensions.factory(
-            JSONNormalizedNodeStreamWriter.class, AnydataExtension.class, MountPointStreamWriter.class);
 
     @Regex
     private static final String NUMBER_STRING = "-?\\d+(\\.\\d+)?";
@@ -217,7 +212,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     @Override
     public ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
-        return EXTENSIONS_BUILDER.newInstance(this);
+        return ImmutableClassToInstanceMap.of(MountPointStreamWriter.class, this);
     }
 
     @Override

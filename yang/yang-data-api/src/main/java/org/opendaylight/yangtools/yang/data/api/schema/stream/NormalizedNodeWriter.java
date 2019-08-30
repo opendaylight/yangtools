@@ -161,20 +161,15 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
 
             LOG.debug("Ignoring unhandled anyxml node {}", anyxmlNode);
         } else if (node instanceof AnydataNode) {
-            final AnydataExtension ext = writer.getExtensions().getInstance(AnydataExtension.class);
-            if (ext != null) {
-                final AnydataNode<?> anydata = (AnydataNode<?>) node;
-                final Class<?> model = anydata.getValueObjectModel();
-                if (ext.startAnydataNode(anydata.getIdentifier(), model)) {
-                    writer.scalarValue(anydata.getValue());
-                    writer.endNode();
-                    return true;
-                }
-
-                LOG.debug("Writer {} does not support anydata in form of {}", writer, model);
-            } else {
-                LOG.debug("Writer {} does not support anydata", writer);
+            final AnydataNode<?> anydata = (AnydataNode<?>) node;
+            final Class<?> model = anydata.getValueObjectModel();
+            if (writer.startAnydataNode(anydata.getIdentifier(), model)) {
+                writer.scalarValue(anydata.getValue());
+                writer.endNode();
+                return true;
             }
+
+            LOG.debug("Writer {} does not support anydata in form of {}", writer, model);
         }
 
         return false;

@@ -98,6 +98,11 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
     }
 
     @Override
+    public boolean startAnydataNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
+        return delegate().startAnydataNode(name, objectModel);
+    }
+
+    @Override
     public void endNode() throws IOException {
         delegate().endNode();
     }
