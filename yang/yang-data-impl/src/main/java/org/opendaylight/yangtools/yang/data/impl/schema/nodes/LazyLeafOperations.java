@@ -64,6 +64,16 @@ public final class LazyLeafOperations {
 
     }
 
+    /**
+     * A boolean flag indicating whether leaf nodes are being treated as expendable.
+     *
+     * @return True if NormalizedNode implementations in this artifact are treating leaf nodes as transieent, i.e. do
+     *              not retain them.
+     */
+    public static boolean isEnabled() {
+        return EXPENDABLE;
+    }
+
     public static Optional<DataContainerChild<?, ?>> findChild(final Map<PathArgument, Object> map,
             final PathArgument key) {
         final Object value = map.get(key);
