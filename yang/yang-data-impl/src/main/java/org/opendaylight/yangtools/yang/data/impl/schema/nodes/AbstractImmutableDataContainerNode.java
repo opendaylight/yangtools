@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
@@ -34,6 +35,21 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
     @Override
     public final Collection<DataContainerChild<? extends PathArgument, ?>> getValue() {
         return LazyLeafOperations.getValue(children);
+    }
+
+    @Override
+    public final Iterator<DataContainerChild<?, ?>> childIterator() {
+        return new LazyChildIterator(children);
+    }
+
+    @Override
+    public final boolean isEmpty() {
+        return children.isEmpty();
+    }
+
+    @Override
+    public final int size() {
+        return children.size();
     }
 
     @Override

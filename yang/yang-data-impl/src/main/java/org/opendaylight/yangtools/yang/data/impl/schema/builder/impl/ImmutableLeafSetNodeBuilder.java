@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -117,6 +118,21 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
         @Override
         public Optional<LeafSetEntryNode<T>> getChild(final NodeWithValue child) {
             return Optional.ofNullable(children.get(child));
+        }
+
+        @Override
+        public Iterator<LeafSetEntryNode<T>> childIterator() {
+            return children.values().iterator();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return children.isEmpty();
+        }
+
+        @Override
+        public int size() {
+            return children.size();
         }
 
         @Override

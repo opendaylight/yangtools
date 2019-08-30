@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
@@ -52,4 +54,10 @@ public interface NormalizedNodeContainer<I extends PathArgument, K extends PathA
      *         {@link Optional#empty()} if child does not exists.
      */
     Optional<V> getChild(K child);
+
+    @NonNull Iterator<V> childIterator();
+
+    boolean isEmpty();
+
+    int size();
 }
