@@ -603,7 +603,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return;
         }
 
-        getBehaviour(type).addListener(new KeyedValueAddedListener<K>(this, key) {
+        getBehaviour(type).addListener(new KeyedValueAddedListener<>(this, key) {
             @Override
             void onValueAdded(final Object value) {
                 listener.namespaceItemAdded(StatementContextBase.this, type, key, value);
@@ -800,11 +800,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     // FIXME: revise this, as it seems to be wrong
-    private static final Set<YangStmtMapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
+    private static final ImmutableSet<YangStmtMapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
         YangStmtMapping.DESCRIPTION,
         YangStmtMapping.REFERENCE,
         YangStmtMapping.STATUS);
-    private static final Set<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(
+    private static final ImmutableSet<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(
         YangStmtMapping.TYPE,
         YangStmtMapping.TYPEDEF,
         YangStmtMapping.USES);
