@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -45,8 +44,8 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
             .addAny(YangStmtMapping.USES)
             .build();
 
-    private static final Set<StatementDefinition> ILLEGAL_PARENTS = ImmutableSet.of(YangStmtMapping.NOTIFICATION,
-            YangStmtMapping.RPC, YangStmtMapping.ACTION);
+    private static final ImmutableSet<StatementDefinition> ILLEGAL_PARENTS = ImmutableSet.of(
+            YangStmtMapping.NOTIFICATION, YangStmtMapping.RPC, YangStmtMapping.ACTION);
     private static final NotificationStatementRFC7950Support INSTANCE = new NotificationStatementRFC7950Support();
 
     private NotificationStatementRFC7950Support() {

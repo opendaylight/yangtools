@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 @ThreadSafe
 @MetaInfServices
 public final class YangParserFactoryImpl implements YangParserFactory {
-    private static final Collection<StatementParserMode> SUPPORTED_MODES = ImmutableList.of(
+    private static final ImmutableList<StatementParserMode> SUPPORTED_MODES = ImmutableList.of(
         StatementParserMode.DEFAULT_MODE, StatementParserMode.SEMVER_MODE);
 
     private final CrossSourceStatementReactor reactor;
