@@ -20,7 +20,6 @@ import com.google.common.collect.Interners;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
@@ -36,7 +35,7 @@ public final class BindingMapping {
 
     public static final @NonNull String VERSION = "0.6";
 
-    public static final Set<String> JAVA_RESERVED_WORDS = ImmutableSet.of(
+    public static final ImmutableSet<String> JAVA_RESERVED_WORDS = ImmutableSet.of(
         // https://docs.oracle.com/javase/specs/jls/se9/html/jls-3.html#jls-3.9
         "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue",
         "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for", "goto", "if",
