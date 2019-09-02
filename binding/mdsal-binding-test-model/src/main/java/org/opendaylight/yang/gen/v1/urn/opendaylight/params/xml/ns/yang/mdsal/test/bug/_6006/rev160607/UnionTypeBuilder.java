@@ -1,5 +1,7 @@
 package org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.bug._6006.rev160607;
 
+import org.opendaylight.yangtools.yang.common.Uint8;
+
 /**
  * The purpose of generated class in src/main/java for Union types is to create new instances of unions from a string representation.
  * In some cases it is very difficult to automate it since there can be unions such as (uint32 - uint16), or (string - uint32).
@@ -20,7 +22,7 @@ public class UnionTypeBuilder {
         }
 
         try {
-            return new UnionType(Short.valueOf(defaultValue));
+            return new UnionType(Uint8.valueOf(defaultValue));
         } catch (NumberFormatException e) {
             /* do nothing */
         }

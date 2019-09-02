@@ -37,10 +37,14 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
         addGenerator(b, new LongRangeGenerator());
         addGenerator(b, new BigDecimalRangeGenerator());
         addGenerator(b, new BigIntegerRangeGenerator());
+        addGenerator(b, new Uint8RangeGenerator());
+        addGenerator(b, new Uint16RangeGenerator());
+        addGenerator(b, new Uint32RangeGenerator());
+        addGenerator(b, new Uint64RangeGenerator());
         GENERATORS = b.build();
     }
 
-    private final Class<T> type;
+    private final @NonNull Class<T> type;
 
     protected AbstractRangeGenerator(final Class<T> typeClass) {
         this.type = requireNonNull(typeClass);
@@ -120,7 +124,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     protected abstract @NonNull String generateRangeCheckerImplementation(@NonNull String checkerName,
             @NonNull RangeConstraint<?> constraints, Function<Class<?>, String> classImporter);
 
-    private static String rangeCheckerName(final String member) {
+    private static @NonNull String rangeCheckerName(final String member) {
         return "check" + member + "Range";
     }
 
@@ -130,6 +134,10 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     }
 
     String generateRangeCheckerCall(final @NonNull String member, final @NonNull String valueReference) {
-        return rangeCheckerName(member) + '(' + valueReference + ");\n";
+        return rangeCheckerName(member) + '(' + valueReference + primitiveRef() + ");\n";
+    }
+
+    String primitiveRef() {
+        return "";
     }
 }

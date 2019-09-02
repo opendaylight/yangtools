@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -62,11 +63,11 @@ public class InstanceIdentifierTest extends AbstractBindingCodecTest {
             NodeIdentifier.create(OspfStatLsdbBrief.QNAME),
             NodeIdentifierWithPredicates.of(OspfStatLsdbBrief.QNAME, ImmutableMap.of(
                 QName.create(OspfStatLsdbBrief.QNAME, "AreaIndex"), 1,
-                QName.create(OspfStatLsdbBrief.QNAME, "LsaType"), (short) 2,
+                QName.create(OspfStatLsdbBrief.QNAME, "LsaType"), Uint8.valueOf(2),
                 QName.create(OspfStatLsdbBrief.QNAME, "LsId"), 3,
                 QName.create(OspfStatLsdbBrief.QNAME, "AdvRtr"), "foo"))));
         assertTrue(result instanceof KeyedInstanceIdentifier);
         final Identifier<?> key = ((KeyedInstanceIdentifier<?, ?>) result).getKey();
-        assertEquals(new OspfStatLsdbBriefKey("foo", 1, 3, (short)2), key);
+        assertEquals(new OspfStatLsdbBriefKey("foo", 1, 3, Uint8.valueOf(2)), key);
     }
 }

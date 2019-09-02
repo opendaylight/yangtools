@@ -24,7 +24,6 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.WildcardType;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -37,6 +36,10 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.common.Uint16;
+import org.opendaylight.yangtools.yang.common.Uint32;
+import org.opendaylight.yangtools.yang.common.Uint64;
+import org.opendaylight.yangtools.yang.common.Uint8;
 
 /**
  * Test correct code generation.
@@ -402,10 +405,10 @@ public class CompilationTest extends BaseCompilationTest {
         CompilationTestUtils.assertContainsMethod(nodesClass, Long.class, "getId64");
         CompilationTestUtils.assertContainsMethod(nodesClass, Long.class, "getIdLeafref");
         CompilationTestUtils.assertContainsMethod(nodesClass, String.class, "getIdString");
-        CompilationTestUtils.assertContainsMethod(nodesClass, Short.class, "getIdU8");
-        CompilationTestUtils.assertContainsMethod(nodesClass, Integer.class, "getIdU16");
-        CompilationTestUtils.assertContainsMethod(nodesClass, Long.class, "getIdU32");
-        CompilationTestUtils.assertContainsMethod(nodesClass, BigInteger.class, "getIdU64");
+        CompilationTestUtils.assertContainsMethod(nodesClass, Uint8.class, "getIdU8");
+        CompilationTestUtils.assertContainsMethod(nodesClass, Uint16.class, "getIdU16");
+        CompilationTestUtils.assertContainsMethod(nodesClass, Uint32.class, "getIdU32");
+        CompilationTestUtils.assertContainsMethod(nodesClass, Uint64.class, "getIdU64");
         CompilationTestUtils.assertContainsMethod(nodesClass, pkg + ".Nodes$IdUnion", "getIdUnion", loader);
 
         final Object builderObj = builderClass.getDeclaredConstructor().newInstance();

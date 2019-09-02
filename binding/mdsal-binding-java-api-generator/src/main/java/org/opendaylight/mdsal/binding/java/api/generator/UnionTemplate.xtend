@@ -118,8 +118,12 @@ class UnionTemplate extends ClassTemplate {
                 return new «String.importedName»(«field»);
                 «ELSEIF propRet.fullyQualifiedName.startsWith("java.lang") || propRet instanceof Enumeration
                         || propRet.fullyQualifiedName.startsWith("java.math")»
-                    ««« type int*, uint, decimal64 or enumeration*
+                    ««« type int*, decimal64 or enumeration*
                 return «field».toString();
+                «ELSEIF "org.opendaylight.yangtools.yang.common".equals(propRet.packageName)
+                        && propRet.name.startsWith("Uint")»
+                    ««« type uint*
+                return «field».toCanonicalString();
                 «ELSEIF propRet instanceof GeneratedTransferObject && (propRet as GeneratedTransferObject).unionType»
                     ««« union type
                 return «field».stringValue();

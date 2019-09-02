@@ -5,12 +5,12 @@ module test-leaf-caching-codec {
     revision 2019-02-01;
 
     typedef my-type {
-        type uint16 {
-          range "1..4094";
+        type string {
+          length 2..5;
         }
     }
 
-    container cont{
+    container cont {
        leaf caching {
          type my-type;
        }

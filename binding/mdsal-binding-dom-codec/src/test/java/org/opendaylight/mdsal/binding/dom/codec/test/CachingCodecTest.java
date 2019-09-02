@@ -56,12 +56,18 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
     private static final NodeIdentifier LEAF_ARG = new NodeIdentifier(QName.create(Cont.QNAME, "caching"));
     private static final InstanceIdentifier<Cont> CONT_PATH = InstanceIdentifier.create(Cont.class);
 
-    // Note: '400' is assumed to not be interned by the JVM here
-    private static final Cont CONT_DATA = new ContBuilder().setCaching(new MyType(400)).setNonCaching("test").build();
-    private static final Cont CONT2_DATA = new ContBuilder().setCaching(new MyType(400)).setNonCaching("test2").build();
+    private static final Cont CONT_DATA = new ContBuilder().setCaching(new MyType(dataValue())).setNonCaching("test")
+            .build();
+    private static final Cont CONT2_DATA = new ContBuilder().setCaching(new MyType(dataValue())).setNonCaching("test2")
+            .build();
 
     private BindingDataObjectCodecTreeNode<Top> topNode;
     private BindingDataObjectCodecTreeNode<Cont> contNode;
+
+    private static String dataValue() {
+        // We are battling interning here
+        return new StringBuilder("foo").toString();
+    }
 
     @Override
     @Before

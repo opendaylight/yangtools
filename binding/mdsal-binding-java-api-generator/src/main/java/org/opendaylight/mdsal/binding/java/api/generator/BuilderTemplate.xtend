@@ -12,6 +12,8 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTA
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 
 import com.google.common.collect.ImmutableList
+import com.google.common.collect.ImmutableMap
+import java.math.BigInteger
 import java.util.ArrayList
 import java.util.Collection
 import java.util.HashMap
@@ -33,6 +35,10 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder
 import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.binding.DataObject
+import org.opendaylight.yangtools.yang.common.Uint8
+import org.opendaylight.yangtools.yang.common.Uint16
+import org.opendaylight.yangtools.yang.common.Uint64
+import org.opendaylight.yangtools.yang.common.Uint32
 
 /**
  * Template for generating JAVA builder classes.
@@ -42,6 +48,13 @@ class BuilderTemplate extends AbstractBuilderTemplate {
      * Constant used as suffix for builder name.
      */
     public static val BUILDER = "Builder";
+
+    static val UINT_TYPES = ImmutableMap.of(
+        Types.typeForClass(Uint8), Types.typeForClass(Short),
+        Types.typeForClass(Uint16), Types.typeForClass(Integer),
+        Types.typeForClass(Uint32), Types.typeForClass(Long),
+        Types.typeForClass(Uint64), Types.typeForClass(BigInteger)
+    );
 
     /**
      * Constructs new instance of this class.
@@ -284,7 +297,8 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             «generateCheckers(field, restrictions, actualType)»
         «ENDIF»
 
-        public «type.getName» set«field.getName.toFirstUpper»(final «field.returnType.importedName» value) {
+        «val setterName = "set" + field.getName.toFirstUpper»
+        public «type.getName» «setterName»(final «field.returnType.importedName» value) {
         «IF restrictions !== null»
             if (value != null) {
                 «checkArgument(field, restrictions, actualType, "value")»
@@ -293,6 +307,19 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             this.«field.fieldName.toString» = value;
             return this;
         }
+        «val uintType = UINT_TYPES.get(field.returnType)»
+        «IF uintType !== null»
+
+        /**
+         * Utility migration setter.
+         *
+         * @deprecated Use {#link «setterName»(«field.returnType.importedName»)} instead.
+         */
+        @Deprecated(forRemoval = true)
+        public «type.getName» «setterName»(final «uintType.importedName» value) {
+            return «setterName»(«CodeHelpers.importedName».compatUint(value));
+        }
+        «ENDIF»
     '''
 
     private def Type getActualType(ParameterizedType ptype) {

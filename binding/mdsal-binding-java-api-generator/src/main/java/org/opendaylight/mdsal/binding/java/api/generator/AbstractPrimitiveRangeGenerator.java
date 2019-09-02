@@ -52,7 +52,8 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
         return minValue.compareTo(minToEnforce) < 0;
     }
 
-    private Collection<String> createExpressions(final RangeConstraint<?> constraint) {
+    private Collection<String> createExpressions(final RangeConstraint<?> constraint,
+            final Function<Class<?>, String> classImporter) {
         final Set<? extends Range<? extends Number>> constraints = constraint.getAllowedRanges().asRanges();
         final Collection<String> ret = new ArrayList<>(constraints.size());
 
@@ -70,19 +71,31 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
 
             final StringBuilder sb = new StringBuilder();
             if (needMin) {
-                sb.append("value >= ").append(format(min));
+                appendMinCheck(sb, min, classImporter);
             }
             if (needMax) {
                 if (needMin) {
                     sb.append(" && ");
                 }
-                sb.append("value <= ").append(format(max));
+                appendMaxCheck(sb, max, classImporter);
             }
 
             ret.add(sb.toString());
         }
 
         return ret;
+    }
+
+    void appendMaxCheck(final StringBuilder sb, final T max, final Function<Class<?>, String> classImporter) {
+        sb.append("value <= ").append(format(max));
+    }
+
+    void appendMinCheck(final StringBuilder sb, final T min, final Function<Class<?>, String> classImporter) {
+        sb.append("value >= ").append(format(min));
+    }
+
+    String codeHelpersThrow() {
+        return "throwInvalidRange";
     }
 
     private String createRangeString(final RangeConstraint<?> constraint) {
@@ -100,7 +113,7 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
     protected final String generateRangeCheckerImplementation(final String checkerName,
             final RangeConstraint<?> constraints, final Function<Class<?>, String> classImporter) {
         final StringBuilder sb = new StringBuilder();
-        final Collection<String> expressions = createExpressions(constraints);
+        final Collection<String> expressions = createExpressions(constraints, classImporter);
 
         sb.append("private static void ").append(checkerName).append("(final ").append(primitiveName)
             .append(" value) {\n");
@@ -112,8 +125,8 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
                 sb.append("    }\n");
             }
 
-            sb.append("    ").append(classImporter.apply(CodeHelpers.class)).append(".throwInvalidRange(\"")
-            .append(createRangeString(constraints)).append("\", value);\n");
+            sb.append("    ").append(classImporter.apply(CodeHelpers.class)).append('.').append(codeHelpersThrow())
+            .append("(\"").append(createRangeString(constraints)).append("\", value);\n");
         }
 
         return sb.append("}\n").toString();

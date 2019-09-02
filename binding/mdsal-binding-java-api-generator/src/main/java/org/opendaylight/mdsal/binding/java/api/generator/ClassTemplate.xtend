@@ -35,6 +35,10 @@ import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
 import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.common.Empty
+import org.opendaylight.yangtools.yang.common.Uint16
+import org.opendaylight.yangtools.yang.common.Uint32
+import org.opendaylight.yangtools.yang.common.Uint64
+import org.opendaylight.yangtools.yang.common.Uint8
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 
 /**
@@ -356,6 +360,14 @@ class ClassTemplate extends BaseTemplate {
                     return new «genTO.name»(«Integer.importedName».valueOf(defaultValue));
                 «ELSEIF "java.lang.Long".equals(prop.returnType.fullyQualifiedName)»
                     return new «genTO.name»(«Long.importedName».valueOf(defaultValue));
+                «ELSEIF "org.opendaylight.yangtools.yang.common.Uint8".equals(prop.returnType.fullyQualifiedName)»
+                    return new «genTO.name»(«Uint8.importedName».valueOf(defaultValue));
+                «ELSEIF "org.opendaylight.yangtools.yang.common.Uint16".equals(prop.returnType.fullyQualifiedName)»
+                    return new «genTO.name»(«Uint16.importedName».valueOf(defaultValue));
+                «ELSEIF "org.opendaylight.yangtools.yang.common.Uint32".equals(prop.returnType.fullyQualifiedName)»
+                    return new «genTO.name»(«Uint32.importedName».valueOf(defaultValue));
+                «ELSEIF "org.opendaylight.yangtools.yang.common.Uint64".equals(prop.returnType.fullyQualifiedName)»
+                    return new «genTO.name»(«Uint64.importedName».valueOf(defaultValue));
                 «ELSE»
                     return new «genTO.name»(new «prop.returnType.importedName»(defaultValue));
                 «ENDIF»

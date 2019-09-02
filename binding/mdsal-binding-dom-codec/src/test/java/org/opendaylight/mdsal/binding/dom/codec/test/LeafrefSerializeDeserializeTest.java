@@ -20,6 +20,7 @@ import org.opendaylight.yang.gen.v1.bug8449.rev170516.ContInt32.RefUnionInt32;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.ContInt32Builder;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -52,7 +53,7 @@ public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
         assertNotNull(fromYangInstanceIdentifier);
 
         final InstanceIdentifier<ContInt32> BA_II_CONT = InstanceIdentifier.builder(ContInt32.class).build();
-        final RefUnionInt32 refVal = new RefUnionInt32(5L);
+        final RefUnionInt32 refVal = new RefUnionInt32(Uint32.valueOf(5));
         final ContInt32 data = new ContInt32Builder().setRefUnionInt32(refVal).build();
         final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> normalizedNode =
                 this.registry.toNormalizedNode(BA_II_CONT, data);

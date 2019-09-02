@@ -21,6 +21,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Uint8;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -56,7 +57,7 @@ public class UnionTypeWithIdentityrefTest extends AbstractBindingCodecTest {
     public void bug6112Test() {
         DataObject unionNodeObj = createValueNode("1");
         UnionType unionTypeObj = ((UnionNode) unionNodeObj).getValue();
-        assertEquals(Short.valueOf((short)1), unionTypeObj.getUint8());
+        assertEquals(Uint8.valueOf(1), unionTypeObj.getUint8());
         assertEquals(null, unionTypeObj.getIdentityref());
     }
 }
