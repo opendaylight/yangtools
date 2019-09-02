@@ -36,17 +36,26 @@ public final class BindingMapping {
 
     public static final @NonNull String VERSION = "0.6";
 
+    // Note: these are not just JLS keywords, but rather character sequences which are reserved in codegen contexts
     public static final ImmutableSet<String> JAVA_RESERVED_WORDS = ImmutableSet.of(
-        // https://docs.oracle.com/javase/specs/jls/se9/html/jls-3.html#jls-3.9
+        // https://docs.oracle.com/javase/specs/jls/se9/html/jls-3.html#jls-3.9 except module-info.java constructs
         "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue",
         "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for", "goto", "if",
         "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package", "private",
         "protected", "public", "return", "short", "static", "strictfp", "super", "switch", "synchronized", "this",
         "throw", "throws", "transient", "try", "void", "volatile", "while", "_",
+        // "open", "module", "requires", "transitive", "exports, "opens", "to", "uses", "provides", "with",
+
         // https://docs.oracle.com/javase/specs/jls/se9/html/jls-3.html#jls-3.10.3
         "false", "true",
         // https://docs.oracle.com/javase/specs/jls/se9/html/jls-3.html#jls-3.10.7
-        "null");
+        "null",
+        // https://docs.oracle.com/javase/specs/jls/se10/html/jls-3.html#jls-3.9
+        "var",
+        // https://docs.oracle.com/javase/specs/jls/se14/html/jls-3.html#jls-3.9
+        "yield",
+        // https://docs.oracle.com/javase/specs/jls/se16/html/jls-3.html#jls-3.9
+        "record");
 
     public static final @NonNull String DATA_ROOT_SUFFIX = "Data";
     public static final @NonNull String RPC_SERVICE_SUFFIX = "Service";
@@ -361,7 +370,9 @@ public final class BindingMapping {
         return javaToYang.inverse();
     }
 
-    // See https://docs.oracle.com/javase/specs/jls/se9/html/jls-3.html#jls-3.8
+    // See https://docs.oracle.com/javase/specs/jls/se16/html/jls-3.html#jls-3.8
+    // TODO: we are being conservative here, but should differentiate TypeIdentifier and UnqualifiedMethodIdentifier,
+    //       which have different exclusions
     private static boolean isValidJavaIdentifier(final String str) {
         return !str.isEmpty() && !JAVA_RESERVED_WORDS.contains(str)
                 && Character.isJavaIdentifierStart(str.codePointAt(0))
