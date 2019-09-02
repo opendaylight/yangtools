@@ -12,7 +12,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.collect.ImmutableSet;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
 
@@ -22,7 +21,7 @@ public final class Immutables {
         throw new UnsupportedOperationException("Helper class");
     }
 
-    public static final Set<Class<?>> KNOWN_IMMUTABLES = ImmutableSet.of(
+    private static final ImmutableSet<Class<?>> KNOWN_IMMUTABLES = ImmutableSet.of(
             Integer.class, Short.class, BigDecimal.class, BigInteger.class, Byte.class, Character.class, Double.class,
             Float.class, String.class, Boolean.class, Void.class);
 
