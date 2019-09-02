@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -28,8 +27,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public final class ActionStatementSupport
         extends AbstractQNameStatementSupport<ActionStatement, EffectiveStatement<QName, ActionStatement>> {
-    private static final Set<StatementDefinition> ILLEGAL_PARENTS = ImmutableSet.of(YangStmtMapping.NOTIFICATION,
-            YangStmtMapping.RPC, YangStmtMapping.ACTION);
+    private static final ImmutableSet<StatementDefinition> ILLEGAL_PARENTS = ImmutableSet.of(
+            YangStmtMapping.NOTIFICATION, YangStmtMapping.RPC, YangStmtMapping.ACTION);
 
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.ACTION)

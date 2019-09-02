@@ -9,7 +9,6 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -22,7 +21,7 @@ import org.slf4j.LoggerFactory;
 public final class RegexUtils {
     private static final Logger LOG = LoggerFactory.getLogger(RegexUtils.class);
     private static final Pattern BETWEEN_CURLY_BRACES_PATTERN = Pattern.compile("\\{(.+?)\\}");
-    private static final Set<String> JAVA_UNICODE_BLOCKS = ImmutableSet.<String>builder()
+    private static final ImmutableSet<String> JAVA_UNICODE_BLOCKS = ImmutableSet.<String>builder()
             .add("AegeanNumbers")
             .add("AlchemicalSymbols")
             .add("AlphabeticPresentationForms")
