@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -42,7 +41,7 @@ public final class BaseTypes {
     public static final QName UINT64_QNAME = constructQName("uint64");
     public static final QName UNION_QNAME = constructQName("union");
 
-    private static final Set<QName> BUILT_IN_TYPES = ImmutableSet.<QName>builder()
+    private static final ImmutableSet<QName> BUILT_IN_TYPES = ImmutableSet.<QName>builder()
             .add(BINARY_QNAME)
             .add(BITS_QNAME)
             .add(BOOLEAN_QNAME)

@@ -86,11 +86,11 @@ abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<
     private static final ImmutableMap<String, DeviateKind> KEYWORD_TO_DEVIATE_MAP =
             Maps.uniqueIndex(Arrays.asList(DeviateKind.values()), DeviateKind::getKeyword);
 
-    private static final Set<YangStmtMapping> SINGLETON_STATEMENTS = ImmutableSet.of(
+    private static final ImmutableSet<YangStmtMapping> SINGLETON_STATEMENTS = ImmutableSet.of(
             YangStmtMapping.UNITS, YangStmtMapping.CONFIG, YangStmtMapping.MANDATORY,
             YangStmtMapping.MIN_ELEMENTS, YangStmtMapping.MAX_ELEMENTS);
 
-    private static final Set<YangStmtMapping> IMPLICIT_STATEMENTS = ImmutableSet.of(YangStmtMapping.CONFIG,
+    private static final ImmutableSet<YangStmtMapping> IMPLICIT_STATEMENTS = ImmutableSet.of(YangStmtMapping.CONFIG,
             YangStmtMapping.MANDATORY, YangStmtMapping.MAX_ELEMENTS, YangStmtMapping.MIN_ELEMENTS);
 
     AbstractDeviateStatementSupport() {
