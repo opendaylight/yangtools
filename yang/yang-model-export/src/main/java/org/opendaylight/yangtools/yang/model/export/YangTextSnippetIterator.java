@@ -50,7 +50,7 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
     private static final CharMatcher NEED_QUOTE_MATCHER = CharMatcher.anyOf(" \t\r'\";{}");
     private static final CharMatcher DQUOT_MATCHER = CharMatcher.is('"');
     private static final Splitter NEWLINE_SPLITTER = Splitter.on('\n');
-    private static final Collection<StatementDefinition> QUOTE_MULTILINE_STATEMENTS = ImmutableSet.of(
+    private static final ImmutableSet<StatementDefinition> QUOTE_MULTILINE_STATEMENTS = ImmutableSet.of(
         YangStmtMapping.CONTACT,
         YangStmtMapping.DESCRIPTION,
         YangStmtMapping.ERROR_MESSAGE,
@@ -64,7 +64,7 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
      *            are commonly used with the default value, which would make the module
      *            difficult to read if used everywhere they are allowed.
      */
-    private static final Map<StatementDefinition, String> DEFAULT_STATEMENTS =
+    private static final ImmutableMap<StatementDefinition, String> DEFAULT_STATEMENTS =
             ImmutableMap.<StatementDefinition, String>builder()
             .put(YangStmtMapping.CONFIG, "true")
             .put(YangStmtMapping.MANDATORY, "true")
