@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
-import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -92,7 +91,7 @@ abstract class AbstractTypeStatementSupport
     static final String UINT64 = "uint64";
     static final String UNION = "union";
 
-    private static final Map<String, String> BUILT_IN_TYPES = ImmutableMap.<String, String>builder()
+    private static final ImmutableMap<String, String> BUILT_IN_TYPES = ImmutableMap.<String, String>builder()
         .put(BINARY, BINARY)
         .put(BITS, BITS)
         .put(BOOLEAN, BOOLEAN)
@@ -114,7 +113,7 @@ abstract class AbstractTypeStatementSupport
         .put(UNION, UNION)
         .build();
 
-    private static final Map<String, StatementSupport<?, ?, ?>> ARGUMENT_SPECIFIC_SUPPORTS =
+    private static final ImmutableMap<String, StatementSupport<?, ?, ?>> ARGUMENT_SPECIFIC_SUPPORTS =
             ImmutableMap.<String, StatementSupport<?, ?, ?>>builder()
             .put(BITS, new BitsSpecificationSupport())
             .put(DECIMAL64, new Decimal64SpecificationSupport())

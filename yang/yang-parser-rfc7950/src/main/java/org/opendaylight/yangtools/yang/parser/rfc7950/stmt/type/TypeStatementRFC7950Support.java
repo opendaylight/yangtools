@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
-import java.util.Map;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 
 /**
@@ -17,7 +16,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
  */
 @Beta
 public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupport {
-    private static final Map<String, StatementSupport<?, ?, ?>> ARGUMENT_SPECIFIC_SUPPORTS = ImmutableMap.of(
+    private static final ImmutableMap<String, StatementSupport<?, ?, ?>> ARGUMENT_SPECIFIC_SUPPORTS = ImmutableMap.of(
         LEAF_REF, new LeafrefSpecificationRFC7950Support(),
         IDENTITY_REF, new IdentityrefSpecificationRFC7950Support());
     private static final TypeStatementRFC7950Support INSTANCE = new TypeStatementRFC7950Support();
