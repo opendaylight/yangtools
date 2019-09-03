@@ -76,7 +76,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
      * @return string with JAVA source code
      */
     override body() '''
-        «wrapToDocumentation(formatDataForJavaDoc(type))»
+        «wrapToDocumentation(formatDataForJavaDoc(targetType))»
         public class «type.name» implements «Builder.importedName»<«targetType.importedName»> {
 
             «generateFields(false)»
