@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.common;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -47,7 +48,8 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
     private static final long serialVersionUID = 1L;
     private static final Uint8[] CACHE = new Uint8[MAX_VALUE_SHORT + 1];
 
-    public static final Uint8 MIN_VALUE = valueOf(MIN_VALUE_SHORT);
+    public static final Uint8 ZERO = valueOf(0);
+    public static final Uint8 ONE = valueOf(1);
     public static final Uint8 MAX_VALUE = valueOf(MAX_VALUE_SHORT);
 
     private final byte value;
@@ -78,53 +80,143 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
         return ret;
     }
 
+    /**
+     * Returns an {@code Uint8} corresponding to a given bit representation. The argument is interpreted as an
+     * unsigned 8-bit value.
+     *
+     * @param bits unsigned bit representation
+     * @return A Uint8 instance
+     */
     public static Uint8 fromByteBits(final byte bits) {
         return instanceFor(bits);
     }
 
+    /**
+     * Returns an {@code Uint8} corresponding to a given {@code byteVal}. The inverse operation is {@link #byteValue()}.
+     *
+     * @param byteVal byte value
+     * @return A Uint8 instance
+     * @throws IllegalArgumentException if byteVal is less than zero
+     */
     public static Uint8 valueOf(final byte byteVal) {
         checkArgument(byteVal >= MIN_VALUE_SHORT, "Negative values are not allowed");
         return instanceFor(byteVal);
     }
 
+    /**
+     * Returns an {@code Uint8} corresponding to a given {@code shortVal}. The inverse operation is
+     * {@link #shortValue()}.
+     *
+     * @param shortVal short value
+     * @return A Uint8 instance
+     * @throws IllegalArgumentException if shortVal is less than zero or greater than 255.
+     */
     public static Uint8 valueOf(final short shortVal) {
         checkArgument(shortVal >= MIN_VALUE_SHORT && shortVal <= MAX_VALUE_SHORT,
                 "Value %s is outside of allowed range", shortVal);
         return instanceFor((byte)(shortVal & 0xff));
     }
 
+    /**
+     * Returns an {@code Uint8} corresponding to a given {@code intVal}. The inverse operation is {@link #intValue()}.
+     *
+     * @param intVal int value
+     * @return A Uint8 instance
+     * @throws IllegalArgumentException if intVal is less than zero or greater than 255.
+     */
     public static Uint8 valueOf(final int intVal) {
         checkArgument(intVal >= MIN_VALUE_SHORT && intVal <= MAX_VALUE_SHORT,
                 "Value %s is outside of allowed range", intVal);
         return instanceFor((byte)(intVal & 0xff));
     }
 
+    /**
+     * Returns an {@code Uint8} corresponding to a given {@code longVal}. The inverse operation is
+     * {@link #longValue()}.
+     *
+     * @param longVal long value
+     * @return A Uint8 instance
+     * @throws IllegalArgumentException if intVal is less than zero or greater than 255.
+     */
     public static Uint8 valueOf(final long longVal) {
         checkArgument(longVal >= MIN_VALUE_SHORT && longVal <= MAX_VALUE_SHORT,
                 "Value %s is outside of allowed range", longVal);
         return instanceFor((byte)(longVal & 0xff));
     }
 
+    /**
+     * Returns an {@code Uint8} corresponding to a given {@code uint}.
+     *
+     * @param uint Uint16 value
+     * @return A Uint8 instance
+     * @throws NullPointerException if uint is null
+     * @throws IllegalArgumentException if uint is greater than 255.
+     */
     public static Uint8 valueOf(final Uint16 uint) {
         return valueOf(uint.intValue());
     }
 
+    /**
+     * Returns an {@code Uint8} corresponding to a given {@code uint}.
+     *
+     * @param uint Uint32 value
+     * @return A Uint8 instance
+     * @throws NullPointerException if uint is null
+     * @throws IllegalArgumentException if uint is greater than 255.
+     */
     public static Uint8 valueOf(final Uint32 uint) {
         return valueOf(uint.longValue());
     }
 
+    /**
+     * Returns an {@code Uint8} corresponding to a given {@code uint}.
+     *
+     * @param uint Uint64 value
+     * @return A Uint8 instance
+     * @throws NullPointerException if uint is null
+     * @throws IllegalArgumentException if uint is greater than 255.
+     */
     public static Uint8 valueOf(final Uint64 uint) {
         return valueOf(uint.longValue());
     }
 
+    /**
+     * Returns an {@code Uint8} holding the value of the specified {@code String}, parsed as an unsigned {@code short}
+     * value.
+     *
+     * @param string String to parse
+     * @return A Uint8 instance
+     * @throws NullPointerException if string is null
+     * @throws IllegalArgumentException if the parsed value is less than zero or greater than 255
+     * @throws NumberFormatException if the string does not contain a parsable unsigned {@code short} value.
+     */
     public static Uint8 valueOf(final String string) {
         return valueOf(string, 10);
     }
 
+    /**
+     * Returns an {@code Uint8} holding the value of the specified {@code String}, parsed as an unsigned {@code short}
+     * value.
+     *
+     * @param string String to parse
+     * @param radix Radix to use
+     * @return A Uint8 instance
+     * @throws NullPointerException if string is null
+     * @throws IllegalArgumentException if the parsed value is less than zero or greater than 255
+     * @throws NumberFormatException if the string does not contain a parsable unsigned {@code short} value, or if the
+     *                               {@code radix} is outside of allowed range.
+     */
     public static Uint8 valueOf(final String string, final int radix) {
-        return valueOf(Short.parseShort(string, radix));
+        return valueOf(Short.parseShort(requireNonNull(string), radix));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * The inverse operation is {@link #fromByteBits(byte)}. In case this value is greater than {@link Byte#MAX_VALUE},
+     * the returned value will be equal to {@code this - 2^8}.
+     */
     @Override
     public final byte byteValue() {
         return value;

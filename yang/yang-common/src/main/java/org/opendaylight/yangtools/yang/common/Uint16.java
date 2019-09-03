@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.common;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
@@ -61,7 +62,8 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
         new Uint16((short)65535),
     };
 
-    public static final Uint16 MIN_VALUE = valueOf(MIN_VALUE_INT);
+    public static final Uint16 ZERO = valueOf(0);
+    public static final Uint16 ONE = valueOf(1);
     public static final Uint16 MAX_VALUE = valueOf(MAX_VALUE_INT);
 
     /**
@@ -125,52 +127,142 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
         return ret;
     }
 
+    /**
+     * Returns an {@code Uint16} corresponding to a given bit representation. The argument is interpreted as an
+     * unsigned 16-bit value.
+     *
+     * @param bits unsigned bit representation
+     * @return A Uint16 instance
+     */
     public static Uint16 fromShortBits(final short bits) {
         return instanceFor(bits);
     }
 
+    /**
+     * Returns an {@code Uint16} corresponding to a given {@code byteVal}. The inverse operation is
+     * {@link #byteValue()}.
+     *
+     * @param byteVal byte value
+     * @return A Uint16 instance
+     * @throws IllegalArgumentException if byteVal is less than zero
+     */
     public static Uint16 valueOf(final byte byteVal) {
         checkArgument(byteVal >= MIN_VALUE_INT, "Negative values are not allowed");
         return instanceFor(byteVal);
     }
 
+    /**
+     * Returns an {@code Uint16} corresponding to a given {@code shortVal}. The inverse operation is
+     * {@link #shortValue()}.
+     *
+     * @param shortVal short value
+     * @return A Uint16 instance
+     * @throws IllegalArgumentException if shortVal is less than zero.
+     */
     public static Uint16 valueOf(final short shortVal) {
         checkArgument(shortVal >= MIN_VALUE_INT, "Negative values are not allowed");
         return instanceFor(shortVal);
     }
 
+    /**
+     * Returns an {@code Uint16} corresponding to a given {@code intVal}. The inverse operation is {@link #intValue()}.
+     *
+     * @param intVal int value
+     * @return A Uint16 instance
+     * @throws IllegalArgumentException if intVal is less than zero or greater than 65535.
+     */
     public static Uint16 valueOf(final int intVal) {
         checkArgument(intVal >= MIN_VALUE_INT && intVal <= MAX_VALUE_INT, "Value %s is outside of allowed range",
                 intVal);
         return instanceFor((short)(intVal & 0xffff));
     }
 
+    /**
+     * Returns an {@code Uint16} corresponding to a given {@code longVal}. The inverse operation is
+     * {@link #longValue()}.
+     *
+     * @param longVal long value
+     * @return A Uint16 instance
+     * @throws IllegalArgumentException if intVal is less than zero or greater than 65535.
+     */
     public static Uint16 valueOf(final long longVal) {
         checkArgument(longVal >= MIN_VALUE_INT && longVal <= MAX_VALUE_INT, "Value %s is outside of allowed range",
                 longVal);
         return instanceFor((short)(longVal & 0xffff));
     }
 
+    /**
+     * Returns an {@code Uint16} corresponding to a given {@code uint}.
+     *
+     * @param uint Uint8 value
+     * @return A Uint16 instance
+     * @throws NullPointerException if uint is null
+     */
     public static Uint16 valueOf(final Uint8 uint) {
         return instanceFor(uint.shortValue());
     }
 
+    /**
+     * Returns an {@code Uint8} corresponding to a given {@code uint}.
+     *
+     * @param uint Uint32 value
+     * @return A Uint16 instance
+     * @throws NullPointerException if uint is null
+     * @throws IllegalArgumentException if uint is greater than 65535.
+     */
     public static Uint16 valueOf(final Uint32 uint) {
         return valueOf(uint.longValue());
     }
 
+    /**
+     * Returns an {@code Uint8} corresponding to a given {@code uint}.
+     *
+     * @param uint Uint64 value
+     * @return A Uint16 instance
+     * @throws NullPointerException if uint is null
+     * @throws IllegalArgumentException if uint is greater than 65535.
+     */
     public static Uint16 valueOf(final Uint64 uint) {
         return valueOf(uint.longValue());
     }
 
+    /**
+     * Returns an {@code Uint16} holding the value of the specified {@code String}, parsed as an unsigned {@code int}
+     * value.
+     *
+     * @param string String to parse
+     * @return A Uint16 instance
+     * @throws NullPointerException if string is null
+     * @throws IllegalArgumentException if the parsed value is less than zero or greater than 65535
+     * @throws NumberFormatException if the string does not contain a parsable unsigned {@code int} value.
+     */
     public static Uint16 valueOf(final String string) {
         return valueOf(string, 10);
     }
 
+    /**
+     * Returns an {@code Uint16} holding the value of the specified {@code String}, parsed as an unsigned {@code int}
+     * value.
+     *
+     * @param string String to parse
+     * @param radix Radix to use
+     * @return A Uint16 instance
+     * @throws NullPointerException if string is null
+     * @throws IllegalArgumentException if the parsed value is less than zero or greater than 65535
+     * @throws NumberFormatException if the string does not contain a parsable unsigned {@code int} value, or if the
+     *                               {@code radix} is outside of allowed range.
+     */
     public static Uint16 valueOf(final String string, final int radix) {
-        return valueOf(Integer.parseInt(string, radix));
+        return valueOf(Integer.parseInt(requireNonNull(string), radix));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * The inverse operation is {@link #fromShortBits(short)}. In case this value is greater than
+     * {@link Short#MAX_VALUE}, the returned value will be equal to {@code this - 2^16}.
+     */
     @Override
     public final short shortValue() {
         return value;
