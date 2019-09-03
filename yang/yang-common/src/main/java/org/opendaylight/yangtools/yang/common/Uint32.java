@@ -64,7 +64,8 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
         new Uint32(-1)
     };
 
-    public static final Uint32 MIN_VALUE = valueOf(MIN_VALUE_LONG);
+    public static final Uint32 ZERO = valueOf(0);
+    public static final Uint32 ONE = valueOf(1);
     public static final Uint32 MAX_VALUE = valueOf(MAX_VALUE_LONG);
 
     /**
@@ -128,55 +129,150 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
         return ret;
     }
 
+    /**
+     * Returns an {@code Uint32} corresponding to a given bit representation. The argument is interpreted as an
+     * unsigned 32-bit value.
+     *
+     * @param bits unsigned bit representation
+     * @return A Uint32 instance
+     */
     public static Uint32 fromIntBits(final int bits) {
         return instanceFor(bits);
     }
 
-    public static Uint32 fromUnsignedInteger(final UnsignedInteger uint) {
-        return instanceFor(uint.intValue());
-    }
-
+    /**
+     * Returns an {@code Uint32} corresponding to a given {@code byteVal}. The inverse operation is {@link #byteValue()}.
+     *
+     * @param byteVal byte value
+     * @return A Uint32 instance
+     * @throws IllegalArgumentException if byteVal is less than zero
+     */
     public static Uint32 valueOf(final byte byteVal) {
         checkArgument(byteVal >= MIN_VALUE_LONG, "Negative values are not allowed");
         return instanceFor(byteVal);
     }
 
+    /**
+     * Returns an {@code Uint32} corresponding to a given {@code shortVal}. The inverse operation is
+     * {@link #shortValue()}.
+     *
+     * @param shortVal short value
+     * @return A Uint32 instance
+     * @throws IllegalArgumentException if shortVal is less than zero
+     */
     public static Uint32 valueOf(final short shortVal) {
         checkArgument(shortVal >= MIN_VALUE_LONG, "Negative values are not allowed");
         return instanceFor(shortVal);
     }
 
+    /**
+     * Returns an {@code Uint32} corresponding to a given {@code intVal}. The inverse operation is {@link #intValue()}.
+     *
+     * @param intVal int value
+     * @return A Uint32 instance
+     * @throws IllegalArgumentException if intVal is less than zero
+     */
     public static Uint32 valueOf(final int intVal) {
-        checkArgument(intVal >= MIN_VALUE_LONG, "Value %s is outside of allowed range", intVal);
+        checkArgument(intVal >= MIN_VALUE_LONG, "Negative values are not allowed");
         return instanceFor(intVal);
     }
 
+    /**
+     * Returns an {@code Uint32} corresponding to a given {@code longVal}. The inverse operation is
+     * {@link #longValue()}.
+     *
+     * @param longVal long value
+     * @return A Uint8 instance
+     * @throws IllegalArgumentException if intVal is less than zero or greater than 4294967295
+     */
     public static Uint32 valueOf(final long longVal) {
         checkArgument(longVal >= MIN_VALUE_LONG && longVal <= MAX_VALUE_LONG, "Value %s is outside of allowed range",
                 longVal);
         return instanceFor((int)longVal);
     }
 
+    /**
+     * Returns an {@code Uint32} corresponding to a given {@code uint}.
+     *
+     * @param uint Uint8 value
+     * @return A Uint32 instance
+     * @throws NullPointerException if uint is null
+     */
     public static Uint32 valueOf(final Uint8 uint) {
         return instanceFor(uint.shortValue());
     }
 
+    /**
+     * Returns an {@code Uint32} corresponding to a given {@code uint}.
+     *
+     * @param uint Uint16 value
+     * @return A Uint32 instance
+     * @throws NullPointerException if uint is null
+     */
     public static Uint32 valueOf(final Uint16 uint) {
         return instanceFor(uint.intValue());
     }
 
+    /**
+     * Returns an {@code Uint32} corresponding to a given {@code uint}.
+     *
+     * @param uint Uint64 value
+     * @return A Uint32 instance
+     * @throws NullPointerException if uint is null
+     * @throws IllegalArgumentException if uint is greater than 4294967295
+     */
     public static Uint32 valueOf(final Uint64 uint) {
         return valueOf(uint.longValue());
     }
 
+    /**
+     * Returns an {@code Uint32} corresponding to a given {@code uint}.
+     *
+     * @param uint UnsignedInteger value
+     * @return A Uint32 instance
+     * @throws NullPointerException if uint is null
+     */
+    public static Uint32 valueOf(final UnsignedInteger uint) {
+        return instanceFor(uint.intValue());
+    }
+
+    /**
+     * Returns an {@code Uint32} holding the value of the specified {@code String}, parsed as an unsigned {@code long}
+     * value.
+     *
+     * @param string String to parse
+     * @return A Uint32 instance
+     * @throws NullPointerException if string is null
+     * @throws IllegalArgumentException if the parsed value is less than zero or greater than 4294967295
+     * @throws NumberFormatException if the string does not contain a parsable unsigned {@code long} value.
+     */
     public static Uint32 valueOf(final String string) {
         return valueOf(string, 10);
     }
 
+    /**
+     * Returns an {@code Uint32} holding the value of the specified {@code String}, parsed as an unsigned {@code long}
+     * value.
+     *
+     * @param string String to parse
+     * @param radix Radix to use
+     * @return A Uint32 instance
+     * @throws NullPointerException if string is null
+     * @throws IllegalArgumentException if the parsed value is less than zero or greater than 4294967295
+     * @throws NumberFormatException if the string does not contain a parsable unsigned {@code long} value, or if the
+     *                               {@code radix} is outside of allowed range.
+     */
     public static Uint32 valueOf(final String string, final int radix) {
         return instanceFor(Integer.parseUnsignedInt(string, radix));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * The inverse operation is {@link #fromIntBits(int)}. In case this value is greater than {@link Integer#MAX_VALUE},
+     * the returned value will be equal to {@code this - 2^32}.
+     */
     @Override
     public final int intValue() {
         return value;
@@ -197,6 +293,11 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
         return longValue();
     }
 
+    /**
+     * Convert this value to an {@link UnsignedInteger}.
+     *
+     * @return An UnsignedInteger instance
+     */
     public final UnsignedInteger toUnsignedInteger() {
         return UnsignedInteger.fromIntBits(value);
     }

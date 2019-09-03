@@ -66,7 +66,8 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
         new Uint64(-1L)
     };
 
-    public static final Uint64 MIN_VALUE = valueOf(MIN_VALUE_LONG);
+    public static final Uint64 ZERO = valueOf(0);
+    public static final Uint64 ONE = valueOf(1);
     public static final Uint64 MAX_VALUE = fromLongBits(-1);
 
     /**
@@ -130,59 +131,154 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
         return ret;
     }
 
+    /**
+     * Returns an {@code Uint64} corresponding to a given bit representation. The argument is interpreted as an
+     * unsigned 64-bit value.
+     *
+     * @param bits unsigned bit representation
+     * @return A Uint64 instance
+     */
     public static Uint64 fromLongBits(final long bits) {
         return instanceFor(bits);
     }
 
-    public static Uint64 fromUnsignedLong(final UnsignedLong ulong) {
-        return instanceFor(ulong.longValue());
-    }
-
+    /**
+     * Returns an {@code Uint64} corresponding to a given {@code byteVal}. The inverse operation is
+     * {@link #byteValue()}.
+     *
+     * @param byteVal byte value
+     * @return A Uint64 instance
+     * @throws IllegalArgumentException if byteVal is less than zero
+     */
     public static Uint64 valueOf(final byte byteVal) {
         checkArgument(byteVal >= MIN_VALUE_LONG, "Negative values are not allowed");
         return instanceFor(byteVal);
     }
 
+    /**
+     * Returns an {@code Uint64} corresponding to a given {@code shortVal}. The inverse operation is
+     * {@link #shortValue()}.
+     *
+     * @param shortVal short value
+     * @return A Uint64 instance
+     * @throws IllegalArgumentException if shortVal is less than zero
+     */
     public static Uint64 valueOf(final short shortVal) {
         checkArgument(shortVal >= MIN_VALUE_LONG, "Negative values are not allowed");
         return instanceFor(shortVal);
     }
 
+    /**
+     * Returns an {@code Uint64} corresponding to a given {@code intVal}. The inverse operation is {@link #intValue()}.
+     *
+     * @param intVal int value
+     * @return A Uint64 instance
+     * @throws IllegalArgumentException if intVal is less than zero
+     */
     public static Uint64 valueOf(final int intVal) {
-        checkArgument(intVal >= MIN_VALUE_LONG, "Value %s is outside of allowed range", intVal);
+        checkArgument(intVal >= MIN_VALUE_LONG, "Negative values are not allowed");
         return instanceFor(intVal);
     }
 
+    /**
+     * Returns an {@code Uint64} corresponding to a given {@code longVal}. The inverse operation is
+     * {@link #fromLongBits(long)}.
+     *
+     * @param longVal long value
+     * @return A Uint8 instance
+     * @throws IllegalArgumentException if intVal is less than zero
+     */
     public static Uint64 valueOf(final long longVal) {
-        checkArgument(longVal >= MIN_VALUE_LONG, "Value %s is outside of allowed range", longVal);
+        checkArgument(longVal >= MIN_VALUE_LONG, "Negative values are not allowed");
         return instanceFor(longVal);
     }
 
+    /**
+     * Returns an {@code Uint64} corresponding to a given {@code uint}.
+     *
+     * @param uint Uint8 value
+     * @return A Uint64 instance
+     * @throws NullPointerException if uint is null
+     */
     public static Uint64 valueOf(final Uint8 uint) {
         return instanceFor(uint.shortValue());
     }
 
+    /**
+     * Returns an {@code Uint64} corresponding to a given {@code uint}.
+     *
+     * @param uint Uint16 value
+     * @return A Uint64 instance
+     * @throws NullPointerException if uint is null
+     */
     public static Uint64 valueOf(final Uint16 uint) {
         return instanceFor(uint.intValue());
     }
 
+    /**
+     * Returns an {@code Uint64} corresponding to a given {@code uint}.
+     *
+     * @param uint Uint32 value
+     * @return A Uint64 instance
+     * @throws NullPointerException if uint is null
+     */
     public static Uint64 valueOf(final Uint32 uint) {
         return instanceFor(uint.longValue());
     }
 
+    /**
+     * Returns an {@code Uint64} corresponding to a given {@code uint}.
+     *
+     * @param uint UnsignedLong value
+     * @return A Uint64 instance
+     * @throws NullPointerException if uint is null
+     */
+    public static Uint64 valueOf(final UnsignedLong ulong) {
+        return instanceFor(ulong.longValue());
+    }
+
+    /**
+     * Returns an {@code Uint64} corresponding to a given {@code bigInt}.
+     *
+     * @param bigInt BigInteger value
+     * @return A Uint64 instance
+     * @throws NullPointerException if uint is null
+     * @throws IllegalArgumentException if bigInt is less than zero or greater than 18446744073709551615
+     */
+    public static Uint64 valueOf(final BigInteger bigInt) {
+        checkArgument(bigInt.signum() >= 0, "Negative values not allowed");
+        checkArgument(bigInt.bitLength() <= Long.SIZE, "Value %s is outside of allowed range", bigInt);
+        return instanceFor(bigInt.longValue());
+    }
+
+    /**
+     * Returns an {@code Uint32} holding the value of the specified {@code String}, parsed as an unsigned {@code long}
+     * value.
+     *
+     * @param string String to parse
+     * @return A Uint64 instance
+     * @throws NullPointerException if string is null
+     * @throws IllegalArgumentException if the parsed value is less than zero or greater than 18446744073709551615
+     * @throws NumberFormatException if the string does not contain a parsable unsigned {@code long} value.
+     */
     public static Uint64 valueOf(final String string) {
         return valueOf(string, 10);
     }
 
+    /**
+     * Returns an {@code Uint64} holding the value of the specified {@code String}, parsed as an unsigned {@code long}
+     * value.
+     *
+     * @param string String to parse
+     * @param radix Radix to use
+     * @return A Uint64 instance
+     * @throws NullPointerException if string is null
+     * @throws IllegalArgumentException if the parsed value is less than zero or greater than 18446744073709551615
+     * @throws NumberFormatException if the string does not contain a parsable unsigned {@code long} value, or if the
+     *                               {@code radix} is outside of allowed range.
+     */
     public static Uint64 valueOf(final String string, final int radix) {
         return instanceFor(Long.parseUnsignedLong(string, radix));
-    }
-
-    public static Uint64 valueOf(final BigInteger bigInt) {
-        checkArgument(bigInt.signum() >= 0, "Negative values not allowed");
-        checkArgument(bigInt.bitLength() <= Long.SIZE, "Value %s is outside of allowed range", bigInt);
-
-        return instanceFor(bigInt.longValue());
     }
 
     @Override
@@ -190,6 +286,13 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
         return (int)value;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * The inverse operation is {@link #fromLongBits(long)}. In case this value is greater than {@link Long#MAX_VALUE},
+     * the returned value will be equal to {@code this - 2^64}.
+     */
     @Override
     public final long longValue() {
         return value;
@@ -207,6 +310,11 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
         return UnsignedLong.fromLongBits(value).doubleValue();
     }
 
+    /**
+     * Convert this value to an {@link UnsignedLong}.
+     *
+     * @return An UnsignedLong instance
+     */
     public final UnsignedLong toUnsignedLong() {
         return UnsignedLong.fromLongBits(value);
     }
