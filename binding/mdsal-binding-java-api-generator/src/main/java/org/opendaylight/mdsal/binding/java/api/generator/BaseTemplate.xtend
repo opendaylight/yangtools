@@ -111,7 +111,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         '''
             public «field.returnType.importedName» «field.getterMethodName»() {
                 «val fieldName = field.fieldName»
-                «IF field.returnType.importedName.contains("[]")»
+                «IF field.returnType.name.endsWith("[]")»
                 return «fieldName» == null ? null : «fieldName».clone();
                 «ELSE»
                 return «fieldName»;

@@ -236,7 +236,7 @@ class ClassTemplate extends BaseTemplate {
 
         «FOR p : properties»
             «val fieldName = p.fieldName»
-            «IF p.returnType.importedName.contains("[]")»
+            «IF p.returnType.name.endsWith("[]")»
                 «IF genTO.typedef && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
                 this.«fieldName» = «fieldName».clone();
                 «ELSE»

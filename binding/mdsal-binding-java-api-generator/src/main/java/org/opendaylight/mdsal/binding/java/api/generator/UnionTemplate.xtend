@@ -179,7 +179,7 @@ class UnionTemplate extends ClassTemplate {
             «ENDIF»
             «FOR p : properties»
                 «val fieldName = p.fieldName»
-                «IF p.returnType.importedName.contains("[]")»
+                «IF p.returnType.name.endsWith("[]")»
                 this.«fieldName» = source.«fieldName» == null ? null : source.«fieldName».clone();
                 «ELSE»
                 this.«fieldName» = source.«fieldName»;
