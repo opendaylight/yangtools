@@ -31,7 +31,6 @@ import java.util.Objects;
 import java.util.Optional;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.field.FieldDescription;
-import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeDescription.ForLoadedType;
@@ -39,10 +38,7 @@ import net.bytebuddy.description.type.TypeDescription.Generic;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.scaffold.InstrumentedType;
 import net.bytebuddy.implementation.Implementation;
-import net.bytebuddy.implementation.Implementation.Context;
-import net.bytebuddy.implementation.bytecode.Addition;
 import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
-import net.bytebuddy.implementation.bytecode.Multiplication;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.assign.TypeCasting;
 import net.bytebuddy.implementation.bytecode.constant.ClassConstant;
@@ -51,7 +47,6 @@ import net.bytebuddy.implementation.bytecode.constant.TextConstant;
 import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 import net.bytebuddy.jar.asm.Label;
-import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.impl.ClassGeneratorBridge.LocalNameProvider;
@@ -332,7 +327,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         return GeneratorResult.of(builder
                 // codecHashCode() ...
                 .defineMethod("codecHashCode", BB_INT, PROT_FINAL)
-                .intercept(new Implementation.Simple(new CodecHashCode(methods)))
+                .intercept(codecHashCode(bindingInterface))
                 // ... codecEquals() ...
                 .defineMethod("codecEquals", BB_BOOLEAN, PROT_FINAL).withParameter(BB_DATAOBJECT)
                 .intercept(codecEquals(methods))
@@ -375,6 +370,14 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         manipulations.add(MethodReturn.INTEGER);
 
         return new Implementation.Simple(manipulations.toArray(new StackManipulation[0]));
+    }
+
+    private static Implementation codecHashCode(final Class<?> bindingInterface) {
+        return new Implementation.Simple(
+            // return Foo.bindingHashCode(this);
+            THIS,
+            invokeMethod(bindingInterface, BindingMapping.BINDING_HASHCODE_NAME, bindingInterface),
+            MethodReturn.INTEGER);
     }
 
     private static Implementation toString(final Class<?> bindingInterface) {
@@ -562,48 +565,6 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
                 CODEC_MEMBER,
                 TypeCasting.to(retType),
                 MethodReturn.REFERENCE);
-        }
-    }
-
-    private static final class CodecHashCode implements ByteCodeAppender {
-        private static final StackManipulation THIRTY_ONE = IntegerConstant.forValue(31);
-        private static final StackManipulation LOAD_RESULT = MethodVariableAccess.INTEGER.loadFrom(1);
-        private static final StackManipulation STORE_RESULT = MethodVariableAccess.INTEGER.storeAt(1);
-        private static final StackManipulation ARRAYS_HASHCODE = invokeMethod(Arrays.class, "hashCode", byte[].class);
-        private static final StackManipulation OBJECTS_HASHCODE = invokeMethod(Objects.class, "hashCode", Object.class);
-
-        private final ImmutableMap<StackManipulation, Method> properties;
-
-        CodecHashCode(final ImmutableMap<StackManipulation, Method> properties) {
-            this.properties = requireNonNull(properties);
-        }
-
-        @Override
-        public Size apply(final MethodVisitor methodVisitor, final Context implementationContext,
-                final MethodDescription instrumentedMethod) {
-            final List<StackManipulation> manipulations = new ArrayList<>(properties.size() * 8 + 4);
-            // int result = 1;
-            manipulations.add(IntegerConstant.ONE);
-            manipulations.add(STORE_RESULT);
-
-            for (Entry<StackManipulation, Method> entry : properties.entrySet()) {
-                // result = 31 * result + java.util.(Objects,Arrays).hashCode(getFoo());
-                manipulations.add(THIRTY_ONE);
-                manipulations.add(LOAD_RESULT);
-                manipulations.add(Multiplication.INTEGER);
-                manipulations.add(THIS);
-                manipulations.add(entry.getKey());
-                manipulations.add(entry.getValue().getReturnType().isArray() ? ARRAYS_HASHCODE : OBJECTS_HASHCODE);
-                manipulations.add(Addition.INTEGER);
-                manipulations.add(STORE_RESULT);
-            }
-            // return result;
-            manipulations.add(LOAD_RESULT);
-            manipulations.add(MethodReturn.INTEGER);
-
-            StackManipulation.Size operandStackSize = new StackManipulation.Compound(manipulations)
-                    .apply(methodVisitor, implementationContext);
-            return new Size(operandStackSize.getMaximalSize(), instrumentedMethod.getStackSize() + 1);
         }
     }
 }

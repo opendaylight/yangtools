@@ -117,11 +117,6 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     }
 
     // Non-final to allow specialization in AugmentableCodecDataObject
-    int codecAugmentedHashCode() {
-        return codecHashCode();
-    }
-
-    // Non-final to allow specialization in AugmentableCodecDataObject
     boolean codecAugmentedEquals(final T other) {
         return codecEquals(other);
     }
@@ -151,7 +146,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     // Helper split out of hashCode() to aid its inlining
     private int loadHashCode() {
-        final int result = codecAugmentedHashCode();
+        final int result = codecHashCode();
         final Object witness = CACHED_HASH_CODE.compareAndExchangeRelease(this, null, Integer.valueOf(result));
         return witness == null ? result : (Integer) witness;
     }
