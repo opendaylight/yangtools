@@ -260,7 +260,7 @@ class ClassTemplate extends BaseTemplate {
 
     '''
 
-    def protected genConstructor(GeneratedProperty property, GeneratedProperty... other) '''
+    def protected genConstructor(GeneratedProperty property, Iterable<GeneratedProperty> other) '''
     public «type.name»(«property.returnType.importedName + " " + property.name») {
         «IF false == parentProperties.empty»
             super(«parentProperties.asArguments»);
