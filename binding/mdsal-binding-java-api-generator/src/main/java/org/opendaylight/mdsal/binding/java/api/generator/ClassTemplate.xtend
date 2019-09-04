@@ -235,15 +235,15 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
 
         «FOR p : properties»
+            «val fieldName = p.fieldName»
             «IF p.returnType.importedName.contains("[]")»
-                «IF genTO.typedef && allProperties.size == 1 && allProperties.get(0).name
-                .equals("value")»
-                this.«p.fieldName» = «p.fieldName».clone();
+                «IF genTO.typedef && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
+                this.«fieldName» = «fieldName».clone();
                 «ELSE»
-                this.«p.fieldName» = «p.fieldName» == null ? null : «p.fieldName».clone();
+                this.«fieldName» = «fieldName» == null ? null : «fieldName».clone();
                 «ENDIF»
             «ELSE»
-            this.«p.fieldName» = «p.fieldName»;
+            this.«fieldName» = «fieldName»;
             «ENDIF»
         «ENDFOR»
     }
@@ -266,9 +266,10 @@ class ClassTemplate extends BaseTemplate {
             super(«parentProperties.asArguments»);
         «ENDIF»
 
-        «generateRestrictions(type, property.fieldName.toString, property.returnType)»
+        «val fieldName = property.fieldName»
+        «generateRestrictions(type, fieldName.toString, property.returnType)»
 
-        this.«property.fieldName» = «property.name»;
+        this.«fieldName» = «property.name»;
         «FOR p : other»
             this.«p.fieldName» = null;
         «ENDFOR»
@@ -318,7 +319,8 @@ class ClassTemplate extends BaseTemplate {
             super(source);
         «ENDIF»
         «FOR p : properties»
-            this.«p.fieldName» = source.«p.fieldName»;
+            «val fieldName = p.fieldName»
+            this.«fieldName» = source.«fieldName»;
         «ENDFOR»
     }
     '''

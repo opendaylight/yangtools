@@ -110,10 +110,11 @@ abstract class BaseTemplate extends JavaFileTemplate {
     protected def getterMethod(GeneratedProperty field) {
         '''
             public «field.returnType.importedName» «field.getterMethodName»() {
+                «val fieldName = field.fieldName»
                 «IF field.returnType.importedName.contains("[]")»
-                return «field.fieldName» == null ? null : «field.fieldName».clone();
+                return «fieldName» == null ? null : «fieldName».clone();
                 «ELSE»
-                return «field.fieldName»;
+                return «fieldName»;
                 «ENDIF»
             }
         '''
@@ -455,19 +456,20 @@ abstract class BaseTemplate extends JavaFileTemplate {
                «AbstractRangeGenerator.forType(actualType).generateRangeCheckerCall(property.getName.toFirstUpper, value + ".getValue()")»
            «ENDIF»
        «ENDIF»
+       «val fieldName = property.fieldName»
        «IF restrictions.getLengthConstraint.isPresent»
            «IF actualType instanceof ConcreteType»
-               «LengthGenerator.generateLengthCheckerCall(property.fieldName.toString, value)»
+               «LengthGenerator.generateLengthCheckerCall(fieldName.toString, value)»
            «ELSE»
-               «LengthGenerator.generateLengthCheckerCall(property.fieldName.toString, value + ".getValue()")»
+               «LengthGenerator.generateLengthCheckerCall(fieldName.toString, value + ".getValue()")»
            «ENDIF»
        «ENDIF»
 
-       «val fieldUpperCase = property.fieldName.toString.toUpperCase(Locale.ENGLISH)»
+       «val fieldUpperCase = fieldName.toString.toUpperCase(Locale.ENGLISH)»
        «FOR currentConstant : type.getConstantDefinitions»
            «IF currentConstant.getName.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)
                && fieldUpperCase.equals(currentConstant.getName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length))»
-           «CodeHelpers.importedName».checkPattern(value, «Constants.MEMBER_PATTERN_LIST»«property.fieldName», «Constants.MEMBER_REGEX_LIST»«property.fieldName»);
+           «CodeHelpers.importedName».checkPattern(value, «Constants.MEMBER_PATTERN_LIST»«fieldName», «Constants.MEMBER_REGEX_LIST»«fieldName»);
            «ENDIF»
        «ENDFOR»
     '''
