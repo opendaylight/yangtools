@@ -461,7 +461,7 @@ class ClassTemplate extends BaseTemplate {
                     FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»);
                     «IF cValue.size == 1»
                         private static final «Pattern.importedName» «Constants.MEMBER_PATTERN_LIST» = «Pattern.importedName».compile(«TypeConstants.PATTERN_CONSTANT_NAME».get(0));
-                        private static final String «Constants.MEMBER_REGEX_LIST» = "«cValue.values.get(0).escapeJava»";
+                        private static final String «Constants.MEMBER_REGEX_LIST» = "«cValue.values.iterator.next.escapeJava»";
                     «ELSE»
                         private static final «Pattern.importedName»[] «Constants.MEMBER_PATTERN_LIST» = «CodeHelpers.importedName».compilePatterns(«TypeConstants.PATTERN_CONSTANT_NAME»);
                         private static final String[] «Constants.MEMBER_REGEX_LIST» = { «
