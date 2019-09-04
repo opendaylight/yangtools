@@ -19,7 +19,7 @@ import com.google.common.collect.Lists
 import java.beans.ConstructorProperties
 import java.util.ArrayList
 import java.util.Base64;
-import java.util.Collections
+import java.util.Comparator
 import java.util.List
 import java.util.Map
 import java.util.regex.Pattern
@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
  */
 @SuppressModernizer
 class ClassTemplate extends BaseTemplate {
+    static val Comparator<GeneratedProperty> PROP_COMPARATOR = Comparator.comparing([prop | prop.name])
 
     protected val List<GeneratedProperty> properties
     protected val List<GeneratedProperty> finalProperties
@@ -89,12 +90,10 @@ class ClassTemplate extends BaseTemplate {
         this.parentProperties = GeneratorUtil.getPropertiesOfAllParents(genTO)
         this.restrictions = genType.restrictions
 
-        var List<GeneratedProperty> sorted = new ArrayList<GeneratedProperty>();
+        val sorted = new ArrayList();
         sorted.addAll(properties);
         sorted.addAll(parentProperties);
-        Collections.sort(sorted, [p1, p2|
-            p1.name.compareTo(p2.name)
-        ]);
+        sorted.sort(PROP_COMPARATOR);
 
         this.allProperties = sorted
         this.enums = genType.enumerations
