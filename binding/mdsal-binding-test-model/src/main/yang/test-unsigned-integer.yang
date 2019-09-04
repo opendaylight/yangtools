@@ -1,0 +1,93 @@
+module test-unsigned-integer {
+    namespace "urn:test:unsigned";
+    prefix tst;
+
+    revision 2018-04-08;
+
+    typedef number-union {
+      type union {
+        type int8 {
+          range "-1..100";
+        }
+
+        type int16 {
+          range "-2..2000";
+        }
+
+        type int32 {
+          range "-3..30000";
+        }
+
+        type int64 {
+          range "-4..40000";
+        }
+
+        type uint8 {
+          range "1..100";
+        }
+
+        type uint16 {
+          range "2..2000";
+        }
+
+        type uint32 {
+          range "3..30000";
+        }
+
+        type uint64 {
+          range "4..40000";
+        }
+        }
+    }
+
+
+    container my-cont {
+        leaf int8-leaf {
+            type int8 {
+              range "-1..100";
+            }
+        }
+
+        leaf int16-leaf {
+            type int16 {
+              range "-2..2000";
+            }
+        }
+
+        leaf int32-leaf {
+            type int32 {
+              range "-3..30000";
+            }
+        }
+
+        leaf int64-leaf {
+            type int64 {
+              range "-4..40000";
+            }
+        }
+
+        leaf uint8-leaf {
+            type uint8 {
+              range "1..100";
+            }
+        }
+
+        leaf uint16-leaf {
+            type uint16 {
+              range "2..2000";
+            }
+        }
+
+        leaf uint32-leaf {
+            type uint32 {
+              range "3..30000";
+            }
+        }
+
+        leaf uint64-leaf {
+            type uint64 {
+              range "4..40000";
+            }
+        }
+    }
+}
