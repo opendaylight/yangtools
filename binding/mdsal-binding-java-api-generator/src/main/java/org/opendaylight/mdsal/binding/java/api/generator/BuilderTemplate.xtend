@@ -260,8 +260,9 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                 «val cValue = c.value as Map<String, String>»
                 «val String fieldSuffix = c.getName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length)»
                 «IF cValue.size == 1»
-                   private static final «Pattern.importedName» «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «Pattern.importedName».compile("«cValue.keySet.get(0).escapeJava»");
-                   private static final String «Constants.MEMBER_REGEX_LIST»«fieldSuffix» = "«cValue.values.get(0).escapeJava»";
+                   «val firstEntry = cValue.entrySet.iterator.next»
+                   private static final «Pattern.importedName» «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «Pattern.importedName».compile("«firstEntry.key.escapeJava»");
+                   private static final String «Constants.MEMBER_REGEX_LIST»«fieldSuffix» = "«firstEntry.value.escapeJava»";
                 «ELSE»
                    private static final «Pattern.importedName»[] «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «CodeHelpers.importedName».compilePatterns(«ImmutableList.importedName».of(
                    «FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»));
