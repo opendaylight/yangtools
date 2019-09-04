@@ -12,6 +12,7 @@ import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMappin
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isGetterMethodName
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isNonnullMethodName
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_HASHCODE_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.BINDING_TO_STRING_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
 
@@ -191,6 +192,7 @@ class InterfaceTemplate extends BaseTemplate {
 
     def private generateStaticMethod(MethodSignature method) {
         switch method.name {
+            case BINDING_HASHCODE_NAME : generateBindingHashCode
             case BINDING_TO_STRING_NAME : generateBindingToString
         }
     }
@@ -212,6 +214,39 @@ class InterfaceTemplate extends BaseTemplate {
         @«OVERRIDE.importedName»
         default «CLASS.importedName»<«type.fullyQualifiedName»> «DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»() {
             return «type.fullyQualifiedName».class;
+        }
+    '''
+
+    def private generateBindingHashCode() '''
+        «val augmentable = analyzeType»
+        /**
+         * Default implementation of {@link «Object.importedName»#hashCode()} contract for this interface.
+         * Implementations of this interface are encouraged to defer to this method to get consistent hashing
+         * results across all implementation.
+         *
+         «IF augmentable»
+         * <p>
+         * @param <T$$> implementation type, which has to also implement «AUGMENTATION_HOLDER.importedName» interface
+         *              contract.
+         «ENDIF»
+         * @param obj Object for which to generate hashCode() result.
+         * @return Hash code value of data modeled by this interface.
+         * @throws «NPE.importedName» if {@code obj} is null
+         */
+        «IF augmentable»
+            static <T$$ extends «type.fullyQualifiedName» & «AUGMENTATION_HOLDER.importedName»<?>> int «BINDING_HASHCODE_NAME»(final @«NONNULL.importedName» T$$ obj) {
+        «ELSE»
+            static int «BINDING_HASHCODE_NAME»(final «type.fullyQualifiedName» obj) {
+        «ENDIF»
+            final int prime = 31;
+            int result = 1;
+            «FOR property : typeAnalysis.value»
+                result = prime * result + «property.importedUtilClass».hashCode(obj.«property.getterMethodName»());
+            «ENDFOR»
+            «IF augmentable»
+                result = prime * result + «CODEHELPERS.importedName».hashAugmentations(obj);
+            «ENDIF»
+            return result;
         }
     '''
 

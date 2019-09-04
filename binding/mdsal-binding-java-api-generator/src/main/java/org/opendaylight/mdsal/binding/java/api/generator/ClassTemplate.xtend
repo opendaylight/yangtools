@@ -581,7 +581,11 @@ class ClassTemplate extends BaseTemplate {
             @«OVERRIDE.importedName»
             public int hashCode() {
                 «IF size != 1»
-                    «hashCodeResult(genTO.hashCodeIdentifiers)»
+                    final int prime = 31;
+                    int result = 1;
+                    «FOR property : genTO.hashCodeIdentifiers»
+                        result = prime * result + «property.importedUtilClass».hashCode(«property.fieldName»);
+                    «ENDFOR»
                     return result;
                 «ELSE»
                     return «CODEHELPERS.importedName».wrapperHashCode(«genTO.hashCodeIdentifiers.get(0).fieldName»);
