@@ -261,6 +261,21 @@ class ClassTemplate extends BaseTemplate {
             «ENDIF»
         «ENDFOR»
     }
+    «val propType = allProperties.get(0).returnType»
+    «val uintType = UINT_TYPES.get(propType)»
+    «IF uintType !== null»
+
+        /**
+         * Utility migration constructor.
+         *
+         * @param value Wrapped value in legacy type
+         * @deprecated Use {#link «type.name»(«propType.importedName»)} instead.
+         */
+        @Deprecated(forRemoval = true)
+        public «type.getName»(final «uintType.importedName» value) {
+            this(«CodeHelpers.importedName».compatUint(value));
+        }
+    «ENDIF»
     '''
 
     def protected genUnionConstructor() '''

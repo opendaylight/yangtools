@@ -12,7 +12,9 @@ import static org.opendaylight.mdsal.binding.model.util.BindingGeneratorUtil.enc
 import com.google.common.base.CharMatcher
 import com.google.common.base.MoreObjects
 import com.google.common.base.Splitter
+import com.google.common.collect.ImmutableMap
 import com.google.common.collect.Iterables
+import java.math.BigInteger
 import java.util.Collection
 import java.util.List
 import java.util.Locale
@@ -36,6 +38,10 @@ import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.common.QName
+import org.opendaylight.yangtools.yang.common.Uint8
+import org.opendaylight.yangtools.yang.common.Uint16
+import org.opendaylight.yangtools.yang.common.Uint32
+import org.opendaylight.yangtools.yang.common.Uint64
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
@@ -62,6 +68,13 @@ abstract class BaseTemplate extends JavaFileTemplate {
         .addIgnoredStatement(YangStmtMapping.REFERENCE)
         .addIgnoredStatement(YangStmtMapping.ORGANIZATION)
         .build();
+
+    protected static val UINT_TYPES = ImmutableMap.of(
+        Types.typeForClass(Uint8), Types.typeForClass(Short),
+        Types.typeForClass(Uint16), Types.typeForClass(Integer),
+        Types.typeForClass(Uint32), Types.typeForClass(Long),
+        Types.typeForClass(Uint64), Types.typeForClass(BigInteger)
+    );
 
     new(GeneratedType type) {
         super(type)

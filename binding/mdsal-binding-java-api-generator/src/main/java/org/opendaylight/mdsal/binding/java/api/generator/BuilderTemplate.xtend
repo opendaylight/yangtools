@@ -12,8 +12,6 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTA
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 
 import com.google.common.collect.ImmutableList
-import com.google.common.collect.ImmutableMap
-import java.math.BigInteger
 import java.util.ArrayList
 import java.util.Collection
 import java.util.HashMap
@@ -35,10 +33,6 @@ import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder
 import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.binding.DataObject
-import org.opendaylight.yangtools.yang.common.Uint8
-import org.opendaylight.yangtools.yang.common.Uint16
-import org.opendaylight.yangtools.yang.common.Uint64
-import org.opendaylight.yangtools.yang.common.Uint32
 
 /**
  * Template for generating JAVA builder classes.
@@ -50,13 +44,6 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     public static val BUILDER = "Builder";
 
     static val AUGMENTATION_FIELD_UPPER = AUGMENTATION_FIELD.toFirstUpper
-
-    static val UINT_TYPES = ImmutableMap.of(
-        Types.typeForClass(Uint8), Types.typeForClass(Short),
-        Types.typeForClass(Uint16), Types.typeForClass(Integer),
-        Types.typeForClass(Uint32), Types.typeForClass(Long),
-        Types.typeForClass(Uint64), Types.typeForClass(BigInteger)
-    );
 
     /**
      * Constructs new instance of this class.
@@ -297,31 +284,33 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     def private generateSetter(GeneratedProperty field, Type actualType) '''
         «val restrictions = restrictionsForSetter(actualType)»
         «IF restrictions !== null»
+
             «generateCheckers(field, restrictions, actualType)»
         «ENDIF»
 
         «val setterName = "set" + field.getName.toFirstUpper»
         public «type.getName» «setterName»(final «field.returnType.importedName» value) {
-        «IF restrictions !== null»
-            if (value != null) {
-                «checkArgument(field, restrictions, actualType, "value")»
-            }
-        «ENDIF»
+            «IF restrictions !== null»
+                if (value != null) {
+                    «checkArgument(field, restrictions, actualType, "value")»
+                }
+            «ENDIF»
             this.«field.fieldName.toString» = value;
             return this;
         }
         «val uintType = UINT_TYPES.get(field.returnType)»
         «IF uintType !== null»
 
-        /**
-         * Utility migration setter.
-         *
-         * @deprecated Use {#link «setterName»(«field.returnType.importedName»)} instead.
-         */
-        @Deprecated(forRemoval = true)
-        public «type.getName» «setterName»(final «uintType.importedName» value) {
-            return «setterName»(«CodeHelpers.importedName».compatUint(value));
-        }
+            /**
+             * Utility migration setter.
+             *
+             * @param value field value in legacy type
+             * @deprecated Use {#link «setterName»(«field.returnType.importedName»)} instead.
+             */
+            @Deprecated(forRemoval = true)
+            public «type.getName» «setterName»(final «uintType.importedName» value) {
+                return «setterName»(«CodeHelpers.importedName».compatUint(value));
+            }
         «ENDIF»
     '''
 
