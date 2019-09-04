@@ -50,7 +50,7 @@ class ClassTemplate extends BaseTemplate {
     protected val List<GeneratedProperty> properties
     protected val List<GeneratedProperty> finalProperties
     protected val List<GeneratedProperty> parentProperties
-    protected val Iterable<GeneratedProperty> allProperties
+    protected val List<GeneratedProperty> allProperties
     protected val Restrictions restrictions
 
     /**
@@ -214,7 +214,7 @@ class ClassTemplate extends BaseTemplate {
     '''
 
     def protected allValuesConstructor() '''
-    «IF genTO.typedef && !allProperties.empty && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
+    «IF genTO.typedef && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
         @«ConstructorParameters.importedName»("value")
         @«ConstructorProperties.importedName»("value")
     «ENDIF»
@@ -230,14 +230,14 @@ class ClassTemplate extends BaseTemplate {
          * If we have patterns, we need to apply them to the value field. This is a sad
          * consequence of how this code is structured.
          */
-        IF genTO.typedef && !allProperties.empty && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
+        IF genTO.typedef && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
             «CodeHelpers.importedName».requireValue(_value);
             «genPatternEnforcer("_value")»
         «ENDIF»
 
         «FOR p : properties»
             «IF p.returnType.importedName.contains("[]")»
-                «IF genTO.typedef && !allProperties.empty && allProperties.size == 1 && allProperties.get(0).name
+                «IF genTO.typedef && allProperties.size == 1 && allProperties.get(0).name
                 .equals("value")»
                 this.«p.fieldName» = «p.fieldName».clone();
                 «ELSE»
