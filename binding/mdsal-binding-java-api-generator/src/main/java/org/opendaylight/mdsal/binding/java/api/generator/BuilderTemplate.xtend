@@ -305,6 +305,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
              * Utility migration setter.
              *
              * @param value field value in legacy type
+             * @return this builder
              * @deprecated Use {#link «setterName»(«field.returnType.importedName»)} instead.
              */
             @Deprecated(forRemoval = true)
