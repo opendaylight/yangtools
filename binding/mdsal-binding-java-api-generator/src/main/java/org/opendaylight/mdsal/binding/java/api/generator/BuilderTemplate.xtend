@@ -275,7 +275,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                }
             }
         «ENDIF»
-            this.«field.fieldName.toString» = values;
+            this.«field.fieldName» = values;
             return this;
         }
 
@@ -295,7 +295,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                     «checkArgument(field, restrictions, actualType, "value")»
                 }
             «ENDIF»
-            this.«field.fieldName.toString» = value;
+            this.«field.fieldName» = value;
             return this;
         }
         «val uintType = UINT_TYPES.get(field.returnType)»

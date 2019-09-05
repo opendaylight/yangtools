@@ -67,7 +67,7 @@ class UnionTemplate extends ClassTemplate {
             public «type.name»(«propertyAndTopParentProperties.asArgumentsDeclaration») {
                 super(«parentProperties.asArguments»);
                 «IF restrictions !== null»
-                    «checkArgument(property, restrictions, actualType, property.fieldName.toString)»
+                    «checkArgument(property, restrictions, actualType, property.fieldName)»
                 «ENDIF»
                 this.«property.fieldName» = «property.fieldName»;
                 «FOR other : finalProperties»

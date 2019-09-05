@@ -221,7 +221,7 @@ class ClassTemplate extends BaseTemplate {
             super(«parentProperties.asArguments»);
         «ENDIF»
         «FOR p : allProperties»
-            «generateRestrictions(type, p.fieldName.toString, p.returnType)»
+            «generateRestrictions(type, p.fieldName, p.returnType)»
         «ENDFOR»
 
         «FOR p : properties»
@@ -243,7 +243,7 @@ class ClassTemplate extends BaseTemplate {
             super(«parentProperties.asArguments»);
         «ENDIF»
         «FOR p : allProperties»
-            «generateRestrictions(type, p.fieldName.toString, p.returnType)»
+            «generateRestrictions(type, p.fieldName, p.returnType)»
         «ENDFOR»
         «/*
          * If we have patterns, we need to apply them to the value field. This is a sad consequence of how this code is
@@ -294,7 +294,7 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
 
         «val fieldName = property.fieldName»
-        «generateRestrictions(type, fieldName.toString, property.returnType)»
+        «generateRestrictions(type, fieldName, property.returnType)»
 
         this.«fieldName» = «property.name»;
         «FOR p : other»

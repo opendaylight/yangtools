@@ -97,7 +97,9 @@ abstract class BaseTemplate extends JavaFileTemplate {
     protected abstract def CharSequence body();
 
     // Helper patterns
-    final protected def fieldName(GeneratedProperty property) '''_«property.name»'''
+    final protected def fieldName(GeneratedProperty property) {
+        "_" + property.name
+    }
 
     final protected def propertyNameFromGetter(MethodSignature getter) {
         var String prefix;
@@ -457,7 +459,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
                restrictions.rangeConstraint.get, this)»
        «ENDIF»
        «IF restrictions.lengthConstraint.present»
-           «LengthGenerator.generateLengthChecker(field.fieldName.toString, actualType, restrictions.lengthConstraint.get, this)»
+           «LengthGenerator.generateLengthChecker(field.fieldName, actualType, restrictions.lengthConstraint.get, this)»
        «ENDIF»
     '''
 
@@ -472,13 +474,13 @@ abstract class BaseTemplate extends JavaFileTemplate {
        «val fieldName = property.fieldName»
        «IF restrictions.getLengthConstraint.isPresent»
            «IF actualType instanceof ConcreteType»
-               «LengthGenerator.generateLengthCheckerCall(fieldName.toString, value)»
+               «LengthGenerator.generateLengthCheckerCall(fieldName, value)»
            «ELSE»
-               «LengthGenerator.generateLengthCheckerCall(fieldName.toString, value + ".getValue()")»
+               «LengthGenerator.generateLengthCheckerCall(fieldName, value + ".getValue()")»
            «ENDIF»
        «ENDIF»
 
-       «val fieldUpperCase = fieldName.toString.toUpperCase(Locale.ENGLISH)»
+       «val fieldUpperCase = fieldName.toUpperCase(Locale.ENGLISH)»
        «FOR currentConstant : type.getConstantDefinitions»
            «IF currentConstant.getName.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)
                && fieldUpperCase.equals(currentConstant.getName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length))»
