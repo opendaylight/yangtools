@@ -152,7 +152,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         rangeConstraints.clear();
         rangeConstraints.add(Range.closed(3, 9));
         rangeConstraints.add(Range.closed(11, 2147483647));
-        arg = new Integer("10");
+        arg = Integer.valueOf("10");
         expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, rangeConstraints);
         CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
         obj = expectedConstructor.newInstance(2147483647);
