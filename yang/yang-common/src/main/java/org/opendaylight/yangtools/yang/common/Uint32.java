@@ -148,7 +148,7 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
      *
      * @param longVal long value
      * @return A Uint8 instance
-     * @throws IllegalArgumentException if intVal is less than zero or greater than 4294967295
+     * @throws IllegalArgumentException if longVal is less than zero or greater than 4294967295
      */
     public static Uint32 valueOf(final long longVal) {
         checkArgument(longVal >= MIN_VALUE_LONG && longVal <= MAX_VALUE_LONG, "Value %s is outside of allowed range",
@@ -258,15 +258,6 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
         return longValue();
     }
 
-    /**
-     * Convert this value to an {@link UnsignedInteger}.
-     *
-     * @return An UnsignedInteger instance
-     */
-    public final UnsignedInteger toUnsignedInteger() {
-        return UnsignedInteger.fromIntBits(value);
-    }
-
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public final int compareTo(final Uint32 o) {
@@ -290,6 +281,24 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
      */
     public final Uint32 intern() {
         return value >= 0 && value < CACHE_SIZE ? this : INTERNER.intern(this);
+    }
+
+    /**
+     * Convert this value to a {@code long}.
+     *
+     * @return A long
+     */
+    public final long toJava() {
+        return longValue();
+    }
+
+    /**
+     * Convert this value to an {@link UnsignedInteger}.
+     *
+     * @return An UnsignedInteger instance
+     */
+    public final UnsignedInteger toGuava() {
+        return UnsignedInteger.fromIntBits(value);
     }
 
     @Override

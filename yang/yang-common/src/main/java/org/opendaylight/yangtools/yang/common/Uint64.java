@@ -148,7 +148,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      *
      * @param longVal long value
      * @return A Uint8 instance
-     * @throws IllegalArgumentException if intVal is less than zero
+     * @throws IllegalArgumentException if longVal is less than zero
      */
     public static Uint64 valueOf(final long longVal) {
         checkArgument(longVal >= MIN_VALUE_LONG, "Negative values are not allowed");
@@ -193,7 +193,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      *
      * @param ulong UnsignedLong value
      * @return A Uint64 instance
-     * @throws NullPointerException if uint is null
+     * @throws NullPointerException if ulong is null
      */
     public static Uint64 valueOf(final UnsignedLong ulong) {
         return instanceFor(ulong.longValue());
@@ -204,7 +204,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      *
      * @param bigInt BigInteger value
      * @return A Uint64 instance
-     * @throws NullPointerException if uint is null
+     * @throws NullPointerException if bigInt is null
      * @throws IllegalArgumentException if bigInt is less than zero or greater than 18446744073709551615
      */
     public static Uint64 valueOf(final BigInteger bigInt) {
@@ -272,15 +272,6 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
         return UnsignedLong.fromLongBits(value).doubleValue();
     }
 
-    /**
-     * Convert this value to an {@link UnsignedLong}.
-     *
-     * @return An UnsignedLong instance
-     */
-    public final UnsignedLong toUnsignedLong() {
-        return UnsignedLong.fromLongBits(value);
-    }
-
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public final int compareTo(final Uint64 o) {
@@ -306,6 +297,24 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
         return value >= 0 && value < CACHE_SIZE ? this : INTERNER.intern(this);
     }
 
+    /**
+     * Convert this value to a {@link BigInteger}.
+     *
+     * @return A BigInteger instance
+     */
+    public final BigInteger toJava() {
+        // FIXME: ditch the Guava transition
+        return toGuava().bigIntegerValue();
+    }
+
+    /**
+     * Convert this value to an {@link UnsignedLong}.
+     *
+     * @return An UnsignedLong instance
+     */
+    public final UnsignedLong toGuava() {
+        return UnsignedLong.fromLongBits(value);
+    }
 
     @Override
     public final int hashCode() {
