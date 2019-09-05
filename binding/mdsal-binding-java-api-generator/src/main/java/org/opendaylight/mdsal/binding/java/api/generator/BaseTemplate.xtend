@@ -172,7 +172,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
      * group of generated property instances which are transformed to the sequence of parameter names
      * @return string with the list of the parameter names of the <code>parameters</code>
      */
-    def final protected asArguments(Iterable<GeneratedProperty> parameters) '''«IF !parameters.empty»«FOR parameter : parameters SEPARATOR ", "»«parameter.
+    def final protected asArguments(Collection<GeneratedProperty> parameters) '''«IF !parameters.empty»«FOR parameter : parameters SEPARATOR ", "»«parameter.
         fieldName»«ENDFOR»«ENDIF»'''
 
     /**
