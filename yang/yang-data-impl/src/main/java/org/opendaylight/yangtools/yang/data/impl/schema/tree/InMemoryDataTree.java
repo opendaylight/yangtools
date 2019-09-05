@@ -11,8 +11,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -35,8 +36,16 @@ import org.slf4j.LoggerFactory;
  * Read-only snapshot of the data tree.
  */
 final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
-    private static final AtomicReferenceFieldUpdater<InMemoryDataTree, DataTreeState> STATE_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(InMemoryDataTree.class, DataTreeState.class, "state");
+    private static final VarHandle STATE;
+
+    static {
+        try {
+            STATE = MethodHandles.lookup().findVarHandle(InMemoryDataTree.class, "state", DataTreeState.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTree.class);
 
     private final DataTreeConfiguration treeConfig;
