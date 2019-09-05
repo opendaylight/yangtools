@@ -203,8 +203,10 @@ class ClassTemplate extends BaseTemplate {
             «genUnionConstructor»
         «ELSEIF genTO.typedef && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
             «typedefConstructor»
+            «legacyConstructor»
         «ELSE»
             «allValuesConstructor»
+            «legacyConstructor»
         «ENDIF»
 
         «IF !allProperties.empty»
@@ -261,22 +263,30 @@ class ClassTemplate extends BaseTemplate {
             «ENDIF»
         «ENDFOR»
     }
-    «val propType = allProperties.get(0).returnType»
-    «val uintType = UINT_TYPES.get(propType)»
-    «IF uintType !== null»
-
-        /**
-         * Utility migration constructor.
-         *
-         * @param value Wrapped value in legacy type
-         * @deprecated Use {#link «type.name»(«propType.importedName»)} instead.
-         */
-        @Deprecated(forRemoval = true)
-        public «type.getName»(final «uintType.importedName» value) {
-            this(«CodeHelpers.importedName».compatUint(value));
-        }
-    «ENDIF»
     '''
+
+    def private legacyConstructor() {
+        if (!hasUintProperties) {
+            return ""
+        }
+
+        val compatUint = CodeHelpers.importedName + ".compatUint("
+        return '''
+
+            /**
+             * Utility migration constructor.
+             *
+             «FOR prop : allProperties»
+             * @param «prop.fieldName» «prop.name»«IF prop.isUintType» in legacy Java type«ENDIF»
+             «ENDFOR»
+             * @deprecated Use {#link «type.name»(«FOR prop : allProperties SEPARATOR ", "»«prop.returnType.importedName»«ENDFOR»)} instead.
+             */
+            @Deprecated(forRemoval = true)
+            public «type.getName»(«FOR prop : allProperties SEPARATOR ", "»«prop.legacyType.importedName» «prop.fieldName»«ENDFOR») {
+                this(«FOR prop : allProperties SEPARATOR ", "»«IF prop.isUintType»«compatUint»«prop.fieldName»)«ELSE»«prop.fieldName»«ENDIF»«ENDFOR»);
+            }
+        '''
+    }
 
     def protected genUnionConstructor() '''
     «FOR p : allProperties»
@@ -576,7 +586,28 @@ class ClassTemplate extends BaseTemplate {
                 return prop;
             }
         }
-        return null;
+        return null
     }
 
+    def private hasUintProperties() {
+        for (GeneratedProperty prop : allProperties) {
+            if (prop.isUintType) {
+                return true
+            }
+        }
+        return false
+    }
+
+    def private static isUintType(GeneratedProperty prop) {
+        UINT_TYPES.containsKey(prop.returnType)
+    }
+
+    def private static legacyType(GeneratedProperty prop) {
+        val type = prop.returnType
+        val uint = UINT_TYPES.get(type)
+        if (uint !== null) {
+            return uint
+        }
+        return type
+    }
 }

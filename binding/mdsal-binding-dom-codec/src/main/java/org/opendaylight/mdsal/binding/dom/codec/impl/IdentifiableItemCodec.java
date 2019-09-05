@@ -31,6 +31,8 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableIt
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Codec support for extracting the {@link Identifiable#key()} method return from a MapEntryNode.
@@ -49,7 +51,7 @@ abstract class IdentifiableItemCodec
             super(schema, keyClass, identifiable);
             this.keyContext = requireNonNull(keyContext);
             this.keyName = requireNonNull(keyName);
-            ctor = getConstructor(keyClass).asType(CTOR_TYPE);
+            ctor = getConstructor(keyClass, 1).asType(CTOR_TYPE);
         }
 
         @Override
@@ -73,7 +75,7 @@ abstract class IdentifiableItemCodec
                 final Class<?> identifiable, final Map<QName, ValueContext> keyValueContexts) {
             super(schema, keyClass, identifiable);
 
-            final MethodHandle tmpCtor = getConstructor(keyClass);
+            final MethodHandle tmpCtor = getConstructor(keyClass, keyValueContexts.size());
             final MethodHandle inv = MethodHandles.spreadInvoker(tmpCtor.type(), 0);
             this.ctor = inv.asType(inv.type().changeReturnType(Identifier.class)).bindTo(tmpCtor);
 
@@ -119,6 +121,8 @@ abstract class IdentifiableItemCodec
             return NodeIdentifierWithPredicates.of(qname, predicateTemplate.instantiateWithValues(values));
         }
     }
+
+    private static final Logger LOG = LoggerFactory.getLogger(IdentifiableItemCodec.class);
 
     private final Class<?> identifiable;
     private final QName qname;
@@ -171,18 +175,37 @@ abstract class IdentifiableItemCodec
 
     abstract @NonNull NodeIdentifierWithPredicates serializeIdentifier(QName qname, Identifier<?> key);
 
-    static MethodHandle getConstructor(final Class<? extends Identifier<?>> clazz) {
-        for (@SuppressWarnings("rawtypes") final Constructor constr : clazz.getConstructors()) {
-            final Class<?>[] parameters = constr.getParameterTypes();
-            if (!clazz.equals(parameters[0])) {
-                // It is not copy constructor...
-                try {
-                    return MethodHandles.publicLookup().unreflectConstructor(constr);
-                } catch (IllegalAccessException e) {
-                    throw new IllegalStateException("Cannot access constructor " + constr + " in class " + clazz, e);
-                }
+    static MethodHandle getConstructor(final Class<? extends Identifier<?>> clazz, final int nrArgs) {
+        for (final Constructor<?> ctor : clazz.getConstructors()) {
+            // Check argument count
+            if (ctor.getParameterCount() != nrArgs) {
+                LOG.debug("Skipping {} due to argument count mismatch", ctor);
+                continue;
+            }
+
+            // Do not consider deprecated constructors
+            if (isDeprecated(ctor)) {
+                LOG.debug("Skipping deprecated constructor {}", ctor);
+                continue;
+            }
+
+            // Do not consider copy constructors
+            if (clazz.equals(ctor.getParameterTypes()[0])) {
+                LOG.debug("Skipping copy constructor {}", ctor);
+                continue;
+            }
+
+            try {
+                return MethodHandles.publicLookup().unreflectConstructor(ctor);
+            } catch (IllegalAccessException e) {
+                throw new IllegalStateException("Cannot access constructor " + ctor + " in class " + clazz, e);
             }
         }
-        throw new IllegalArgumentException("Supplied class " + clazz + "does not have required constructor.");
+        throw new IllegalArgumentException("Supplied class " + clazz + " does not have required constructor.");
+    }
+
+    // This could be inlined, but then it throws off Eclipse analysis, which thinks the return is always non-null
+    private static boolean isDeprecated(final Constructor<?> ctor) {
+        return ctor.getAnnotation(Deprecated.class) != null;
     }
 }
