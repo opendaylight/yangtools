@@ -11,8 +11,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -35,16 +36,25 @@ import org.slf4j.LoggerFactory;
  * Read-only snapshot of the data tree.
  */
 final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
-    private static final AtomicReferenceFieldUpdater<InMemoryDataTree, DataTreeState> STATE_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(InMemoryDataTree.class, DataTreeState.class, "state");
+    private static final VarHandle STATE;
+
+    static {
+        try {
+            STATE = MethodHandles.lookup().findVarHandle(InMemoryDataTree.class, "state", DataTreeState.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTree.class);
 
     private final DataTreeConfiguration treeConfig;
     private final boolean maskMandatory;
 
     /**
-     * Current data store state generation.
+     * Current data store state generation. All accesses need to go through {@link #STATE}
      */
+    @SuppressWarnings("unused")
     private volatile DataTreeState state;
 
     InMemoryDataTree(final TreeNode rootNode, final DataTreeConfiguration treeConfig,
@@ -107,14 +117,15 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
         DataTreeState currentState;
         DataTreeState newState;
         do {
-            currentState = state;
+            currentState = currentState();
             newState = currentState.withSchemaContext(newSchemaContext, rootNode);
-        } while (!STATE_UPDATER.compareAndSet(this, currentState, newState));
+            // TODO: can we lower this to compareAndSwapRelease?
+        } while (!STATE.compareAndSet(this, currentState, newState));
     }
 
     @Override
     public InMemoryDataTreeSnapshot takeSnapshot() {
-        return state.newSnapshot();
+        return currentState().newSnapshot();
     }
 
     @Override
@@ -134,7 +145,7 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
         DataTreeState currentState;
         DataTreeState newState;
         do {
-            currentState = state;
+            currentState = currentState();
             final TreeNode currentRoot = currentState.getRoot();
             LOG.debug("Updating datastore from {} to {}", currentRoot, newRoot);
 
@@ -148,11 +159,16 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
 
             newState = currentState.withRoot(newRoot);
             LOG.trace("Updated state from {} to {}", currentState, newState);
-        } while (!STATE_UPDATER.compareAndSet(this, currentState, newState));
+            // TODO: can we lower this to compareAndSwapRelease?
+        } while (!STATE.compareAndSet(this, currentState, newState));
     }
 
     private static String simpleToString(final Object obj) {
         return obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode());
+    }
+
+    private DataTreeState currentState() {
+        return (DataTreeState) STATE.getAcquire(this);
     }
 
     @Override
@@ -165,12 +181,12 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
         return MoreObjects.toStringHelper(this)
                 .add("object", super.toString())
                 .add("config", treeConfig)
-                .add("state", state)
+                .add("state", currentState())
                 .toString();
     }
 
     @Override
     protected TreeNode getTipRoot() {
-        return state.getRoot();
+        return currentState().getRoot();
     }
 }
