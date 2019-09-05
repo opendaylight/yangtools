@@ -279,6 +279,15 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
         return intValue() < CACHE_SIZE ? this : INTERNER.intern(this);
     }
 
+    /**
+     * Convert this value to an {@code int}.
+     *
+     * @return An int
+     */
+    public final int toJava() {
+        return intValue();
+    }
+
     @Override
     public final int hashCode() {
         return Short.hashCode(value);

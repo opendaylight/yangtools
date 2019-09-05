@@ -94,7 +94,7 @@ public class Uint32Test {
         assertSame(Uint32.valueOf(20), Uint32.valueOf(Uint64.valueOf(20)));
 
         assertSame(Uint32.valueOf(5), Uint32.valueOf(UnsignedInteger.fromIntBits(5)));
-        assertEquals(UnsignedInteger.fromIntBits(5), Uint32.valueOf(5).toUnsignedInteger());
+        assertEquals(UnsignedInteger.fromIntBits(5), Uint32.valueOf(5).toGuava());
     }
 
     @Test

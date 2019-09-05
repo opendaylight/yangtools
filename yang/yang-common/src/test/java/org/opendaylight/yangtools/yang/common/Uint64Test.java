@@ -96,7 +96,7 @@ public class Uint64Test {
         assertEquals(Uint64.valueOf(30), Uint64.valueOf(new BigInteger("30")));
 
         assertSame(Uint64.valueOf(5), Uint64.valueOf(UnsignedLong.fromLongBits(5)));
-        assertEquals(UnsignedLong.fromLongBits(5), Uint64.valueOf(5).toUnsignedLong());
+        assertEquals(UnsignedLong.fromLongBits(5), Uint64.valueOf(5).toGuava());
     }
 
     @Test

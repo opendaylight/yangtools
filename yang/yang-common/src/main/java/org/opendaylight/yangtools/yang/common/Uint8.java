@@ -254,6 +254,15 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
         return SUPPORT;
     }
 
+    /**
+     * Convert this value to a {@code short}.
+     *
+     * @return A short
+     */
+    public final short toJava() {
+        return shortValue();
+    }
+
     @Override
     public final int hashCode() {
         return Byte.hashCode(value);
