@@ -224,7 +224,7 @@ class YangToSourcesProcessor {
             final BasicCodeGenerator generator;
             try {
                 generator = getInstance(arg.getCodeGeneratorClass(), BasicCodeGenerator.class);
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            } catch (ReflectiveOperationException e) {
                 throw new MojoExecutionException("Failed to instantiate code generator "
                         + arg.getCodeGeneratorClass(), e);
             }
@@ -391,10 +391,10 @@ class YangToSourcesProcessor {
     /**
      * Instantiate object from fully qualified class name.
      */
-    private static <T> T getInstance(final String codeGeneratorClass, final Class<T> baseType) throws
-            ClassNotFoundException, InstantiationException, IllegalAccessException {
+    private static <T> T getInstance(final String codeGeneratorClass, final Class<T> baseType)
+            throws ReflectiveOperationException {
         final Class<?> clazz = Class.forName(codeGeneratorClass);
         checkArgument(baseType.isAssignableFrom(clazz), "Code generator %s has to implement %s", clazz, baseType);
-        return baseType.cast(clazz.newInstance());
+        return baseType.cast(clazz.getConstructor().newInstance());
     }
 }
