@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import com.google.common.primitives.UnsignedInteger;
@@ -24,9 +25,19 @@ import org.opendaylight.yangtools.concepts.Variant;
  *
  * @author Robert Varga
  */
+/*
+ * Note this class is final even though it is a CanonicalValue. As our current progress on using that mechanics
+ * is stalled, that should not be a problem. If that effort is restarted, this class may become non-final when needed.
+ *
+ * Valhalla is a major consideration, as inline types in the current prototype
+ * (https://wiki.openjdk.java.net/display/valhalla/LW2) do not allow subclassing. That would mean
+ * we'd want to convert to an inline type of value + support, which should still be lower than a full object.
+ *
+ * Anyway, this needs to be revisited once either one gets closer to being integrated.
+ */
 @Beta
 @NonNullByDefault
-public class Uint32 extends Number implements CanonicalValue<Uint32> {
+public final class Uint32 extends Number implements CanonicalValue<Uint32> {
     @MetaInfServices(value = CanonicalValueSupport.class)
     public static final class Support extends AbstractCanonicalValueSupport<Uint32> {
         public Support() {
@@ -80,12 +91,13 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
 
     private final int value;
 
-    Uint32(final int value) {
+    private Uint32(final int value) {
         this.value = value;
     }
 
-    protected Uint32(final Uint32 other) {
-        this.value = other.value;
+    @VisibleForTesting
+    Uint32(final Uint32 other) {
+        this(other.value);
     }
 
     private static Uint32 instanceFor(final int value) {
@@ -239,38 +251,38 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
      * the returned value will be equal to {@code this - 2^32}.
      */
     @Override
-    public final int intValue() {
+    public int intValue() {
         return value;
     }
 
     @Override
-    public final long longValue() {
+    public long longValue() {
         return Integer.toUnsignedLong(value);
     }
 
     @Override
-    public final float floatValue() {
+    public float floatValue() {
         return longValue();
     }
 
     @Override
-    public final double doubleValue() {
+    public double doubleValue() {
         return longValue();
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final int compareTo(final Uint32 o) {
+    public int compareTo(final Uint32 o) {
         return Integer.compareUnsigned(value, o.value);
     }
 
     @Override
-    public final String toCanonicalString() {
+    public String toCanonicalString() {
         return Integer.toUnsignedString(value);
     }
 
     @Override
-    public final CanonicalValueSupport<Uint32> support() {
+    public CanonicalValueSupport<Uint32> support() {
         return SUPPORT;
     }
 
@@ -279,7 +291,7 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
      *
      * @return A shared instance.
      */
-    public final Uint32 intern() {
+    public Uint32 intern() {
         return value >= 0 && value < CACHE_SIZE ? this : INTERNER.intern(this);
     }
 
@@ -288,7 +300,7 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
      *
      * @return A long
      */
-    public final long toJava() {
+    public long toJava() {
         return longValue();
     }
 
@@ -297,22 +309,22 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
      *
      * @return An UnsignedInteger instance
      */
-    public final UnsignedInteger toGuava() {
+    public UnsignedInteger toGuava() {
         return UnsignedInteger.fromIntBits(value);
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return Integer.hashCode(value);
     }
 
     @Override
-    public final boolean equals(final @Nullable Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         return this == obj || obj instanceof Uint32 && value == ((Uint32)obj).value;
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return toCanonicalString();
     }
 

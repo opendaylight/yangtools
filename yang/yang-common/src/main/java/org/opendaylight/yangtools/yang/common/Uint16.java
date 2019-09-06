@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import org.eclipse.jdt.annotation.NonNull;
@@ -24,9 +25,19 @@ import org.opendaylight.yangtools.concepts.Variant;
  *
  * @author Robert Varga
  */
+/*
+ * Note this class is final even though it is a CanonicalValue. As our current progress on using that mechanics
+ * is stalled, that should not be a problem. If that effort is restarted, this class may become non-final when needed.
+ *
+ * Valhalla is a major consideration, as inline types in the current prototype
+ * (https://wiki.openjdk.java.net/display/valhalla/LW2) do not allow subclassing. That would mean
+ * we'd want to convert to an inline type of value + support, which should still be lower than a full object.
+ *
+ * Anyway, this needs to be revisited once either one gets closer to being integrated.
+ */
 @Beta
 @NonNullByDefault
-public class Uint16 extends Number implements CanonicalValue<Uint16> {
+public final class Uint16 extends Number implements CanonicalValue<Uint16> {
     @MetaInfServices(value = CanonicalValueSupport.class)
     public static final class Support extends AbstractCanonicalValueSupport<Uint16> {
         public Support() {
@@ -80,12 +91,13 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
 
     private final short value;
 
-    Uint16(final short value) {
+    private Uint16(final short value) {
         this.value = value;
     }
 
-    protected Uint16(final Uint16 other) {
-        this.value = other.value;
+    @VisibleForTesting
+    Uint16(final Uint16 other) {
+        this(other.value);
     }
 
     private static Uint16 instanceFor(final short value) {
@@ -230,43 +242,43 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      * {@link Short#MAX_VALUE}, the returned value will be equal to {@code this - 2^16}.
      */
     @Override
-    public final short shortValue() {
+    public short shortValue() {
         return value;
     }
 
     @Override
-    public final int intValue() {
+    public int intValue() {
         return Short.toUnsignedInt(value);
     }
 
     @Override
-    public final long longValue() {
+    public long longValue() {
         return Short.toUnsignedLong(value);
     }
 
     @Override
-    public final float floatValue() {
+    public float floatValue() {
         return intValue();
     }
 
     @Override
-    public final double doubleValue() {
+    public double doubleValue() {
         return intValue();
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final int compareTo(final Uint16 o) {
+    public int compareTo(final Uint16 o) {
         return Integer.compare(intValue(), o.intValue());
     }
 
     @Override
-    public final String toCanonicalString() {
+    public String toCanonicalString() {
         return String.valueOf(intValue());
     }
 
     @Override
-    public final CanonicalValueSupport<Uint16> support() {
+    public CanonicalValueSupport<Uint16> support() {
         return SUPPORT;
     }
 
@@ -275,7 +287,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      *
      * @return A shared instance.
      */
-    public final Uint16 intern() {
+    public Uint16 intern() {
         return intValue() < CACHE_SIZE ? this : INTERNER.intern(this);
     }
 
@@ -284,22 +296,22 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      *
      * @return An int
      */
-    public final int toJava() {
+    public int toJava() {
         return intValue();
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return Short.hashCode(value);
     }
 
     @Override
-    public final boolean equals(final @Nullable Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         return this == obj || obj instanceof Uint16 && value == ((Uint16)obj).value;
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return toCanonicalString();
     }
 
