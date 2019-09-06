@@ -69,7 +69,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
     }
 
     protected Uint8(final Uint8 other) {
-        this.value = other.value;
+        this(other.value);
     }
 
     private static Uint8 instanceFor(final byte value) {
@@ -246,7 +246,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
 
     @Override
     public final String toCanonicalString() {
-        return String.valueOf(intValue());
+        return Integer.toString(intValue());
     }
 
     @Override

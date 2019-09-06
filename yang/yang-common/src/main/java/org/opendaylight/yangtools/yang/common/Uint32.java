@@ -80,12 +80,12 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
 
     private final int value;
 
-    Uint32(final int value) {
+    private Uint32(final int value) {
         this.value = value;
     }
 
     protected Uint32(final Uint32 other) {
-        this.value = other.value;
+        this(other.value);
     }
 
     private static Uint32 instanceFor(final int value) {

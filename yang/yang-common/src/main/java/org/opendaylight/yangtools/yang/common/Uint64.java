@@ -80,12 +80,12 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
 
     private final long value;
 
-    Uint64(final long value) {
+    private Uint64(final long value) {
         this.value = value;
     }
 
     protected Uint64(final Uint64 other) {
-        this.value = other.value;
+        this(other.value);
     }
 
     private static Uint64 instanceFor(final long value) {

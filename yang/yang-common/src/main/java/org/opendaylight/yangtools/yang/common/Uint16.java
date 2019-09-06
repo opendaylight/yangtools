@@ -80,12 +80,12 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
 
     private final short value;
 
-    Uint16(final short value) {
+    private Uint16(final short value) {
         this.value = value;
     }
 
     protected Uint16(final Uint16 other) {
-        this.value = other.value;
+        this(other.value);
     }
 
     private static Uint16 instanceFor(final short value) {
@@ -262,7 +262,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
 
     @Override
     public final String toCanonicalString() {
-        return String.valueOf(intValue());
+        return Integer.toString(intValue());
     }
 
     @Override
