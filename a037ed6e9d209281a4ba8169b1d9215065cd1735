@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0e5557a1_f26b2621",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/InMemoryDataTreeModification.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-09-06T16:26:31Z",
+      "side": 1,
+      "message": "compareAndSetRelease",
+      "range": {
+        "startLine": 304,
+        "startChar": 42,
+        "endLine": 304,
+        "endChar": 55
+      },
+      "revId": "a037ed6e9d209281a4ba8169b1d9215065cd1735",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
