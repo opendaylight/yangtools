@@ -20,7 +20,7 @@
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yangtools-docs</artifactId>
     <packaging>jar</packaging>
-    <version>2.0.22-SNAPSHOT</version>
+    <version>2.0.22</version>
     <name>${project.artifactId}</name>
     <description>YANG Tools documentation</description>
 
@@ -29,7 +29,7 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>2.0.22-SNAPSHOT</version>
+                <version>2.0.22</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
