@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import com.google.common.primitives.UnsignedLong;
@@ -25,9 +26,19 @@ import org.opendaylight.yangtools.concepts.Variant;
  *
  * @author Robert Varga
  */
+/*
+ * Note this class is final even though it is a CanonicalValue. As our current progress on using that mechanics
+ * is stalled, that should not be a problem. If that effort is restarted, this class may become non-final when needed.
+ *
+ * Valhalla is a major consideration, as inline types in the current prototype
+ * (https://wiki.openjdk.java.net/display/valhalla/LW2) do not allow subclassing. That would mean
+ * we'd want to convert to an inline type of value + support, which should still be lower than a full object.
+ *
+ * Anyway, this needs to be revisited once either one gets closer to being integrated.
+ */
 @Beta
 @NonNullByDefault
-public class Uint64 extends Number implements CanonicalValue<Uint64> {
+public final class Uint64 extends Number implements CanonicalValue<Uint64> {
     @MetaInfServices(value = CanonicalValueSupport.class)
     public static final class Support extends AbstractCanonicalValueSupport<Uint64> {
         public Support() {
@@ -80,12 +91,13 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
 
     private final long value;
 
-    Uint64(final long value) {
+    private Uint64(final long value) {
         this.value = value;
     }
 
-    protected Uint64(final Uint64 other) {
-        this.value = other.value;
+    @VisibleForTesting
+    Uint64(final Uint64 other) {
+        this(other.value);
     }
 
     private static Uint64 instanceFor(final long value) {
@@ -244,7 +256,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
     }
 
     @Override
-    public final int intValue() {
+    public int intValue() {
         return (int)value;
     }
 
@@ -256,35 +268,35 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      * the returned value will be equal to {@code this - 2^64}.
      */
     @Override
-    public final long longValue() {
+    public long longValue() {
         return value;
     }
 
     @Override
-    public final float floatValue() {
+    public float floatValue() {
         // TODO: ditch Guava
         return UnsignedLong.fromLongBits(value).floatValue();
     }
 
     @Override
-    public final double doubleValue() {
+    public double doubleValue() {
         // TODO: ditch Guava
         return UnsignedLong.fromLongBits(value).doubleValue();
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final int compareTo(final Uint64 o) {
+    public int compareTo(final Uint64 o) {
         return Long.compareUnsigned(value, o.value);
     }
 
     @Override
-    public final String toCanonicalString() {
+    public String toCanonicalString() {
         return Long.toUnsignedString(value);
     }
 
     @Override
-    public final CanonicalValueSupport<Uint64> support() {
+    public CanonicalValueSupport<Uint64> support() {
         return SUPPORT;
     }
 
@@ -293,7 +305,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      *
      * @return A shared instance.
      */
-    public final Uint64 intern() {
+    public Uint64 intern() {
         return value >= 0 && value < CACHE_SIZE ? this : INTERNER.intern(this);
     }
 
@@ -302,7 +314,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      *
      * @return A BigInteger instance
      */
-    public final BigInteger toJava() {
+    public BigInteger toJava() {
         // FIXME: ditch the Guava transition
         return toGuava().bigIntegerValue();
     }
@@ -312,22 +324,22 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      *
      * @return An UnsignedLong instance
      */
-    public final UnsignedLong toGuava() {
+    public UnsignedLong toGuava() {
         return UnsignedLong.fromLongBits(value);
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return Long.hashCode(value);
     }
 
     @Override
-    public final boolean equals(final @Nullable Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         return this == obj || obj instanceof Uint64 && value == ((Uint64)obj).value;
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return toCanonicalString();
     }
 
