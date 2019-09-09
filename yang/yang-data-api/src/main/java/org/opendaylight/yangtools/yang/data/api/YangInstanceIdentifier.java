@@ -572,7 +572,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * overall data tree.
      */
     public abstract static class NodeIdentifierWithPredicates extends AbstractPathArgument {
-        private static final class Singleton extends NodeIdentifierWithPredicates {
+        @Beta
+        public static final class Singleton extends NodeIdentifierWithPredicates {
             private static final long serialVersionUID = 1L;
 
             private final @NonNull QName key;
@@ -586,7 +587,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
             @Override
             public SingletonSet<Entry<QName, Object>> entrySet() {
-                return SingletonSet.of(new SimpleImmutableEntry<>(key, value));
+                return SingletonSet.of(singleEntry());
             }
 
             @Override
@@ -607,6 +608,16 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             @Override
             public ImmutableMap<QName, Object> asMap() {
                 return ImmutableMap.of(key, value);
+            }
+
+            /**
+             * Return the single entry contained in this object. This is equivalent to
+             * {@code entrySet().iterator().next()}.
+             *
+             * @return A single entry.
+             */
+            public @NonNull Entry<QName, Object> singleEntry() {
+                return new SimpleImmutableEntry<>(key, value);
             }
 
             @Override
