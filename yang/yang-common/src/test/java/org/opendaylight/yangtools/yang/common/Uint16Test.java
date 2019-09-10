@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -36,15 +39,15 @@ public class Uint16Test {
         final Uint16 max = Uint16.valueOf(65535);
 
         assertEquals(0, zero.compareTo(zero));
-        assertEquals(-1, zero.compareTo(five));
-        assertEquals(-1, zero.compareTo(max));
+        assertThat(zero.compareTo(five), lessThan(0));
+        assertThat(zero.compareTo(max), lessThan(0));
 
-        assertEquals(1, five.compareTo(zero));
+        assertThat(five.compareTo(zero), greaterThan(0));
         assertEquals(0, five.compareTo(five));
-        assertEquals(-1, five.compareTo(max));
+        assertThat(five.compareTo(max), lessThan(0));
 
-        assertEquals(1, max.compareTo(zero));
-        assertEquals(1, max.compareTo(five));
+        assertThat(max.compareTo(zero), greaterThan(0));
+        assertThat(max.compareTo(five), greaterThan(0));
         assertEquals(0, max.compareTo(max));
     }
 

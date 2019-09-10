@@ -257,7 +257,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public final int compareTo(final Uint16 o) {
-        return Integer.compare(intValue(), o.intValue());
+        return Short.compareUnsigned(value, o.value);
     }
 
     @Override
