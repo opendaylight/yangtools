@@ -40,7 +40,7 @@ final class RevisionDependencyResolver extends DependencyResolver {
         }
 
         // Slow revision-less walk
-        return !mi.getRevision().isPresent() && findWildcard(haystack, mi.getModuleName()) != null;
+        return mi.getRevision().isEmpty() && findWildcard(haystack, mi.getModuleName()) != null;
     }
 
     public static RevisionDependencyResolver create(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {

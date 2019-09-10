@@ -233,7 +233,7 @@ public final class SchemaContextUtil {
 
         LOG.trace("Looking up module {} in context {}", current, path);
         final Optional<Module> module = context.findModule(current.getModule());
-        if (!module.isPresent()) {
+        if (module.isEmpty()) {
             LOG.debug("Module {} not found", current);
             return null;
         }

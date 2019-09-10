@@ -104,7 +104,7 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
         checkArgument(SCHEMA_MOUNTS.equals(mountData.getIdentifier()), "Unexpected top-level container %s", mountData);
 
         final Optional<DataContainerChild<?, ?>> optMountPoint = mountData.getChild(MOUNT_POINT);
-        if (!optMountPoint.isPresent()) {
+        if (optMountPoint.isEmpty()) {
             LOG.debug("mount-point list not present in {}", mountData);
             return new EmptyMountPointContext(schemaContext);
         }

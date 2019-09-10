@@ -166,7 +166,7 @@ public final class ModuleDependencySort {
         }
 
         // If revision is not specified in import, but module exists with different revisions, take first one
-        if (!toRevision.isPresent()) {
+        if (toRevision.isEmpty()) {
             final Map<Optional<Revision>, ModuleNodeImpl> modulerevs = moduleGraph.row(toName);
 
             if (!modulerevs.isEmpty()) {

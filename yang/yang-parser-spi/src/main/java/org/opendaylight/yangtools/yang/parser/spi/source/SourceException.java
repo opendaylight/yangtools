@@ -134,7 +134,7 @@ public class SourceException extends RuntimeException {
      */
     public static <T> @NonNull T unwrap(final Optional<T> opt, final @NonNull StatementSourceReference source,
             final @NonNull String format, final Object... args) {
-        throwIf(!opt.isPresent(), source, format, args);
+        throwIf(opt.isEmpty(), source, format, args);
         return opt.get();
     }
 

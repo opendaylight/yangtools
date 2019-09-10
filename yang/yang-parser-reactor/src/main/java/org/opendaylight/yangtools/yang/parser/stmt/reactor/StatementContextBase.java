@@ -826,7 +826,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public final StatementContextBase<?, ?, ?> wrapWithImplicit(final StatementContextBase<?, ?, ?> original) {
         final Optional<StatementSupport<?, ?, ?>> optImplicit = definition.getImplicitParentFor(
             original.getPublicDefinition());
-        if (!optImplicit.isPresent()) {
+        if (optImplicit.isEmpty()) {
             return original;
         }
 

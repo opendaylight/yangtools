@@ -318,7 +318,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
         SomeModifiersUnresolvedException buildFailure = null;
         for (final SourceSpecificContext failedSource : sourcesToProgress) {
             final Optional<SourceException> optSourceEx = failedSource.failModifiers(currentPhase);
-            if (!optSourceEx.isPresent()) {
+            if (optSourceEx.isEmpty()) {
                 continue;
             }
 

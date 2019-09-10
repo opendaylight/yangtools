@@ -94,7 +94,7 @@ public interface DataNodeContainer {
      * @return child node of this DataNodeContainer if child with given name is present, empty otherwise
      * @throws NullPointerException if any argument is null
      */
-    default Optional<DataSchemaNode> findDataChildByName(QName first, QName... others) {
+    default Optional<DataSchemaNode> findDataChildByName(final QName first, final QName... others) {
         Optional<DataSchemaNode> optCurrent = findDataChildByName(first);
         for (QName qname : others) {
             if (optCurrent.isPresent()) {
@@ -181,7 +181,7 @@ public interface DataNodeContainer {
         DataNodeContainer parent = this;
         do {
             final Optional<DataSchemaNode> optChild = parent.findDataTreeChild(requireNonNull(it.next()));
-            if (!optChild.isPresent() || !it.hasNext()) {
+            if (optChild.isEmpty() || !it.hasNext()) {
                 return optChild;
             }
 
