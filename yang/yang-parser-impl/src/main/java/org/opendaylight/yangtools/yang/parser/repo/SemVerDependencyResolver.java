@@ -36,11 +36,11 @@ final class SemVerDependencyResolver extends DependencyResolver {
     }
 
     private static boolean isCompatible(final Optional<SemVer> moduleSemVer, final Optional<SemVer> importSemVer) {
-        if (!importSemVer.isPresent()) {
+        if (importSemVer.isEmpty()) {
             // Import does not care about the version
             return true;
         }
-        if (!moduleSemVer.isPresent()) {
+        if (moduleSemVer.isEmpty()) {
             // Modules which do not declare a semantic version are incompatible with imports which do
             return false;
         }

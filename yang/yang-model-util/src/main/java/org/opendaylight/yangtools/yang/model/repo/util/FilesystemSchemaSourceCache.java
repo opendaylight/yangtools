@@ -143,7 +143,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     static File sourceIdToFile(final SourceIdentifier identifier, final File storageDirectory) {
         final Optional<Revision> rev = identifier.getRevision();
         final File file;
-        if (!rev.isPresent()) {
+        if (rev.isEmpty()) {
             // FIXME: this does not look right
             file = findFileWithNewestRev(identifier, storageDirectory);
         } else {

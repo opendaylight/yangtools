@@ -188,7 +188,7 @@ public final class CompatUtils {
         final Optional<LengthConstraint> optLengths = type.getLengthConstraint();
 
         if ((patterns.isEmpty() || patterns.equals(base.getPatternConstraints()))
-                && (!optLengths.isPresent() || optLengths.equals(base.getLengthConstraint()))) {
+                && (optLengths.isEmpty() || optLengths.equals(base.getLengthConstraint()))) {
             return base;
         }
 
@@ -202,7 +202,7 @@ public final class CompatUtils {
     private static <T extends RangeRestrictedTypeDefinition<T, ?>> T baseTypeIfNotConstrained(final @NonNull T type,
             final T base) {
         final Optional<?> optConstraint = type.getRangeConstraint();
-        if (!optConstraint.isPresent()) {
+        if (optConstraint.isEmpty()) {
             return base;
         }
         return optConstraint.equals(base.getRangeConstraint()) ? base : type;
@@ -211,7 +211,7 @@ public final class CompatUtils {
     private static <T extends LengthRestrictedTypeDefinition<T>> T baseTypeIfNotConstrained(final @NonNull T type,
             final T base) {
         final Optional<LengthConstraint> optConstraint = type.getLengthConstraint();
-        if (!optConstraint.isPresent()) {
+        if (optConstraint.isEmpty()) {
             return base;
         }
         return optConstraint.equals(base.getLengthConstraint()) ? base : type;

@@ -114,7 +114,7 @@ public final class DataTreeCandidateNodes {
 
         // Process removals next, looking into new data to see if we processed it
         for (NormalizedNode<?, ?> child : oldData.getValue()) {
-            if (!newData.getChild(child.getIdentifier()).isPresent()) {
+            if (newData.getChild(child.getIdentifier()).isEmpty()) {
                 result.add(deleteNode(child));
             }
         }

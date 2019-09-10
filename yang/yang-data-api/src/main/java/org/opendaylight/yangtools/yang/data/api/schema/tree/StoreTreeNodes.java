@@ -51,7 +51,7 @@ public final class StoreTreeNodes {
         int depth = 1;
         for (PathArgument pathArg : path.getPathArguments()) {
             Optional<T> potential = current.getChild(pathArg);
-            if (!potential.isPresent()) {
+            if (potential.isEmpty()) {
                 throw new IllegalArgumentException(String.format("Child %s is not present in tree.",
                         path.getAncestor(depth)));
             }

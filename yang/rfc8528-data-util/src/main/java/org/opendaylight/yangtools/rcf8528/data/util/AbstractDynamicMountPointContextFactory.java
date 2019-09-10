@@ -46,7 +46,7 @@ public abstract class AbstractDynamicMountPointContextFactory extends AbstractId
         for (Entry<ContainerName, MountPointChild> entry : libraryContainers.entrySet()) {
             // Context for the specific code word
             final Optional<SchemaContext> optLibContext = findSchemaForLibrary(entry.getKey());
-            if (!optLibContext.isPresent()) {
+            if (optLibContext.isEmpty()) {
                 LOG.debug("YANG Library context for mount point {} container {} not found", getIdentifier(),
                     entry.getKey());
                 continue;

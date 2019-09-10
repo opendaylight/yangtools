@@ -129,7 +129,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         for (Module module : baseModules) {
             for (ModuleImport moduleImport : module.getImports()) {
                 Optional<Revision> revisionDate = moduleImport.getRevision();
-                if (!revisionDate.isPresent()) {
+                if (revisionDate.isEmpty()) {
                     revisionDate = nameToModulesAll.get(moduleImport.getModuleName()).first().getRevision();
                 }
 
@@ -184,7 +184,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
             //handling/checking imports regarding root modules
             for (ModuleImport moduleImport : module.getImports()) {
                 if (moduleImport.getModuleName().equals(rootModule.getName())) {
-                    return !moduleImport.getRevision().isPresent()
+                    return moduleImport.getRevision().isEmpty()
                             || moduleImport.getRevision().equals(rootModule.getRev());
                 }
             }
