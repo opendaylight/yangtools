@@ -241,7 +241,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public final int compareTo(final Uint8 o) {
-        return intValue() - o.intValue();
+        return Byte.compareUnsigned(value, o.value);
     }
 
     @Override
