@@ -852,14 +852,14 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     public static final class NodeWithValue<T> extends AbstractPathArgument {
         private static final long serialVersionUID = -3637456085341738431L;
 
-        private final T value;
+        private final @NonNull T value;
 
         public NodeWithValue(final QName node, final T value) {
             super(node);
-            this.value = value;
+            this.value = requireNonNull(value);
         }
 
-        public T getValue() {
+        public @NonNull T getValue() {
             return value;
         }
 

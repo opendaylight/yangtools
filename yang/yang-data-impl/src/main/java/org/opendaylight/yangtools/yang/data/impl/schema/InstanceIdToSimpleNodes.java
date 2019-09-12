@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Iterator;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -69,7 +70,8 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
 
     static final class LeafListEntryNormalization extends InstanceIdToSimpleNodes<NodeWithValue> {
         LeafListEntryNormalization(final LeafListSchemaNode potential) {
-            super(new NodeWithValue<>(potential.getQName(), null));
+            // We are fudging a value here
+            super(new NodeWithValue<>(potential.getQName(), Empty.getInstance()));
         }
 
         @Override
