@@ -677,6 +677,18 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         /**
+         * Determine whether a particular predicate key is present.
+         *
+         * @param key Predicate key
+         * @return True if the predicate is present, false otherwise
+         * @throws NullPointerException if {@code key} is null
+         */
+        @Beta
+        public boolean containsKey(final QName key) {
+            return keyValues.containsKey(requireNonNull(key));
+        }
+
+        /**
          * Return the predicate values in the iteration order of {@link #entrySet()}.
          *
          * @return Predicate values.
