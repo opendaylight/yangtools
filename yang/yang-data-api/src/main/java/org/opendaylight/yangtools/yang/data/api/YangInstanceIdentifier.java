@@ -596,6 +596,11 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             }
 
             @Override
+            public boolean containsKey(final QName qname) {
+                return key.equals(requireNonNull(qname));
+            }
+
+            @Override
             public SingletonSet<Object> values() {
                 return SingletonSet.of(value);
             }
@@ -650,6 +655,11 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             @Override
             public Set<QName> keySet() {
                 return keyValues.keySet();
+            }
+
+            @Override
+            public boolean containsKey(final QName qname) {
+                return keyValues.containsKey(requireNonNull(qname));
             }
 
             @Override
@@ -748,6 +758,16 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          */
         @Beta
         public abstract @NonNull Set<QName> keySet();
+
+        /**
+         * Determine whether a particular predicate key is present.
+         *
+         * @param key Predicate key
+         * @return True if the predicate is present, false otherwise
+         * @throws NullPointerException if {@code key} is null
+         */
+        @Beta
+        public abstract boolean containsKey(QName key);
 
         /**
          * Return the predicate values in the iteration order of {@link #entrySet()}.
