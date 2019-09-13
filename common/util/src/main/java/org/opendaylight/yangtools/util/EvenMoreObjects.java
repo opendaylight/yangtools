@@ -49,5 +49,7 @@ public final class EvenMoreObjects {
     @FunctionalInterface
     public interface BooleanEqualsFunction<T> extends BiFunction<T, T, Boolean> { }
 
-    private EvenMoreObjects() { }
+    private EvenMoreObjects() {
+
+    }
 }
