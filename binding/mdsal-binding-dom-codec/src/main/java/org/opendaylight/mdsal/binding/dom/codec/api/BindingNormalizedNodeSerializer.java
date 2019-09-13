@@ -80,12 +80,18 @@ public interface BindingNormalizedNodeSerializer {
      */
     @Nullable Notification fromNormalizedNodeNotification(@NonNull SchemaPath path, @NonNull ContainerNode data);
 
-    // FIXME: 5.0.0: make this method non-default
+    /**
+     * Translates supplied NormalizedNode Notification into Binding data, optionally taking an instant
+     * when the notification was generated.
+     *
+     * @param path Schema Path of Notification, schema path is absolute, and consists of Notification QName.
+     * @param data NormalizedNode representing data
+     * @param eventInstant optional instant when the event was generated
+     * @return Binding representation of Notification
+     */
     @Beta
-    default Notification fromNormalizedNodeNotification(final @NonNull SchemaPath path,
-            final @NonNull ContainerNode data, final @Nullable Instant eventInstant) {
-        return fromNormalizedNodeNotification(path, data);
-    }
+    @Nullable Notification fromNormalizedNodeNotification(@NonNull SchemaPath path, @NonNull ContainerNode data,
+            @Nullable Instant eventInstant);
 
     /**
      * Translates supplied NormalizedNode RPC input or output into Binding data.
