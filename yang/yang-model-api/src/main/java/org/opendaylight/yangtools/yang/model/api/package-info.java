@@ -7,7 +7,7 @@
  */
 
 /**
- * Definition of structures and DOM like API of effected YANG schema
+ * Definition of structures and DOM like API of effected YANG schema.
  *
  * <p>
  * This package is structured into following logical units:

@@ -7,10 +7,8 @@
  */
 
 /**
- * Definition of normalized YANG DOM Model
- *
- * Normalized DOM Model brings more direct mapping between YANG Model, DOM
- * representation of data
+ * Definition of normalized YANG DOM Model. Normalized DOM Model brings more
+ * direct mapping between YANG Model, DOM representation of data.
  *
  * <h2>Normalized DOM Model</h2>
  *
@@ -119,8 +117,8 @@
  *    {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue} SimpleValue
  * </pre>
  *
+ * <p>
  * The resulting tree organization is following:
- *
  * <ul>
  * <li>(DataContainerNode)
  * <ul>
@@ -159,11 +157,11 @@
  * </ul>
  *
  * <h3>Ordering of child nodes</h3>
- *
  * Ordering of child nodes is not enforced by this API definition, unless
  * explicitly stated by subclasses of
  * {@link org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer}
  * which marks nodes with semantic constrain to preserve user-supplied ordering.
+ *
  * <p>
  * Clients should not expect any specific ordering of child nodes for interfaces
  * from this package which does not extend
