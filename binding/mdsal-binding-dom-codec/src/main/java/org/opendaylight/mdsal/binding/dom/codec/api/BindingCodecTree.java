@@ -34,9 +34,6 @@ public interface BindingCodecTree {
      *
      * @return A BindingIdentityCodec instance.
      */
-    // FIXME: 5.0.0: make this method non-default
     @Beta
-    default @NonNull BindingIdentityCodec getIdentityCodec() {
-        throw new UnsupportedOperationException("Not implemented by " + getClass());
-    }
+    @NonNull BindingIdentityCodec getIdentityCodec();
 }
