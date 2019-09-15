@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Strings;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -38,7 +37,7 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     public LoggingNormalizedNodeStreamWriter(final int indentSize) {
-        this.indentStr = Strings.repeat(" ", indentSize);
+        this.indentStr = " ".repeat(indentSize);
         indent.push("");
     }
 

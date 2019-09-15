@@ -13,7 +13,6 @@ import static org.eclipse.jdt.annotation.DefaultLocation.RETURN_TYPE;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -82,7 +81,7 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
 
     static {
         for (int i = 0; i < INDENT_STRINGS_SIZE; i++) {
-            INDENT_STRINGS[i] = Strings.repeat(INDENT, i).intern();
+            INDENT_STRINGS[i] = INDENT.repeat(i).intern();
         }
     }
 
