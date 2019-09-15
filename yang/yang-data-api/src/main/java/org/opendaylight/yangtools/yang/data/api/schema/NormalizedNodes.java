@@ -96,13 +96,13 @@ public final class NormalizedNodes {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Optional<NormalizedNode<?, ?>> getDirectChild(final NormalizedNode<?, ?> node,
             final PathArgument pathArg) {
-        if (node instanceof LeafNode<?> || node instanceof LeafSetEntryNode<?>) {
+        if (node instanceof ValueNode) {
             return Optional.empty();
-        } else if (node instanceof DataContainerNode<?>) {
+        } else if (node instanceof DataContainerNode) {
             return (Optional) ((DataContainerNode<?>) node).getChild(pathArg);
         } else if (node instanceof MapNode && pathArg instanceof NodeIdentifierWithPredicates) {
             return (Optional) ((MapNode) node).getChild((NodeIdentifierWithPredicates) pathArg);
-        } else if (node instanceof LeafSetNode<?> && pathArg instanceof NodeWithValue) {
+        } else if (node instanceof LeafSetNode && pathArg instanceof NodeWithValue) {
             return (Optional) ((LeafSetNode<?>) node).getChild((NodeWithValue) pathArg);
         }
         return Optional.empty();
@@ -124,7 +124,7 @@ public final class NormalizedNodes {
         final String prefix = " ".repeat(offset);
 
         builder.append(prefix).append(toStringTree(node.getIdentifier()));
-        if (node instanceof NormalizedNodeContainer<?, ?, ?>) {
+        if (node instanceof NormalizedNodeContainer) {
             final NormalizedNodeContainer<?, ?, ?> container = (NormalizedNodeContainer<?, ?, ?>) node;
 
             builder.append(" {\n");
