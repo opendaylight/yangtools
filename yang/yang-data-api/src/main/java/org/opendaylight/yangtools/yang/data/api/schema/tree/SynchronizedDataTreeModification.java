@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -68,5 +70,11 @@ public final class SynchronizedDataTreeModification implements DataTreeModificat
     @Override
     public synchronized SchemaContext getSchemaContext() {
         return delegate.getSchemaContext();
+    }
+
+    @Override
+    public Collection<Entry<YangInstanceIdentifier, NormalizedNode<?, ?>>> readNodes(
+            final YangInstanceIdentifier wildcard) {
+        return delegate.readNodes(wildcard);
     }
 }
