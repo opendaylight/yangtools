@@ -90,7 +90,7 @@ public final class CodeHelpers {
      * @param value Value to append
      * @throws NullPointerException if the name or helper is null
      */
-    public static void appendValue(final @NonNull ToStringHelper helper, final @NonNull String name,
+    public static void appendValue(final ToStringHelper helper, final @NonNull String name,
             final @Nullable Object value) {
         if (value != null) {
             helper.add(name, value);
