@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
@@ -45,8 +45,8 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
 
     private static final CanonicalValueSupport<Uint32> SUPPORT = new Support();
     private static final long serialVersionUID = 1L;
-    private static final long MIN_VALUE_LONG = 0;
-    private static final long MAX_VALUE_LONG = 0xffffffffL;
+    private static final long MAX_VALUE_LONG = 4294967295L;
+    private static final String MAX_VALUE_STR = "4294967295";
 
     private static final String CACHE_SIZE_PROPERTY = "org.opendaylight.yangtools.yang.common.Uint32.cache.size";
     private static final int DEFAULT_CACHE_SIZE = 256;
@@ -113,7 +113,7 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
      * @throws IllegalArgumentException if byteVal is less than zero
      */
     public static Uint32 valueOf(final byte byteVal) {
-        checkArgument(byteVal >= MIN_VALUE_LONG, "Negative values are not allowed");
+        UintConversions.checkNonNegative(byteVal, MAX_VALUE_STR);
         return instanceFor(byteVal);
     }
 
@@ -126,7 +126,7 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
      * @throws IllegalArgumentException if shortVal is less than zero
      */
     public static Uint32 valueOf(final short shortVal) {
-        checkArgument(shortVal >= MIN_VALUE_LONG, "Negative values are not allowed");
+        UintConversions.checkNonNegative(shortVal, MAX_VALUE_STR);
         return instanceFor(shortVal);
     }
 
@@ -138,7 +138,7 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
      * @throws IllegalArgumentException if intVal is less than zero
      */
     public static Uint32 valueOf(final int intVal) {
-        checkArgument(intVal >= MIN_VALUE_LONG, "Negative values are not allowed");
+        UintConversions.checkNonNegative(intVal, MAX_VALUE_STR);
         return instanceFor(intVal);
     }
 
@@ -151,8 +151,7 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
      * @throws IllegalArgumentException if longVal is less than zero or greater than 4294967295
      */
     public static Uint32 valueOf(final long longVal) {
-        checkArgument(longVal >= MIN_VALUE_LONG && longVal <= MAX_VALUE_LONG, "Value %s is outside of allowed range",
-                longVal);
+        UintConversions.checkRange(longVal, MAX_VALUE_LONG, MAX_VALUE_STR);
         return instanceFor((int)longVal);
     }
 
@@ -228,7 +227,7 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
      *                               {@code radix} is outside of allowed range.
      */
     public static Uint32 valueOf(final String string, final int radix) {
-        return instanceFor(Integer.parseUnsignedInt(string, radix));
+        return instanceFor(Integer.parseUnsignedInt(requireNonNull(string), radix));
     }
 
     /**

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -43,8 +42,8 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
 
     private static final CanonicalValueSupport<Uint8> SUPPORT = new Support();
 
-    private static final short MIN_VALUE_SHORT = 0;
     private static final short MAX_VALUE_SHORT = 255;
+    private static final String MAX_VALUE_STR = "255";
 
     private static final long serialVersionUID = 1L;
 
@@ -52,13 +51,13 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
 
     static {
         final Uint8[] c = new Uint8[MAX_VALUE_SHORT + 1];
-        for (int i = MIN_VALUE_SHORT; i <= MAX_VALUE_SHORT; ++i) {
+        for (int i = 0; i <= MAX_VALUE_SHORT; ++i) {
             c[i] = new Uint8((byte)i);
         }
         CACHE = c;
     }
 
-    public static final Uint8 ZERO = valueOf(MIN_VALUE_SHORT);
+    public static final Uint8 ZERO = valueOf(0);
     public static final Uint8 ONE = valueOf(1);
     public static final Uint8 MAX_VALUE = valueOf(MAX_VALUE_SHORT);
 
@@ -95,7 +94,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
      * @throws IllegalArgumentException if byteVal is less than zero
      */
     public static Uint8 valueOf(final byte byteVal) {
-        checkArgument(byteVal >= MIN_VALUE_SHORT, "Negative values are not allowed");
+        UintConversions.checkNonNegative(byteVal, MAX_VALUE_STR);
         return instanceFor(byteVal);
     }
 
@@ -108,8 +107,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
      * @throws IllegalArgumentException if shortVal is less than zero or greater than 255.
      */
     public static Uint8 valueOf(final short shortVal) {
-        checkArgument(shortVal >= MIN_VALUE_SHORT && shortVal <= MAX_VALUE_SHORT,
-                "Value %s is outside of allowed range", shortVal);
+        UintConversions.checkRange(shortVal, MAX_VALUE_SHORT, MAX_VALUE_STR);
         return instanceFor((byte)(shortVal & 0xff));
     }
 
@@ -121,8 +119,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
      * @throws IllegalArgumentException if intVal is less than zero or greater than 255.
      */
     public static Uint8 valueOf(final int intVal) {
-        checkArgument(intVal >= MIN_VALUE_SHORT && intVal <= MAX_VALUE_SHORT,
-                "Value %s is outside of allowed range", intVal);
+        UintConversions.checkRange(intVal, MAX_VALUE_SHORT, MAX_VALUE_STR);
         return instanceFor((byte)(intVal & 0xff));
     }
 
@@ -135,8 +132,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
      * @throws IllegalArgumentException if intVal is less than zero or greater than 255.
      */
     public static Uint8 valueOf(final long longVal) {
-        checkArgument(longVal >= MIN_VALUE_SHORT && longVal <= MAX_VALUE_SHORT,
-                "Value %s is outside of allowed range", longVal);
+        UintConversions.checkRange(longVal, MAX_VALUE_SHORT, MAX_VALUE_STR);
         return instanceFor((byte)(longVal & 0xff));
     }
 

@@ -102,4 +102,50 @@ public final class UintConversions {
     public static Uint64 fromGuava(final UnsignedLong value) {
         return Uint64.valueOf(value);
     }
+
+    static void checkNonNegative(final byte value, final String maxValue) {
+        if (value < 0) {
+            throwIAE(value, maxValue);
+        }
+    }
+
+    static void checkNonNegative(final short value, final String maxStr) {
+        if (value < 0) {
+            throwIAE(value, maxStr);
+        }
+    }
+
+    static void checkNonNegative(final int value, final String maxStr) {
+        if (value < 0) {
+            throwIAE(value, maxStr);
+        }
+    }
+
+    static void checkRange(final short value, final short max, final String maxStr) {
+        if (value < 0 || value > max) {
+            throwIAE(value, maxStr);
+        }
+    }
+
+    static void checkRange(final int value, final int max, final String maxStr) {
+        if (value < 0 || value > max) {
+            throwIAE(value, maxStr);
+        }
+    }
+
+    static void checkRange(final long value, final long max, final String maxStr) {
+        if (value < 0 || value > max) {
+            throwIAE(value, maxStr);
+        }
+    }
+
+    private static void throwIAE(final int value, final String max) {
+        // "Invalid range: 65536, expected: [[0..65535]]."
+        throw new IllegalArgumentException("Invalid range: " + value + ", expected: [[0.." + max + "]].");
+    }
+
+    private static void throwIAE(final long value, final String max) {
+        // "Invalid range: 65536, expected: [[0..65535]]."
+        throw new IllegalArgumentException("Invalid range: " + value + ", expected: [[0.." + max + "]].");
+    }
 }

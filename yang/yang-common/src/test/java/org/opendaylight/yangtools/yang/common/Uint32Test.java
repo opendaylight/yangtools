@@ -137,4 +137,9 @@ public class Uint32Test {
     public void testBigLong() {
         Uint32.valueOf(4294967296L);
     }
+
+    @Test(expected = NullPointerException.class)
+    public void testNullValueOfString() {
+        Uint32.valueOf((String) null);
+    }
 }

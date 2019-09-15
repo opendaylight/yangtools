@@ -142,4 +142,9 @@ public class Uint8Test {
     public void testBigLong() {
         Uint8.valueOf(256L);
     }
+
+    @Test(expected = NullPointerException.class)
+    public void testNullValueOfString() {
+        Uint8.valueOf((String) null);
+    }
 }

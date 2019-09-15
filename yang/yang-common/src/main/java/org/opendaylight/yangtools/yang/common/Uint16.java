@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -45,8 +44,8 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
 
     private static final CanonicalValueSupport<Uint16> SUPPORT = new Support();
     private static final long serialVersionUID = 1L;
-    private static final int MIN_VALUE_INT = 0;
     private static final int MAX_VALUE_INT = 65535;
+    private static final String MAX_VALUE_STR = "65535";
 
     private static final String CACHE_SIZE_PROPERTY = "org.opendaylight.yangtools.yang.common.Uint16.cache.size";
     private static final int DEFAULT_CACHE_SIZE = 256;
@@ -66,7 +65,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
 
     static {
         final Uint16[] c = new Uint16[CACHE_SIZE];
-        for (int i = MIN_VALUE_INT; i < c.length; ++i) {
+        for (int i = 0; i < c.length; ++i) {
             c[i] = new Uint16((short) i);
         }
         CACHE = c;
@@ -74,7 +73,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
 
     private static final Interner<Uint16> INTERNER = Interners.newWeakInterner();
 
-    public static final Uint16 ZERO = valueOf(MIN_VALUE_INT).intern();
+    public static final Uint16 ZERO = valueOf(0).intern();
     public static final Uint16 ONE = valueOf(1).intern();
     public static final Uint16 MAX_VALUE = valueOf(MAX_VALUE_INT).intern();
 
@@ -113,7 +112,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      * @throws IllegalArgumentException if byteVal is less than zero
      */
     public static Uint16 valueOf(final byte byteVal) {
-        checkArgument(byteVal >= MIN_VALUE_INT, "Negative values are not allowed");
+        UintConversions.checkNonNegative(byteVal, MAX_VALUE_STR);
         return instanceFor(byteVal);
     }
 
@@ -126,7 +125,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      * @throws IllegalArgumentException if shortVal is less than zero.
      */
     public static Uint16 valueOf(final short shortVal) {
-        checkArgument(shortVal >= MIN_VALUE_INT, "Negative values are not allowed");
+        UintConversions.checkNonNegative(shortVal, MAX_VALUE_STR);
         return instanceFor(shortVal);
     }
 
@@ -138,8 +137,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      * @throws IllegalArgumentException if intVal is less than zero or greater than 65535.
      */
     public static Uint16 valueOf(final int intVal) {
-        checkArgument(intVal >= MIN_VALUE_INT && intVal <= MAX_VALUE_INT, "Value %s is outside of allowed range",
-                intVal);
+        UintConversions.checkRange(intVal, MAX_VALUE_INT, MAX_VALUE_STR);
         return instanceFor((short)(intVal & 0xffff));
     }
 
@@ -152,8 +150,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      * @throws IllegalArgumentException if intVal is less than zero or greater than 65535.
      */
     public static Uint16 valueOf(final long longVal) {
-        checkArgument(longVal >= MIN_VALUE_INT && longVal <= MAX_VALUE_INT, "Value %s is outside of allowed range",
-                longVal);
+        UintConversions.checkRange(longVal, MAX_VALUE_INT, MAX_VALUE_STR);
         return instanceFor((short)(longVal & 0xffff));
     }
 

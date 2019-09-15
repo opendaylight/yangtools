@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
@@ -46,7 +46,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
 
     private static final CanonicalValueSupport<Uint64> SUPPORT = new Support();
     private static final long serialVersionUID = 1L;
-    private static final long MIN_VALUE_LONG = 0;
+    private static final String MAX_VALUE_STR = Long.toUnsignedString(-1);
 
     private static final String CACHE_SIZE_PROPERTY = "org.opendaylight.yangtools.yang.common.Uint64.cache.size";
     private static final int DEFAULT_CACHE_SIZE = 256;
@@ -113,7 +113,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      * @throws IllegalArgumentException if byteVal is less than zero
      */
     public static Uint64 valueOf(final byte byteVal) {
-        checkArgument(byteVal >= MIN_VALUE_LONG, "Negative values are not allowed");
+        UintConversions.checkNonNegative(byteVal, MAX_VALUE_STR);
         return instanceFor(byteVal);
     }
 
@@ -126,7 +126,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      * @throws IllegalArgumentException if shortVal is less than zero
      */
     public static Uint64 valueOf(final short shortVal) {
-        checkArgument(shortVal >= MIN_VALUE_LONG, "Negative values are not allowed");
+        UintConversions.checkNonNegative(shortVal, MAX_VALUE_STR);
         return instanceFor(shortVal);
     }
 
@@ -138,21 +138,23 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      * @throws IllegalArgumentException if intVal is less than zero
      */
     public static Uint64 valueOf(final int intVal) {
-        checkArgument(intVal >= MIN_VALUE_LONG, "Negative values are not allowed");
+        UintConversions.checkNonNegative(intVal, MAX_VALUE_STR);
         return instanceFor(intVal);
     }
 
     /**
-     * Returns an {@code Uint64} corresponding to a given {@code longVal}. The inverse operation is
-     * {@link #fromLongBits(long)}.
+     * Returns an {@code Uint64} corresponding to a given {@code longVal}, which is checked for range.
+     * See also {@link #longValue()} and {@link #fromLongBits(long)}.
      *
      * @param longVal long value
      * @return A Uint8 instance
      * @throws IllegalArgumentException if longVal is less than zero
      */
     public static Uint64 valueOf(final long longVal) {
-        checkArgument(longVal >= MIN_VALUE_LONG, "Negative values are not allowed");
-        return instanceFor(longVal);
+        if (longVal >= 0) {
+            return instanceFor(longVal);
+        }
+        throw new IllegalArgumentException("Invalid range: " + longVal + ", expected: [[0..18446744073709551615]].");
     }
 
     /**
@@ -208,9 +210,10 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      * @throws IllegalArgumentException if bigInt is less than zero or greater than 18446744073709551615
      */
     public static Uint64 valueOf(final BigInteger bigInt) {
-        checkArgument(bigInt.signum() >= 0, "Negative values not allowed");
-        checkArgument(bigInt.bitLength() <= Long.SIZE, "Value %s is outside of allowed range", bigInt);
-        return instanceFor(bigInt.longValue());
+        if (bigInt.signum() >= 0 && bigInt.bitLength() <= Long.SIZE) {
+            return instanceFor(bigInt.longValue());
+        }
+        throw new IllegalArgumentException("Invalid range: " + bigInt + ", expected: [[0..18446744073709551615]].");
     }
 
     /**
@@ -240,7 +243,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
      *                               {@code radix} is outside of allowed range.
      */
     public static Uint64 valueOf(final String string, final int radix) {
-        return instanceFor(Long.parseUnsignedLong(string, radix));
+        return instanceFor(Long.parseUnsignedLong(requireNonNull(string), radix));
     }
 
     @Override

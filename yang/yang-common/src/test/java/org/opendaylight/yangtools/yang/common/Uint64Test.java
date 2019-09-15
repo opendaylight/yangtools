@@ -144,4 +144,14 @@ public class Uint64Test {
     public void testBigBigInteger() {
         Uint64.valueOf(new BigInteger("0x10000000000000000"));
     }
+
+    @Test(expected = NullPointerException.class)
+    public void testNullValueOfString() {
+        Uint64.valueOf((String) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testNullValueOfBigInteger() {
+        Uint64.valueOf((BigInteger) null);
+    }
 }

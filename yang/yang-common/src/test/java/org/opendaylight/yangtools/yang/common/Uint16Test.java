@@ -141,4 +141,9 @@ public class Uint16Test {
     public void testBigLong() {
         Uint16.valueOf(65536L);
     }
+
+    @Test(expected = NullPointerException.class)
+    public void testNullValueOfString() {
+        Uint16.valueOf((String) null);
+    }
 }
