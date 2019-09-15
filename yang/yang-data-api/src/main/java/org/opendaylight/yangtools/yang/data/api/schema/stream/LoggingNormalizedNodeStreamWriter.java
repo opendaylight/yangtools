@@ -158,6 +158,7 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
         LOG.debug("{}({})={}", ind(), requireNonNull(value).getClass().getSimpleName(), value);
     }
 
+    @Override
     public void domSourceValue(final DOMSource value) {
         scalarValue(value);
     }
