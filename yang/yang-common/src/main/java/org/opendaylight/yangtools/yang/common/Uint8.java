@@ -107,7 +107,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
      * @throws IllegalArgumentException if shortVal is less than zero or greater than 255.
      */
     public static Uint8 valueOf(final short shortVal) {
-        UintConversions.checkRange(shortVal, MAX_VALUE_SHORT, MAX_VALUE_STR);
+        UintConversions.checkRange(shortVal, MAX_VALUE_SHORT);
         return instanceFor((byte)shortVal);
     }
 
@@ -119,7 +119,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
      * @throws IllegalArgumentException if intVal is less than zero or greater than 255.
      */
     public static Uint8 valueOf(final int intVal) {
-        UintConversions.checkRange(intVal, MAX_VALUE_SHORT, MAX_VALUE_STR);
+        UintConversions.checkRange(intVal, MAX_VALUE_SHORT);
         return instanceFor((byte)intVal);
     }
 
@@ -132,7 +132,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
      * @throws IllegalArgumentException if intVal is less than zero or greater than 255.
      */
     public static Uint8 valueOf(final long longVal) {
-        UintConversions.checkRange(longVal, MAX_VALUE_SHORT, MAX_VALUE_STR);
+        UintConversions.checkRange(longVal, MAX_VALUE_SHORT);
         return instanceFor((byte)longVal);
     }
 

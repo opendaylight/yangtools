@@ -151,7 +151,7 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
      * @throws IllegalArgumentException if longVal is less than zero or greater than 4294967295
      */
     public static Uint32 valueOf(final long longVal) {
-        UintConversions.checkRange(longVal, MAX_VALUE_LONG, MAX_VALUE_STR);
+        UintConversions.checkRange(longVal, MAX_VALUE_LONG);
         return instanceFor((int)longVal);
     }
 

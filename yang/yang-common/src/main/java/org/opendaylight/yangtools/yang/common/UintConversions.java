@@ -121,30 +121,35 @@ public final class UintConversions {
         }
     }
 
-    static void checkRange(final short value, final short max, final String maxStr) {
+    static void checkRange(final short value, final short max) {
         if (value < 0 || value > max) {
-            throwIAE(value, maxStr);
+            throwIAE(value, max);
         }
     }
 
-    static void checkRange(final int value, final int max, final String maxStr) {
+    static void checkRange(final int value, final int max) {
         if (value < 0 || value > max) {
-            throwIAE(value, maxStr);
+            throwIAE(value, max);
         }
     }
 
-    static void checkRange(final long value, final long max, final String maxStr) {
+    static void checkRange(final long value, final long max) {
         if (value < 0 || value > max) {
-            throwIAE(value, maxStr);
+            throwIAE(value, max);
         }
     }
 
-    private static void throwIAE(final int value, final String max) {
+    private static void throwIAE(final int value, final int max) {
         // "Invalid range: 65536, expected: [[0..65535]]."
         throw new IllegalArgumentException("Invalid range: " + value + ", expected: [[0.." + max + "]].");
     }
 
-    private static void throwIAE(final long value, final String max) {
+    private static void throwIAE(final long value, final long max) {
+        // "Invalid range: 65536, expected: [[0..65535]]."
+        throw new IllegalArgumentException("Invalid range: " + value + ", expected: [[0.." + max + "]].");
+    }
+
+    private static void throwIAE(final int value, final String max) {
         // "Invalid range: 65536, expected: [[0..65535]]."
         throw new IllegalArgumentException("Invalid range: " + value + ", expected: [[0.." + max + "]].");
     }

@@ -137,7 +137,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      * @throws IllegalArgumentException if intVal is less than zero or greater than 65535.
      */
     public static Uint16 valueOf(final int intVal) {
-        UintConversions.checkRange(intVal, MAX_VALUE_INT, MAX_VALUE_STR);
+        UintConversions.checkRange(intVal, MAX_VALUE_INT);
         return instanceFor((short)intVal);
     }
 
@@ -150,7 +150,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      * @throws IllegalArgumentException if intVal is less than zero or greater than 65535.
      */
     public static Uint16 valueOf(final long longVal) {
-        UintConversions.checkRange(longVal, MAX_VALUE_INT, MAX_VALUE_STR);
+        UintConversions.checkRange(longVal, MAX_VALUE_INT);
         return instanceFor((short)longVal);
     }
 
