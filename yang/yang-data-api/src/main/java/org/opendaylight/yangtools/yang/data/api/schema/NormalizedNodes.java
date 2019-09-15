@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import java.util.Arrays;
@@ -122,7 +121,7 @@ public final class NormalizedNodes {
     }
 
     private static void toStringTree(final StringBuilder builder, final NormalizedNode<?, ?> node, final int offset) {
-        final String prefix = Strings.repeat(" ", offset);
+        final String prefix = " ".repeat(offset);
 
         builder.append(prefix).append(toStringTree(node.getIdentifier()));
         if (node instanceof NormalizedNodeContainer) {

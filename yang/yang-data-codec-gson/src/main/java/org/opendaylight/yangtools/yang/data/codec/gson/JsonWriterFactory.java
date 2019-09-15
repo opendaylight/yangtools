@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Strings;
 import com.google.gson.stream.JsonWriter;
 import java.io.Writer;
 
@@ -40,7 +39,7 @@ public final class JsonWriterFactory {
      */
     public static JsonWriter createJsonWriter(final Writer writer, final int indentSize) {
         JsonWriter jsonWriter = new JsonWriter(writer);
-        final String indent = Strings.repeat(" ", indentSize);
+        final String indent = " ".repeat(indentSize);
         jsonWriter.setIndent(indent);
         return jsonWriter;
     }
