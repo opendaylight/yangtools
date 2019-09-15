@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -47,6 +48,11 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
     @Override
     public Optional<NormalizedNode<?, ?>> readNode(final YangInstanceIdentifier path) {
         return NormalizedNodes.findNode(rootNode.getData(), path);
+    }
+
+    @Override
+    public Collection<YangInstanceIdentifier> resolveWildcard(final YangInstanceIdentifier wildcard) {
+        return NormalizedNodes.findNodeIdentifiers(rootNode.getData(), wildcard);
     }
 
     @Override

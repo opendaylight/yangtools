@@ -8,13 +8,19 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -35,6 +41,35 @@ public final class NormalizedNodes {
 
     private NormalizedNodes() {
         throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
+
+    /**
+     * Expand a {@link YangInstanceIdentifier} child specification into a set of {@link YangInstanceIdentifier}s
+     * which identify nodes in a specified root node.
+     *
+     * <p>
+     * The specification takes the form of an instance identifier, with additional lookup mechanics. The mechanics
+     * specifically means that children of {@link MapNode}s do not need to be precisely specified via
+     * {@link NodeIdentifierWithPredicates}, but can instead be identified via a simple {@link NodeIdentifier}, meaning
+     * 'all of the map's direct children'. In such a case this method will traverse each node recursively, and report
+     * all nodes matching the criteria.
+     *
+     * @param rootNode Node to use as the root, corresponding to {@link YangInstanceIdentifier#empty()}
+     * @param childSpec Child matching specification
+     * @return A set of identifiers of matched nodes. This collection is guaranteed to hold each identifier exactly
+     *         once.
+     */
+    // Note: we expose Collection rather than a Set so we do not need to do comparisons
+    public static Collection<YangInstanceIdentifier> findNodeIdentifiers(final NormalizedNode<?, ?> rootNode,
+            final YangInstanceIdentifier childSpec) {
+        if (childSpec.isEmpty()) {
+            return ImmutableSet.of(childSpec);
+        }
+
+        final ArrayDeque<PathArgument> args = new ArrayDeque<>(childSpec.getPathArguments());
+        final List<YangInstanceIdentifier> result = new ArrayList<>();
+        findChildren(result, new ArrayList<>(args.size()), rootNode, args);
+        return result;
     }
 
     /**
@@ -147,5 +182,74 @@ public final class NormalizedNodes {
         } else {
             return identifier.getNodeType().getLocalName();
         }
+    }
+
+    /*
+     * Recursive children lookup. We store found children in 'result'. During recursive invocation we poll/push items
+     * into 'remaining', so that we it becomes empty we know we have a hit and should store the node.
+     *
+     * The 'parentState' argument contains the state needed to build the matching YangInstanceIdentifier. While we
+     * could build it up as we descend, it is a relatively expensive operation in that it computes hashCode -- which
+     * would be a wasted effort if we end up not matching anything under a particular subtree search.
+     *
+     * Alternatively we could hold a List<PathArgument> and use YangInstanceIdentifier.create(), but that would mean
+     * each identifier instance would hold the full copy of arguments. This is wasteful if we end up matching multiple
+     * entries, as the YangInstanceIdentifier.node() method allows us to create a child identifier efficiently.
+     *
+     * We therefore use a mixed approach, where 'parentState' can hold either PathArgument or a YangInstanceIdentifier.
+     * When asked to create an identifier we locate the first identifier entry and key off of it, mutating the list
+     * to hold intermediate YangInstanceIdentifiers. This means we will end up reusing instances as much as possible.
+     */
+    private static void findChildren(final List<YangInstanceIdentifier> result, final ArrayList<Object> parentState,
+            final NormalizedNode<?, ?> parent, final ArrayDeque<PathArgument> remaining) {
+        final PathArgument next = remaining.poll();
+        if (next == null) {
+            // Parent was a complete match, add it
+            result.add(createIdentifier(parentState));
+            return;
+        }
+
+        final Optional<NormalizedNode<?, ?>> optChild = getDirectChild(parent, next);
+        if (optChild.isPresent()) {
+            // We found the child directly, proceed to examine it
+            findChildren(result, parentState, remaining, optChild.get());
+        } else if (parent instanceof MapNode && next instanceof NodeIdentifier) {
+            // Wildcard case: examine all children
+            for (MapEntryNode child : ((MapNode) parent).getValue()) {
+                findChildren(result, parentState, remaining, child);
+            }
+        }
+
+        remaining.push(next);
+    }
+
+    private static void findChildren(final List<YangInstanceIdentifier> result, final ArrayList<Object> parentState,
+            final ArrayDeque<PathArgument> remaining, final NormalizedNode<?, ?> node) {
+        parentState.add(node.getIdentifier());
+        findChildren(result, parentState, node, remaining);
+        parentState.remove(parentState.size() - 1);
+    }
+
+    private static YangInstanceIdentifier createIdentifier(final ArrayList<Object> pathState) {
+        // Note: pathState is guaranteed to be non-empty
+        for (int i = pathState.size() - 1; i >= 0; --i) {
+            final Object obj = pathState.get(i);
+            if (obj instanceof YangInstanceIdentifier) {
+                return createIdentifier((YangInstanceIdentifier) obj, pathState, i + 1);
+            }
+        }
+        return createIdentifier(YangInstanceIdentifier.empty(), pathState, 0);
+    }
+
+    private static YangInstanceIdentifier createIdentifier(final YangInstanceIdentifier first,
+            final ArrayList<Object> pathState, final int next) {
+        YangInstanceIdentifier current = first;
+        for (int i = next, size = pathState.size(); i < size; ++i) {
+            final Object obj = pathState.get(i);
+            verify(obj instanceof PathArgument, "Unexpected item %s in state %s", obj, pathState);
+            current = current.node((PathArgument) obj);
+            pathState.set(i, current);
+        }
+        return current;
     }
 }

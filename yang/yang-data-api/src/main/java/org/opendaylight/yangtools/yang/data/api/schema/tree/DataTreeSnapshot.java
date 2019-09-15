@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -32,4 +33,6 @@ public interface DataTreeSnapshot extends SchemaContextProvider {
      * @return A new data tree modification
      */
     DataTreeModification newModification();
+
+    Collection<YangInstanceIdentifier> resolveWildcard(YangInstanceIdentifier wildcard);
 }
