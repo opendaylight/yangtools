@@ -38,6 +38,17 @@ public final class NormalizedNodes {
         throw new UnsupportedOperationException("Utility class should not be instantiated");
     }
 
+    /**
+     * Find duplicate NormalizedNode instances within a subtree. Duplicates are those, which compare
+     * as equal, but do not refer to the same object.
+     *
+     * @param node A normalized node subtree, may not be null
+     * @return A Map of NormalizedNode/DuplicateEntry relationships.
+     */
+    public static Map<NormalizedNode<?, ?>, DuplicateEntry> findDuplicates(final @NonNull NormalizedNode<?, ?> node) {
+        return Maps.filterValues(DuplicateFinder.findDuplicates(node), input -> !input.getDuplicates().isEmpty());
+    }
+
     public static Optional<NormalizedNode<?, ?>> findNode(final YangInstanceIdentifier rootPath,
             final NormalizedNode<?, ?> rootNode, final YangInstanceIdentifier childPath) {
         final Optional<YangInstanceIdentifier> relativePath = childPath.relativeTo(rootPath);
@@ -46,11 +57,9 @@ public final class NormalizedNodes {
 
     public static Optional<NormalizedNode<?, ?>> findNode(final Optional<NormalizedNode<?, ?>> parent,
             final Iterable<PathArgument> relativePath) {
-        requireNonNull(parent, "Parent must not be null");
-        requireNonNull(relativePath, "Relative path must not be null");
-
-        Optional<NormalizedNode<?, ?>> currentNode = parent;
-        final Iterator<PathArgument> pathIterator = relativePath.iterator();
+        final Iterator<PathArgument> pathIterator = requireNonNull(relativePath, "Relative path must not be null")
+                .iterator();
+        Optional<NormalizedNode<?, ?>> currentNode = requireNonNull(parent, "Parent must not be null");
         while (currentNode.isPresent() && pathIterator.hasNext()) {
             currentNode = getDirectChild(currentNode.get(), pathIterator.next());
         }
@@ -81,10 +90,8 @@ public final class NormalizedNodes {
 
     public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> tree,
             final YangInstanceIdentifier path) {
-        requireNonNull(tree, "Tree must not be null");
-        requireNonNull(path, "Path must not be null");
-
-        return findNode(Optional.of(tree), path.getPathArguments());
+        return findNode(Optional.of(requireNonNull(tree, "Tree must not be null")),
+            requireNonNull(path, "Path must not be null").getPathArguments());
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -141,16 +148,5 @@ public final class NormalizedNodes {
         } else {
             return identifier.getNodeType().getLocalName();
         }
-    }
-
-    /**
-     * Find duplicate NormalizedNode instances within a subtree. Duplicates are those, which compare
-     * as equal, but do not refer to the same object.
-     *
-     * @param node A normalized node subtree, may not be null
-     * @return A Map of NormalizedNode/DuplicateEntry relationships.
-     */
-    public static Map<NormalizedNode<?, ?>, DuplicateEntry> findDuplicates(final @NonNull NormalizedNode<?, ?> node) {
-        return Maps.filterValues(DuplicateFinder.findDuplicates(node), input -> !input.getDuplicates().isEmpty());
     }
 }
