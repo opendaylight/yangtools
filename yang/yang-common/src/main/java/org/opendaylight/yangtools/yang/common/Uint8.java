@@ -108,7 +108,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
      */
     public static Uint8 valueOf(final short shortVal) {
         UintConversions.checkRange(shortVal, MAX_VALUE_SHORT, MAX_VALUE_STR);
-        return instanceFor((byte)(shortVal & 0xff));
+        return instanceFor((byte)shortVal);
     }
 
     /**
@@ -120,7 +120,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
      */
     public static Uint8 valueOf(final int intVal) {
         UintConversions.checkRange(intVal, MAX_VALUE_SHORT, MAX_VALUE_STR);
-        return instanceFor((byte)(intVal & 0xff));
+        return instanceFor((byte)intVal);
     }
 
     /**
@@ -133,7 +133,7 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
      */
     public static Uint8 valueOf(final long longVal) {
         UintConversions.checkRange(longVal, MAX_VALUE_SHORT, MAX_VALUE_STR);
-        return instanceFor((byte)(longVal & 0xff));
+        return instanceFor((byte)longVal);
     }
 
     /**

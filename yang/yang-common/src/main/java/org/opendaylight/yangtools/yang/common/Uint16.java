@@ -138,7 +138,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      */
     public static Uint16 valueOf(final int intVal) {
         UintConversions.checkRange(intVal, MAX_VALUE_INT, MAX_VALUE_STR);
-        return instanceFor((short)(intVal & 0xffff));
+        return instanceFor((short)intVal);
     }
 
     /**
@@ -151,7 +151,7 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
      */
     public static Uint16 valueOf(final long longVal) {
         UintConversions.checkRange(longVal, MAX_VALUE_INT, MAX_VALUE_STR);
-        return instanceFor((short)(longVal & 0xffff));
+        return instanceFor((short)longVal);
     }
 
     /**
