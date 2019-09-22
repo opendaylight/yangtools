@@ -136,9 +136,8 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
     protected static final <E extends DataObject> void streamList(final Class<E> childClass,
             final DataObjectStreamer<E> childStreamer, final DataObjectSerializerRegistry registry,
             final BindingStreamEventWriter writer, final List<? extends E> value) throws IOException {
-        final int size = nullSize(value);
-        if (size != 0) {
-            writer.startUnkeyedList(childClass, size);
+        if (value != null) {
+            writer.startUnkeyedList(childClass, value.size());
             commonStreamList(registry, writer, childStreamer, value);
         }
     }
@@ -146,9 +145,8 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
     protected static final <E extends DataObject & Identifiable<?>> void streamMap(final Class<E> childClass,
             final DataObjectStreamer<E> childStreamer, final DataObjectSerializerRegistry registry,
             final BindingStreamEventWriter writer, final List<? extends E> value) throws IOException {
-        final int size = nullSize(value);
-        if (size != 0) {
-            writer.startMapNode(childClass, size);
+        if (value != null) {
+            writer.startMapNode(childClass, value.size());
             commonStreamList(registry, writer, childStreamer, value);
         }
     }
@@ -156,9 +154,8 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
     protected static final <E extends DataObject & Identifiable<?>> void streamOrderedMap(final Class<E> childClass,
             final DataObjectStreamer<E> childStreamer, final DataObjectSerializerRegistry registry,
             final BindingStreamEventWriter writer, final List<? extends E> value) throws IOException {
-        final int size = nullSize(value);
-        if (size != 0) {
-            writer.startOrderedMapNode(childClass, size);
+        if (value != null) {
+            writer.startOrderedMapNode(childClass, value.size());
             commonStreamList(registry, writer, childStreamer, value);
         }
     }
@@ -206,9 +203,5 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
     @SuppressWarnings("unchecked")
     private static <T extends DataObject> boolean tryCache(final BindingStreamEventWriter writer, final T value) {
         return writer instanceof BindingSerializer ? ((BindingSerializer<?, T>) writer).serialize(value) == null : true;
-    }
-
-    private static int nullSize(final List<?> list) {
-        return list == null ? 0 : list.size();
     }
 }

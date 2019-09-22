@@ -58,10 +58,6 @@ public final class ListsBindingUtils {
         return path(key).augmentation(augmentation);
     }
 
-    public static Top top() {
-        return new TopBuilder().build();
-    }
-
     public static Top top(final TopLevelList... listItems) {
         return new TopBuilder().setTopLevelList(Arrays.asList(listItems)).build();
     }

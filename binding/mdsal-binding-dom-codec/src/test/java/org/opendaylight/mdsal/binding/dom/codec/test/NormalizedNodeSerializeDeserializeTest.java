@@ -137,7 +137,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     private static ContainerNode getEmptyTop() {
         return ImmutableContainerNodeBuilder.create()
                     .withNodeIdentifier(new NodeIdentifier(TOP_QNAME))
-                    .build();
+                    .withChild(mapNodeBuilder(TOP_LEVEL_LIST_QNAME).build()).build();
     }
 
     private static final QName AGUMENT_STRING_Q = QName.create(TOP_QNAME, "augmented-string");
