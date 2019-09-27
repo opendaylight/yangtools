@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.rfc6241.model.api.GetFilterElementAttributesSchemaNode;
 import org.opendaylight.yangtools.rfc6241.model.api.NetconfConstants;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
@@ -75,8 +75,8 @@ public class NetconfTest {
         final Optional<DataSchemaNode> optFilter = def.getInput().findDataTreeChild(FILTER);
         assertEquals(expected, optFilter.isPresent());
         optFilter.ifPresent(filter -> {
-            assertThat(filter, is(instanceOf(AnyXmlSchemaNode.class)));
-            assertTrue(GetFilterElementAttributesSchemaNode.findIn((AnyXmlSchemaNode) filter).isPresent());
+            assertThat(filter, is(instanceOf(AnyxmlSchemaNode.class)));
+            assertTrue(GetFilterElementAttributesSchemaNode.findIn((AnyxmlSchemaNode) filter).isPresent());
         });
     }
 }

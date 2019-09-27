@@ -17,7 +17,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -97,7 +97,7 @@ public class IfFeatureResolutionTest {
         final LeafSchemaNode augmentingTestLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-leaf-g"));
         assertNull(augmentingTestLeafG);
-        final AnyXmlSchemaNode augmentingTestAnyxmlG = (AnyXmlSchemaNode) testContainerG.getDataChildByName(
+        final AnyxmlSchemaNode augmentingTestAnyxmlG = (AnyxmlSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-anyxml-g"));
         assertNotNull(augmentingTestAnyxmlG);
 
@@ -215,7 +215,7 @@ public class IfFeatureResolutionTest {
         final LeafSchemaNode augmentingTestLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-leaf-g"));
         assertNotNull(augmentingTestLeafG);
-        final AnyXmlSchemaNode augmentingTestAnyxmlG = (AnyXmlSchemaNode) testContainerG.getDataChildByName(
+        final AnyxmlSchemaNode augmentingTestAnyxmlG = (AnyxmlSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-anyxml-g"));
         assertNotNull(augmentingTestAnyxmlG);
 
@@ -307,7 +307,7 @@ public class IfFeatureResolutionTest {
         final LeafSchemaNode augmentingTestLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-leaf-g"));
         assertNull(augmentingTestLeafG);
-        final AnyXmlSchemaNode augmentingTestAnyxmlG = (AnyXmlSchemaNode) testContainerG.getDataChildByName(
+        final AnyxmlSchemaNode augmentingTestAnyxmlG = (AnyxmlSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-anyxml-g"));
         assertNotNull(augmentingTestAnyxmlG);
 

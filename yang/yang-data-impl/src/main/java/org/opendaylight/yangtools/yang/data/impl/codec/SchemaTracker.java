@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -26,8 +26,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -217,10 +217,10 @@ public final class SchemaTracker {
         LOG.debug("Enter yang modeled anyXml {}", name);
         final SchemaNode schema = getSchema(name);
 
-        checkArgument(schema instanceof YangModeledAnyXmlSchemaNode, "Node %s is not an yang modeled anyXml.",
+        checkArgument(schema instanceof YangModeledAnyxmlSchemaNode, "Node %s is not an yang modeled anyXml.",
             schema.getPath());
 
-        schemaStack.push(((YangModeledAnyXmlSchemaNode) schema).getSchemaOfAnyXmlData());
+        schemaStack.push(((YangModeledAnyxmlSchemaNode) schema).getSchemaOfAnyXmlData());
 
         return schema;
     }
@@ -243,20 +243,20 @@ public final class SchemaTracker {
         return resolvedSchema;
     }
 
-    public AnyXmlSchemaNode anyxmlNode(final NodeIdentifier name) {
+    public AnyxmlSchemaNode anyxmlNode(final NodeIdentifier name) {
         final SchemaNode schema = getSchema(name);
-        checkArgument(schema instanceof AnyXmlSchemaNode, "Node %s is not anyxml", schema.getPath());
-        return (AnyXmlSchemaNode)schema;
+        checkArgument(schema instanceof AnyxmlSchemaNode, "Node %s is not anyxml", schema.getPath());
+        return (AnyxmlSchemaNode)schema;
     }
 
     public void startAnyxmlNode(final NodeIdentifier name) {
         schemaStack.push(anyxmlNode(name));
     }
 
-    public AnyDataSchemaNode anydataNode(final NodeIdentifier name) {
+    public AnydataSchemaNode anydataNode(final NodeIdentifier name) {
         final SchemaNode schema = getSchema(name);
-        checkArgument(schema instanceof AnyDataSchemaNode, "Node %s is not anydata", schema.getPath());
-        return (AnyDataSchemaNode)schema;
+        checkArgument(schema instanceof AnydataSchemaNode, "Node %s is not anydata", schema.getPath());
+        return (AnydataSchemaNode)schema;
     }
 
     public void startAnydataNode(final NodeIdentifier name) {

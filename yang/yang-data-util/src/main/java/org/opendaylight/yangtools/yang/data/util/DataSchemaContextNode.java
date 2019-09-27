@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -171,10 +171,10 @@ public abstract class DataSchemaContextNode<T extends PathArgument> extends Abst
             return new ChoiceNodeContextNode((ChoiceSchemaNode) potential);
         } else if (potential instanceof LeafListSchemaNode) {
             return fromLeafListSchemaNode((LeafListSchemaNode) potential);
-        } else if (potential instanceof AnyDataSchemaNode) {
-            return new AnydataContextNode((AnyDataSchemaNode) potential);
-        } else if (potential instanceof AnyXmlSchemaNode) {
-            return new AnyXmlContextNode((AnyXmlSchemaNode) potential);
+        } else if (potential instanceof AnydataSchemaNode) {
+            return new AnydataContextNode((AnydataSchemaNode) potential);
+        } else if (potential instanceof AnyxmlSchemaNode) {
+            return new AnyXmlContextNode((AnyxmlSchemaNode) potential);
         }
         return null;
     }

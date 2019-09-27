@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -62,7 +62,7 @@ public class GroupingAndUsesStmtTest {
         assertEquals("target", grouping.getQName().getLocalName());
         assertEquals(5, grouping.getChildNodes().size());
 
-        final AnyXmlSchemaNode anyXmlNode = (AnyXmlSchemaNode) grouping.getDataChildByName(
+        final AnyxmlSchemaNode anyXmlNode = (AnyxmlSchemaNode) grouping.getDataChildByName(
             QName.create(testModule.getQNameModule(), "data"));
         assertNotNull(anyXmlNode);
         final ChoiceSchemaNode choiceNode = (ChoiceSchemaNode) grouping.getDataChildByName(

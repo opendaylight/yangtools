@@ -17,11 +17,11 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map.Entry;
-import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -112,14 +112,14 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
         SimpleNodeDataWithSchema<?> newChild = null;
         if (schema instanceof LeafSchemaNode) {
             newChild = new LeafNodeDataWithSchema((LeafSchemaNode) schema);
-        } else if (schema instanceof AnyXmlSchemaNode) {
-            // YangModeledAnyXmlSchemaNode is handled by addCompositeChild method.
-            if (schema instanceof YangModeledAnyXmlSchemaNode) {
+        } else if (schema instanceof AnyxmlSchemaNode) {
+            // YangModeledAnyxmlSchemaNode is handled by addCompositeChild method.
+            if (schema instanceof YangModeledAnyxmlSchemaNode) {
                 return null;
             }
-            newChild = new AnyXmlNodeDataWithSchema((AnyXmlSchemaNode) schema);
-        } else if (schema instanceof AnyDataSchemaNode) {
-            newChild = new AnydataNodeDataWithSchema((AnyDataSchemaNode) schema);
+            newChild = new AnyXmlNodeDataWithSchema((AnyxmlSchemaNode) schema);
+        } else if (schema instanceof AnydataSchemaNode) {
+            newChild = new AnydataNodeDataWithSchema((AnydataSchemaNode) schema);
         } else {
             return null;
         }
@@ -165,8 +165,8 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             newChild = new LeafListNodeDataWithSchema((LeafListSchemaNode) schema);
         } else if (schema instanceof ContainerSchemaNode) {
             newChild = new ContainerNodeDataWithSchema((ContainerSchemaNode) schema);
-        } else if (schema instanceof YangModeledAnyXmlSchemaNode) {
-            newChild = new YangModeledAnyXmlNodeDataWithSchema((YangModeledAnyXmlSchemaNode)schema);
+        } else if (schema instanceof YangModeledAnyxmlSchemaNode) {
+            newChild = new YangModeledAnyXmlNodeDataWithSchema((YangModeledAnyxmlSchemaNode)schema);
         } else {
             newChild = new CompositeNodeDataWithSchema<>(schema);
         }

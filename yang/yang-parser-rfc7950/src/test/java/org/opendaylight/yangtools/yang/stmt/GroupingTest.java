@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -166,12 +166,12 @@ public class GroupingTest {
         assertEquals(1, uses.size());
 
         // check uses process
-        final AnyXmlSchemaNode data_u = (AnyXmlSchemaNode) destination.getDataChildByName(QName.create(
+        final AnyxmlSchemaNode data_u = (AnyxmlSchemaNode) destination.getDataChildByName(QName.create(
                 foo.getQNameModule(), "data"));
         assertNotNull(data_u);
         assertTrue(data_u.isAddedByUses());
 
-        final AnyXmlSchemaNode data_g = (AnyXmlSchemaNode) grouping.getDataChildByName(QName.create(
+        final AnyxmlSchemaNode data_g = (AnyxmlSchemaNode) grouping.getDataChildByName(QName.create(
                 baz.getQNameModule(), "data"));
         assertNotNull(data_g);
         assertFalse(data_g.isAddedByUses());
@@ -278,12 +278,12 @@ public class GroupingTest {
         assertEquals(1, uses.size());
 
         // check uses process
-        final AnyXmlSchemaNode data_u = (AnyXmlSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
+        final AnyxmlSchemaNode data_u = (AnyxmlSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
                 "data"));
         assertNotNull(data_u);
         assertTrue(data_u.isAddedByUses());
 
-        final AnyXmlSchemaNode data_g = (AnyXmlSchemaNode) grouping.getDataChildByName(QName.create(
+        final AnyxmlSchemaNode data_g = (AnyxmlSchemaNode) grouping.getDataChildByName(QName.create(
             baz.getQNameModule(), "data"));
         assertNotNull(data_g);
         assertFalse(data_g.isAddedByUses());

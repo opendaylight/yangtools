@@ -12,16 +12,16 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 
 public final class ImmutableAnyXmlNodeSchemaAwareBuilder extends ImmutableAnyXmlNodeBuilder {
 
-    private ImmutableAnyXmlNodeSchemaAwareBuilder(final AnyXmlSchemaNode schema) {
+    private ImmutableAnyXmlNodeSchemaAwareBuilder(final AnyxmlSchemaNode schema) {
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
     public static @NonNull NormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> create(
-            final AnyXmlSchemaNode schema) {
+            final AnyxmlSchemaNode schema) {
         return new ImmutableAnyXmlNodeSchemaAwareBuilder(schema);
     }
 

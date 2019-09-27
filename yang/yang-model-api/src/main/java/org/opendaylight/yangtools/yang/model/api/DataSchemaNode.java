@@ -23,8 +23,8 @@ package org.opendaylight.yangtools.yang.model.api;
  * @see ChoiceSchemaNode
  * @see CaseSchemaNode
  * @see LeafSchemaNode
- * @see AnyXmlSchemaNode
- * @see AnyDataSchemaNode
+ * @see AnyxmlSchemaNode
+ * @see AnydataSchemaNode
  */
 public interface DataSchemaNode extends SchemaNode, CopyableNode, WhenConditionAware {
     /**

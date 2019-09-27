@@ -18,7 +18,7 @@ import java.util.Optional;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -77,7 +77,7 @@ public class YangModeledAnyXMLDeserializationTest {
     public void testRawAnyXMLFromBar() throws Exception {
         DataSchemaNode barContainer = schemaContext.findDataChildByName(QName.create(barModuleQName, "bar")).get();
         assertTrue(barContainer instanceof ContainerSchemaNode);
-        final YangModeledAnyXmlSchemaNode yangModeledAnyXML = new YangModeledAnyXMLSchemaNodeImplTest(myAnyXMLDataBar,
+        final YangModeledAnyxmlSchemaNode yangModeledAnyXML = new YangModeledAnyXMLSchemaNodeImplTest(myAnyXMLDataBar,
                 (ContainerSchemaNode) barContainer);
 
         final InputStream resourceAsStream = YangModeledAnyXMLDeserializationTest.class.getResourceAsStream(
@@ -117,7 +117,7 @@ public class YangModeledAnyXMLDeserializationTest {
         final InputStream resourceAsStream = YangModeledAnyXMLDeserializationTest.class.getResourceAsStream(
                 "/anyxml-support/xml/foo.xml");
         final Module foo = schemaContext.findModules("foo").iterator().next();
-        final YangModeledAnyXmlSchemaNode myAnyXmlData = (YangModeledAnyXmlSchemaNode) foo.findDataChildByName(
+        final YangModeledAnyxmlSchemaNode myAnyXmlData = (YangModeledAnyxmlSchemaNode) foo.findDataChildByName(
                 QName.create(foo.getQNameModule(), "my-anyxml-data")).get();
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -161,7 +161,7 @@ public class YangModeledAnyXMLDeserializationTest {
         assertEquals("any-xml-leaf-3-value", leafNode3Value);
     }
 
-    private static final class YangModeledAnyXMLSchemaNodeImplTest implements YangModeledAnyXmlSchemaNode {
+    private static final class YangModeledAnyXMLSchemaNodeImplTest implements YangModeledAnyxmlSchemaNode {
         private final QName qname;
         private final ContainerSchemaNode contentSchema;
 

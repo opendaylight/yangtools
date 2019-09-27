@@ -20,9 +20,8 @@ import java.util.Optional;
  * model for anydata content to become known through protocol signaling or other means that are outside the scope
  * of this document.
  */
-// FIXME: 4.0.0: rename this to 'AnydataSchemaNode'
 @Beta
-public interface AnyDataSchemaNode extends DataSchemaNode, MandatoryAware, MustConstraintAware {
+public interface AnydataSchemaNode extends DataSchemaNode, MandatoryAware, MustConstraintAware {
     /**
      * Schema of data.
      *

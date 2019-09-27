@@ -23,8 +23,8 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -54,7 +54,7 @@ public class YangParserSimpleTest {
 
     @Test
     public void testParseAnyXml() {
-        final AnyXmlSchemaNode data = (AnyXmlSchemaNode) testModule.getDataChildByName(
+        final AnyxmlSchemaNode data = (AnyxmlSchemaNode) testModule.getDataChildByName(
             QName.create(testModule.getQNameModule(), "data"));
         assertNotNull("'anyxml data not found'", data);
         assertFalse(data.equals(null));
@@ -100,7 +100,7 @@ public class YangParserSimpleTest {
 
     @Test
     public void testParseAnyData() {
-        final AnyDataSchemaNode anydata = (AnyDataSchemaNode) testModule.findDataChildByName(
+        final AnydataSchemaNode anydata = (AnydataSchemaNode) testModule.findDataChildByName(
                 QName.create(testModule.getQNameModule(), "data2")).orElse(null);
 
         assertNotNull("'anydata data not found'", anydata);

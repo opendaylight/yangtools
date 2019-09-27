@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.rfc6241.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 /**
@@ -19,12 +19,12 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 @Beta
 public interface GetFilterElementAttributesSchemaNode extends UnknownSchemaNode {
     /**
-     * Attempt to find a {@link GetFilterElementAttributesSchemaNode} in a parent {@link AnyXmlSchemaNode}.
+     * Attempt to find a {@link GetFilterElementAttributesSchemaNode} in a parent {@link AnyxmlSchemaNode}.
      *
      * @param parent Parent to search
      * @return {@link GetFilterElementAttributesSchemaNode} child, if present.
      */
-    static Optional<GetFilterElementAttributesSchemaNode> findIn(final AnyXmlSchemaNode parent) {
+    static Optional<GetFilterElementAttributesSchemaNode> findIn(final AnyxmlSchemaNode parent) {
         return parent.getUnknownSchemaNodes().stream().filter(GetFilterElementAttributesSchemaNode.class::isInstance)
                 .findAny().map(GetFilterElementAttributesSchemaNode.class::cast);
     }

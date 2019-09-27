@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
@@ -30,17 +30,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  */
 @Beta
 final class AnydataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnydataStatement>
-        implements AnydataEffectiveStatement, AnyDataSchemaNode, DerivableSchemaNode {
+        implements AnydataEffectiveStatement, AnydataSchemaNode, DerivableSchemaNode {
 
     private final ImmutableSet<MustDefinition> mustConstraints;
-    private final AnyDataSchemaNode original;
+    private final AnydataSchemaNode original;
     private final ContainerSchemaNode schema;
     private final boolean mandatory;
 
     AnydataEffectiveStatementImpl(
             final StmtContext<QName, AnydataStatement, EffectiveStatement<QName, AnydataStatement>> ctx) {
         super(ctx);
-        this.original = (AnyDataSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+        this.original = (AnydataSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
         mandatory = findFirstEffectiveSubstatementArgument(MandatoryEffectiveStatement.class).orElse(Boolean.FALSE)
                 .booleanValue();
         mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
@@ -52,7 +52,7 @@ final class AnydataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
     }
 
     @Override
-    public Optional<AnyDataSchemaNode> getOriginal() {
+    public Optional<AnydataSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
     }
 

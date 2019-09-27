@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 
-final class AnyXmlContextNode extends AbstractOpaqueContextNode<AnyXmlSchemaNode> {
-    AnyXmlContextNode(final AnyXmlSchemaNode schema) {
+final class AnyXmlContextNode extends AbstractOpaqueContextNode<AnyxmlSchemaNode> {
+    AnyXmlContextNode(final AnyxmlSchemaNode schema) {
         super(schema);
     }
 }

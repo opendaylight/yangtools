@@ -22,8 +22,8 @@ import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
@@ -107,13 +107,13 @@ public class DeviationResolutionTest {
         final NotificationDefinition myNotification = barModule.getNotifications().iterator().next();
         assertEquals(2, myNotification.getMustConstraints().size());
 
-        final AnyXmlSchemaNode myAnyxml = (AnyXmlSchemaNode) barModule.getDataChildByName(
+        final AnyxmlSchemaNode myAnyxml = (AnyxmlSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-anyxml"));
         assertNotNull(myAnyxml);
         assertTrue(myAnyxml.isMandatory());
         assertEquals(2, myAnyxml.getUnknownSchemaNodes().size());
 
-        final AnyDataSchemaNode myAnyData = (AnyDataSchemaNode) barModule.findDataChildByName(
+        final AnydataSchemaNode myAnyData = (AnydataSchemaNode) barModule.findDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-anydata")).orElse(null);
         assertNotNull(myAnyData);
         assertTrue(myAnyData.isMandatory());

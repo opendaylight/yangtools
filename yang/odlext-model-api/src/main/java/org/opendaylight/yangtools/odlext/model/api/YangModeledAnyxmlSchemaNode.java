@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.odlext.model.api;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
  * Statement</a>
  */
 @Beta
-public interface YangModeledAnyXmlSchemaNode extends AnyXmlSchemaNode {
+public interface YangModeledAnyxmlSchemaNode extends AnyxmlSchemaNode {
 
     /**
      * Returns the root schema node of the data in this anyxml node.

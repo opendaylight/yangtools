@@ -28,6 +28,6 @@ final class HelperMethods {
     private static boolean isDataNode(final DataSchemaNode node) {
         return node instanceof ContainerSchemaNode || node instanceof LeafSchemaNode
                 || node instanceof LeafListSchemaNode || node instanceof ListSchemaNode
-                || node instanceof AnyDataSchemaNode || node instanceof AnyXmlSchemaNode;
+                || node instanceof AnydataSchemaNode || node instanceof AnyxmlSchemaNode;
     }
 }

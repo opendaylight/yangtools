@@ -24,8 +24,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -88,7 +88,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
                 endElement();
             }
         } else if (schema instanceof ContainerSchemaNode || schema instanceof LeafSchemaNode
-                || schema instanceof AnyDataSchemaNode || schema instanceof AnyXmlSchemaNode) {
+                || schema instanceof AnydataSchemaNode || schema instanceof AnyxmlSchemaNode) {
             endElement();
         }
     }
@@ -153,7 +153,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
         final Object current = tracker.getParent();
         if (current instanceof TypedDataSchemaNode) {
             writeValue(value, (SchemaNode) current);
-        } else if (current instanceof AnyDataSchemaNode) {
+        } else if (current instanceof AnydataSchemaNode) {
             anydataValue(value);
         } else {
             throw new IllegalStateException("Unexpected scalar value " + value + " with " + current);
@@ -163,7 +163,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     @Override
     public void domSourceValue(final DOMSource value) throws IOException {
         final Object current = tracker.getParent();
-        checkState(current instanceof AnyXmlSchemaNode, "Unexpected scala value %s with %s", value, current);
+        checkState(current instanceof AnyxmlSchemaNode, "Unexpected scala value %s with %s", value, current);
         anyxmlValue(value);
     }
 

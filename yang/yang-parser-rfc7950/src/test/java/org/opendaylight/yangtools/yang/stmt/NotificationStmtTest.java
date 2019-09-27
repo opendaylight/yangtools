@@ -15,7 +15,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -47,7 +47,7 @@ public class NotificationStmtTest {
         assertNotNull(leaf);
         leaf = (LeafSchemaNode) notification.getDataChildByName(QName.create(testModule.getQNameModule(), "severity"));
         assertNotNull(leaf);
-        final AnyXmlSchemaNode anyXml = (AnyXmlSchemaNode) notification.getDataChildByName(QName.create(
+        final AnyxmlSchemaNode anyXml = (AnyxmlSchemaNode) notification.getDataChildByName(QName.create(
             testModule.getQNameModule(), "reporting-entity"));
         assertNotNull(anyXml);
     }

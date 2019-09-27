@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import java.io.IOException;
-import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 
@@ -20,9 +20,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
  * Represents a YANG-modeled-anyxml node.
  */
 public final class YangModeledAnyXmlNodeDataWithSchema
-        extends CompositeNodeDataWithSchema<YangModeledAnyXmlSchemaNode> {
+        extends CompositeNodeDataWithSchema<YangModeledAnyxmlSchemaNode> {
 
-    public YangModeledAnyXmlNodeDataWithSchema(final YangModeledAnyXmlSchemaNode yangModeledAnyXml) {
+    public YangModeledAnyXmlNodeDataWithSchema(final YangModeledAnyxmlSchemaNode yangModeledAnyXml) {
         super(yangModeledAnyXml);
     }
 

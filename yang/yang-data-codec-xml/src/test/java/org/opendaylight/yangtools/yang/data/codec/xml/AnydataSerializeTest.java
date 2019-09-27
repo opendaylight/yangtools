@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnydataNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.util.ImmutableNormalizedAnydata;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
@@ -87,8 +87,8 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         //Create Data Scheme from yang file
         SchemaPath anydataPath = SchemaPath.create(true, FOO_QNAME);
         final SchemaNode dataSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, anydataPath);
-        assertTrue(dataSchemaNode instanceof AnyDataSchemaNode);
-        final AnyDataSchemaNode anyDataSchemaNode = (AnyDataSchemaNode) dataSchemaNode;
+        assertTrue(dataSchemaNode instanceof AnydataSchemaNode);
+        final AnydataSchemaNode anyDataSchemaNode = (AnydataSchemaNode) dataSchemaNode;
 
         // deserialization
         final XMLStreamReader reader
@@ -137,7 +137,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         //Load XML from file and write it with xmlParseStream
         final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
-        final AnyDataSchemaNode anyDataSchemaNode = (AnyDataSchemaNode) SchemaContextUtil.findDataSchemaNode(
+        final AnydataSchemaNode anyDataSchemaNode = (AnydataSchemaNode) SchemaContextUtil.findDataSchemaNode(
                 SCHEMA_CONTEXT, SchemaPath.create(true, FOO_QNAME));
         final NormalizedNodeStreamWriter streamWriter = XMLStreamNormalizedNodeStreamWriter.create(
                 xmlStreamWriter, SCHEMA_CONTEXT);
@@ -169,7 +169,7 @@ public class AnydataSerializeTest extends AbstractAnydataTest {
         final DOMSource domSource = new DOMSource(doc.getDocumentElement());
 
         //Get specific attribute from Yang file.
-        final AnyDataSchemaNode contWithAttr = (AnyDataSchemaNode) SchemaContextUtil.findDataSchemaNode(
+        final AnydataSchemaNode contWithAttr = (AnydataSchemaNode) SchemaContextUtil.findDataSchemaNode(
                 SCHEMA_CONTEXT, SchemaPath.create(true, FOO_QNAME));
 
         //Create NormalizedNodeResult

@@ -33,8 +33,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.data.util.SingleChildDataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -358,7 +358,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
         final Object current = tracker.getParent();
         if (current instanceof TypedDataSchemaNode) {
             writeValue(value, codecs.codecFor((TypedDataSchemaNode) current));
-        } else if (current instanceof AnyDataSchemaNode) {
+        } else if (current instanceof AnydataSchemaNode) {
             writeAnydataValue(value);
         } else {
             throw new IllegalStateException(String.format("Cannot emit scalar %s for %s", value, current));
@@ -368,7 +368,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public void domSourceValue(final DOMSource value) throws IOException {
         final Object current = tracker.getParent();
-        checkState(current instanceof AnyXmlSchemaNode, "Cannot emit DOMSource %s for %s", value, current);
+        checkState(current instanceof AnyxmlSchemaNode, "Cannot emit DOMSource %s for %s", value, current);
         // FIXME: should have a codec based on this :)
         writeAnyXmlValue(value);
     }

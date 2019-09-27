@@ -17,7 +17,7 @@ import com.google.common.collect.Iterables;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -33,7 +33,7 @@ public class Bug6883Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/bug6883");
         assertNotNull(schemaContext);
 
-        final AnyDataSchemaNode topAnyData = assertAnyData(schemaContext, ImmutableList.of("top"));
+        final AnydataSchemaNode topAnyData = assertAnyData(schemaContext, ImmutableList.of("top"));
         assertEquals(Status.DEPRECATED, topAnyData.getStatus());
         assertEquals(Optional.of("top anydata"), topAnyData.getDescription());
 
@@ -51,12 +51,12 @@ public class Bug6883Test {
         assertAnyData(schemaContext, ImmutableList.of("my-choice", "case-shorthand-anydata", "case-shorthand-anydata"));
     }
 
-    private static AnyDataSchemaNode assertAnyData(final SchemaContext context, final Iterable<String> localNamesPath) {
+    private static AnydataSchemaNode assertAnyData(final SchemaContext context, final Iterable<String> localNamesPath) {
         final Iterable<QName> qNames = Iterables.transform(localNamesPath,
             localName -> QName.create(FOO_NS, localName));
         final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
                 SchemaPath.create(qNames, true));
-        assertTrue(findDataSchemaNode instanceof AnyDataSchemaNode);
-        return (AnyDataSchemaNode) findDataSchemaNode;
+        assertTrue(findDataSchemaNode instanceof AnydataSchemaNode);
+        return (AnydataSchemaNode) findDataSchemaNode;
     }
 }

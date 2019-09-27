@@ -42,7 +42,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
-import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContextFactory;
@@ -70,8 +70,8 @@ import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.YangModeledAnyXmlNodeDataWithSchema;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -253,16 +253,16 @@ public final class XmlParserStream implements Closeable, Flushable {
                 nodeDataWithSchema = new ContainerNodeDataWithSchema((ContainerSchemaNode) parentNode);
             } else if (parentNode instanceof ListSchemaNode) {
                 nodeDataWithSchema = new ListNodeDataWithSchema((ListSchemaNode) parentNode);
-            } else if (parentNode instanceof YangModeledAnyXmlSchemaNode) {
-                nodeDataWithSchema = new YangModeledAnyXmlNodeDataWithSchema((YangModeledAnyXmlSchemaNode) parentNode);
-            } else if (parentNode instanceof AnyXmlSchemaNode) {
-                nodeDataWithSchema = new AnyXmlNodeDataWithSchema((AnyXmlSchemaNode) parentNode);
+            } else if (parentNode instanceof YangModeledAnyxmlSchemaNode) {
+                nodeDataWithSchema = new YangModeledAnyXmlNodeDataWithSchema((YangModeledAnyxmlSchemaNode) parentNode);
+            } else if (parentNode instanceof AnyxmlSchemaNode) {
+                nodeDataWithSchema = new AnyXmlNodeDataWithSchema((AnyxmlSchemaNode) parentNode);
             } else if (parentNode instanceof LeafSchemaNode) {
                 nodeDataWithSchema = new LeafNodeDataWithSchema((LeafSchemaNode) parentNode);
             } else if (parentNode instanceof LeafListSchemaNode) {
                 nodeDataWithSchema = new LeafListNodeDataWithSchema((LeafListSchemaNode) parentNode);
-            } else if (parentNode instanceof AnyDataSchemaNode) {
-                nodeDataWithSchema = new AnydataNodeDataWithSchema((AnyDataSchemaNode) parentNode);
+            } else if (parentNode instanceof AnydataSchemaNode) {
+                nodeDataWithSchema = new AnydataNodeDataWithSchema((AnydataSchemaNode) parentNode);
             } else {
                 throw new IllegalStateException("Unsupported schema node type " + parentNode.getClass() + ".");
             }
@@ -430,7 +430,7 @@ public final class XmlParserStream implements Closeable, Flushable {
             return;
         }
 
-        if (parent instanceof YangModeledAnyXmlSchemaNode) {
+        if (parent instanceof YangModeledAnyxmlSchemaNode) {
             parent.setAttributes(getElementAttributes(in));
         }
 
@@ -460,8 +460,8 @@ public final class XmlParserStream implements Closeable, Flushable {
                         break;
                     }
 
-                    if (parentSchema instanceof YangModeledAnyXmlSchemaNode) {
-                        parentSchema = ((YangModeledAnyXmlSchemaNode) parentSchema).getSchemaOfAnyXmlData();
+                    if (parentSchema instanceof YangModeledAnyxmlSchemaNode) {
+                        parentSchema = ((YangModeledAnyxmlSchemaNode) parentSchema).getSchemaOfAnyXmlData();
                     }
 
                     final String elementNS = in.getNamespaceURI();
@@ -609,7 +609,7 @@ public final class XmlParserStream implements Closeable, Flushable {
 
     private Object translateValueByType(final Object value, final DataSchemaNode node,
             final NamespaceContext namespaceCtx) {
-        if (node instanceof AnyXmlSchemaNode) {
+        if (node instanceof AnyxmlSchemaNode) {
             checkArgument(value instanceof Document);
             /*
              * FIXME: Figure out some YANG extension dispatch, which will reuse JSON parsing or XML parsing -
@@ -617,7 +617,7 @@ public final class XmlParserStream implements Closeable, Flushable {
              */
             return new DOMSource(((Document) value).getDocumentElement());
         }
-        if (node instanceof AnyDataSchemaNode) {
+        if (node instanceof AnydataSchemaNode) {
             checkArgument(value instanceof Document);
             return new DOMSourceAnydata(new DOMSource(((Document) value).getDocumentElement()));
         }

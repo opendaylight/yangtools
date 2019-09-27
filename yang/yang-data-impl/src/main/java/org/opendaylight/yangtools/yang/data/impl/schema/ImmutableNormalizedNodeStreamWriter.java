@@ -18,7 +18,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -191,9 +191,9 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
 
-        checkArgument(nextSchema instanceof YangModeledAnyXmlSchemaNode,
-                "Schema of this node should be instance of YangModeledAnyXmlSchemaNode");
-        final YangModeledAnyXmlSchemaNode anyxmlSchema = (YangModeledAnyXmlSchemaNode) nextSchema;
+        checkArgument(nextSchema instanceof YangModeledAnyxmlSchemaNode,
+                "Schema of this node should be instance of YangModeledAnyxmlSchemaNode");
+        final YangModeledAnyxmlSchemaNode anyxmlSchema = (YangModeledAnyxmlSchemaNode) nextSchema;
         enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableYangModeledAnyXmlNodeBuilder.create(anyxmlSchema)
                 : ImmutableYangModeledAnyXmlNodeBuilder.create(anyxmlSchema, childSizeHint));
     }

@@ -16,7 +16,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
-import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -64,8 +64,8 @@ public class Bug3874ExtensionTest {
         QName myAnyXmlDataQName = QName.create(foo, "my-anyxml-data");
 
         DataSchemaNode dataChildByName = context.findDataChildByName(myAnyXmlDataQName).get();
-        assertTrue(dataChildByName instanceof YangModeledAnyXmlSchemaNode);
-        YangModeledAnyXmlSchemaNode yangModeledAnyXml = (YangModeledAnyXmlSchemaNode) dataChildByName;
+        assertTrue(dataChildByName instanceof YangModeledAnyxmlSchemaNode);
+        YangModeledAnyxmlSchemaNode yangModeledAnyXml = (YangModeledAnyxmlSchemaNode) dataChildByName;
 
         SchemaNode myContainer2 = SchemaContextUtil.findDataSchemaNode(context,
             SchemaPath.create(true, myContainer2QName));

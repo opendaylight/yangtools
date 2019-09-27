@@ -19,7 +19,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
@@ -53,7 +53,7 @@ public class RpcStmtTest {
         final ContainerSchemaNode container = (ContainerSchemaNode) input.getDataChildByName(
             QName.create(testModule.getQNameModule(), "source"));
         assertNotNull(container);
-        AnyXmlSchemaNode anyXml = (AnyXmlSchemaNode) input.getDataChildByName(
+        AnyxmlSchemaNode anyXml = (AnyxmlSchemaNode) input.getDataChildByName(
             QName.create(testModule.getQNameModule(), "filter"));
         assertNotNull(anyXml);
 
@@ -61,7 +61,7 @@ public class RpcStmtTest {
         assertNotNull(output);
         assertEquals(1, output.getChildNodes().size());
 
-        anyXml = (AnyXmlSchemaNode) output.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
+        anyXml = (AnyxmlSchemaNode) output.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
         assertNotNull(anyXml);
 
         final Module fooModule = result.findModule("foo", Revision.of("2016-09-23")).get();

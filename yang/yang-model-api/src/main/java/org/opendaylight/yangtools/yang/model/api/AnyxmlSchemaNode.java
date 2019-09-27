@@ -16,7 +16,6 @@ package org.opendaylight.yangtools.yang.model.api;
  * This interface was modeled according to definition in
  * <a href="https://tools.ietf.org/html/rfc6020#section-7.10">[RFC-6020] The anyxml Statement</a>
  */
-// FIXME: 4.0.0: rename this to 'AnyxmlSchemaNode'
-public interface AnyXmlSchemaNode extends DataSchemaNode, MandatoryAware, MustConstraintAware {
+public interface AnyxmlSchemaNode extends DataSchemaNode, MandatoryAware, MustConstraintAware {
 
 }

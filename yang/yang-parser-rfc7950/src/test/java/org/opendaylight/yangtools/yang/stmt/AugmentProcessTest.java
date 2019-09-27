@@ -19,7 +19,7 @@ import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -141,12 +141,12 @@ public class AugmentProcessTest {
 
         final ContainerSchemaNode contAdded2Node = (ContainerSchemaNode) targetContNode.getDataChildByName(contAdded2);
         assertNotNull(contAdded2Node);
-        final AnyXmlSchemaNode axmlNode = (AnyXmlSchemaNode) contAdded2Node.getDataChildByName(axml);
+        final AnyxmlSchemaNode axmlNode = (AnyxmlSchemaNode) contAdded2Node.getDataChildByName(axml);
         assertNotNull(axmlNode);
 
         final ContainerSchemaNode contGrpNode = (ContainerSchemaNode) targetContNode.getDataChildByName(contGrp);
         assertNotNull(contGrpNode);
-        final AnyXmlSchemaNode axmlGrpNode = (AnyXmlSchemaNode) contGrpNode.getDataChildByName(axmlGrp);
+        final AnyxmlSchemaNode axmlGrpNode = (AnyxmlSchemaNode) contGrpNode.getDataChildByName(axmlGrp);
         assertNotNull(axmlGrpNode);
 
         final ContainerSchemaNode augCont1Node = (ContainerSchemaNode) root.getDataChildByName(augCont1);

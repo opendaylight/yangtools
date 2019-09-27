@@ -27,8 +27,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -111,7 +111,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractIdentif
     }
 
     private static final class AnydataNormalization extends AbstractOpaqueNormalization {
-        AnydataNormalization(final AnyDataSchemaNode schema) {
+        AnydataNormalization(final AnydataSchemaNode schema) {
             super(schema);
         }
 
@@ -131,7 +131,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractIdentif
     }
 
     private static final class AnyXmlNormalization extends AbstractOpaqueNormalization {
-        AnyXmlNormalization(final AnyXmlSchemaNode schema) {
+        AnyXmlNormalization(final AnyxmlSchemaNode schema) {
             super(schema);
         }
 
@@ -212,10 +212,10 @@ abstract class InstanceIdToNodes<T extends PathArgument> extends AbstractIdentif
             return new InstanceIdToCompositeNodes.ChoiceNodeNormalization((ChoiceSchemaNode) potential);
         } else if (potential instanceof LeafListSchemaNode) {
             return fromLeafListSchemaNode((LeafListSchemaNode) potential);
-        } else if (potential instanceof AnyDataSchemaNode) {
-            return new AnydataNormalization((AnyDataSchemaNode) potential);
-        } else if (potential instanceof AnyXmlSchemaNode) {
-            return new AnyXmlNormalization((AnyXmlSchemaNode) potential);
+        } else if (potential instanceof AnydataSchemaNode) {
+            return new AnydataNormalization((AnydataSchemaNode) potential);
+        } else if (potential instanceof AnyxmlSchemaNode) {
+            return new AnyXmlNormalization((AnyxmlSchemaNode) potential);
         }
         return null;
     }

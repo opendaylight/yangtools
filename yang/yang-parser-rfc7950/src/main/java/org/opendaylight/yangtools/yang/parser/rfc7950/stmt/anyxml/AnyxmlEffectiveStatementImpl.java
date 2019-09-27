@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
@@ -22,15 +22,15 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveData
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class AnyxmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnyxmlStatement>
-        implements AnyxmlEffectiveStatement, AnyXmlSchemaNode, DerivableSchemaNode {
+        implements AnyxmlEffectiveStatement, AnyxmlSchemaNode, DerivableSchemaNode {
 
     private final ImmutableSet<MustDefinition> mustConstraints;
-    private final AnyXmlSchemaNode original;
+    private final AnyxmlSchemaNode original;
     private final boolean mandatory;
 
     AnyxmlEffectiveStatementImpl(final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx) {
         super(ctx);
-        this.original = (AnyXmlSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+        this.original = (AnyxmlSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
         mandatory = findFirstEffectiveSubstatementArgument(MandatoryEffectiveStatement.class).orElse(Boolean.FALSE)
                 .booleanValue();
         mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
@@ -47,7 +47,7 @@ final class AnyxmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode
     }
 
     @Override
-    public Optional<AnyXmlSchemaNode> getOriginal() {
+    public Optional<AnyxmlSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
     }
 

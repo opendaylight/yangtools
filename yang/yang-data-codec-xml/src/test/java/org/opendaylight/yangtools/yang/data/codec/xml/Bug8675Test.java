@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -108,7 +108,7 @@ public class Bug8675Test {
 
     @Test
     public void testAnyXmlAsRootElement() throws Exception {
-        final AnyXmlSchemaNode topLevelAnyXml = (AnyXmlSchemaNode) fooModule.findDataChildByName(
+        final AnyxmlSchemaNode topLevelAnyXml = (AnyxmlSchemaNode) fooModule.findDataChildByName(
                 QName.create(fooModule.getQNameModule(), "top-level-anyxml")).get();
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-4.xml");

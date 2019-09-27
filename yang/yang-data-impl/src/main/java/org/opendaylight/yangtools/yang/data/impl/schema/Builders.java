@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import javax.xml.transform.dom.DOMSource;
-import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -57,7 +57,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOr
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableYangModeledAnyXmlNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -94,12 +94,12 @@ public final class Builders {
     }
 
     public static NormalizedNodeBuilder<NodeIdentifier, DOMSource, DOMSourceAnyxmlNode> anyXmlBuilder(
-            final AnyXmlSchemaNode schema) {
+            final AnyxmlSchemaNode schema) {
         return ImmutableAnyXmlNodeSchemaAwareBuilder.create(schema);
     }
 
     public static DataContainerNodeBuilder<NodeIdentifier, YangModeledAnyXmlNode> yangModeledAnyXmlBuilder(
-            final YangModeledAnyXmlSchemaNode schema) {
+            final YangModeledAnyxmlSchemaNode schema) {
         return ImmutableYangModeledAnyXmlNodeBuilder.create(schema);
     }
 

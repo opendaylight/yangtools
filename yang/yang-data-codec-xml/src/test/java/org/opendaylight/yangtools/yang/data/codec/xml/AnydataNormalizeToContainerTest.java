@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -38,8 +38,8 @@ public class AnydataNormalizeToContainerTest extends AbstractAnydataTest {
         //Create Data Scheme from yang file
         SchemaPath anydataPath = SchemaPath.create(true, FOO_QNAME);
         final SchemaNode fooSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, anydataPath);
-        assertTrue(fooSchemaNode instanceof AnyDataSchemaNode);
-        final AnyDataSchemaNode anyDataSchemaNode = (AnyDataSchemaNode) fooSchemaNode;
+        assertTrue(fooSchemaNode instanceof AnydataSchemaNode);
+        final AnydataSchemaNode anyDataSchemaNode = (AnydataSchemaNode) fooSchemaNode;
 
         SchemaPath containerPath = SchemaPath.create(true, CONT_QNAME);
         final SchemaNode barSchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT, containerPath);

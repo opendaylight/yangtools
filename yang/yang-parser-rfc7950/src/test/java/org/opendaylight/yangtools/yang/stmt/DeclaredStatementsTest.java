@@ -21,7 +21,7 @@ import java.util.function.Predicate;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -82,7 +82,7 @@ public class DeclaredStatementsTest {
         final Module testModule = schemaContext.findModules("anyxml-declared-test").iterator().next();
         assertNotNull(testModule);
 
-        final AnyXmlSchemaNode anyxmlSchemaNode = (AnyXmlSchemaNode) testModule.getDataChildByName(
+        final AnyxmlSchemaNode anyxmlSchemaNode = (AnyxmlSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "foobar"));
         assertNotNull(anyxmlSchemaNode);
         final AnyxmlStatement anyxmlStatement = ((AnyxmlEffectiveStatement) anyxmlSchemaNode).getDeclared();

@@ -17,17 +17,17 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.AnydataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 
 @Beta
-public class AnydataNodeDataWithSchema extends SimpleNodeDataWithSchema<AnyDataSchemaNode> {
+public class AnydataNodeDataWithSchema extends SimpleNodeDataWithSchema<AnydataSchemaNode> {
     private Class<?> objectModel;
 
-    public AnydataNodeDataWithSchema(final AnyDataSchemaNode dataSchemaNode) {
+    public AnydataNodeDataWithSchema(final AnydataSchemaNode dataSchemaNode) {
         super(dataSchemaNode);
     }
 
-    public AnydataNodeDataWithSchema(final AnyDataSchemaNode dataSchemaNode, final Class<?> objectModel) {
+    public AnydataNodeDataWithSchema(final AnydataSchemaNode dataSchemaNode, final Class<?> objectModel) {
         super(dataSchemaNode);
         this.objectModel = requireNonNull(objectModel);
     }

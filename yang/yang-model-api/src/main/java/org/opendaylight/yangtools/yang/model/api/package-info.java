@@ -31,7 +31,7 @@
  *
  * <dl>
  * <dt>anyxml
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode}
  *
  * <dt>argument
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ExtensionDefinition#getArgument()}
