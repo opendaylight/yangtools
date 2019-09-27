@@ -28,8 +28,8 @@ import org.opendaylight.yangtools.concepts.AbstractIllegalArgumentCodec;
 import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
 import org.opendaylight.yangtools.yang.binding.OpaqueData;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
-import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ForeignDataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -56,7 +56,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
         @Override
         T deserialize(final ForeignDataNode<?, ?> foreignData) {
             // Streaming cannot support anything but DOMSource-based AnyxmlNodes.
-            verify(foreignData instanceof AnyXmlNode, "Variable node %s not supported yet", foreignData);
+            verify(foreignData instanceof DOMSourceAnyxmlNode, "Variable node %s not supported yet", foreignData);
             return super.deserialize(foreignData);
         }
     }
