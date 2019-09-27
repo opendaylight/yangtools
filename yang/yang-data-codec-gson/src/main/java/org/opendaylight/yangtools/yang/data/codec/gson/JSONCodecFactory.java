@@ -78,7 +78,11 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
 
     @Override
     protected JSONCodec<?> decimalCodec(final DecimalTypeDefinition type) {
-        return new NumberJSONCodec<>(DecimalStringCodec.from(type));
+        if (iidCodec instanceof RFC7951JSONInstanceIdentifierCodec) {
+            return new QuotedJSONCodec<>(StringStringCodec.from(type));
+        } else {
+            return new NumberJSONCodec<>(DecimalStringCodec.from(type));
+        }
     }
 
     @Override
@@ -118,7 +122,11 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
 
     @Override
     protected JSONCodec<?> int64Codec(final Int64TypeDefinition type) {
-        return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
+        if (iidCodec instanceof RFC7951JSONInstanceIdentifierCodec) {
+            return new QuotedJSONCodec<>(StringStringCodec.from(type));
+        } else {
+            return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
+        }
     }
 
     @Override
@@ -143,7 +151,11 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
 
     @Override
     protected JSONCodec<?> uint64Codec(final Uint64TypeDefinition type) {
-        return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
+        if (iidCodec instanceof RFC7951JSONInstanceIdentifierCodec) {
+            return new QuotedJSONCodec<>(StringStringCodec.from(type));
+        } else {
+            return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
+        }
     }
 
     @Override
