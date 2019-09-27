@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1ac77936_86ebb6a3",
+        "filename": "yang/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/BugYangtools1027Test.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-09-27T10:15:25Z",
+      "side": 1,
+      "message": "YT",
+      "range": {
+        "startLine": 21,
+        "startChar": 13,
+        "endLine": 21,
+        "endChar": 25
+      },
+      "revId": "24e1ca36246fbccdf09da91c83be5cb4c7974154",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "73cdc2dc_226bcdc3",
+        "filename": "yang/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/BugYangtools1027Test.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-09-27T10:15:25Z",
+      "side": 1,
+      "message": "static finals should be before other fields",
+      "revId": "24e1ca36246fbccdf09da91c83be5cb4c7974154",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
