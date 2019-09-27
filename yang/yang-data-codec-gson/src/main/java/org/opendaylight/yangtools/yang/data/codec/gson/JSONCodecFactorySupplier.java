@@ -18,6 +18,7 @@ import com.google.common.cache.LoadingCache;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.NoopCodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.PrecomputedCodecCache;
@@ -39,36 +40,43 @@ public enum JSONCodecFactorySupplier {
     /**
      * Source of {@link JSONCodecFactory} instances compliant with RFC7951.
      */
-    // FIXME: YANGTOOLS-766: use a different codec
-    RFC7951(RFC7951JSONInstanceIdentifierCodec::new),
+    RFC7951() {
+        @Override
+        JSONCodecFactory createFactory(final SchemaContext context, final CodecCache<JSONCodec<?>> cache) {
+            return new RFC7951JSONCodecFactory(context, cache);
+        }
+    },
     /**
-     * Source of {@link JSONCodecFactory} instances compliant with RFC7951.
+     * Source of {@link JSONCodecFactory} instances compliant with draft-lhotka-netmod-yang-json-02.
      */
-    DRAFT_LHOTKA_NETMOD_YANG_JSON_02(JSONInstanceIdentifierCodec::new);
+    DRAFT_LHOTKA_NETMOD_YANG_JSON_02() {
+        @Override
+        JSONCodecFactory createFactory(final SchemaContext context, final CodecCache<JSONCodec<?>> cache) {
+            return new Lhotka02JSONCodecFactory(context, cache);
+        }
+    };
 
     private static final Logger LOG = LoggerFactory.getLogger(JSONCodecFactorySupplier.class);
 
     private static final class EagerCacheLoader extends CacheLoader<SchemaContext, JSONCodecFactory> {
-        private final BiFunction<SchemaContext, JSONCodecFactory, JSONInstanceIdentifierCodec>
-            iidCodecSupplier;
+        private final BiFunction<SchemaContext, CodecCache<JSONCodec<?>>, JSONCodecFactory> factorySupplier;
 
-        EagerCacheLoader(final BiFunction<SchemaContext, JSONCodecFactory, JSONInstanceIdentifierCodec>
-                iidCodecSupplier) {
-            this.iidCodecSupplier = requireNonNull(iidCodecSupplier);
+        EagerCacheLoader(final BiFunction<SchemaContext, CodecCache<JSONCodec<?>>, JSONCodecFactory> factorySupplier) {
+            this.factorySupplier = requireNonNull(factorySupplier);
         }
 
         @Override
         public JSONCodecFactory load(final SchemaContext key) {
             final Stopwatch sw = Stopwatch.createStarted();
             final LazyCodecCache<JSONCodec<?>> lazyCache = new LazyCodecCache<>();
-            final JSONCodecFactory lazy = new JSONCodecFactory(key, lazyCache, iidCodecSupplier);
+            final JSONCodecFactory lazy = factorySupplier.apply(key, lazyCache);
             final int visitedLeaves = requestCodecsForChildren(lazy, key);
             sw.stop();
 
             final PrecomputedCodecCache<JSONCodec<?>> cache = lazyCache.toPrecomputed();
             LOG.debug("{} leaf nodes resulted in {} simple and {} complex codecs in {}", visitedLeaves,
                 cache.simpleSize(), cache.complexSize(), sw);
-            return new JSONCodecFactory(key, cache, iidCodecSupplier);
+            return factorySupplier.apply(key, cache);
         }
 
         private static int requestCodecsForChildren(final JSONCodecFactory lazy, final DataNodeContainer parent) {
@@ -86,22 +94,18 @@ public enum JSONCodecFactorySupplier {
         }
     }
 
-    private final BiFunction<SchemaContext, JSONCodecFactory, JSONInstanceIdentifierCodec> iidCodecSupplier;
-
     // Weak keys to retire the entry when SchemaContext goes away
     private final LoadingCache<SchemaContext, JSONCodecFactory> precomputed;
 
     // Weak keys to retire the entry when SchemaContext goes away and to force identity-based lookup
     private final LoadingCache<SchemaContext, JSONCodecFactory> shared;
 
-    JSONCodecFactorySupplier(
-            final BiFunction<SchemaContext, JSONCodecFactory, JSONInstanceIdentifierCodec> iidCodecSupplier) {
-        this.iidCodecSupplier = requireNonNull(iidCodecSupplier);
-        precomputed = CacheBuilder.newBuilder().weakKeys().build(new EagerCacheLoader(iidCodecSupplier));
+    JSONCodecFactorySupplier() {
+        precomputed = CacheBuilder.newBuilder().weakKeys().build(new EagerCacheLoader(this::createFactory));
         shared = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<SchemaContext, JSONCodecFactory>() {
             @Override
             public JSONCodecFactory load(final SchemaContext key) {
-                return new JSONCodecFactory(key, new SharedCodecCache<>(), iidCodecSupplier);
+                return createFactory(key, new SharedCodecCache<>());
             }
         });
     }
@@ -177,7 +181,7 @@ public enum JSONCodecFactorySupplier {
      * @throws NullPointerException if context is null
      */
     public @NonNull JSONCodecFactory createLazy(final @NonNull SchemaContext context) {
-        return new JSONCodecFactory(context, new LazyCodecCache<>(), iidCodecSupplier);
+        return createFactory(context, new LazyCodecCache<>());
     }
 
     /**
@@ -194,6 +198,8 @@ public enum JSONCodecFactorySupplier {
      * @throws NullPointerException if context is null.
      */
     public @NonNull JSONCodecFactory createSimple(final @NonNull SchemaContext context) {
-        return new JSONCodecFactory(context, NoopCodecCache.getInstance(), iidCodecSupplier);
+        return createFactory(context, NoopCodecCache.getInstance());
     }
+
+    abstract @NonNull JSONCodecFactory createFactory(SchemaContext context, CodecCache<JSONCodec<?>> cache);
 }
