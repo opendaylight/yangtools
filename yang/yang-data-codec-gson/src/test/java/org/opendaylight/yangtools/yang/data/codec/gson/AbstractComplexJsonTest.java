@@ -16,15 +16,18 @@ public abstract class AbstractComplexJsonTest {
 
     static SchemaContext schemaContext;
     static JSONCodecFactory lhotkaCodecFactory;
+    static JSONCodecFactory rfc7951CodecFactory;
 
     @BeforeClass
     public static void beforeClass() {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/complexjson/yang");
         lhotkaCodecFactory = JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext);
+        rfc7951CodecFactory = JSONCodecFactorySupplier.RFC7951.getShared(schemaContext);
     }
 
     @AfterClass
     public static void afterClass() {
+        rfc7951CodecFactory = null;
         lhotkaCodecFactory = null;
         schemaContext = null;
     }
