@@ -58,8 +58,8 @@ import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
@@ -301,8 +301,8 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
             final DataNodeContainer childSchema) {
         final Map<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
         for (final DataSchemaNode leaf : childSchema.getChildNodes()) {
-            if (leaf instanceof TypedDataSchemaNode || leaf instanceof AnyXmlSchemaNode
-                    || leaf instanceof AnyDataSchemaNode) {
+            if (leaf instanceof TypedDataSchemaNode || leaf instanceof AnyxmlSchemaNode
+                    || leaf instanceof AnydataSchemaNode) {
                 getterToLeafSchema.put(BindingSchemaMapping.getGetterMethodName(leaf), leaf);
             }
         }
@@ -342,11 +342,11 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                     final LeafListSchemaNode leafListSchema = (LeafListSchemaNode) schema;
                     final IllegalArgumentCodec<Object, Object> codec = getCodec(valueType, leafListSchema.getType());
                     valueNode = new LeafSetNodeCodecContext(leafListSchema, codec, method.getName());
-                } else if (schema instanceof AnyXmlSchemaNode) {
-                    valueNode = new OpaqueNodeCodecContext.AnyXml<>((AnyXmlSchemaNode) schema, method.getName(),
+                } else if (schema instanceof AnyxmlSchemaNode) {
+                    valueNode = new OpaqueNodeCodecContext.Anyxml<>((AnyxmlSchemaNode) schema, method.getName(),
                             opaqueReturnType(method), loader);
-                } else if (schema instanceof AnyDataSchemaNode) {
-                    valueNode = new OpaqueNodeCodecContext.AnyData<>((AnyDataSchemaNode) schema, method.getName(),
+                } else if (schema instanceof AnydataSchemaNode) {
+                    valueNode = new OpaqueNodeCodecContext.Anydata<>((AnydataSchemaNode) schema, method.getName(),
                             opaqueReturnType(method), loader);
                 } else {
                     verify(schema == null, "Unhandled schema %s for method %s", schema, method);

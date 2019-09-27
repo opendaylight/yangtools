@@ -62,8 +62,8 @@ import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -269,10 +269,10 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         if (childSchema instanceof ChoiceSchemaNode) {
             return choiceChildStream(getter);
         }
-        if (childSchema instanceof AnyDataSchemaNode) {
+        if (childSchema instanceof AnydataSchemaNode) {
             return qnameChildStream(STREAM_ANYDATA, getter, childSchema);
         }
-        if (childSchema instanceof AnyXmlSchemaNode) {
+        if (childSchema instanceof AnyxmlSchemaNode) {
             return qnameChildStream(STREAM_ANYXML, getter, childSchema);
         }
         if (childSchema instanceof LeafListSchemaNode) {

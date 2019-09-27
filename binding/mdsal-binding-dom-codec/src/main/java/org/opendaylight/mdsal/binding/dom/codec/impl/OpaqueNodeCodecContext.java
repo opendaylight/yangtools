@@ -33,14 +33,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.DOMSourceAnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ForeignDataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNodeCodecContext
         implements BindingOpaqueObjectCodecTreeNode<T> {
-    static final class AnyXml<T extends OpaqueObject<T>> extends OpaqueNodeCodecContext<T> {
-        AnyXml(final AnyXmlSchemaNode schema, final String getterName, final Class<T> bindingClass,
+    static final class Anyxml<T extends OpaqueObject<T>> extends OpaqueNodeCodecContext<T> {
+        Anyxml(final AnyxmlSchemaNode schema, final String getterName, final Class<T> bindingClass,
                 final CodecClassLoader loader) {
             super(schema, getterName, bindingClass, loader);
         }
@@ -61,8 +61,8 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
         }
     }
 
-    static final class AnyData<T extends OpaqueObject<T>> extends OpaqueNodeCodecContext<T> {
-        AnyData(final AnyDataSchemaNode schema, final String getterName, final Class<T> bindingClass,
+    static final class Anydata<T extends OpaqueObject<T>> extends OpaqueNodeCodecContext<T> {
+        Anydata(final AnydataSchemaNode schema, final String getterName, final Class<T> bindingClass,
                 final CodecClassLoader loader) {
             super(schema, getterName, bindingClass, loader);
         }

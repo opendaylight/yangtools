@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -115,7 +115,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
                     } else {
                         haveAddressable = true;
                     }
-                } else if (child instanceof AnyDataSchemaNode || child instanceof AnyXmlSchemaNode
+                } else if (child instanceof AnydataSchemaNode || child instanceof AnyxmlSchemaNode
                         || child instanceof TypedDataSchemaNode) {
                     haveUnaddressable = true;
                 } else if (child instanceof ChoiceSchemaNode) {
