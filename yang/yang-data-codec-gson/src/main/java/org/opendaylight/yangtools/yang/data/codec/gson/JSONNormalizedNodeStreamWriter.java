@@ -54,7 +54,7 @@ import org.w3c.dom.Text;
 public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter,
         StreamWriterMountPointExtension {
     private static final class Exclusive extends JSONNormalizedNodeStreamWriter {
-        Exclusive(final JSONCodecFactory codecFactory, final SchemaTracker tracker, final JsonWriter writer,
+        Exclusive(final AbstractJSONCodecFactory codecFactory, final SchemaTracker tracker, final JsonWriter writer,
                 final JSONStreamWriterRootContext rootContext) {
             super(codecFactory, tracker, writer, rootContext);
         }
@@ -67,7 +67,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     private static final class Nested extends JSONNormalizedNodeStreamWriter {
-        Nested(final JSONCodecFactory codecFactory, final SchemaTracker tracker, final JsonWriter writer,
+        Nested(final AbstractJSONCodecFactory codecFactory, final SchemaTracker tracker, final JsonWriter writer,
                 final JSONStreamWriterRootContext rootContext) {
             super(codecFactory, tracker, writer, rootContext);
         }
@@ -94,11 +94,11 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     private static final Pattern NOT_DECIMAL_NUMBER_PATTERN = Pattern.compile(NOT_DECIMAL_NUMBER_STRING);
 
     private final SchemaTracker tracker;
-    private final JSONCodecFactory codecs;
+    private final AbstractJSONCodecFactory codecs;
     private final JsonWriter writer;
     private JSONStreamWriterContext context;
 
-    JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaTracker tracker,
+    JSONNormalizedNodeStreamWriter(final AbstractJSONCodecFactory codecFactory, final SchemaTracker tracker,
             final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
         this.writer = requireNonNull(writer);
         this.codecs = requireNonNull(codecFactory);
@@ -127,7 +127,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      * @param jsonWriter JsonWriter
      * @return A stream writer instance
      */
-    public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
+    public static NormalizedNodeStreamWriter createExclusiveWriter(final AbstractJSONCodecFactory codecFactory,
             final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
         return new Exclusive(codecFactory, SchemaTracker.create(codecFactory.getSchemaContext(), path), jsonWriter,
             new JSONStreamWriterExclusiveRootContext(initialNs));
@@ -154,7 +154,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      * @param jsonWriter JsonWriter
      * @return A stream writer instance
      */
-    public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
+    public static NormalizedNodeStreamWriter createExclusiveWriter(final AbstractJSONCodecFactory codecFactory,
             final DataNodeContainer rootNode, final URI initialNs, final JsonWriter jsonWriter) {
         return new Exclusive(codecFactory, SchemaTracker.create(rootNode), jsonWriter,
             new JSONStreamWriterExclusiveRootContext(initialNs));
@@ -179,7 +179,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      * @param jsonWriter JsonWriter
      * @return A stream writer instance
      */
-    public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
+    public static NormalizedNodeStreamWriter createNestedWriter(final AbstractJSONCodecFactory codecFactory,
             final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
         return new Nested(codecFactory, SchemaTracker.create(codecFactory.getSchemaContext(), path), jsonWriter,
             new JSONStreamWriterSharedRootContext(initialNs));
@@ -204,7 +204,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      * @param jsonWriter JsonWriter
      * @return A stream writer instance
      */
-    public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
+    public static NormalizedNodeStreamWriter createNestedWriter(final AbstractJSONCodecFactory codecFactory,
             final DataNodeContainer rootNode, final URI initialNs, final JsonWriter jsonWriter) {
         return new Nested(codecFactory, SchemaTracker.create(rootNode), jsonWriter,
             new JSONStreamWriterSharedRootContext(initialNs));

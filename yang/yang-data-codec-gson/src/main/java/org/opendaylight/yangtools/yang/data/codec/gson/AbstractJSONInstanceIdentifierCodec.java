@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
-
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
@@ -17,22 +14,13 @@ import java.util.Iterator;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
+abstract class AbstractJSONInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
         implements JSONCodec<YangInstanceIdentifier> {
-    private final DataSchemaContextTree dataContextTree;
-    private final JSONCodecFactory codecFactory;
-    private final SchemaContext context;
-
-    JSONInstanceIdentifierCodec(final SchemaContext context, final JSONCodecFactory jsonCodecFactory) {
-        this.context = requireNonNull(context);
-        this.dataContextTree = DataSchemaContextTree.from(context);
-        this.codecFactory = requireNonNull(jsonCodecFactory);
-    }
+    DataSchemaContextTree dataContextTree;
+    SchemaContext context;
 
     @Override
     protected Module moduleForPrefix(final String prefix) {
@@ -49,14 +37,6 @@ class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifier
     @Override
     protected DataSchemaContextTree getDataContextTree() {
         return dataContextTree;
-    }
-
-    @Override
-    protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
-        requireNonNull(schemaNode, "schemaNode cannot be null");
-        checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
-        final JSONCodec<?> objectJSONCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode);
-        return objectJSONCodec.parseValue(null, value);
     }
 
     @Override

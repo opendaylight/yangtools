@@ -83,14 +83,14 @@ public class Bug8083Test {
     @Test
     public void testInstanceIdentifierSerializeNew() throws IOException {
         assertEquals("/example-foomod:top/foo-list[name='key-value']/example-barmod:bar-container/bar-leaf",
-            writeInstanceIdentifier(JSONCodecFactorySupplier.RFC7951));
+            writeInstanceIdentifier(Rfc7951JSONCodecFactorySupplier.getInstance()));
     }
 
     @Test
     public void testInstanceIdentifierSerializeOld() throws IOException {
         assertEquals("/example-foomod:top/example-foomod:foo-list[example-foomod:name='key-value']"
                 + "/example-barmod:bar-container/example-barmod:bar-leaf",
-            writeInstanceIdentifier(JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02));
+            writeInstanceIdentifier(LhotkaJSONCodecFactorySupplier.getInstance()));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class Bug8083Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
-            JSONCodecFactorySupplier.RFC7951.getShared(FULL_SCHEMA_CONTEXT));
+            Rfc7951JSONCodecFactorySupplier.getInstance().getShared(FULL_SCHEMA_CONTEXT));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
 
@@ -121,7 +121,7 @@ public class Bug8083Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
+            LhotkaJSONCodecFactorySupplier.getInstance().getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);
@@ -136,7 +136,7 @@ public class Bug8083Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
+            LhotkaJSONCodecFactorySupplier.getInstance().getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);
@@ -151,7 +151,7 @@ public class Bug8083Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
+            LhotkaJSONCodecFactorySupplier.getInstance().getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);

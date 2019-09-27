@@ -67,10 +67,10 @@ public final class JsonParserStream implements Closeable, Flushable {
 
     private final Deque<URI> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
-    private final JSONCodecFactory codecs;
+    private final AbstractJSONCodecFactory codecs;
     private final DataSchemaNode parentNode;
 
-    private JsonParserStream(final NormalizedNodeStreamWriter writer, final JSONCodecFactory codecs,
+    private JsonParserStream(final NormalizedNodeStreamWriter writer, final AbstractJSONCodecFactory codecs,
             final DataSchemaNode parentNode) {
         this.writer = requireNonNull(writer);
         this.codecs = requireNonNull(codecs);
@@ -79,31 +79,31 @@ public final class JsonParserStream implements Closeable, Flushable {
 
     /**
      * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
-     * and {@link JSONCodecFactory}. The stream will be logically rooted at the top of the SchemaContext associated
-     * with the specified codec factory.
+     * and {@link AbstractJSONCodecFactory}. The stream will be logically rooted at the top of the SchemaContext
+     * associated with the specified codec factory.
      *
      * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
-     * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
+     * @param codecFactory {@link AbstractJSONCodecFactory} to use for parsing leaves
      * @return A new {@link JsonParserStream}
      * @throws NullPointerException if any of the arguments are null
      */
     public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
-            final @NonNull JSONCodecFactory codecFactory) {
+            final @NonNull AbstractJSONCodecFactory codecFactory) {
         return new JsonParserStream(writer, codecFactory, codecFactory.getSchemaContext());
     }
 
     /**
      * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
-     * and {@link JSONCodecFactory}. The stream will be logically rooted at the specified parent node.
+     * and {@link AbstractJSONCodecFactory}. The stream will be logically rooted at the specified parent node.
      *
      * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
-     * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
+     * @param codecFactory {@link AbstractJSONCodecFactory} to use for parsing leaves
      * @param parentNode Logical root node
      * @return A new {@link JsonParserStream}
      * @throws NullPointerException if any of the arguments are null
      */
     public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
-            final @NonNull JSONCodecFactory codecFactory, final @NonNull SchemaNode parentNode) {
+            final @NonNull AbstractJSONCodecFactory codecFactory, final @NonNull SchemaNode parentNode) {
         final DataSchemaNode parent;
         if (parentNode instanceof DataSchemaNode) {
             parent = (DataSchemaNode) parentNode;
