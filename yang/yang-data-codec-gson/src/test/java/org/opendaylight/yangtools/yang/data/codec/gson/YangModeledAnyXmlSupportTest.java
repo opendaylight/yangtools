@@ -50,14 +50,14 @@ import org.xml.sax.SAXException;
 public class YangModeledAnyXmlSupportTest {
 
     private static SchemaContext schemaContext;
-    private static JSONCodecFactory lhotkaCodecFactory;
+    private static LhotkaJSONCodecFactory lhotkaCodecFactory;
     private static ContainerNode data;
 
     @BeforeClass
     public static void init() throws XMLStreamException, URISyntaxException, IOException, ParserConfigurationException,
             SAXException {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/yang-modeled-anyxml/yang");
-        lhotkaCodecFactory = JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext);
+        lhotkaCodecFactory = LhotkaJSONCodecFactorySupplier.getInstance().getShared(schemaContext);
 
         final Module bazModule = schemaContext.findModules("baz").iterator().next();
         final ContainerSchemaNode bazCont = (ContainerSchemaNode) bazModule.findDataChildByName(

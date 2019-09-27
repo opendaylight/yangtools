@@ -53,7 +53,7 @@ public class Bug4501Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
+            LhotkaJSONCodecFactorySupplier.getInstance().getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertTrue(transformedInput instanceof UnkeyedListNode);
@@ -72,7 +72,7 @@ public class Bug4501Test {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
-            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
+            LhotkaJSONCodecFactorySupplier.getInstance().getShared(schemaContext));
 
         try {
             jsonParser.parse(new JsonReader(new StringReader(inputJson)));

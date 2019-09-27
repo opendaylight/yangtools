@@ -19,5 +19,5 @@ import com.google.common.annotations.Beta;
 @Beta
 public interface UncheckedSerializer<P, I, X extends RuntimeException> extends Deserializer<P, I, X> {
     @Override
-    P deserialize(I input);
+    P deserialize(I input) throws X;
 }

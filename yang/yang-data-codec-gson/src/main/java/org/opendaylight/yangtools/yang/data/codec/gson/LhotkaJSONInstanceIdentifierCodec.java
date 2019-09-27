@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Pantheon Technologies, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2019 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -10,17 +10,15 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-final class RFC7951JSONInstanceIdentifierCodec extends AbstractJSONInstanceIdentifierCodec {
-    private final Rfc7951JSONCodecFactory codecFactory;
+class LhotkaJSONInstanceIdentifierCodec extends AbstractJSONInstanceIdentifierCodec {
+    private final LhotkaJSONCodecFactory codecFactory;
 
-    RFC7951JSONInstanceIdentifierCodec(final SchemaContext context, final Rfc7951JSONCodecFactory jsonCodecFactory) {
+    LhotkaJSONInstanceIdentifierCodec(final SchemaContext context, final LhotkaJSONCodecFactory jsonCodecFactory) {
         this.context = requireNonNull(context);
         this.dataContextTree = DataSchemaContextTree.from(context);
         this.codecFactory = requireNonNull(jsonCodecFactory);
@@ -32,20 +30,5 @@ final class RFC7951JSONInstanceIdentifierCodec extends AbstractJSONInstanceIdent
         checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
         final JSONCodec<?> objectJSONCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode);
         return objectJSONCodec.parseValue(null, value);
-    }
-
-    @Override
-    protected StringBuilder appendQName(final StringBuilder sb, final QName qname, final QNameModule lastModule) {
-        if (qname.getModule().equals(lastModule)) {
-            return sb.append(qname.getLocalName());
-        }
-
-        return super.appendQName(sb, qname, lastModule);
-    }
-
-    @Override
-    protected QName createQName(final QNameModule lastModule, final String localName) {
-        checkArgument(lastModule != null, "Unprefixed leading name %s", localName);
-        return QName.create(lastModule, localName);
     }
 }

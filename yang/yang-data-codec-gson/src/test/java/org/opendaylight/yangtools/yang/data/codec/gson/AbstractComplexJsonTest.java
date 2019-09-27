@@ -15,12 +15,12 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public abstract class AbstractComplexJsonTest {
 
     static SchemaContext schemaContext;
-    static JSONCodecFactory lhotkaCodecFactory;
+    static LhotkaJSONCodecFactory lhotkaCodecFactory;
 
     @BeforeClass
     public static void beforeClass() {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/complexjson/yang");
-        lhotkaCodecFactory = JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext);
+        lhotkaCodecFactory = LhotkaJSONCodecFactorySupplier.getInstance().getShared(schemaContext);
     }
 
     @AfterClass
