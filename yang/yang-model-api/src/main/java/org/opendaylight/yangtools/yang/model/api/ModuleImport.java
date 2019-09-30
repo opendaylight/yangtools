@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
  * <p>
  * The import statement makes definitions from one module available inside another module or submodule.
  */
-// FIXME: 3.0.0 this class is a leak of the declared world into the effective one. In effective world, all nodes form
+// FIXME: 5.0.0 this class is a leak of the declared world into the effective one. In effective world, all nodes form
 //        a tree, which consists of multiple (mostly) QName-navigated namespaces. As such module imports contribute
 //        only a prefix/QNameModule mapping to the effective world and hence should be mapped that way:
 //        - Module exposes String->QNameModule mapping
