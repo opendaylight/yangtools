@@ -29,7 +29,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -43,7 +43,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * <li>For each {@link BasicCodeGenerator} from {@link #codeGenerators}:
  * <ol>
  * <li>Instantiate using default constructor</li>
- * <li>Call {@link BasicCodeGenerator#generateSources(SchemaContext, File, Set, Function)}</li>
+ * <li>Call {@link BasicCodeGenerator#generateSources(EffectiveModelContext, File, Set, Function)}</li>
  * </ol></li>
  * </ol>
  */

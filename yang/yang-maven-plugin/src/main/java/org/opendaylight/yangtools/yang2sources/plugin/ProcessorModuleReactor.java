@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.io.CharStreams;
@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -59,7 +59,7 @@ final class ProcessorModuleReactor {
             parser.addLibSource(source);
         }
 
-        final SchemaContext schemaContext = Verify.verifyNotNull(parser.buildSchemaContext());
+        final EffectiveModelContext schemaContext = verifyNotNull(parser.buildEffectiveModel());
 
         final Set<Module> modules = new HashSet<>();
         for (Module module : schemaContext.getModules()) {

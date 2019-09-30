@@ -31,8 +31,8 @@ import org.apache.maven.repository.RepositorySystem;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -99,7 +99,8 @@ public class UtilTest {
 
     @Test
     public void contextHolderTest() throws Exception {
-        final SchemaContext context = YangParserTestUtils.parseYangResources(getClass(), "/test.yang", "/test2.yang");
+        final EffectiveModelContext context = YangParserTestUtils.parseYangResources(getClass(), "/test.yang",
+            "/test2.yang");
         final Set<Module> yangModules = new HashSet<>();
         final ContextHolder cxH = new ContextHolder(context, yangModules, ImmutableSet.of());
         assertEquals(context, cxH.getContext());
