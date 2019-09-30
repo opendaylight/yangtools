@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public final class TestModel {
@@ -47,11 +47,11 @@ public final class TestModel {
         throw new UnsupportedOperationException();
     }
 
-    public static SchemaContext createTestContext() {
+    public static EffectiveModelContext createTestContext() {
         return createTestContext(DATASTORE_TEST_YANG);
     }
 
-    public static SchemaContext createTestContext(final String resourcePath) {
+    public static EffectiveModelContext createTestContext(final String resourcePath) {
         return YangParserTestUtils.parseYangResources(TestModel.class, resourcePath);
     }
 }

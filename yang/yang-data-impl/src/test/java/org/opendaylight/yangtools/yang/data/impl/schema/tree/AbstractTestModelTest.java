@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 public abstract class AbstractTestModelTest {
-    static SchemaContext SCHEMA_CONTEXT;
+    static EffectiveModelContext SCHEMA_CONTEXT;
 
     @BeforeClass
     public static void beforeClass() {
