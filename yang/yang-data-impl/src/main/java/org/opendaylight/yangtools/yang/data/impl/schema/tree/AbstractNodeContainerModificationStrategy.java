@@ -169,7 +169,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
 
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
-            final Optional<TreeNode> currentMeta, final Version version) {
+            final Optional<? extends TreeNode> currentMeta, final Version version) {
         final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
 
         if (modification.getChildren().isEmpty()) {
@@ -221,9 +221,9 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
 
         for (final ModifiedNode mod : modifications) {
             final PathArgument id = mod.getIdentifier();
-            final Optional<TreeNode> cm = meta.getChild(id);
+            final Optional<? extends TreeNode> cm = meta.getChild(id);
 
-            final Optional<TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
+            final Optional<? extends TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
             if (result.isPresent()) {
                 final TreeNode tn = result.get();
                 meta.addChild(tn);
@@ -302,7 +302,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
                 // and then append any child entries.
                 if (!modification.getChildren().isEmpty()) {
                     // Version does not matter here as we'll throw it out
-                    final Optional<TreeNode> current = apply(modification, modification.getOriginal(),
+                    final Optional<? extends TreeNode> current = apply(modification, modification.getOriginal(),
                         Version.initial());
                     if (current.isPresent()) {
                         modification.updateValue(LogicalOperation.WRITE, current.get().getData());
@@ -364,7 +364,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
 
     @Override
     protected final void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
+            final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
         final TreeNode currentNode;
         if (!current.isPresent()) {
             currentNode = defaultTreeNode();
@@ -402,7 +402,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
 
     @Override
     protected final void checkMergeApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
+            final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
         if (current.isPresent()) {
             checkChildPreconditions(path, modification, current.get(), version);
         }
@@ -419,7 +419,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
             final TreeNode current, final Version version) throws DataValidationFailedException {
         for (final NodeModification childMod : modification.getChildren()) {
             final PathArgument childId = childMod.getIdentifier();
-            final Optional<TreeNode> childMeta = current.getChild(childId);
+            final Optional<? extends TreeNode> childMeta = current.getChild(childId);
 
             path.push(childId);
             try {

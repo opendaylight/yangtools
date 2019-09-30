@@ -49,7 +49,7 @@ class ContainerModificationStrategy extends DataNodeContainerModificationStrateg
 
         @Override
         protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
-                final Optional<TreeNode> currentMeta, final Version version) {
+                final Optional<? extends TreeNode> currentMeta, final Version version) {
             final TreeNode ret = super.applyWrite(modification, newValue, currentMeta, version);
             enforcer.enforceOnTreeNode(ret);
             return ret;

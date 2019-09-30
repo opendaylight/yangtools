@@ -110,7 +110,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         final YangInstanceIdentifier key = entry.getKey();
         final ModifiedNode mod = entry.getValue();
 
-        final Optional<TreeNode> result = resolveSnapshot(key, mod);
+        final Optional<? extends TreeNode> result = resolveSnapshot(key, mod);
         if (result.isPresent()) {
             final NormalizedNode<?, ?> data = result.get().getData();
             return NormalizedNodes.findNode(key, data, path);
@@ -120,8 +120,9 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private Optional<TreeNode> resolveSnapshot(final YangInstanceIdentifier path, final ModifiedNode modification) {
-        final Optional<TreeNode> potentialSnapshot = modification.getSnapshot();
+    private Optional<? extends TreeNode> resolveSnapshot(final YangInstanceIdentifier path,
+            final ModifiedNode modification) {
+        final Optional<? extends TreeNode> potentialSnapshot = modification.getSnapshot();
         if (potentialSnapshot != null) {
             return potentialSnapshot;
         }
@@ -202,7 +203,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          * have same version each time this method is called.
          */
         final TreeNode originalSnapshotRoot = snapshot.getRootNode();
-        final Optional<TreeNode> tempRoot = getStrategy().apply(rootNode, Optional.of(originalSnapshotRoot), version);
+        final Optional<? extends TreeNode> tempRoot = getStrategy().apply(rootNode, Optional.of(originalSnapshotRoot),
+            version);
         checkState(tempRoot.isPresent(), "Data tree root is not present, possibly removed by previous modification");
 
         final InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(),

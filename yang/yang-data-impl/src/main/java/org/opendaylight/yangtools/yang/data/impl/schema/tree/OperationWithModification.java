@@ -60,7 +60,7 @@ final class OperationWithModification {
         if (maybeChild.isPresent()) {
             final ModifiedNode childNode = maybeChild.get();
 
-            Optional<TreeNode> snapshot = childNode.getSnapshot();
+            Optional<? extends TreeNode> snapshot = childNode.getSnapshot();
             if (snapshot == null) {
                 // Snapshot is not present, force instantiation
                 snapshot = applyOperation.getChild(child).get().apply(childNode, childNode.getOriginal(), version);
@@ -69,7 +69,7 @@ final class OperationWithModification {
             return snapshot.map(TreeNode::getData);
         }
 
-        Optional<TreeNode> snapshot = modification.getSnapshot();
+        Optional<? extends TreeNode> snapshot = modification.getSnapshot();
         if (snapshot == null) {
             snapshot = apply(modification.getOriginal(), version);
         }
@@ -89,7 +89,7 @@ final class OperationWithModification {
         return applyOperation;
     }
 
-    public Optional<TreeNode> apply(final Optional<TreeNode> data, final Version version) {
+    public Optional<? extends TreeNode> apply(final Optional<? extends TreeNode> data, final Version version) {
         return applyOperation.apply(modification, data, version);
     }
 

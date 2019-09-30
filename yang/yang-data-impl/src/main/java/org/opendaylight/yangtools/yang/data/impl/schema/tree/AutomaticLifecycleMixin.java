@@ -26,7 +26,8 @@ final class AutomaticLifecycleMixin {
      */
     @FunctionalInterface
     interface Apply {
-        Optional<TreeNode> apply(ModifiedNode modification, Optional<TreeNode> storeMeta, Version version);
+        Optional<? extends TreeNode> apply(ModifiedNode modification, Optional<? extends TreeNode> storeMeta,
+                Version version);
     }
 
     /**
@@ -35,18 +36,18 @@ final class AutomaticLifecycleMixin {
      */
     @FunctionalInterface
     interface ApplyWrite {
-        TreeNode applyWrite(ModifiedNode modification, NormalizedNode<?, ?> newValue, Optional<TreeNode> storeMeta,
-                Version version);
+        TreeNode applyWrite(ModifiedNode modification, NormalizedNode<?, ?> newValue,
+                Optional<? extends TreeNode> storeMeta, Version version);
     }
 
     private AutomaticLifecycleMixin() {
 
     }
 
-    static Optional<TreeNode> apply(final Apply delegate, final ApplyWrite writeDelegate,
-            final NormalizedNode<?, ?> emptyNode, final ModifiedNode modification, final Optional<TreeNode> storeMeta,
-            final Version version) {
-        final Optional<TreeNode> ret;
+    static Optional<? extends TreeNode> apply(final Apply delegate, final ApplyWrite writeDelegate,
+            final NormalizedNode<?, ?> emptyNode, final ModifiedNode modification,
+            final Optional<? extends TreeNode> storeMeta, final Version version) {
+        final Optional<? extends TreeNode> ret;
         if (modification.getOperation() == LogicalOperation.DELETE) {
             if (modification.getChildren().isEmpty()) {
                 return delegate.apply(modification, storeMeta, version);
@@ -63,10 +64,10 @@ final class AutomaticLifecycleMixin {
         return ret.isPresent() ? disappearResult(modification, ret.get(), storeMeta) : ret;
     }
 
-    private static Optional<TreeNode> applyTouch(final Apply delegate, final NormalizedNode<?, ?> emptyNode,
-            final ModifiedNode modification, final Optional<TreeNode> storeMeta, final Version version) {
+    private static Optional<? extends TreeNode> applyTouch(final Apply delegate, final NormalizedNode<?, ?> emptyNode,
+            final ModifiedNode modification, final Optional<? extends TreeNode> storeMeta, final Version version) {
         // Container is not present, let's take care of the 'magically appear' part of our job
-        final Optional<TreeNode> ret = delegate.apply(modification, fakeMeta(emptyNode, version), version);
+        final Optional<? extends TreeNode> ret = delegate.apply(modification, fakeMeta(emptyNode, version), version);
 
         // If the delegate indicated SUBTREE_MODIFIED, account for the fake and report APPEARED
         if (modification.getModificationType() == ModificationType.SUBTREE_MODIFIED) {
@@ -75,8 +76,8 @@ final class AutomaticLifecycleMixin {
         return ret;
     }
 
-    private static Optional<TreeNode> disappearResult(final ModifiedNode modification, final TreeNode result,
-            final Optional<TreeNode> storeMeta) {
+    private static Optional<? extends TreeNode> disappearResult(final ModifiedNode modification, final TreeNode result,
+            final Optional<? extends TreeNode> storeMeta) {
         // Check if the result is in fact empty before pulling any tricks
         if (!isEmpty(result)) {
             return Optional.of(result);

@@ -32,7 +32,7 @@ abstract class NodeModification implements Identifiable<PathArgument> {
      * @return The original node, or {@link Optional#absent()} if the node is
      *         a new node.
      */
-    abstract Optional<TreeNode> getOriginal();
+    abstract Optional<? extends TreeNode> getOriginal();
 
     /**
      * Get a read-only view of children nodes.

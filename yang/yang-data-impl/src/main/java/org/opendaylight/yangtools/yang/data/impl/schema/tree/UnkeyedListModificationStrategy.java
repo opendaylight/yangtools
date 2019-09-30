@@ -43,7 +43,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation<Li
     }
 
     @Override
-    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
+    Optional<? extends TreeNode> apply(final ModifiedNode modification, final Optional<? extends TreeNode> storeMeta,
             final Version version) {
         return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
             version);
@@ -67,7 +67,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation<Li
 
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
-            final Optional<TreeNode> currentMeta, final Version version) {
+            final Optional<? extends TreeNode> currentMeta, final Version version) {
         final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
         if (modification.getChildren().isEmpty()) {
             return newValueMeta;
@@ -110,9 +110,9 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation<Li
 
         for (final ModifiedNode mod : modifications) {
             final PathArgument id = mod.getIdentifier();
-            final Optional<TreeNode> cm = meta.getChild(id);
+            final Optional<? extends TreeNode> cm = meta.getChild(id);
 
-            final Optional<TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
+            final Optional<? extends TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
             if (result.isPresent()) {
                 final TreeNode tn = result.get();
                 meta.addChild(tn);
@@ -144,7 +144,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation<Li
 
     @Override
     protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws IncorrectDataStructureException {
+            final Optional<? extends TreeNode> current, final Version version) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path.toInstanceIdentifier(), "Subtree modification is not allowed.");
     }
 

@@ -36,8 +36,9 @@ public final class StoreTreeNodes {
      * @param path Path to the node
      * @return Optional with node if the node is present in tree, {@link Optional#empty()} otherwise.
      */
-    public static <T extends StoreTreeNode<T>> Optional<T> findNode(final T tree, final YangInstanceIdentifier path) {
-        Optional<T> current = Optional.of(tree);
+    public static <T extends StoreTreeNode<T>> Optional<? extends T> findNode(final T tree,
+            final YangInstanceIdentifier path) {
+        Optional<? extends T> current = Optional.of(tree);
         Iterator<PathArgument> pathIter = path.getPathArguments().iterator();
         while (current.isPresent() && pathIter.hasNext()) {
             current = current.get().getChild(pathIter.next());
@@ -50,7 +51,7 @@ public final class StoreTreeNodes {
 
         int depth = 1;
         for (PathArgument pathArg : path.getPathArguments()) {
-            Optional<T> potential = current.getChild(pathArg);
+            Optional<? extends T> potential = current.getChild(pathArg);
             if (potential.isEmpty()) {
                 throw new IllegalArgumentException(String.format("Child %s is not present in tree.",
                         path.getAncestor(depth)));
@@ -77,8 +78,8 @@ public final class StoreTreeNodes {
 
     public static <T extends StoreTreeNode<T>> Entry<YangInstanceIdentifier, T> findClosestsOrFirstMatch(final T tree,
             final YangInstanceIdentifier path, final Predicate<T> predicate) {
-        Optional<T> parent = Optional.of(tree);
-        Optional<T> current = Optional.of(tree);
+        Optional<? extends T> parent = Optional.of(tree);
+        Optional<? extends T> current = Optional.of(tree);
 
         int nesting = 0;
         Iterator<PathArgument> pathIter = path.getPathArguments().iterator();
@@ -102,7 +103,7 @@ public final class StoreTreeNodes {
         return new SimpleImmutableEntry<>(path.getAncestor(nesting - 1), parent.get());
     }
 
-    public static <T extends StoreTreeNode<T>> Optional<T> getChild(final Optional<T> parent,
+    public static <T extends StoreTreeNode<T>> Optional<? extends T> getChild(final Optional<T> parent,
             final PathArgument child) {
         if (parent.isPresent()) {
             return parent.get().getChild(child);

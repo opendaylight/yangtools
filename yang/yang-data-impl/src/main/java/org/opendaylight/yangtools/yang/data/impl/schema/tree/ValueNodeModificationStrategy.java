@@ -66,13 +66,13 @@ final class ValueNodeModificationStrategy<T extends DataSchemaNode> extends Sche
 
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
-            final Optional<TreeNode> currentMeta, final Version version) {
+            final Optional<? extends TreeNode> currentMeta, final Version version) {
         return TreeNodeFactory.createTreeNode(newValue, version);
     }
 
     @Override
     protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws IncorrectDataStructureException {
+            final Optional<? extends TreeNode> current, final Version version) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path.toInstanceIdentifier(), "Subtree modification is not allowed.");
     }
 

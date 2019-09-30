@@ -54,7 +54,8 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
      *             If it is not possible to apply Operation on provided Metadata
      *             node
      */
-    abstract Optional<TreeNode> apply(ModifiedNode modification, Optional<TreeNode> storeMeta, Version version);
+    abstract Optional<? extends TreeNode> apply(ModifiedNode modification, Optional<? extends TreeNode> storeMeta,
+            Version version);
 
     /**
      * Checks if provided node modification could be applied to current metadata node.
@@ -66,7 +67,7 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
      * @throws DataValidationFailedException if the modification is not applicable
      */
     abstract void checkApplicable(ModificationPath path, NodeModification modification,
-            Optional<TreeNode> current, Version version) throws DataValidationFailedException;
+            Optional<? extends TreeNode> current, Version version) throws DataValidationFailedException;
 
     /**
      * Performs a quick structural verification of NodeModification, such as written values / types uses right
