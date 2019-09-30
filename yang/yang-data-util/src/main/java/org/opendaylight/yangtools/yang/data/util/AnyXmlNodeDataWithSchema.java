@@ -30,9 +30,10 @@ public class AnyXmlNodeDataWithSchema extends SimpleNodeDataWithSchema<AnyxmlSch
     public void write(final NormalizedNodeStreamWriter writer, final StreamWriterMetadataExtension metaWriter)
             throws IOException {
         writer.nextDataSchemaNode(getSchema());
-        writer.startAnyxmlNode(provideNodeIdentifier());
-        writeMetadata(metaWriter);
-        writer.domSourceValue((DOMSource) getValue());
-        writer.endNode();
+        if (writer.startAnyxmlNode(provideNodeIdentifier(), DOMSource.class)) {
+            writeMetadata(metaWriter);
+            writer.domSourceValue((DOMSource) getValue());
+            writer.endNode();
+        }
     }
 }

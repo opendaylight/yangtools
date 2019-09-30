@@ -165,10 +165,14 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void startAnyxmlNode(final NodeIdentifier name) {
+    public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) {
         checkDataNodeContainer();
-        enter(name, ImmutableAnyXmlNodeBuilder.create());
-        nextSchema = null;
+        if (DOMSource.class.isAssignableFrom(objectModel)) {
+            enter(name, ImmutableAnyXmlNodeBuilder.create());
+            nextSchema = null;
+            return true;
+        }
+        return false;
     }
 
     @Override

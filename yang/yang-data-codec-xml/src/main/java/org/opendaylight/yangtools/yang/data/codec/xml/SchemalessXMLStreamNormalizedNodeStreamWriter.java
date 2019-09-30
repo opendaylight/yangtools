@@ -79,9 +79,13 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     }
 
     @Override
-    public void startAnyxmlNode(final NodeIdentifier name) throws IOException {
-        nodeTypeStack.push(NodeType.ANY_XML);
-        startElement(name.getNodeType());
+    public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
+        if (DOMSource.class.isAssignableFrom(objectModel)) {
+            nodeTypeStack.push(NodeType.ANY_XML);
+            startElement(name.getNodeType());
+            return true;
+        }
+        return false;
     }
 
     @Override
