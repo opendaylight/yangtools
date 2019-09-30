@@ -33,8 +33,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
@@ -109,8 +109,9 @@ public class GenerateSourcesTest {
         }
 
         @Override
-        public Collection<File> generateSources(SchemaContext context, File outputBaseDir, Set<Module> currentModules,
-                Function<Module, Optional<String>> moduleResourcePathResolver) throws IOException {
+        public Collection<File> generateSources(final EffectiveModelContext context, final File outputBaseDir,
+                final Set<Module> currentModules, final Function<Module, Optional<String>> moduleResourcePathResolver)
+                        throws IOException {
             called++;
             outputDir = outputBaseDir;
             return new ArrayList<>();

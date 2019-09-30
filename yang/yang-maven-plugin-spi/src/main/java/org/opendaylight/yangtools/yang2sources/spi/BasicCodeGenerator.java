@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * Maven 3.1.x and newer uses SLF4J internally, which means we do not need to pass a logger instance around.
@@ -36,7 +36,7 @@ public interface BasicCodeGenerator {
     }
 
     /**
-     * Generate sources from provided {@link SchemaContext}.
+     * Generate sources from provided {@link EffectiveModelContext}.
      *
      * @param context
      *            parsed from YANG files
@@ -49,7 +49,7 @@ public interface BasicCodeGenerator {
      *            Function converting a local module to the packaged resource path
      * @return collection of files that were generated from schema context
      */
-    Collection<File> generateSources(SchemaContext context, File outputBaseDir, Set<Module> currentModules,
+    Collection<File> generateSources(EffectiveModelContext context, File outputBaseDir, Set<Module> currentModules,
             Function<Module, Optional<String>> moduleResourcePathResolver) throws IOException;
 
     /**

@@ -15,8 +15,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import org.apache.maven.project.MavenProject;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +25,9 @@ public class CodeGeneratorTestImpl implements BasicCodeGenerator, MavenProjectAw
     private static final Logger LOG = LoggerFactory.getLogger(CodeGeneratorTestImpl.class);
 
     @Override
-    public Collection<File> generateSources(SchemaContext context, File outputBaseDir, Set<Module> currentModules,
-            Function<Module, Optional<String>> moduleResourcePathResolver) throws IOException {
+    public Collection<File> generateSources(final EffectiveModelContext context, final File outputBaseDir,
+            final Set<Module> currentModules, final Function<Module, Optional<String>> moduleResourcePathResolver)
+                    throws IOException {
         LOG.debug("{} generateSources:context: {}", getClass().getCanonicalName(), context);
         LOG.debug("{} generateSources:outputBaseDir: {}", getClass().getCanonicalName(), outputBaseDir);
         LOG.debug("{} generateSources:currentModules: {}", getClass().getCanonicalName(), currentModules);

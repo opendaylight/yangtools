@@ -13,22 +13,22 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 final class ContextHolder implements Immutable {
-    private final SchemaContext context;
+    private final EffectiveModelContext context;
     private final Set<Module> modules;
     private final Set<SourceIdentifier> sources;
 
-    ContextHolder(final SchemaContext context, final Set<Module> modules, final Set<SourceIdentifier> sources) {
+    ContextHolder(final EffectiveModelContext context, final Set<Module> modules, final Set<SourceIdentifier> sources) {
         this.context = requireNonNull(context);
         this.modules = ImmutableSet.copyOf(modules);
         this.sources = ImmutableSet.copyOf(sources);
     }
 
-    SchemaContext getContext() {
+    EffectiveModelContext getContext() {
         return context;
     }
 
