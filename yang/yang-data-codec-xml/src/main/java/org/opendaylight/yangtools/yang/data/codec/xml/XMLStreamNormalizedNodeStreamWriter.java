@@ -20,7 +20,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
+import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -50,7 +50,7 @@ import org.w3c.dom.Node;
  * removed in a future version.
  */
 public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamWriter,
-        NormalizedMetadataStreamWriter {
+        StreamWriterMetadataExtension {
     private static final Logger LOG = LoggerFactory.getLogger(XMLStreamNormalizedNodeStreamWriter.class);
     private static final Set<String> BROKEN_ATTRIBUTES = ConcurrentHashMap.newKeySet();
 
@@ -112,7 +112,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
 
     @Override
     public final ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(NormalizedMetadataStreamWriter.class, this);
+        return ImmutableClassToInstanceMap.of(StreamWriterMetadataExtension.class, this);
     }
 
     abstract void startAnydata(NodeIdentifier name);

@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import java.io.IOException;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
+import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
@@ -26,7 +26,7 @@ public class ListNodeDataWithSchema extends CompositeNodeDataWithSchema<ListSche
     }
 
     @Override
-    public void write(final NormalizedNodeStreamWriter writer, final NormalizedMetadataStreamWriter metaWriter)
+    public void write(final NormalizedNodeStreamWriter writer, final StreamWriterMetadataExtension metaWriter)
             throws IOException {
         final ListSchemaNode schema = getSchema();
         writer.nextDataSchemaNode(schema);

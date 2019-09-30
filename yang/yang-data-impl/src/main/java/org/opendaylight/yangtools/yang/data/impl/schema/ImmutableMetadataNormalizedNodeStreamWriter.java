@@ -19,7 +19,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
+import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.rfc7952.data.util.ImmutableNormalizedMetadata;
 import org.opendaylight.yangtools.rfc7952.data.util.ImmutableNormalizedMetadata.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -29,11 +29,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 
 /**
  * A {@link NormalizedMetadata}-aware {@link ImmutableMetadataNormalizedNodeStreamWriter}. It advertizes the
- * {@link NormalizedMetadataStreamWriter} extension.
+ * {@link StreamWriterMetadataExtension} extension.
  */
 @Beta
 public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormalizedNodeStreamWriter
-        implements NormalizedMetadataStreamWriter {
+        implements StreamWriterMetadataExtension {
     /**
      * Snapshot of currently-open data- and metadatastate.
      */
@@ -71,7 +71,7 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
 
     @Override
     public final ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(NormalizedMetadataStreamWriter.class, this);
+        return ImmutableClassToInstanceMap.of(StreamWriterMetadataExtension.class, this);
     }
 
     @Override

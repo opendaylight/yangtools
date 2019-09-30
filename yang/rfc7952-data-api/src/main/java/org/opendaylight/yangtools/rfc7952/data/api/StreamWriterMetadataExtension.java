@@ -29,8 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
  * attached to {@code leaf-list} and {@code list} nodes by correctly extending them to each entry.
  */
 @Beta
-// FIXME: 4.0.0: rename this to MetadataExtension?
-public interface NormalizedMetadataStreamWriter extends NormalizedNodeStreamWriterExtension {
+public interface StreamWriterMetadataExtension extends NormalizedNodeStreamWriterExtension {
     /**
      * Emit a block of metadata associated with the currently-open node. The argument is a map of annotation names,
      * as defined {@code md:annotation} extension. Values are normalized objects, which are required to be

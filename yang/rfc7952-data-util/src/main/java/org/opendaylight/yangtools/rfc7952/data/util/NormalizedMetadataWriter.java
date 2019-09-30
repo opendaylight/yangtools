@@ -16,7 +16,7 @@ import java.io.Flushable;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
+import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -105,8 +105,8 @@ public final class NormalizedMetadataWriter implements Closeable, Flushable {
         final PathArgument metaId = metadata.getIdentifier();
         checkArgument(dataId.equals(metaId), "Mismatched data %s and metadata %s", dataId, metaId);
 
-        final NormalizedMetadataStreamWriter metaWriter = writer.getExtensions()
-                .getInstance(NormalizedMetadataStreamWriter.class);
+        final StreamWriterMetadataExtension metaWriter = writer.getExtensions()
+                .getInstance(StreamWriterMetadataExtension.class);
         final NormalizedNodeStreamWriter delegate = metaWriter == null ? writer
                 : new NormalizedNodeStreamWriterMetadataDecorator(writer, metaWriter, metadata);
 

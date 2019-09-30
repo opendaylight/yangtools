@@ -18,7 +18,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map.Entry;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
+import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
@@ -193,7 +193,7 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
     }
 
     @Override
-    public void write(final NormalizedNodeStreamWriter writer, final NormalizedMetadataStreamWriter metaWriter)
+    public void write(final NormalizedNodeStreamWriter writer, final StreamWriterMetadataExtension metaWriter)
             throws IOException {
         for (AbstractNodeDataWithSchema<?> child : children) {
             child.write(writer, metaWriter);

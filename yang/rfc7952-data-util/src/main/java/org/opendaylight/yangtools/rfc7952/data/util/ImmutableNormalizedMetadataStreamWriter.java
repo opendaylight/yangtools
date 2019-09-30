@@ -16,17 +16,17 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Optional;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
+import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.rfc7952.data.util.ImmutableNormalizedMetadata.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
- * A simple {@link NormalizedMetadataStreamWriter} implementation, which takes care of building
+ * A simple {@link StreamWriterMetadataExtension} implementation, which takes care of building
  * {@link NormalizedMetadata} based on additional nesting instructions.
  */
 @Beta
-public final class ImmutableNormalizedMetadataStreamWriter implements NormalizedMetadataStreamWriter {
+public final class ImmutableNormalizedMetadataStreamWriter implements StreamWriterMetadataExtension {
     private final Deque<Builder> builders = new ArrayDeque<>();
 
     private ImmutableNormalizedMetadata result;

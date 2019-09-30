@@ -15,7 +15,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
+import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -31,14 +31,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
  */
 final class NormalizedNodeStreamWriterMetadataDecorator extends ForwardingNormalizedNodeStreamWriter {
     private final Deque<NormalizedMetadata> stack = new ArrayDeque<>();
-    private final NormalizedMetadataStreamWriter metaWriter;
+    private final StreamWriterMetadataExtension metaWriter;
     private final NormalizedNodeStreamWriter writer;
     private final NormalizedMetadata metadata;
 
     private int absentDepth = 0;
 
     NormalizedNodeStreamWriterMetadataDecorator(final NormalizedNodeStreamWriter writer,
-            final NormalizedMetadataStreamWriter metaWriter, final NormalizedMetadata metadata) {
+            final StreamWriterMetadataExtension metaWriter, final NormalizedMetadata metadata) {
         this.writer = requireNonNull(writer);
         this.metaWriter = requireNonNull(metaWriter);
         this.metadata = requireNonNull(metadata);

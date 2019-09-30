@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
+import org.opendaylight.yangtools.rfc7952.data.api.StreamWriterMetadataExtension;
 import org.opendaylight.yangtools.util.ImmutableMapTemplate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -54,7 +54,7 @@ public abstract class ListEntryNodeDataWithSchema extends AbstractMountPointData
         }
 
         @Override
-        public void write(final NormalizedNodeStreamWriter writer, final NormalizedMetadataStreamWriter metaWriter)
+        public void write(final NormalizedNodeStreamWriter writer, final StreamWriterMetadataExtension metaWriter)
                 throws IOException {
             writer.nextDataSchemaNode(getSchema());
             final NodeIdentifierWithPredicates identifier = NodeIdentifierWithPredicates.of(getSchema().getQName(),
@@ -73,7 +73,7 @@ public abstract class ListEntryNodeDataWithSchema extends AbstractMountPointData
         }
 
         @Override
-        public void write(final NormalizedNodeStreamWriter writer, final NormalizedMetadataStreamWriter metaWriter)
+        public void write(final NormalizedNodeStreamWriter writer, final StreamWriterMetadataExtension metaWriter)
                 throws IOException {
             writer.nextDataSchemaNode(getSchema());
             writer.startUnkeyedListItem(provideNodeIdentifier(), childSizeHint());
