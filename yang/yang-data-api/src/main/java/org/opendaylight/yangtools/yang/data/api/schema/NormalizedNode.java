@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * @param <V> Value of node
  */
 /*
- * FIXME: 4.0.0: NormalizedNode represents the perfectly-compliant view of the data, as evaluated by an implementation,
+ * FIXME: 5.0.0: NormalizedNode represents the perfectly-compliant view of the data, as evaluated by an implementation,
  *               which is currently singular, with respect of its interpretation of a SchemaContext. This includes
  *               leaf values, which are required to hold normalized representation for a particular implementation,
  *               which may be affected by its understanding of any YANG extensions present -- such as optional type
@@ -43,6 +43,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *               some "Node" ambiguity. "Node" should be a generic term reserved for a particular domain -- hence 'node'
  *               can be used to refer to either a 'schema node' in context of yang.model.api, or to
  *               a 'normalized data node' in context of yang.data.api.
+ *
+ * FIXME: 5.0.0: Well, not quite. The structure of unverified data is really codec specific -- and JSON and XML
+ *               do not agree on details. Furthermore things get way more complicated when we have a cross-schema
+ *               boundary -- like RFC8528. Hence we cannot really have a reasonably-structured concept of unverified
+ *               data. Nevertheless, this interface should be named 'NormalizedData'.
  */
 public interface NormalizedNode<K extends PathArgument, V> extends Identifiable<K> {
     /**
