@@ -20,8 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
  */
 @Beta
 @NonNullByDefault
-// FIXME: 4.0.0: rename this to MountPointExtension?
-public interface MountPointStreamWriter extends NormalizedNodeStreamWriterExtension {
+public interface StreamWriterMountPointExtension extends NormalizedNodeStreamWriterExtension {
     /**
      * Start a new mount point with a specific mount point context. The returned writer will be used to emit the content
      * of the mount point, without touching the writer to which this extension is attached to. Once that is done, the

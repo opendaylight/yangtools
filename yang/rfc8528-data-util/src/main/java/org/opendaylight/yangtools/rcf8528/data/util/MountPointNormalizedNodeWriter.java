@@ -14,7 +14,7 @@ import com.google.common.annotations.Beta;
 import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointNode;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointStreamWriter;
+import org.opendaylight.yangtools.rfc8528.data.api.StreamWriterMountPointExtension;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -39,9 +39,9 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
     }
 
     private static final class Forwarding extends MountPointNormalizedNodeWriter {
-        private final MountPointStreamWriter mountWriter;
+        private final StreamWriterMountPointExtension mountWriter;
 
-        Forwarding(final NormalizedNodeStreamWriter writer, final MountPointStreamWriter mountWriter) {
+        Forwarding(final NormalizedNodeStreamWriter writer, final StreamWriterMountPointExtension mountWriter) {
             super(writer);
             this.mountWriter = requireNonNull(mountWriter);
         }
@@ -62,7 +62,8 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
     }
 
     public static @NonNull MountPointNormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer) {
-        final MountPointStreamWriter mountWriter = writer.getExtensions().getInstance(MountPointStreamWriter.class);
+        final StreamWriterMountPointExtension mountWriter = writer.getExtensions()
+            .getInstance(StreamWriterMountPointExtension.class);
         return mountWriter == null ? new Filtering(writer) : new Forwarding(writer, mountWriter);
     }
 
@@ -71,7 +72,8 @@ public abstract class MountPointNormalizedNodeWriter extends NormalizedNodeWrite
     }
 
     public static @NonNull MountPointNormalizedNodeWriter forwardingFor(final NormalizedNodeStreamWriter writer) {
-        final MountPointStreamWriter mountWriter = writer.getExtensions().getInstance(MountPointStreamWriter.class);
+        final StreamWriterMountPointExtension mountWriter = writer.getExtensions()
+            .getInstance(StreamWriterMountPointExtension.class);
         checkArgument(mountWriter != null, "Writer %s does not support mount points", writer);
         return new Forwarding(writer, mountWriter);
     }

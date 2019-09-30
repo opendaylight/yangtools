@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.rfc8528.data.api.MountPointChild;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContextFactory;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointStreamWriter;
+import org.opendaylight.yangtools.rfc8528.data.api.StreamWriterMountPointExtension;
 import org.opendaylight.yangtools.rfc8528.data.api.YangLibraryConstants.ContainerName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
@@ -64,7 +64,8 @@ public final class MountPointData extends AbstractIdentifiable<MountPointIdentif
     }
 
     void write(final @NonNull NormalizedNodeStreamWriter writer) throws IOException {
-        final MountPointStreamWriter mountWriter = writer.getExtensions().getInstance(MountPointStreamWriter.class);
+        final StreamWriterMountPointExtension mountWriter = writer.getExtensions()
+            .getInstance(StreamWriterMountPointExtension.class);
         if (mountWriter == null) {
             LOG.debug("Writer {} does not support mount points, ignoring data in {}", writer, getIdentifier());
             return;

@@ -22,7 +22,7 @@ import javax.xml.transform.dom.DOMSource;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointContext;
 import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
-import org.opendaylight.yangtools.rfc8528.data.api.MountPointStreamWriter;
+import org.opendaylight.yangtools.rfc8528.data.api.StreamWriterMountPointExtension;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -52,7 +52,7 @@ import org.w3c.dom.Text;
  * Values of leaf and leaf-list are NOT translated according to codecs.
  */
 public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter,
-        MountPointStreamWriter {
+        StreamWriterMountPointExtension {
     private static final class Exclusive extends JSONNormalizedNodeStreamWriter {
         Exclusive(final JSONCodecFactory codecFactory, final SchemaTracker tracker, final JsonWriter writer,
                 final JSONStreamWriterRootContext rootContext) {
@@ -212,7 +212,7 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     @Override
     public ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(MountPointStreamWriter.class, this);
+        return ImmutableClassToInstanceMap.of(StreamWriterMountPointExtension.class, this);
     }
 
     @Override
