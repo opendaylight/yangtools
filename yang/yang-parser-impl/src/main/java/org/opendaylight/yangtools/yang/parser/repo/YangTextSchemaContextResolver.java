@@ -33,7 +33,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -63,7 +62,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
 
     private final Collection<SourceIdentifier> requiredSources = new ConcurrentLinkedDeque<>();
     private final Multimap<SourceIdentifier, YangTextSchemaSource> texts = ArrayListMultimap.create();
-    private final AtomicReference<Optional<SchemaContext>> currentSchemaContext =
+    private final AtomicReference<Optional<EffectiveModelContext>> currentSchemaContext =
             new AtomicReference<>(Optional.empty());
     private final InMemorySchemaSourceCache<ASTSchemaSource> cache;
     private final SchemaListenerRegistration transReg;
@@ -201,7 +200,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      * @return new schema context iif there is at least 1 yang file registered and
      *         new schema context was successfully built.
      */
-    public Optional<SchemaContext> getSchemaContext() {
+    public Optional<EffectiveModelContext> getSchemaContext() {
         return getSchemaContext(StatementParserMode.DEFAULT_MODE);
     }
 
@@ -212,10 +211,10 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      * @return new schema context iif there is at least 1 yang file registered and
      *         new schema context was successfully built.
      */
-    public Optional<SchemaContext> getSchemaContext(final StatementParserMode statementParserMode) {
+    public Optional<EffectiveModelContext> getSchemaContext(final StatementParserMode statementParserMode) {
         final EffectiveModelContextFactory factory = repository.createEffectiveModelContextFactory(
             config(statementParserMode));
-        Optional<SchemaContext> sc;
+        Optional<EffectiveModelContext> sc;
         Object ver;
         do {
             // Spin get stable context version
