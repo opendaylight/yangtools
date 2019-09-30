@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
@@ -19,8 +20,21 @@ public interface DataTree extends DataTreeTip, ReadOnlyDataTree {
      *
      * @param newSchemaContext new SchemaContext
      * @throws IllegalArgumentException if the new context is incompatible
+     * @throws NullPointerException if newSchemaContext is null
+     * @deprecated Prefer {@link #setEffectiveModelContext(EffectiveModelContext)}.
      */
+    @Deprecated
     void setSchemaContext(SchemaContext newSchemaContext);
+
+    /**
+     * Make the data tree use a new schema context. The context will be used
+     * only by subsequent operations.
+     *
+     * @param newModelContext new EffectiveModelContext
+     * @throws IllegalArgumentException if the new context is incompatible
+     * @throws NullPointerException if newModelContext is null
+     */
+    void setEffectiveModelContext(EffectiveModelContext newModelContext);
 
     /**
      * Commit a data tree candidate.

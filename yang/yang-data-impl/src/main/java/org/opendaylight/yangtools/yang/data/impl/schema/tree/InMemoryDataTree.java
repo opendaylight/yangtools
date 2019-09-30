@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
     private volatile DataTreeState state;
 
     InMemoryDataTree(final TreeNode rootNode, final DataTreeConfiguration treeConfig,
-        final SchemaContext schemaContext) {
+            final SchemaContext schemaContext) {
         this.treeConfig = requireNonNull(treeConfig, "treeConfig");
         maskMandatory = true;
         state = DataTreeState.createInitial(rootNode);
@@ -80,12 +81,22 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
         return SchemaAwareApplyOperation.from(rootSchemaNode, treeConfig);
     }
 
+    @Deprecated
+    @Override
+    public void setSchemaContext(final SchemaContext newSchemaContext) {
+        internalSetSchemaContext(newSchemaContext);
+    }
+
+    @Override
+    public void setEffectiveModelContext(final EffectiveModelContext newModelContext) {
+        internalSetSchemaContext(newModelContext);
+    }
+
     /*
      * This method is synchronized to guard against user attempting to install
      * multiple contexts. Otherwise it runs in a lock-free manner.
      */
-    @Override
-    public synchronized void setSchemaContext(final SchemaContext newSchemaContext) {
+    private synchronized void internalSetSchemaContext(final SchemaContext newSchemaContext) {
         requireNonNull(newSchemaContext);
 
         LOG.debug("Following schema contexts will be attempted {}", newSchemaContext);
