@@ -150,11 +150,14 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         } else if (node instanceof AnyxmlNode) {
             final AnyxmlNode<?> anyxmlNode = (AnyxmlNode<?>)node;
             final Class<?> model = anyxmlNode.getValueObjectModel();
-            if (DOMSource.class.isAssignableFrom(model)) {
+            if (writer.startAnyxmlNode(anyxmlNode.getIdentifier(), model)) {
                 final Object value = node.getValue();
-                verify(value instanceof DOMSource, "Inconsistent anyxml node %s", anyxmlNode);
-                writer.startAnyxmlNode(anyxmlNode.getIdentifier());
-                writer.domSourceValue((DOMSource) value);
+                if (DOMSource.class.isAssignableFrom(model)) {
+                    verify(value instanceof DOMSource, "Inconsistent anyxml node %s", anyxmlNode);
+                    writer.domSourceValue((DOMSource) value);
+                } else {
+                    writer.scalarValue(value);
+                }
                 writer.endNode();
                 return true;
             }

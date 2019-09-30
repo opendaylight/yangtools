@@ -138,9 +138,13 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     }
 
     @Override
-    public void startAnyxmlNode(final NodeIdentifier name) throws IOException {
-        tracker.startAnyxmlNode(name);
-        startElement(name.getNodeType());
+    public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
+        if (DOMSource.class.isAssignableFrom(objectModel)) {
+            tracker.startAnyxmlNode(name);
+            startElement(name.getNodeType());
+            return true;
+        }
+        return false;
     }
 
     @Override

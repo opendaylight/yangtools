@@ -316,10 +316,14 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
-    public final void startAnyxmlNode(final NodeIdentifier name) throws IOException {
-        tracker.startAnyxmlNode(name);
-        context.emittingChild(codecs.getSchemaContext(), writer);
-        context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
+    public final boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
+        if (DOMSource.class.isAssignableFrom(objectModel)) {
+            tracker.startAnyxmlNode(name);
+            context.emittingChild(codecs.getSchemaContext(), writer);
+            context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -123,9 +123,12 @@ final class NormalizedNodeStreamWriterMetadataDecorator extends ForwardingNormal
     }
 
     @Override
-    public void startAnyxmlNode(final NodeIdentifier name) throws IOException {
-        super.startAnyxmlNode(name);
-        enterMetadataNode(name);
+    public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
+        final boolean ret = super.startAnyxmlNode(name, objectModel);
+        if (ret) {
+            enterMetadataNode(name);
+        }
+        return ret;
     }
 
     @Override
