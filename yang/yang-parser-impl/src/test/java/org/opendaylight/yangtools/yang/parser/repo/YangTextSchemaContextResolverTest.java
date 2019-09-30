@@ -82,7 +82,7 @@ public class YangTextSchemaContextResolverTest {
                 e.getCause().getMessage());
         }
 
-        Optional<SchemaContext> schemaContextOptional = yangTextSchemaContextResolver.getSchemaContext();
+        Optional<? extends SchemaContext> schemaContextOptional = yangTextSchemaContextResolver.getSchemaContext();
         assertTrue(schemaContextOptional.isPresent());
         SchemaContext schemaContext = schemaContextOptional.get();
         assertEquals(3, schemaContext.getModules().size());
