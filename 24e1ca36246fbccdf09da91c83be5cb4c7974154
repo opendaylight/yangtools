@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "5668d0a1_f40c1011",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-09-30T08:40:16Z",
+      "side": 1,
+      "message": "JIRA",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 8
+      },
+      "revId": "24e1ca36246fbccdf09da91c83be5cb4c7974154",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7f1295a5_6832cd44",
         "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONCodecFactory.java",
         "patchSetId": 1
