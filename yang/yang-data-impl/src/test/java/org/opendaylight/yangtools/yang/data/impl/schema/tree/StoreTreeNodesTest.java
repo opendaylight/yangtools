@@ -84,7 +84,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
         final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final Optional<TreeNode> node = StoreTreeNodes.findNode(rootNode, OUTER_LIST_1_PATH);
+        final Optional<? extends TreeNode> node = StoreTreeNodes.findNode(rootNode, OUTER_LIST_1_PATH);
         assertPresentAndType(node, TreeNode.class);
     }
 
@@ -96,7 +96,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
         final YangInstanceIdentifier outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
                 .build();
-        final Optional<TreeNode> node = StoreTreeNodes.findNode(rootNode, outerList1InvalidPath);
+        final Optional<? extends TreeNode> node = StoreTreeNodes.findNode(rootNode, outerList1InvalidPath);
         assertFalse(node.isPresent());
     }
 
@@ -135,7 +135,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
         final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final Optional<TreeNode> expectedNode = StoreTreeNodes.findNode(rootNode, TWO_TWO_PATH);
+        final Optional<? extends TreeNode> expectedNode = StoreTreeNodes.findNode(rootNode, TWO_TWO_PATH);
         assertPresentAndType(expectedNode, TreeNode.class);
 
         final Entry<YangInstanceIdentifier, TreeNode> actualNode = StoreTreeNodes.findClosest(rootNode, TWO_TWO_PATH);
@@ -154,7 +154,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
                 .node(TestModel.INNER_LIST_QNAME)
                 .nodeWithKey(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, "three")
                 .build();
-        final Optional<TreeNode> expectedNode = StoreTreeNodes.findNode(rootNode, outerListInnerListPath);
+        final Optional<? extends TreeNode> expectedNode = StoreTreeNodes.findNode(rootNode, outerListInnerListPath);
         assertPresentAndType(expectedNode, TreeNode.class);
 
         final Entry<YangInstanceIdentifier, TreeNode> actualNode = StoreTreeNodes.findClosest(rootNode,
@@ -167,7 +167,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
         final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final Optional<TreeNode> node = StoreTreeNodes.getChild(Optional.ofNullable(rootNode),
+        final Optional<? extends TreeNode> node = StoreTreeNodes.getChild(Optional.ofNullable(rootNode),
                 TestModel.TEST_PATH.getLastPathArgument());
         assertPresentAndType(node, TreeNode.class);
     }
@@ -177,7 +177,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
         final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final Optional<TreeNode> node = StoreTreeNodes.getChild(Optional.ofNullable(rootNode),
+        final Optional<? extends TreeNode> node = StoreTreeNodes.getChild(Optional.ofNullable(rootNode),
                 TestModel.OUTER_LIST_PATH.getLastPathArgument());
         assertFalse(node.isPresent());
     }
@@ -192,7 +192,7 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
                         .withChild(BAR_NODE).build()).build();
     }
 
-    private static <T extends TreeNode> T assertPresentAndType(final Optional<TreeNode> potential,
+    private static <T extends TreeNode> T assertPresentAndType(final Optional<? extends TreeNode> potential,
             final Class<T> type) {
         assertNotNull(potential);
         assertTrue(potential.isPresent());

@@ -32,7 +32,7 @@ final class StructuralContainerModificationStrategy extends ContainerModificatio
     }
 
     @Override
-    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
+    Optional<? extends TreeNode> apply(final ModifiedNode modification, final Optional<? extends TreeNode> storeMeta,
             final Version version) {
         return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
             version);

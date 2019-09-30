@@ -57,7 +57,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     };
 
     private final Map<PathArgument, ModifiedNode> children;
-    private final Optional<TreeNode> original;
+    private final Optional<? extends TreeNode> original;
     private final PathArgument identifier;
     private LogicalOperation operation = LogicalOperation.NONE;
     private Optional<TreeNode> snapshotCache;
@@ -69,10 +69,10 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
 
     // Internal cache for TreeNodes created as part of validation
     private ModificationApplyOperation validatedOp;
-    private Optional<TreeNode> validatedCurrent;
-    private Optional<TreeNode> validatedNode;
+    private Optional<? extends TreeNode> validatedCurrent;
+    private Optional<? extends TreeNode> validatedNode;
 
-    private ModifiedNode(final PathArgument identifier, final Optional<TreeNode> original,
+    private ModifiedNode(final PathArgument identifier, final Optional<? extends TreeNode> original,
             final ChildTrackingPolicy childPolicy) {
         this.identifier = identifier;
         this.original = original;
@@ -90,7 +90,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     @Override
-    Optional<TreeNode> getOriginal() {
+    Optional<? extends TreeNode> getOriginal() {
         return original;
     }
 
@@ -116,11 +116,11 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return Optional.ofNullable(children.get(child));
     }
 
-    private Optional<TreeNode> metadataFromSnapshot(final @NonNull PathArgument child) {
+    private Optional<? extends TreeNode> metadataFromSnapshot(final @NonNull PathArgument child) {
         return original.isPresent() ? original.get().getChild(child) : Optional.empty();
     }
 
-    private Optional<TreeNode> metadataFromData(final @NonNull PathArgument child, final Version modVersion) {
+    private Optional<? extends TreeNode> metadataFromData(final @NonNull PathArgument child, final Version modVersion) {
         if (writtenOriginal == null) {
             // Lazy instantiation, as we do not want do this for all writes. We are using the modification's version
             // here, as that version is what the SchemaAwareApplyOperation will see when dealing with the resulting
@@ -140,7 +140,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @param modVersion Version allocated by the calling {@link InMemoryDataTreeModification}
      * @return Before-image tree node as observed by that child.
      */
-    private Optional<TreeNode> findOriginalMetadata(final @NonNull PathArgument child, final Version modVersion) {
+    private Optional<? extends TreeNode> findOriginalMetadata(final @NonNull PathArgument child,
+            final Version modVersion) {
         switch (operation) {
             case DELETE:
                 // DELETE implies non-presence
@@ -179,9 +180,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             return potential;
         }
 
-        final Optional<TreeNode> currentMetadata = findOriginalMetadata(child, modVersion);
-
-
+        final Optional<? extends TreeNode> currentMetadata = findOriginalMetadata(child, modVersion);
         final ModifiedNode newlyCreated = new ModifiedNode(child, currentMetadata, childOper.getChildPolicy());
         if (operation == LogicalOperation.MERGE && value != null) {
             /*
@@ -356,14 +355,15 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return new ModifiedNode(metadataTree.getIdentifier(), Optional.of(metadataTree), childPolicy);
     }
 
-    void setValidatedNode(final ModificationApplyOperation op, final Optional<TreeNode> current,
-            final Optional<TreeNode> node) {
+    void setValidatedNode(final ModificationApplyOperation op, final Optional<? extends TreeNode> current,
+            final Optional<? extends TreeNode> node) {
         this.validatedOp = requireNonNull(op);
         this.validatedCurrent = requireNonNull(current);
         this.validatedNode = requireNonNull(node);
     }
 
-    Optional<TreeNode> getValidatedNode(final ModificationApplyOperation op, final Optional<TreeNode> current) {
+    Optional<? extends TreeNode> getValidatedNode(final ModificationApplyOperation op,
+            final Optional<? extends TreeNode> current) {
         return op.equals(validatedOp) && current.equals(validatedCurrent) ? validatedNode : null;
     }
 }

@@ -112,7 +112,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
 
     @Override
     final void checkApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
+            final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
         switch (modification.getOperation()) {
             case DELETE:
                 checkDeleteApplicable(modification, current);
@@ -163,8 +163,8 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
     }
 
     protected void checkMergeApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        final Optional<TreeNode> original = modification.getOriginal();
+            final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
+        final Optional<? extends TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
             /*
              * We need to do conflict detection only and only if the value of leaf changed
@@ -191,8 +191,8 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
      * @throws DataValidationFailedException when a data dependency conflict is detected
      */
     private static void checkWriteApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        final Optional<TreeNode> original = modification.getOriginal();
+            final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
+        final Optional<? extends TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
             checkNotConflicting(path, original.get(), current.get());
         } else {
@@ -201,7 +201,8 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
         }
     }
 
-    private static void checkDeleteApplicable(final NodeModification modification, final Optional<TreeNode> current) {
+    private static void checkDeleteApplicable(final NodeModification modification,
+            final Optional<? extends TreeNode> current) {
         // Delete is always applicable, we do not expose it to subclasses
         if (!current.isPresent()) {
             LOG.trace("Delete operation turned to no-op on missing node {}", modification);
@@ -209,7 +210,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
     }
 
     @Override
-    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
+    Optional<? extends TreeNode> apply(final ModifiedNode modification, final Optional<? extends TreeNode> currentMeta,
             final Version version) {
         switch (modification.getOperation()) {
             case DELETE:
@@ -261,7 +262,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
     protected abstract TreeNode applyMerge(ModifiedNode modification, TreeNode currentMeta, Version version);
 
     protected abstract TreeNode applyWrite(ModifiedNode modification, NormalizedNode<?, ?> newValue,
-            Optional<TreeNode> currentMeta, Version version);
+            Optional<? extends TreeNode> currentMeta, Version version);
 
     /**
      * Apply a nested operation. Since there may not actually be a nested operation
@@ -286,7 +287,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
      *         modification is not applicable (e.g. leaf node).
      */
     protected abstract void checkTouchApplicable(ModificationPath path, NodeModification modification,
-            Optional<TreeNode> current, Version version) throws DataValidationFailedException;
+            Optional<? extends TreeNode> current, Version version) throws DataValidationFailedException;
 
     /**
      * Return the {@link WithStatus}-subclass schema associated with this operation.

@@ -52,9 +52,9 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
     }
 
     @Override
-    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
+    Optional<? extends TreeNode> apply(final ModifiedNode modification, final Optional<? extends TreeNode> storeMeta,
             final Version version) {
-        Optional<TreeNode> ret = modification.getValidatedNode(this, storeMeta);
+        Optional<? extends TreeNode> ret = modification.getValidatedNode(this, storeMeta);
         if (ret == null) {
             // Deal with the result moving on us
             ret = delegate.apply(modification, storeMeta, version);
@@ -68,7 +68,7 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
 
     @Override
     void checkApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
+            final Optional<? extends TreeNode> current, final Version version) throws DataValidationFailedException {
         delegate.checkApplicable(path, modification, current, version);
 
         if (!(modification instanceof ModifiedNode)) {
@@ -79,7 +79,7 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
 
         // We need to actually perform the operation to deal with merge in a sane manner. We know the modification
         // is immutable, so the result of validation will probably not change. Note we should not be checking number
-        final Optional<TreeNode> maybeApplied = delegate.apply(modified, current, version);
+        final Optional<? extends TreeNode> maybeApplied = delegate.apply(modified, current, version);
         if (maybeApplied.isPresent()) {
             // We only enforce min/max on present data and rely on MandatoryLeafEnforcer to take care of the empty case
             validateMinMaxElements(path, maybeApplied.get().getData());
