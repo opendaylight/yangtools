@@ -47,7 +47,7 @@ public class ErrorReportingTest extends AbstractTestModelTest {
     }
 
     @Test
-    public void parentConcurrentlyDeletedExisting() {
+    public void parentConcurrentlyDeletedExisting() throws DataValidationFailedException {
         DataTreeModification initial = tree.takeSnapshot().newModification();
         // We write node without creating parent
         initial.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));

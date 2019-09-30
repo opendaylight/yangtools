@@ -118,7 +118,7 @@ public class Bug4454Test {
     }
 
     @Before
-    public void prepare() {
+    public void prepare() throws DataValidationFailedException {
         inMemoryDataTree =  new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
             schemaContext);
         final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();

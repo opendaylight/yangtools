@@ -30,7 +30,7 @@ public class DataTreeTransactionTest extends AbstractTestModelTest {
     }
 
     @Test
-    public void testSealedPrepare() {
+    public void testSealedPrepare() throws DataValidationFailedException {
         final DataTreeModification mod = tree.takeSnapshot().newModification();
         mod.ready();
         tree.prepare(mod);
@@ -43,7 +43,7 @@ public class DataTreeTransactionTest extends AbstractTestModelTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testUnsealedPrepare() {
+    public void testUnsealedPrepare() throws DataValidationFailedException {
         final DataTreeModification mod = tree.takeSnapshot().newModification();
         tree.prepare(mod);
     }

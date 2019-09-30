@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
@@ -28,7 +29,7 @@ public class Bug3674Test extends AbstractTestModelTest {
     private DataTree tree;
 
     @Before
-    public void setUp() {
+    public void setUp() throws DataValidationFailedException {
         tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
 
         // Create the top-level container
@@ -39,7 +40,7 @@ public class Bug3674Test extends AbstractTestModelTest {
     }
 
     @Test
-    public void testDeleteOfNonExistingNode() {
+    public void testDeleteOfNonExistingNode() throws DataValidationFailedException {
         final DataTreeModification mod = tree.takeSnapshot().newModification();
         mod.delete(TestModel.OUTER_LIST_PATH);
         mod.ready();

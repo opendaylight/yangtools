@@ -24,6 +24,7 @@ public interface DataTreeTip {
      * @throws DataValidationFailedException If modification data is not valid.
      * @throws NullPointerException if modification is null
      * @throws IllegalArgumentException if modification is unrecognized
+     * @throws DataValidationFailedException if modification would result in inconsistent data tree
      */
     void validate(DataTreeModification modification) throws DataValidationFailedException;
 
@@ -34,9 +35,9 @@ public interface DataTreeTip {
      * @return candidate data tree
      * @throws NullPointerException if modification is null
      * @throws IllegalArgumentException if modification is unrecognized
+     * @throws DataValidationFailedException if modification would result in inconsistent data tree
      */
-    // FIXME: 4.0.0: throw DataValidationFailedException or similar
-    DataTreeCandidateTip prepare(DataTreeModification modification);
+    DataTreeCandidateTip prepare(DataTreeModification modification) throws DataValidationFailedException;
 
     /**
      * {@inheritDoc}

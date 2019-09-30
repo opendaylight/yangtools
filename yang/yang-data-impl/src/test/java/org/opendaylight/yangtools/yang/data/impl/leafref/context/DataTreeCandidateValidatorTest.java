@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefDataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidation;
@@ -99,7 +100,7 @@ public class DataTreeCandidateValidatorTest {
     }
 
     @BeforeClass
-    public static void init()  {
+    public static void init() throws DataValidationFailedException {
         context = YangParserTestUtils.parseYangResourceDirectory("/leafref-validation");
 
         final Set<Module> modules = context.getModules();
@@ -175,7 +176,7 @@ public class DataTreeCandidateValidatorTest {
     }
 
     @Test
-    public void dataTreeCanditateValidationTest() {
+    public void dataTreeCanditateValidationTest() throws DataValidationFailedException {
         write();
 
         write2();
@@ -189,7 +190,7 @@ public class DataTreeCandidateValidatorTest {
         writeIntoMapEntry();
     }
 
-    private static void writeContributors() {
+    private static void writeContributors() throws DataValidationFailedException {
 
         final ContainerSchemaNode contributorContSchemaNode = (ContainerSchemaNode) valModule
                 .findDataChildByName(odlContributor).get();
@@ -232,7 +233,7 @@ public class DataTreeCandidateValidatorTest {
 
     }
 
-    private static void writeIntoMapEntry() {
+    private static void writeIntoMapEntry() throws DataValidationFailedException {
 
         final Map<QName, Object> keys = new HashMap<>();
         keys.put(name, "New Project");
@@ -278,7 +279,7 @@ public class DataTreeCandidateValidatorTest {
 
     }
 
-    private static void writeMapEntry() {
+    private static void writeMapEntry() throws DataValidationFailedException {
 
         final Map<QName, Object> keys = new HashMap<>();
         keys.put(name, "New Project");
@@ -330,7 +331,7 @@ public class DataTreeCandidateValidatorTest {
 
     }
 
-    private static void write() {
+    private static void write() throws DataValidationFailedException {
 
         final ContainerSchemaNode contributorContSchemaNode = (ContainerSchemaNode) valModule
                 .findDataChildByName(odlContributor).get();
@@ -378,7 +379,7 @@ public class DataTreeCandidateValidatorTest {
         assertTrue(exception);
     }
 
-    private static void write2() {
+    private static void write2() throws DataValidationFailedException {
 
         final ContainerSchemaNode odlCon = (ContainerSchemaNode) valModule.findDataChildByName(odl).get();
         final ContainerSchemaNode con1Con = (ContainerSchemaNode) odlCon.findDataChildByName(con1).get();
@@ -553,7 +554,7 @@ public class DataTreeCandidateValidatorTest {
         return mapEntryBuilder.build();
     }
 
-    private static void delete() {
+    private static void delete() throws DataValidationFailedException {
 
         final YangInstanceIdentifier contributorPath = YangInstanceIdentifier
                 .of(odlContributor);
@@ -562,8 +563,7 @@ public class DataTreeCandidateValidatorTest {
         delete.delete(contributorPath);
         delete.ready();
 
-        final DataTreeCandidate deleteContributorsCanditate = inMemoryDataTree
-                .prepare(delete);
+        final DataTreeCandidate deleteContributorsCanditate = inMemoryDataTree.prepare(delete);
 
         LOG.debug("*************************");
         LOG.debug("Before delete: ");

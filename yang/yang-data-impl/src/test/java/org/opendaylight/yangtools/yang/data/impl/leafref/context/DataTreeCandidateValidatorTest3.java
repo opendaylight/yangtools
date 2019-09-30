@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefDataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidation;
@@ -81,7 +82,7 @@ public class DataTreeCandidateValidatorTest3 {
     }
 
     @BeforeClass
-    public static void init() {
+    public static void init() throws DataValidationFailedException {
         context = YangParserTestUtils.parseYangResourceDirectory("/leafref-validation");
 
         final Set<Module> modules = context.getModules();
@@ -149,20 +150,15 @@ public class DataTreeCandidateValidatorTest3 {
     }
 
     @Test
-    public void dataTreeCanditateValidationTest2() {
-
+    public void dataTreeCanditateValidationTest2() throws DataValidationFailedException {
         writeDevices();
-
         mergeDevices();
     }
 
-    private static void writeDevices() {
-
+    private static void writeDevices() throws DataValidationFailedException {
         final ContainerSchemaNode devicesContSchemaNode = (ContainerSchemaNode) mainModule.findDataChildByName(devices)
                 .get();
-
         final ContainerNode devicesContainer = createDevicesContainer(devicesContSchemaNode);
-
         final YangInstanceIdentifier devicesPath = YangInstanceIdentifier.of(devices);
         final DataTreeModification writeModification = inMemoryDataTree.takeSnapshot().newModification();
         writeModification.write(devicesPath, devicesContainer);
@@ -194,7 +190,7 @@ public class DataTreeCandidateValidatorTest3 {
         LOG.debug("{}", inMemoryDataTree);
     }
 
-    private static void mergeDevices() {
+    private static void mergeDevices() throws DataValidationFailedException {
 
         final ContainerSchemaNode devicesContSchemaNode = (ContainerSchemaNode) mainModule.findDataChildByName(devices)
                 .get();
