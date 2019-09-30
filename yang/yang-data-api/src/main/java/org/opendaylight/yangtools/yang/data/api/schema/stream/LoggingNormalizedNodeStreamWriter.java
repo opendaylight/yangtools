@@ -130,9 +130,10 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
-    public void startAnyxmlNode(final NodeIdentifier name) {
+    public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) {
         LOG.debug("{}{}(anyxml)", ind(), name);
         incIndent();
+        return true;
     }
 
     @Override

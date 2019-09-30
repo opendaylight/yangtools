@@ -144,8 +144,8 @@ public abstract class QNameTransformingStreamWriter extends ForwardingNormalized
     }
 
     @Override
-    public void startAnyxmlNode(final NodeIdentifier name) throws IOException {
-        super.startAnyxmlNode(transform(name));
+    public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
+        return super.startAnyxmlNode(transform(name), objectModel);
     }
 
     @Override
