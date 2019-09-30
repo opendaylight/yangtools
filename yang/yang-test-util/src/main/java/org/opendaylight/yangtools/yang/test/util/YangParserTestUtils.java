@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.test.util;
 
 import com.google.common.annotations.Beta;
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
@@ -71,7 +70,7 @@ public final class YangParserTestUtils {
      *
      * @return effective schema context
      */
-    public static SchemaContext parseYangResource(final String resource) {
+    public static EffectiveModelContext parseYangResource(final String resource) {
         return parseYangResource(resource, StatementParserMode.DEFAULT_MODE);
     }
 
@@ -82,7 +81,7 @@ public final class YangParserTestUtils {
      * @param parserMode mode of statement parser
      * @return effective schema context
      */
-    public static SchemaContext parseYangResource(final String resource, final StatementParserMode parserMode) {
+    public static EffectiveModelContext parseYangResource(final String resource, final StatementParserMode parserMode) {
         return parseYangResource(resource, parserMode, null);
     }
 
@@ -95,7 +94,7 @@ public final class YangParserTestUtils {
      *                          model are resolved
      * @return effective schema context
      */
-    public static SchemaContext parseYangResource(final String resource, final Set<QName> supportedFeatures) {
+    public static EffectiveModelContext parseYangResource(final String resource, final Set<QName> supportedFeatures) {
         return parseYangResource(resource, StatementParserMode.DEFAULT_MODE, supportedFeatures);
     }
 
@@ -108,7 +107,7 @@ public final class YangParserTestUtils {
      * @param parserMode mode of statement parser
      * @return effective schema context
      */
-    public static SchemaContext parseYangResource(final String resource, final StatementParserMode parserMode,
+    public static EffectiveModelContext parseYangResource(final String resource, final StatementParserMode parserMode,
             final Set<QName> supportedFeatures) {
         final YangTextSchemaSource source = YangTextSchemaSource.forResource(YangParserTestUtils.class, resource);
         return parseYangSources(parserMode, supportedFeatures, source);
@@ -121,7 +120,7 @@ public final class YangParserTestUtils {
      * @param files YANG files to be parsed
      * @return effective schema context
      */
-    public static SchemaContext parseYangFiles(final File... files) {
+    public static EffectiveModelContext parseYangFiles(final File... files) {
         return parseYangFiles(Arrays.asList(files));
     }
 
@@ -132,7 +131,7 @@ public final class YangParserTestUtils {
      * @param files collection of YANG files to be parsed
      * @return effective schema context
      */
-    public static SchemaContext parseYangFiles(final Collection<File> files) {
+    public static EffectiveModelContext parseYangFiles(final Collection<File> files) {
         return parseYangFiles(StatementParserMode.DEFAULT_MODE, files);
     }
 
@@ -145,11 +144,12 @@ public final class YangParserTestUtils {
      * @param files YANG files to be parsed
      * @return effective schema context
      */
-    public static SchemaContext parseYangFiles(final Set<QName> supportedFeatures, final File... files) {
+    public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures, final File... files) {
         return parseYangFiles(supportedFeatures, Arrays.asList(files));
     }
 
-    public static SchemaContext parseYangFiles(final Set<QName> supportedFeatures, final Collection<File> files) {
+    public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
+            final Collection<File> files) {
         return parseYangFiles(supportedFeatures, StatementParserMode.DEFAULT_MODE, files);
     }
 
@@ -160,7 +160,7 @@ public final class YangParserTestUtils {
      * @param files YANG files to be parsed
      * @return effective schema context
      */
-    public static SchemaContext parseYangFiles(final StatementParserMode parserMode, final File... files) {
+    public static EffectiveModelContext parseYangFiles(final StatementParserMode parserMode, final File... files) {
         return parseYangFiles(parserMode, Arrays.asList(files));
     }
 
@@ -171,7 +171,8 @@ public final class YangParserTestUtils {
      * @param files collection of YANG files to be parsed
      * @return effective schema context
      */
-    public static SchemaContext parseYangFiles(final StatementParserMode parserMode, final Collection<File> files) {
+    public static EffectiveModelContext parseYangFiles(final StatementParserMode parserMode,
+            final Collection<File> files) {
         return parseYangFiles(null, parserMode, files);
     }
 
@@ -184,7 +185,7 @@ public final class YangParserTestUtils {
      * @param files YANG files to be parsed
      * @return effective schema context
      */
-    public static SchemaContext parseYangFiles(final Set<QName> supportedFeatures,
+    public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
             final StatementParserMode parserMode, final File... files) {
         return parseYangFiles(supportedFeatures, parserMode, Arrays.asList(files));
     }
@@ -198,7 +199,7 @@ public final class YangParserTestUtils {
      * @param files YANG files to be parsed
      * @return effective schema context
      */
-    public static SchemaContext parseYangFiles(final Set<QName> supportedFeatures,
+    public static EffectiveModelContext parseYangFiles(final Set<QName> supportedFeatures,
             final StatementParserMode parserMode, final Collection<File> files) {
         return parseSources(parserMode, supportedFeatures,
             files.stream().map(YangTextSchemaSource::forFile).collect(Collectors.toList()));
@@ -211,7 +212,7 @@ public final class YangParserTestUtils {
      * @param resourcePath relative path to the directory with YANG files to be parsed
      * @return effective schema context
      */
-    public static SchemaContext parseYangResourceDirectory(final String resourcePath) {
+    public static EffectiveModelContext parseYangResourceDirectory(final String resourcePath) {
         return parseYangResourceDirectory(resourcePath, StatementParserMode.DEFAULT_MODE);
     }
 
@@ -222,7 +223,7 @@ public final class YangParserTestUtils {
      * @param parserMode mode of statement parser
      * @return effective schema context
      */
-    public static SchemaContext parseYangResourceDirectory(final String resourcePath,
+    public static EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
             final StatementParserMode parserMode) {
         return parseYangResourceDirectory(resourcePath, null, parserMode);
     }
@@ -236,7 +237,7 @@ public final class YangParserTestUtils {
      *                          models are resolved
      * @return effective schema context
      */
-    public static SchemaContext parseYangResourceDirectory(final String resourcePath,
+    public static EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
             final Set<QName> supportedFeatures) {
         return parseYangResourceDirectory(resourcePath, supportedFeatures, StatementParserMode.DEFAULT_MODE);
     }
@@ -251,7 +252,7 @@ public final class YangParserTestUtils {
      * @return effective schema context
      */
     @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE", justification = "Wrong inferent on listFiles")
-    public static SchemaContext parseYangResourceDirectory(final String resourcePath,
+    public static EffectiveModelContext parseYangResourceDirectory(final String resourcePath,
             final Set<QName> supportedFeatures, final StatementParserMode parserMode) {
         final URI directoryPath;
         try {
@@ -270,11 +271,11 @@ public final class YangParserTestUtils {
      * @param resources Resource names to be looked up
      * @return effective schema context
      */
-    public static SchemaContext parseYangResources(final Class<?> clazz, final String... resources) {
+    public static EffectiveModelContext parseYangResources(final Class<?> clazz, final String... resources) {
         return parseYangResources(clazz, Arrays.asList(resources));
     }
 
-    public static SchemaContext parseYangResources(final Class<?> clazz, final Collection<String> resources) {
+    public static EffectiveModelContext parseYangResources(final Class<?> clazz, final Collection<String> resources) {
         final List<YangTextSchemaSource> sources = new ArrayList<>(resources.size());
         for (final String r : resources) {
             sources.add(YangTextSchemaSource.forResource(clazz, r));
@@ -292,7 +293,7 @@ public final class YangParserTestUtils {
      *                          models are resolved
      * @return effective schema context
      */
-    public static SchemaContext parseYangResources(final List<String> yangDirs, final List<String> yangFiles,
+    public static EffectiveModelContext parseYangResources(final List<String> yangDirs, final List<String> yangFiles,
             final Set<QName> supportedFeatures) {
         return parseYangResources(yangDirs, yangFiles, supportedFeatures, StatementParserMode.DEFAULT_MODE);
     }
@@ -305,7 +306,7 @@ public final class YangParserTestUtils {
      * @param statementParserMode mode of statement parser
      * @return effective schema context
      */
-    public static SchemaContext parseYangResources(final List<String> yangResourceDirs,
+    public static EffectiveModelContext parseYangResources(final List<String> yangResourceDirs,
             final List<String> yangResources, final StatementParserMode statementParserMode) {
         return parseYangResources(yangResourceDirs, yangResources, null, statementParserMode);
     }
@@ -320,7 +321,7 @@ public final class YangParserTestUtils {
      * @param statementParserMode mode of statement parser
      * @return effective schema context
      */
-    public static SchemaContext parseYangResources(final List<String> yangResourceDirs,
+    public static EffectiveModelContext parseYangResources(final List<String> yangResourceDirs,
             final List<String> yangResources, final Set<QName> supportedFeatures,
             final StatementParserMode statementParserMode) {
         final List<File> allYangFiles = new ArrayList<>();
@@ -339,13 +340,13 @@ public final class YangParserTestUtils {
         return parseYangFiles(supportedFeatures, statementParserMode, allYangFiles);
     }
 
-    public static SchemaContext parseYangSources(final StatementParserMode parserMode,
+    public static EffectiveModelContext parseYangSources(final StatementParserMode parserMode,
             final Set<QName> supportedFeatures, final YangTextSchemaSource... sources) {
         return parseSources(parserMode, supportedFeatures, Arrays.asList(sources));
     }
 
-    public static SchemaContext parseSources(final StatementParserMode parserMode, final Set<QName> supportedFeatures,
-            final Collection<? extends SchemaSourceRepresentation> sources) {
+    public static EffectiveModelContext parseSources(final StatementParserMode parserMode,
+            final Set<QName> supportedFeatures, final Collection<? extends SchemaSourceRepresentation> sources) {
         final YangParser parser = PARSER_FACTORY.createParser(parserMode);
         if (supportedFeatures != null) {
             parser.setSupportedFeatures(supportedFeatures);
@@ -360,7 +361,7 @@ public final class YangParserTestUtils {
         }
 
         try {
-            return parser.buildSchemaContext();
+            return parser.buildEffectiveModel();
         } catch (YangParserException e) {
             throw new IllegalStateException("Failed to assemble SchemaContext", e);
         }
