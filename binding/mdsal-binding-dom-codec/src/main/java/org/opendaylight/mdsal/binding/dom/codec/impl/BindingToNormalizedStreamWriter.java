@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.AnydataExtension;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
@@ -130,13 +129,10 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
 
     @Override
     public void anydataNode(final String name, final OpaqueObject<?> value) throws IOException {
-        final AnydataExtension ext = delegate.getExtensions().getInstance(AnydataExtension.class);
-        if (ext != null) {
-            final Entry<NodeIdentifier, Object> dom = serializeLeaf(name, value);
-            if (ext.startAnydataNode(dom.getKey(), value.getValue().getObjectModel())) {
-                delegate.scalarValue(dom.getValue());
-                delegate.endNode();
-            }
+        final Entry<NodeIdentifier, Object> dom = serializeLeaf(name, value);
+        if (delegate.startAnydataNode(dom.getKey(), value.getValue().getObjectModel())) {
+            delegate.scalarValue(dom.getValue());
+            delegate.endNode();
         }
     }
 
