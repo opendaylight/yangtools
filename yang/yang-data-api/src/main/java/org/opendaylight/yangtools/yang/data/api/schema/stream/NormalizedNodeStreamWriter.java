@@ -308,6 +308,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
      * @param objectModel The object model of anydata content
      * @return True if the specified object model is supported by this extension and the process of emitting the node
      *         has started. False if the object model is not supported and the node has not started to be emitted.
+     * @throws NullPointerException if any argument is null
      * @throws IOException if an underlying IO error occurs
      */
     @Beta
@@ -317,14 +318,16 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
      * Emits a start of anyxml node event.
      *
      * @param name name of node as defined in schema, namespace and revision are derived from parent node.
-     * @throws NullPointerException if {@code name} is null
+     * @param objectModel The object model of anyxml content
+     * @return True if the specified object model is supported by this extension and the process of emitting the node
+     *         has started. False if the object model is not supported and the node has not started to be emitted.
+     * @throws NullPointerException if any argument is null
      * @throws IllegalArgumentException If emitted node is invalid in current context or was emitted multiple times.
      * @throws IllegalStateException If node was emitted inside {@code map}, {@code choice} or a {@code unkeyed list}
      *                               node.
      * @throws IOException if an underlying IO error occurs
      */
-    // FIXME: 4.0.0: this should follow the startAnydataNode template
-    void startAnyxmlNode(NodeIdentifier name) throws IOException;
+    boolean startAnyxmlNode(NodeIdentifier name, Class<?> objectModel) throws IOException;
 
     /**
      * Set the value of current anyxml node. This call is only valid within the context in which an anyxml node is open.
