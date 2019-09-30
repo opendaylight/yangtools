@@ -139,9 +139,11 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
     @Override
     public void anyxmlNode(final String name, final Object value) throws IOException {
         final Entry<NodeIdentifier, Object> dom = serializeLeaf(name, value);
-        delegate.startAnyxmlNode(dom.getKey());
-        delegate.domSourceValue((DOMSource) dom.getValue());
-        delegate.endNode();
+        // FIXME: this is not quite right -- we should be handling other object models, too
+        if (delegate.startAnyxmlNode(dom.getKey(), DOMSource.class)) {
+            delegate.domSourceValue((DOMSource) dom.getValue());
+            delegate.endNode();
+        }
     }
 
     @Override
