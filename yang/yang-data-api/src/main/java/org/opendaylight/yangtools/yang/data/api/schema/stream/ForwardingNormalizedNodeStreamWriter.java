@@ -88,8 +88,8 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
     }
 
     @Override
-    public void startAnyxmlNode(final NodeIdentifier name) throws IOException {
-        delegate().startAnyxmlNode(name);
+    public boolean startAnyxmlNode(final NodeIdentifier name, final Class<?> objectModel) throws IOException {
+        return delegate().startAnyxmlNode(name, objectModel);
     }
 
     @Override
