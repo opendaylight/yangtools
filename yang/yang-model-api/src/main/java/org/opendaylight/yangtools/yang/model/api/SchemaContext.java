@@ -31,9 +31,9 @@ import org.opendaylight.yangtools.yang.common.Revision;
  * Instances MUST be immutable and thus usage in multi threaded
  * environment is safe.
  */
-// FIXME: 3.0.0: ContainerSchemaNode is far too broad. A combination of DataNodeContainer, NotificationNodeContainer
+// FIXME: 5.0.0: ContainerSchemaNode is far too broad. A combination of DataNodeContainer, NotificationNodeContainer
 //               and possibly DataSchemaNode would reflect SchemaContext traits better.
-// FIXME: 4.0.0: consider deprecating this class in favor of EffectiveModelContext
+// FIXME: 5.0.0: consider deprecating this class in favor of EffectiveModelContext
 public interface SchemaContext extends ContainerSchemaNode, Immutable {
     /**
      * QName of NETCONF top-level data node.
