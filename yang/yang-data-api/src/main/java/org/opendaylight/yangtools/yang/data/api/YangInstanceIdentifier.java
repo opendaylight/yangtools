@@ -806,7 +806,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          */
         @Beta
         @Deprecated
-        // FIXME: 4.0.0: evaluate the real usefulness of this. The problem here is Map.hashCode() and Map.equals(),
+        // FIXME: 5.0.0: evaluate the real usefulness of this. The problem here is Map.hashCode() and Map.equals(),
         //               which limits our options.
         public abstract @NonNull Map<QName, Object> asMap();
 
