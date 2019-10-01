@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -42,23 +41,11 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      * @param <N> Namespace identifier type
      * @param namespace Namespace type
      * @param identifier Identifier of element.
-     * @return Value if present, null otherwise.
+     * @return Value if present
      */
     //<K, V, N extends IdentifierNamespace<? super K, ? extends V>> V
-    // FIXME: 4.0.0: make this return an Optional, not a nullable
-    <K, V, N extends IdentifierNamespace<K, V>> @Nullable V get(@NonNull Class<N> namespace, @NonNull K identifier);
-
-    /**
-     * Returns all local values from supplied namespace.
-     *
-     * @param <K> Identifier type
-     * @param <V> Value type
-     * @param <N> Namespace identifier type
-     * @param namespace Namespace type
-     * @return Value if present, null otherwise.
-     */
-    // FIXME: 4.0.0: make this contract return empty maps on non-presence
-    <K, V, N extends IdentifierNamespace<K, V>> @Nullable Map<K, V> getAll(@NonNull Class<N> namespace);
+    <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends V> get(@NonNull Class<N> namespace,
+            @NonNull K identifier);
 
     /**
      * Returns all local values from supplied namespace.
@@ -68,11 +55,24 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      * @param <N> Namespace identifier type
      * @param namespace Namespace type
      * @return Key-value mappings, empty if the namespace does not exist.
+     * @throws NullPointerException if namespace is null
      */
-    // FIXME: 4.0.0: remove this in favor of fixed getAll()
+    <K, V, N extends IdentifierNamespace<K, V>> @NonNull Map<K, V> getAll(@NonNull Class<N> namespace);
+
+    /**
+     * Returns all local values from supplied namespace.
+     *
+     * @param <K> Identifier type
+     * @param <V> Value type
+     * @param <N> Namespace identifier type
+     * @param namespace Namespace type
+     * @return Key-value mappings, empty if the namespace does not exist.
+     * @throws NullPointerException if namespace is null
+     * @deprecated Use {@link #getAll(Class)} instead
+     */
+    @Deprecated(forRemoval = true)
     default <K, V, N extends IdentifierNamespace<K, V>> @NonNull Map<K, V> findAll(final @NonNull Class<N> namespace) {
-        final Map<K, V> map = getAll(requireNonNull(namespace));
-        return map == null ? ImmutableMap.of() : map;
+        return getAll(requireNonNull(namespace));
     }
 
     /**

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -109,7 +110,8 @@ final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ty
         }
 
         @Override
-        public <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
+        public <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends V> get(final Class<N> namespace,
+                final K identifier) {
             return TypedefEffectiveStatementImpl.this.get(namespace, identifier);
         }
 

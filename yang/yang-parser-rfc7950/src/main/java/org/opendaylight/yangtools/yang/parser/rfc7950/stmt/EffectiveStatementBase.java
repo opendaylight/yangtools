@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -76,13 +77,15 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
-        return findAll(namespace).get(requireNonNull(identifier));
+    public final <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends V> get(final Class<N> namespace,
+            final K identifier) {
+        return Optional.ofNullable(getAll(namespace).get(requireNonNull(identifier)));
     }
 
     @Override
     public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
-        return getNamespaceContents(requireNonNull(namespace)).orElse(null);
+        final Optional<? extends Map<K, V>> ret = getNamespaceContents(requireNonNull(namespace));
+        return ret.isPresent() ? ret.get() : ImmutableMap.of();
     }
 
     /**

@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -58,15 +60,16 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStatement> 
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
-        // TODO Auto-generated method stub
-        return null;
+    public final <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends V> get(final Class<N> namespace,
+            final K identifier) {
+        // FIXME: 5.0.0: implement this
+        return Optional.empty();
     }
 
     @Override
     public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
-        // TODO Auto-generated method stub
-        return null;
+        // FIXME: 5.0.0: implement this
+        return ImmutableMap.of();
     }
 
     @Override

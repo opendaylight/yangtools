@@ -27,7 +27,7 @@ public interface ActionNodeContainerCompat<A, D extends DeclaredStatement<A>>
     default Optional<ActionDefinition> findAction(final QName qname) {
         // 'action' identifier must never collide with another element, hence if we look it up and it ends up being
         // an ActionDefinition, we have found a match.
-        final Object child = get(Namespace.class, qname);
-        return child instanceof ActionDefinition ? Optional.of((ActionDefinition) child) : Optional.empty();
+        return get(Namespace.class, qname)
+                .flatMap(child -> child instanceof ActionDefinition ? Optional.of(child) : Optional.empty());
     }
 }
