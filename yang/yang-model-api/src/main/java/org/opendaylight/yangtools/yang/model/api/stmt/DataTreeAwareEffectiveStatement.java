@@ -54,8 +54,6 @@ public interface DataTreeAwareEffectiveStatement<A, D extends DeclaredStatement<
      */
     default <E extends DataTreeEffectiveStatement<?>> @NonNull Optional<E> findDataTreeNode(
             final @NonNull QName qname) {
-        @SuppressWarnings("unchecked")
-        final E result = (E) get(Namespace.class, requireNonNull(qname));
-        return Optional.ofNullable(result);
+        return get(Namespace.class, requireNonNull(qname));
     }
 }

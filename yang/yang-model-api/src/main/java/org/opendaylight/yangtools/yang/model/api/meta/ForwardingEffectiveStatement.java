@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ForwardingObject;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Utility forwarding implementation of {@link EffectiveStatement} contract. This class is useful for implementing
@@ -36,7 +37,8 @@ public abstract class ForwardingEffectiveStatement<A, D extends DeclaredStatemen
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
+    public <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends V> get(final Class<N> namespace,
+            final K identifier) {
         return delegate().get(namespace, identifier);
     }
 
