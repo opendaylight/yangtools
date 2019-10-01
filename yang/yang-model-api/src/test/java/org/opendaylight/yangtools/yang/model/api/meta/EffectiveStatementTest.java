@@ -43,7 +43,7 @@ public class EffectiveStatementTest {
         doCallRealMethod().when(stmt).findFirstEffectiveSubstatement(any());
         doCallRealMethod().when(stmt).findFirstEffectiveSubstatementArgument(any());
         doCallRealMethod().when(stmt).streamEffectiveSubstatements(any());
-        doCallRealMethod().when(stmt).findAll(any());
+        doCallRealMethod().when(stmt).getAll(any());
     }
 
     @Test
@@ -67,14 +67,14 @@ public class EffectiveStatementTest {
     }
 
     @Test
-    public void testFindAll() {
+    public void testGetAll() {
         doReturn(mockNamespace).when(stmt).getAll(any());
-        assertSame(mockNamespace, stmt.findAll(IdentifierNamespace.class));
+        assertSame(mockNamespace, stmt.getAll(IdentifierNamespace.class));
     }
 
     @Test
-    public void testFindAllNone() {
+    public void testGetAllNone() {
         doReturn(null).when(stmt).getAll(any());
-        assertEquals(ImmutableMap.of(), stmt.findAll(IdentifierNamespace.class));
+        assertEquals(ImmutableMap.of(), stmt.getAll(IdentifierNamespace.class));
     }
 }
