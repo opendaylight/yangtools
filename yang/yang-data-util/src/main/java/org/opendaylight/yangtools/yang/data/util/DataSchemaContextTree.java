@@ -64,7 +64,7 @@ public final class DataSchemaContextTree {
      *
      * @deprecated Use {@link #findChild(YangInstanceIdentifier)} instead.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public @Nullable DataSchemaContextNode<?> getChild(final YangInstanceIdentifier path) {
         DataSchemaContextNode<?> currentOp = root;
         for (PathArgument arg : path.getPathArguments()) {
