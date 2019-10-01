@@ -222,7 +222,7 @@ public abstract class YangLocationPath implements YangExpr {
         }
     }
 
-    // FIXME: 4.0.0: integrate this into QName step once QName is a subclass AbstractQName
+    // FIXME: 5.0.0: integrate this into QName step once QName is a subclass AbstractQName
     public static class UnresolvedQNameStep extends QNameStep implements UnresolvedQNameReferent<ResolvedQNameStep> {
         private static final long serialVersionUID = 1L;
 
