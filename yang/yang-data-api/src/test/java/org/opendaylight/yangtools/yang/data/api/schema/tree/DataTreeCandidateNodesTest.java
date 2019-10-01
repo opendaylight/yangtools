@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import static org.junit.Assert.assertNotNull;
@@ -32,8 +31,7 @@ public class DataTreeCandidateNodesTest {
     @Test
     public void testFromNormalizedNode() {
         final NormalizedNode<?, ?> mockedNormalizedNode = mock(NormalizedNode.class);
-        final DataTreeCandidateNode dataTreeCandidateNode = DataTreeCandidateNodes.fromNormalizedNode(
-                mockedNormalizedNode);
+        final DataTreeCandidateNode dataTreeCandidateNode = DataTreeCandidateNodes.written(mockedNormalizedNode);
         assertNotNull(dataTreeCandidateNode);
     }
 
