@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 @Beta
 public final class DataTreeCandidateNodes {
     private DataTreeCandidateNodes() {
-        throw new UnsupportedOperationException();
+
     }
 
     /**
@@ -37,11 +37,6 @@ public final class DataTreeCandidateNodes {
      */
     public static @NonNull DataTreeCandidateNode empty(final PathArgument identifier) {
         return new EmptyDataTreeCandidateNode(identifier);
-    }
-
-    @Deprecated
-    public static @NonNull DataTreeCandidateNode fromNormalizedNode(final NormalizedNode<?, ?> node) {
-        return written(node);
     }
 
     /**
@@ -270,7 +265,7 @@ public final class DataTreeCandidateNodes {
             this.iterator = requireNonNull(iterator);
         }
 
-        AbstractNodeIterator next(final DataTreeModificationCursor cursor) {
+        final AbstractNodeIterator next(final DataTreeModificationCursor cursor) {
             while (iterator.hasNext()) {
                 final DataTreeCandidateNode node = iterator.next();
                 switch (node.getModificationType()) {
@@ -306,24 +301,22 @@ public final class DataTreeCandidateNodes {
     }
 
     private static final class RootNonExitingIterator extends AbstractNodeIterator {
-
         RootNonExitingIterator(final Iterator<DataTreeCandidateNode> iterator) {
             super(iterator);
         }
 
         @Override
-        protected void exitNode(final DataTreeModificationCursor cursor) {
+        void exitNode(final DataTreeModificationCursor cursor) {
             // Intentional noop.
         }
 
         @Override
-        protected AbstractNodeIterator getParent() {
+        AbstractNodeIterator getParent() {
             return null;
         }
     }
 
     private static final class ExitingNodeIterator extends AbstractNodeIterator {
-
         private final AbstractNodeIterator parent;
 
         ExitingNodeIterator(final AbstractNodeIterator parent, final Iterator<DataTreeCandidateNode> iterator) {
