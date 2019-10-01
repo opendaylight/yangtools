@@ -109,7 +109,8 @@ final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ty
         }
 
         @Override
-        public <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
+        public <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends V> get(final Class<N> namespace,
+                final K identifier) {
             return TypedefEffectiveStatementImpl.this.get(namespace, identifier);
         }
 

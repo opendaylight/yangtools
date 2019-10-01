@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.mandatory;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -49,7 +50,8 @@ abstract class EmptyMandatoryEffectiveStatement implements MandatoryEffectiveSta
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends V> get(final Class<N> namespace,
+            final K identifier) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
