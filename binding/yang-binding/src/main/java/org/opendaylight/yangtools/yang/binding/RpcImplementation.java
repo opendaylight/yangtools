@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
  *
  * @deprecated This slated for removal unless we find a use for it.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public interface RpcImplementation {
 
     Set<Class<? extends RpcInput>> getSupportedInputs();
