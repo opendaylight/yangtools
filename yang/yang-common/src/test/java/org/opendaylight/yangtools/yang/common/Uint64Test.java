@@ -29,6 +29,8 @@ public class Uint64Test {
         assertEquals(2147483647, Uint64.valueOf(Integer.MAX_VALUE).intValue());
         assertEquals(9223372036854775807L, Uint64.valueOf(Long.MAX_VALUE).longValue());
         assertEquals(0, Uint64.valueOf("0").intValue());
+        assertEquals(2170205184637009920L, Uint64.valueOf(2170205184637009920L).longValue());
+        assertEquals(2170205184637009920L, Uint64.valueOf(new BigInteger("2170205184637009920")).longValue());
     }
 
     @Test

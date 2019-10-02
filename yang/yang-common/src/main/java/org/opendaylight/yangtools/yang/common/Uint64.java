@@ -87,8 +87,7 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
     }
 
     private static Uint64 instanceFor(final long value) {
-        final int slot = (int)value;
-        return slot >= 0 && slot < CACHE.length ? CACHE[slot] : new Uint64(value);
+        return value >= 0 && value < CACHE.length ? CACHE[(int) value] : new Uint64(value);
     }
 
     /**
