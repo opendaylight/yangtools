@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c434fb2c_f3df3b8e",
+        "filename": "yang/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/RFC7951YT1027Test.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-10-05T11:24:43Z",
+      "side": 1,
+      "message": "aside from the instanceof checks, these tests should also verify that JSON the entire codec works correctly, i.e. that payload parsing and serialization works.\n\n- lhotka02 needs to validate the JSON output is not quoted and JSON input is accepted when not quoted\n- rfc7951 needs to validate that JSON output is quouted and that JSON input is accepted *both* quoted and unquoted\n\nAccepting RFC7951 unquoted input is important for backwards compatibility with previous releases -- i.e. if something was serialized with a previous release, we must not suddenly start rejecting it.",
+      "range": {
+        "startLine": 10,
+        "startChar": 13,
+        "endLine": 10,
+        "endChar": 57
+      },
+      "revId": "f305c8c8e595a46ed714b1de1dd5bf636f94740b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
