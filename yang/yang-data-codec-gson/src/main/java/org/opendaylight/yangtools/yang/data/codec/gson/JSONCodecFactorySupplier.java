@@ -44,7 +44,7 @@ public enum JSONCodecFactorySupplier {
     /**
      * Source of {@link JSONCodecFactory} instances compliant with RFC7951.
      */
-    DRAFT_LHOTKA_NETMOD_YANG_JSON_02(JSONInstanceIdentifierCodec::new);
+    DRAFT_LHOTKA_NETMOD_YANG_JSON_02(Lhotka02JSONInstanceIdentifierCodec::new);
 
     private static final Logger LOG = LoggerFactory.getLogger(JSONCodecFactorySupplier.class);
 
