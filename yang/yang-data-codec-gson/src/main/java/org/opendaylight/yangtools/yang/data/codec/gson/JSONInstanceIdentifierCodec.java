@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
+abstract class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
         implements JSONCodec<YangInstanceIdentifier> {
     private final DataSchemaContextTree dataContextTree;
     private final JSONCodecFactory codecFactory;
@@ -35,24 +35,24 @@ class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifier
     }
 
     @Override
-    protected Module moduleForPrefix(final String prefix) {
+    protected final Module moduleForPrefix(final String prefix) {
         final Iterator<Module> modules = context.findModules(prefix).iterator();
         return modules.hasNext() ? modules.next() : null;
     }
 
     @Override
-    protected String prefixForNamespace(final URI namespace) {
+    protected final String prefixForNamespace(final URI namespace) {
         final Iterator<Module> modules = context.findModules(namespace).iterator();
         return modules.hasNext() ? modules.next().getName() : null;
     }
 
     @Override
-    protected DataSchemaContextTree getDataContextTree() {
+    protected final DataSchemaContextTree getDataContextTree() {
         return dataContextTree;
     }
 
     @Override
-    protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
+    protected final Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
         requireNonNull(schemaNode, "schemaNode cannot be null");
         checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
         final JSONCodec<?> objectJSONCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode);
@@ -60,17 +60,17 @@ class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifier
     }
 
     @Override
-    public Class<YangInstanceIdentifier> getDataType() {
+    public final Class<YangInstanceIdentifier> getDataType() {
         return YangInstanceIdentifier.class;
     }
 
     @Override
-    public YangInstanceIdentifier parseValue(final Object ctx, final String str) {
+    public final YangInstanceIdentifier parseValue(final Object ctx, final String str) {
         return deserialize(str);
     }
 
     @Override
-    public void writeValue(final JsonWriter ctx, final YangInstanceIdentifier value) throws IOException {
+    public final void writeValue(final JsonWriter ctx, final YangInstanceIdentifier value) throws IOException {
         ctx.value(serialize(value));
     }
 }
