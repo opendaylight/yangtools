@@ -338,10 +338,6 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     public final void endNode() throws IOException {
         tracker.endNode();
         context = context.endNode(codecs.getSchemaContext(), writer);
-
-        if (context instanceof JSONStreamWriterRootContext) {
-            context.endNode(codecs.getSchemaContext(), writer);
-        }
     }
 
     @Override
@@ -350,6 +346,11 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     final void closeWriter() throws IOException {
+        if (!(context instanceof JSONStreamWriterRootContext)) {
+            throw new IOException("Unexpected root context " + context);
+        }
+
+        context.endNode(codecs.getSchemaContext(), writer);
         writer.close();
     }
 

@@ -29,14 +29,9 @@ import java.io.Writer;
 import java.util.HashSet;
 import java.util.Iterator;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
@@ -45,10 +40,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
  * via gson as structure of json elements which are walked and compared with awaited values.
  */
 public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
-
-    private static final QName CONT_1 = QName.create("ns:complex:json", "2014-08-11", "cont1");
-    private static final QName EMPTY_LEAF = QName.create(CONT_1, "empty");
-
     @Test
     public void leafNodeInContainer() throws IOException {
         final String jsonOutput = normalizedNodeToJsonStreamTransformation(
@@ -265,10 +256,7 @@ public class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
 
     @Test
     public void emptyTypeTest() throws IOException {
-        final String jsonOutput = normalizedNodeToJsonStreamTransformation(Builders.containerBuilder()
-            .withNodeIdentifier(new NodeIdentifier(CONT_1))
-            .addChild(ImmutableNodes.leafNode(EMPTY_LEAF, Empty.getInstance()))
-            .build());
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(CONT1_WITH_EMPTYLEAF);
         final JsonObject cont1 = resolveCont1(jsonOutput);
         final JsonElement emptyObj = cont1.get("empty");
         assertNotNull(emptyObj);
