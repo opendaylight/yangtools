@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
@@ -152,5 +154,14 @@ abstract class JSONStreamWriterContext {
             emitEnd(writer);
         }
         return parent;
+    }
+
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+    }
+
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper;
     }
 }

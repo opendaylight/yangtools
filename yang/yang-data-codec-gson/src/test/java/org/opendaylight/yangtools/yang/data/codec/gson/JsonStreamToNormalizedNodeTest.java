@@ -23,11 +23,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
@@ -38,10 +36,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
  * Each test tests whether json input is correctly transformed to normalized node structure.
  */
 public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
-
-    private static final QName CONT_1 = QName.create("ns:complex:json", "2014-08-11", "cont1");
-    private static final QName EMPTY_LEAF = QName.create(CONT_1,"empty");
-
     @Test
     public void leafNodeInContainer() throws IOException, URISyntaxException {
         final String inputJson = loadTextFile("/complexjson/leaf-node-in-container.json");
@@ -154,12 +148,7 @@ public class JsonStreamToNormalizedNodeTest extends AbstractComplexJsonTest {
     @Test
     public void emptyTypeTest() throws IOException, URISyntaxException {
         final String inputJson = loadTextFile("/complexjson/type-empty.json");
-        final ContainerNode awaitedStructure = containerBuilder()
-                .withNodeIdentifier(new NodeIdentifier(CONT_1))
-                .addChild(leafNode(EMPTY_LEAF, Empty.getInstance()))
-                .build();
-
-        verifyTransformationToNormalizedNode(inputJson, awaitedStructure);
+        verifyTransformationToNormalizedNode(inputJson, CONT1_WITH_EMPTYLEAF);
     }
 
     /**
