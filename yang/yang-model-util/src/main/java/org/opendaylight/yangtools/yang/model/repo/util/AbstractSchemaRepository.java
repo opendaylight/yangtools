@@ -97,7 +97,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         }
 
         // TODO, remove and make sources keep sorted multimap (e.g. ArrayListMultimap with SortedLists)
-        Collections.sort(sortedSchemaSourceRegistrations, SchemaProviderCostComparator.INSTANCE);
+        sortedSchemaSourceRegistrations.sort(SchemaProviderCostComparator.INSTANCE);
 
         final Iterator<AbstractSchemaSourceRegistration<?>> regs = sortedSchemaSourceRegistrations.iterator();
         if (!regs.hasNext()) {
