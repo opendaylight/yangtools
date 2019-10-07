@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.rcf8528.data.util;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -22,11 +23,14 @@ import org.opendaylight.yangtools.rfc8528.data.api.MountPointIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.util.AbstractSchemaContextProvider;
 
-final class ImmutableMountPointContext extends AbstractSchemaContextProvider implements Immutable, MountPointContext {
+@Beta
+public final class ImmutableMountPointContext extends AbstractSchemaContextProvider
+        implements Immutable, MountPointContext {
     private final ImmutableMap<MountPointIdentifier, MountPointDefinition> mountPoints;
     private final Function<MountPointDefinition, MountPointContextFactory> createFactory;
 
-    ImmutableMountPointContext(final SchemaContext schemaContext, final Iterable<MountPointDefinition> mountPoints,
+    public ImmutableMountPointContext(final SchemaContext schemaContext,
+            final Iterable<MountPointDefinition> mountPoints,
             final Function<MountPointDefinition, MountPointContextFactory> createFactory) {
         super(schemaContext);
         this.mountPoints = Maps.uniqueIndex(mountPoints, MountPointDefinition::getIdentifier);
