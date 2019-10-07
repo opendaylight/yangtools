@@ -44,7 +44,6 @@ import org.w3c.dom.Text;
 
 public class AnyXmlSupportTest extends AbstractComplexJsonTest {
 
-    private static final QName CONT_1 = QName.create("ns:complex:json", "2014-08-11", "cont1");
     private static final QName LF12_ANY = QName.create(CONT_1, "lf12-any");
     private static final QName LF13_ANY = QName.create(CONT_1, "lf13-any");
     private static final QName LF14_ANY = QName.create(CONT_1, "lf14-any");
