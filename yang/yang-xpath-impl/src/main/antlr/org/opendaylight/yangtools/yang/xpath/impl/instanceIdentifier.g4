@@ -1,9 +1,5 @@
 grammar instanceIdentifier;
 
-@header {
-package org.opendaylight.yangtools.yang.xpath.impl;
-}
-
 /*
  * YANG 1.1 instance-identifier grammar, as defined in
  * https://tools.ietf.org/html/rfc7950#section-9.13
