@@ -7,11 +7,7 @@
 //
 lexer grammar YangStatementLexer;
 
-@header {
-package org.opendaylight.yangtools.antlrv4.code.gen;
-}
-
-tokens{
+tokens {
     SEMICOLON,
     LEFT_BRACE,
     RIGHT_BRACE,
