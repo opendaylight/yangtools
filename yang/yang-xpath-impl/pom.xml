@@ -75,8 +75,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <sourceDirectory>src/main/antlr</sourceDirectory>
-                    <outputDirectory>${project.build.directory}/generated-sources/antlr/org/opendaylight/yangtools/yang/xpath/impl</outputDirectory>
+                    <sourceDirectory>${project.basedir}/src/main/antlr</sourceDirectory>
+                    <outputDirectory>${project.build.directory}/generated-sources/antlr</outputDirectory>
                     <visitor>false</visitor>
                     <listener>false</listener>
                 </configuration>
