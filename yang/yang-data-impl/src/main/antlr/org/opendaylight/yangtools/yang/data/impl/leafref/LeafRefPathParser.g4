@@ -1,11 +1,7 @@
 parser grammar LeafRefPathParser;
 
-@header {
-package org.opendaylight.yangtools.yang.data.impl.leafref;
-}
-
-options{
- tokenVocab = LeafRefPathLexer;
+options {
+    tokenVocab = LeafRefPathLexer;
 }
 
 path_arg : absolute_path | relative_path;
