@@ -23,9 +23,6 @@
     <description>YANG XPath parser</description>
 
     <properties>
-        <!-- FIXME: workaround for MJAVADOC-586 -->
-        <maven.compiler.release>8</maven.compiler.release>
-
         <!-- FIXME: antlr-generated code does not pass SB -->
         <odlparent.spotbugs.enforce>false</odlparent.spotbugs.enforce>
     </properties>
