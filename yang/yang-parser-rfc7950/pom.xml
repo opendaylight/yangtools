@@ -89,8 +89,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <sourceDirectory>src/main/antlr</sourceDirectory>
-                    <outputDirectory>${project.build.directory}/generated-sources/parser</outputDirectory>
                     <visitor>true</visitor>
                     <listener>false</listener>
                 </configuration>
