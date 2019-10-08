@@ -1,0 +1,28 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    grouping flags {
+        leaf one {
+            type boolean;
+        }
+        leaf two {
+            type boolean;
+        }
+    }
+
+    grouping choice-grp {
+        choice flags {
+            case first {
+                uses flags;
+            }
+            case second {
+                uses flags;
+            }
+        }
+    }
+
+    container cont {
+        uses choice-grp;
+    }
+}
