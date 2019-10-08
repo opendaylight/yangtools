@@ -31,8 +31,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <sourceDirectory>src/main/antlr</sourceDirectory>
-                    <outputDirectory>target/generated-sources/parser/org/opendaylight/yangtools/yang/data/impl/leafref</outputDirectory>
+                    <sourceDirectory>${project.basedir}/src/main/antlr</sourceDirectory>
+                    <outputDirectory>${project.build.directory}/generated-sources/parser</outputDirectory>
                     <visitor>true</visitor>
                     <listener>true</listener>
                 </configuration>
