@@ -10,6 +10,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 
 @Beta
-public interface LeafEffectiveStatement extends SchemaTreeEffectiveStatement<LeafStatement> {
+public interface LeafEffectiveStatement extends DataTreeEffectiveStatement<LeafStatement> {
 
 }
