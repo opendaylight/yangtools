@@ -1,9 +1,5 @@
 grammar xpath;
 
-@header {
-package org.opendaylight.yangtools.yang.xpath.impl;
-}
-
 /*
 XPath 1.0 grammar. Should conform to the official spec at
 http://www.w3.org/TR/1999/REC-xpath-19991116. The grammar
