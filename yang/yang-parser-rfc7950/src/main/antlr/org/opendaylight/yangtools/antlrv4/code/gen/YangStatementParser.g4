@@ -7,11 +7,7 @@
 //
 parser grammar YangStatementParser;
 
-@header {
-package org.opendaylight.yangtools.antlrv4.code.gen;
-}
-
-options{
+options {
     tokenVocab = YangStatementLexer;
 }
 

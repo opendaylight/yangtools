@@ -1,9 +1,5 @@
 lexer grammar LeafRefPathLexer;
 
-@header {
-package org.opendaylight.yangtools.antlrv4.code.gen;
-}
-
 COLON : ':' ;
 SLASH : '/' ;
 DOTS : '..' ;

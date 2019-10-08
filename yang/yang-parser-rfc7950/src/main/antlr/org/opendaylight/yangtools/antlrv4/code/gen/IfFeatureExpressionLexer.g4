@@ -7,10 +7,6 @@
 //
 lexer grammar IfFeatureExpressionLexer;
 
-@header {
-package org.opendaylight.yangtools.antlrv4.code.gen;
-}
-
 NOT : 'not';
 LP : '(';
 RP : ')';
