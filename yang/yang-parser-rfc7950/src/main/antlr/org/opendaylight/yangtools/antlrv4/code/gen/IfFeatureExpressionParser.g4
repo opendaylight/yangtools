@@ -7,14 +7,9 @@
 //
 parser grammar IfFeatureExpressionParser;
 
-@header {
-package org.opendaylight.yangtools.antlrv4.code.gen;
-}
-
-options{
+options {
     tokenVocab = IfFeatureExpressionLexer;
 }
-
 
 if_feature_expr: if_feature_term (SEP OR SEP if_feature_term)*;
 if_feature_term: if_feature_factor (SEP AND SEP if_feature_term)*;
