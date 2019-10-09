@@ -306,7 +306,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
              *
              * @param value field value in legacy type
              * @return this builder
-             * @deprecated Use {#link «setterName»(«field.returnType.importedName»)} instead.
+             * @deprecated Use {#link «setterName»(«field.returnType.importedJavadocName»)} instead.
              */
             @Deprecated(forRemoval = true)
             public «type.getName» «setterName»(final «uintType.importedName» value) {

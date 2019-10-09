@@ -279,7 +279,7 @@ class ClassTemplate extends BaseTemplate {
              «FOR prop : allProperties»
              * @param «prop.fieldName» «prop.name»«IF prop.isUintType» in legacy Java type«ENDIF»
              «ENDFOR»
-             * @deprecated Use {#link «type.name»(«FOR prop : allProperties SEPARATOR ", "»«prop.returnType.importedName»«ENDFOR»)} instead.
+             * @deprecated Use {#link «type.name»(«FOR prop : allProperties SEPARATOR ", "»«prop.returnType.importedJavadocName»«ENDFOR»)} instead.
              */
             @Deprecated(forRemoval = true)
             public «type.getName»(«FOR prop : allProperties SEPARATOR ", "»«prop.legacyType.importedName» «prop.fieldName»«ENDFOR») {

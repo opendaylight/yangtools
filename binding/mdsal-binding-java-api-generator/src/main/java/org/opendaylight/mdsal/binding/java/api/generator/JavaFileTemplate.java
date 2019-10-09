@@ -19,6 +19,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.util.Types;
@@ -65,6 +66,10 @@ class JavaFileTemplate {
         verify(javaType instanceof TopLevelJavaGeneratedType);
         return ((TopLevelJavaGeneratedType) javaType).imports().map(name -> "import " + name + ";\n")
                 .collect(Collectors.joining());
+    }
+
+    final String importedJavadocName(final Type intype) {
+        return importedName(intype instanceof ParameterizedType ? ((ParameterizedType) intype).getRawType() : intype);
     }
 
     final String importedName(final Type intype, final String... annotations) {

@@ -1,0 +1,21 @@
+module opendaylight-mdsal483 {
+    namespace "urn:test:opendaylight-mdsal483";
+    prefix base;
+
+    identity foo;
+
+    list bar {
+        key "one two";
+
+        leaf one {
+            type uint64;
+        }
+
+        leaf two {
+            type identityref {
+                base foo;
+            }
+        }
+    }
+}
+
