@@ -377,7 +377,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         }
 
         // We need to normalize both
-        return intPart() == other.intPart() && fracPart() == fracPart();
+        return intPart() == other.intPart() && fracPart() == other.fracPart();
     }
 
     @Override
