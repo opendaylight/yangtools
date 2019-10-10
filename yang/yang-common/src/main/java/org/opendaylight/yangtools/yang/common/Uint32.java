@@ -308,6 +308,16 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
         return this == obj || obj instanceof Uint32 && value == ((Uint32)obj).value;
     }
 
+    /**
+     * A slightly faster version of {@link #equals(Object)}.
+     *
+     * @param obj Uint32 object
+     * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise.
+     */
+    public final boolean equals(final @Nullable Uint32 obj) {
+        return this == obj || obj != null && value == obj.value;
+    }
+
     @Override
     public final String toString() {
         return toCanonicalString();

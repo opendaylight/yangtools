@@ -326,6 +326,16 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
         return this == obj || obj instanceof Uint64 && value == ((Uint64)obj).value;
     }
 
+    /**
+     * A slightly faster version of {@link #equals(Object)}.
+     *
+     * @param obj Uint64 object
+     * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise.
+     */
+    public final boolean equals(final @Nullable Uint64 obj) {
+        return this == obj || obj != null && value == obj.value;
+    }
+
     @Override
     public final String toString() {
         return toCanonicalString();

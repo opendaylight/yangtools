@@ -293,6 +293,16 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
         return this == obj || obj instanceof Uint16 && value == ((Uint16)obj).value;
     }
 
+    /**
+     * A slightly faster version of {@link #equals(Object)}.
+     *
+     * @param obj Uint16 object
+     * @return  {@code true} if this object is the same as the obj argument; {@code false} otherwise.
+     */
+    public final boolean equals(final @Nullable Uint16 obj) {
+        return this == obj || obj != null && value == obj.value;
+    }
+
     @Override
     public final String toString() {
         return toCanonicalString();
