@@ -365,24 +365,28 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof Decimal64)) {
-            return false;
-        }
-        final Decimal64 other = (Decimal64) obj;
-        if (scaleOffset == other.scaleOffset) {
-            return value == other.value;
-        }
+        return this == obj || obj instanceof Decimal64 && equalsImpl((Decimal64) obj);
+    }
 
-        // We need to normalize both
-        return intPart() == other.intPart() && fracPart() == other.fracPart();
+    /**
+     * A slightly faster version of {@link #equals(Object)}.
+     *
+     * @param obj Decimal64 object
+     * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise.
+     */
+    public final boolean equals(final @Nullable Decimal64 obj) {
+        return this == obj || obj != null && equalsImpl(obj);
     }
 
     @Override
     public final String toString() {
         return toCanonicalString();
+    }
+
+    private boolean equalsImpl(final Decimal64 other) {
+        return scaleOffset == other.scaleOffset ? value == other.value
+                // We need to normalize both
+                : intPart() == other.intPart() && fracPart() == other.fracPart();
     }
 
     private long intPart() {
