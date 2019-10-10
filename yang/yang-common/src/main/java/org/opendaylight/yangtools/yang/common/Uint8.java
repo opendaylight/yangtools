@@ -267,6 +267,16 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
         return this == obj || obj instanceof Uint8 && value == ((Uint8)obj).value;
     }
 
+    /**
+     * A slightly faster version of {@link #equals(Object)}.
+     *
+     * @param obj Uint8 object
+     * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise.
+     */
+    public final boolean equals(final @Nullable Uint8 obj) {
+        return this == obj || obj != null && value == obj.value;
+    }
+
     @Override
     public final String toString() {
         return toCanonicalString();
