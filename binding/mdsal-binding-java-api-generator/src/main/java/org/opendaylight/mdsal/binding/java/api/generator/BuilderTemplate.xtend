@@ -20,6 +20,7 @@ import java.util.List
 import java.util.Map
 import java.util.Set
 import java.util.regex.Pattern
+import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
@@ -44,6 +45,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     public static val BUILDER = "Builder";
 
     static val AUGMENTATION_FIELD_UPPER = AUGMENTATION_FIELD.toFirstUpper
+    static val SUPPRESS_WARNINGS = JavaTypeName.create(SuppressWarnings)
 
     /**
      * Constructs new instance of this class.
@@ -66,6 +68,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
      */
     override body() '''
         «wrapToDocumentation(formatDataForJavaDoc(targetType))»
+        «targetType.annotations.generateDeprecatedAnnotation»
         public class «type.name» implements «Builder.importedName»<«targetType.importedName»> {
 
             «generateFields(false)»
@@ -98,6 +101,14 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             «new BuilderImplTemplate(this, type.enclosedTypes.get(0)).body»
         }
     '''
+
+    override generateDeprecatedAnnotation(AnnotationType ann) {
+        val forRemoval = ann.getParameter("forRemoval")
+        if (forRemoval !== null) {
+            return "@" + DEPRECATED.importedName + "(forRemoval = " + forRemoval.value + ")"
+        }
+        return "@" + SUPPRESS_WARNINGS.importedName + "(\"deprecation\")"
+    }
 
     /**
      * Generate default constructor and constructor for every implemented interface from uses statements.

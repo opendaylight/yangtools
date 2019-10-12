@@ -15,7 +15,9 @@ module foo {
 
 
     container services {
+        status deprecated;
         list service {
+            status obsolete;
             key "permission";
 
             leaf permission {

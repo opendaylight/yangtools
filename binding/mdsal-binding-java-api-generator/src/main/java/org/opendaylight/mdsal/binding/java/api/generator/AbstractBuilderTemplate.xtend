@@ -17,9 +17,11 @@ import java.util.Comparator
 import java.util.List
 import java.util.Map
 import java.util.Set
+import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
@@ -28,6 +30,8 @@ import org.opendaylight.yangtools.yang.binding.Identifiable
 
 abstract class AbstractBuilderTemplate extends BaseTemplate {
     static val Comparator<GeneratedProperty> KEY_PROPS_COMPARATOR = [ p1, p2 | return p1.name.compareTo(p2.name) ]
+
+    protected static val DEPRECATED = JavaTypeName.create(Deprecated);
 
     /**
      * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME.
@@ -146,9 +150,19 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         }
     '''
 
+    def protected final CharSequence generateDeprecatedAnnotation(List<AnnotationType> annotations) {
+        var AnnotationType found = annotations.findDeprecatedAnnotation
+        if (found === null) {
+            return ""
+        }
+        return generateDeprecatedAnnotation(found)
+    }
+
     def protected abstract CharSequence generateCopyKeys(List<GeneratedProperty> keyProps)
 
-    def protected abstract CharSequence generateCopyAugmentation(Type implType);
+    def protected abstract CharSequence generateCopyAugmentation(Type implType)
+
+    def protected abstract CharSequence generateDeprecatedAnnotation(AnnotationType ann)
 
     private def boolean implementsIfc(GeneratedType type, Type impl) {
         for (Type ifc : type.implements) {
@@ -169,5 +183,16 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         if (toRemove !== null) {
             props.remove(toRemove);
         }
+    }
+
+    private static def findDeprecatedAnnotation(List<AnnotationType> annotations) {
+        if (annotations !== null) {
+            for (annotation : annotations) {
+                if (DEPRECATED.equals(annotation.identifier)) {
+                    return annotation
+                }
+            }
+        }
+        return null
     }
 }

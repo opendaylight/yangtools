@@ -14,6 +14,7 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CON
 import java.util.List
 import java.util.Map
 import java.util.Objects
+import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.Type
@@ -31,6 +32,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
     }
 
     override body() '''
+        «targetType.annotations.generateDeprecatedAnnotation»
         private static final class «type.name»
             «val impIface = targetType.importedName»
             «IF augmentType !== null»
@@ -51,6 +53,10 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
             «generateToString(properties)»
         }
     '''
+
+    override generateDeprecatedAnnotation(AnnotationType ann) {
+        return generateAnnotation(ann)
+    }
 
     /**
      * Template method which generates the method <code>hashCode()</code>.
