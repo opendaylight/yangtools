@@ -95,6 +95,20 @@ public class Uint32Test {
 
         assertSame(Uint32.valueOf(5), Uint32.valueOf(UnsignedInteger.fromIntBits(5)));
         assertEquals(UnsignedInteger.fromIntBits(5), Uint32.valueOf(5).toGuava());
+
+        assertEquals(Uint8.TEN, Uint32.TEN.toUint8());
+        assertEquals(Uint16.TEN, Uint32.TEN.toUint16());
+        assertEquals(Uint64.valueOf(4294967295L), Uint32.MAX_VALUE.toUint64());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToUint8() {
+        Uint32.MAX_VALUE.toUint8();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToUint16() {
+        Uint32.MAX_VALUE.toUint16();
     }
 
     @Test

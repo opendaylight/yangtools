@@ -90,6 +90,10 @@ public class Uint8Test {
         assertSame(Uint8.valueOf(5), Uint8.valueOf(Uint16.valueOf(5)));
         assertSame(Uint8.valueOf(10), Uint8.valueOf(Uint32.valueOf(10)));
         assertSame(Uint8.valueOf(20), Uint8.valueOf(Uint64.valueOf(20)));
+
+        assertEquals(Uint16.valueOf(255), Uint8.MAX_VALUE.toUint16());
+        assertEquals(Uint32.valueOf(255), Uint8.MAX_VALUE.toUint32());
+        assertEquals(Uint64.valueOf(255), Uint8.MAX_VALUE.toUint64());
     }
 
     @Test

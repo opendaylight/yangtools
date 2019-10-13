@@ -300,6 +300,34 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
         return intValue();
     }
 
+    /**
+     * Convert this value to a {@code Uint8}.
+     *
+     * @return A Uint8
+     * @throws IllegalArgumentException if this value is greater than 255.
+     */
+    public final Uint8 toUint8() {
+        return Uint8.valueOf(toJava());
+    }
+
+    /**
+     * Convert this value to a {@code Uint32}.
+     *
+     * @return A Uint32
+     */
+    public final Uint32 toUint32() {
+        return Uint32.fromIntBits(intValue());
+    }
+
+    /**
+     * Convert this value to a {@code Uint64}.
+     *
+     * @return A Uint64
+     */
+    public final Uint64 toUint64() {
+        return Uint64.fromLongBits(longValue());
+    }
+
     @Override
     public final int hashCode() {
         return Short.hashCode(value);
