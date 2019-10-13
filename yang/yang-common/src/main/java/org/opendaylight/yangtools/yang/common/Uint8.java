@@ -55,8 +55,25 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
         CACHE = c;
     }
 
+    /**
+     * Value of {@code 0}.
+     */
     public static final Uint8 ZERO = valueOf(0);
+    /**
+     * Value of {@code 1}.
+     */
     public static final Uint8 ONE = valueOf(1);
+    /**
+     * Value of {@code 2}.
+     */
+    public static final Uint8 TWO = valueOf(2);
+    /**
+     * Value of {@code 10}.
+     */
+    public static final Uint8 TEN = valueOf(10);
+    /**
+     * Value of {@code 255}.
+     */
     public static final Uint8 MAX_VALUE = valueOf(MAX_VALUE_SHORT);
 
     private final byte value;

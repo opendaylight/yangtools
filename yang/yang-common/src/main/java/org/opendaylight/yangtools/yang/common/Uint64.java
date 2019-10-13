@@ -72,8 +72,25 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
 
     private static final Interner<Uint64> INTERNER = Interners.newWeakInterner();
 
+    /**
+     * Value of {@code 0}.
+     */
     public static final Uint64 ZERO = valueOf(0).intern();
+    /**
+     * Value of {@code 1}.
+     */
     public static final Uint64 ONE = valueOf(1).intern();
+    /**
+     * Value of {@code 2}.
+     */
+    public static final Uint64 TWO = valueOf(2).intern();
+    /**
+     * Value of {@code 10}.
+     */
+    public static final Uint64 TEN = valueOf(10).intern();
+    /**
+     * Value of {@code 18446744073709551615}.
+     */
     public static final Uint64 MAX_VALUE = fromLongBits(-1).intern();
 
     private final long value;
