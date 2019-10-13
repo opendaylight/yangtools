@@ -94,6 +94,15 @@ public class Uint16Test {
         assertSame(Uint16.valueOf(5), Uint16.valueOf(Uint8.valueOf(5)));
         assertSame(Uint16.valueOf(10), Uint16.valueOf(Uint32.valueOf(10)));
         assertSame(Uint16.valueOf(20), Uint16.valueOf(Uint64.valueOf(20)));
+
+        assertEquals(Uint8.TEN, Uint16.TEN.toUint8());
+        assertEquals(Uint32.valueOf(65535), Uint16.MAX_VALUE.toUint32());
+        assertEquals(Uint64.valueOf(65535), Uint16.MAX_VALUE.toUint64());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToUint8() {
+        Uint16.MAX_VALUE.toUint8();
     }
 
     @Test

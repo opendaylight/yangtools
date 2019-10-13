@@ -274,6 +274,33 @@ public class Uint8 extends Number implements CanonicalValue<Uint8> {
         return shortValue();
     }
 
+    /**
+     * Convert this value to a {@code Uint16}.
+     *
+     * @return A Uint16
+     */
+    public final Uint16 toUint16() {
+        return Uint16.fromShortBits(shortValue());
+    }
+
+    /**
+     * Convert this value to a {@code Uint32}.
+     *
+     * @return A Uint32
+     */
+    public final Uint32 toUint32() {
+        return Uint32.fromIntBits(intValue());
+    }
+
+    /**
+     * Convert this value to a {@code Uint64}.
+     *
+     * @return A Uint64
+     */
+    public final Uint64 toUint64() {
+        return Uint64.fromLongBits(longValue());
+    }
+
     @Override
     public final int hashCode() {
         return Byte.hashCode(value);
