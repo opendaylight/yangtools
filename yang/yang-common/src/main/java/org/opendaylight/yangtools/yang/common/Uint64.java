@@ -333,6 +333,36 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
         return UnsignedLong.fromLongBits(value);
     }
 
+    /**
+     * Convert this value to a {@code Uint8}.
+     *
+     * @return A Uint8
+     * @throws IllegalArgumentException if this value is greater than 255.
+     */
+    public final Uint8 toUint8() {
+        return Uint8.valueOf(longValue());
+    }
+
+    /**
+     * Convert this value to a {@code Uint16}.
+     *
+     * @return A Uint16
+     * @throws IllegalArgumentException if this value is greater than 65535.
+     */
+    public final Uint16 toUint16() {
+        return Uint16.valueOf(longValue());
+    }
+
+    /**
+     * Convert this value to a {@code Uint64}.
+     *
+     * @return A Uint32
+     * @throws IllegalArgumentException if this value is greater than 4294967295.
+     */
+    public final Uint32 toUint32() {
+        return Uint32.valueOf(longValue());
+    }
+
     @Override
     public final int hashCode() {
         return Long.hashCode(value);

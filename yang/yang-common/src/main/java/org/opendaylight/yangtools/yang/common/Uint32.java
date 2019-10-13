@@ -315,6 +315,35 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
         return UnsignedInteger.fromIntBits(value);
     }
 
+    /**
+     * Convert this value to a {@code Uint8}.
+     *
+     * @return A Uint8
+     * @throws IllegalArgumentException if this value is greater than 255.
+     */
+    public final Uint8 toUint8() {
+        return Uint8.valueOf(toJava());
+    }
+
+    /**
+     * Convert this value to a {@code Uint16}.
+     *
+     * @return A Uint16
+     * @throws IllegalArgumentException if this value is greater than 65535.
+     */
+    public final Uint16 toUint16() {
+        return Uint16.valueOf(toJava());
+    }
+
+    /**
+     * Convert this value to a {@code Uint64}.
+     *
+     * @return A Uint64
+     */
+    public final Uint64 toUint64() {
+        return Uint64.fromLongBits(longValue());
+    }
+
     @Override
     public final int hashCode() {
         return Integer.hashCode(value);

@@ -99,6 +99,25 @@ public class Uint64Test {
 
         assertSame(Uint64.valueOf(5), Uint64.valueOf(UnsignedLong.fromLongBits(5)));
         assertEquals(UnsignedLong.fromLongBits(5), Uint64.valueOf(5).toGuava());
+
+        assertEquals(Uint8.TEN, Uint64.TEN.toUint8());
+        assertEquals(Uint16.TEN, Uint64.TEN.toUint16());
+        assertEquals(Uint32.TEN, Uint64.TEN.toUint32());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToUint8() {
+        Uint64.MAX_VALUE.toUint8();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToUint16() {
+        Uint64.MAX_VALUE.toUint16();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToUint32() {
+        Uint64.MAX_VALUE.toUint32();
     }
 
     @Test
