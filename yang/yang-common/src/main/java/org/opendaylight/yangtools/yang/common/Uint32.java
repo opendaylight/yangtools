@@ -72,8 +72,25 @@ public class Uint32 extends Number implements CanonicalValue<Uint32> {
 
     private static final Interner<Uint32> INTERNER = Interners.newWeakInterner();
 
+    /**
+     * Value of {@code 0}.
+     */
     public static final Uint32 ZERO = valueOf(0).intern();
+    /**
+     * Value of {@code 1}.
+     */
     public static final Uint32 ONE = valueOf(1).intern();
+    /**
+     * Value of {@code 2}.
+     */
+    public static final Uint32 TWO = valueOf(2).intern();
+    /**
+     * Value of {@code 10}.
+     */
+    public static final Uint32 TEN = valueOf(10).intern();
+    /**
+     * Value of {@code 4294967295}.
+     */
     public static final Uint32 MAX_VALUE = valueOf(MAX_VALUE_LONG).intern();
 
     private final int value;

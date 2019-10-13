@@ -71,8 +71,25 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
 
     private static final Interner<Uint16> INTERNER = Interners.newWeakInterner();
 
+    /**
+     * Value of {@code 0}.
+     */
     public static final Uint16 ZERO = valueOf(0).intern();
+    /**
+     * Value of {@code 1}.
+     */
     public static final Uint16 ONE = valueOf(1).intern();
+    /**
+     * Value of {@code 2}.
+     */
+    public static final Uint16 TWO = valueOf(2).intern();
+    /**
+     * Value of {@code 10}.
+     */
+    public static final Uint16 TEN = valueOf(10).intern();
+    /**
+     * Value of {@code 65535}.
+     */
     public static final Uint16 MAX_VALUE = valueOf(MAX_VALUE_INT).intern();
 
     private final short value;
