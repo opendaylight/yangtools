@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
@@ -48,6 +49,7 @@ public class GeneratorJavaFileTest extends BaseCompilationTest {
         assertTrue(filesList.contains("Type4Builder.java"));
     }
 
+    @NonNullByDefault
     private static GeneratedType createGeneratedType(final String pkgName, final String name) {
         GeneratedTypeBuilder builder = new CodegenGeneratedTypeBuilder(JavaTypeName.create(pkgName, name));
         builder.addImplementsType(BindingTypes.DATA_OBJECT);
