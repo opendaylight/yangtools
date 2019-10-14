@@ -61,7 +61,7 @@ public class GeneratorUtilTest {
         doReturn(parameterizedType).when(property).getReturnType();
         doReturn(new Type[] { type }).when(parameterizedType).getActualTypeArguments();
         doReturn(ImmutableList.of(property)).when(enclosedType).getProperties();
-        doReturn(true).when(property).isReadOnly();
+        doReturn(Boolean.TRUE).when(property).isReadOnly();
         doReturn("tst.package").when(enclosedType).getPackageName();
         doReturn("tstName").when(enclosedType).getName();
         doReturn(TYPE).when(enclosedType).getIdentifier();
