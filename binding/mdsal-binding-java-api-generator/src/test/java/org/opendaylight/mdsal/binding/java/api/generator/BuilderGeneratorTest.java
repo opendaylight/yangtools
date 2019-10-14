@@ -21,8 +21,6 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.Type;
 
 public class BuilderGeneratorTest {
-
-    private static final String PROPERTIES_FIELD_NAME = "properties";
     private static final String TEST = "test";
     private static final JavaTypeName TYPE_NAME = JavaTypeName.create(TEST, TEST);
 
