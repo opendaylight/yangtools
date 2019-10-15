@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 
 abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>> extends AbstractRangeGenerator<T> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPrimitiveRangeGenerator.class);
-    private final String primitiveName;
-    private final T minValue;
-    private final T maxValue;
+    private final @NonNull String primitiveName;
+    private final @NonNull T minValue;
+    private final @NonNull T maxValue;
 
     protected AbstractPrimitiveRangeGenerator(final Class<T> typeClass, final String primitiveName, final T minValue,
             final T maxValue) {
