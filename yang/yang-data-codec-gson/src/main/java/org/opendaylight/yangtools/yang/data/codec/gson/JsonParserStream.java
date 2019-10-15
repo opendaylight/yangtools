@@ -54,6 +54,8 @@ import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -66,16 +68,21 @@ import org.w3c.dom.Text;
 public final class JsonParserStream implements Closeable, Flushable {
     static final String ANYXML_ARRAY_ELEMENT_ID = "array-element";
 
+    private static final Logger LOG = LoggerFactory.getLogger(JsonParserStream.class);
     private final Deque<URI> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
     private final DataSchemaNode parentNode;
 
+    // TODO: consider class specialization to remove this field
+    private final boolean lenient;
+
     private JsonParserStream(final NormalizedNodeStreamWriter writer, final JSONCodecFactory codecs,
-            final DataSchemaNode parentNode) {
+            final DataSchemaNode parentNode, final boolean lenient) {
         this.writer = requireNonNull(writer);
         this.codecs = requireNonNull(codecs);
         this.parentNode = parentNode;
+        this.lenient = lenient;
     }
 
     /**
@@ -90,7 +97,7 @@ public final class JsonParserStream implements Closeable, Flushable {
      */
     public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory) {
-        return new JsonParserStream(writer, codecFactory, codecFactory.getSchemaContext());
+        return new JsonParserStream(writer, codecFactory, codecFactory.getSchemaContext(), false);
     }
 
     /**
@@ -105,15 +112,7 @@ public final class JsonParserStream implements Closeable, Flushable {
      */
     public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory, final @NonNull SchemaNode parentNode) {
-        final DataSchemaNode parent;
-        if (parentNode instanceof DataSchemaNode) {
-            parent = (DataSchemaNode) parentNode;
-        } else if (parentNode instanceof OperationDefinition) {
-            parent = OperationAsContainer.of((OperationDefinition) parentNode);
-        } else {
-            throw new IllegalArgumentException("Illegal parent node " + requireNonNull(parentNode));
-        }
-        return new JsonParserStream(writer, codecFactory, parent);
+        return new JsonParserStream(writer, codecFactory, validateParent(parentNode), false);
     }
 
     /**
@@ -152,10 +151,52 @@ public final class JsonParserStream implements Closeable, Flushable {
             parentNode);
     }
 
+    /**
+     * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
+     * and {@link JSONCodecFactory}. The stream will be logically rooted at the top of the SchemaContext associated
+     * with the specified codec factory.
+     *
+     * <p>
+     * Returned parser will treat incoming JSON data leniently:
+     * <ul>
+     *   <li>JSON elements referring to unknown constructs will be silently ignored</li>
+     * </ul>
+     *
+     * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
+     * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
+     * @return A new {@link JsonParserStream}
+     * @throws NullPointerException if any of the arguments are null
+     */
+    public static @NonNull JsonParserStream createLenient(final @NonNull NormalizedNodeStreamWriter writer,
+            final @NonNull JSONCodecFactory codecFactory) {
+        return new JsonParserStream(writer, codecFactory, codecFactory.getSchemaContext(), true);
+    }
+
+    /**
+     * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
+     * and {@link JSONCodecFactory}. The stream will be logically rooted at the specified parent node.
+     *
+     * <p>
+     * Returned parser will treat incoming JSON data leniently:
+     * <ul>
+     *   <li>JSON elements referring to unknown constructs will be silently ignored</li>
+     * </ul>
+     *
+     * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
+     * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
+     * @param parentNode Logical root node
+     * @return A new {@link JsonParserStream}
+     * @throws NullPointerException if any of the arguments are null
+     */
+    public static @NonNull JsonParserStream createLenient(final @NonNull NormalizedNodeStreamWriter writer,
+            final @NonNull JSONCodecFactory codecFactory, final @NonNull SchemaNode parentNode) {
+        return new JsonParserStream(writer, codecFactory, validateParent(parentNode), true);
+    }
+
     public JsonParserStream parse(final JsonReader reader) {
         // code copied from gson's JsonParser and Stream classes
 
-        final boolean lenient = reader.isLenient();
+        final boolean readerLenient = reader.isLenient();
         reader.setLenient(true);
         boolean isEmpty = true;
         try {
@@ -179,7 +220,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         } catch (StackOverflowError | OutOfMemoryError e) {
             throw new JsonParseException("Failed parsing JSON source: " + reader + " to Json", e);
         } finally {
-            reader.setLenient(lenient);
+            reader.setLenient(readerLenient);
         }
     }
 
@@ -281,7 +322,14 @@ public final class JsonParserStream implements Closeable, Flushable {
                     }
                     final Entry<String, URI> namespaceAndName = resolveNamespace(jsonElementName, parentSchema);
                     final String localName = namespaceAndName.getKey();
-                    addNamespace(namespaceAndName.getValue());
+                    final URI namespace = namespaceAndName.getValue();
+                    if (lenient && (localName == null || namespace == null)) {
+                        LOG.debug("Schema node with name {} was not found under {}", localName,
+                            parentSchema.getQName());
+                        in.skipValue();
+                        continue;
+                    }
+                    addNamespace(namespace);
                     if (!namesakes.add(jsonElementName)) {
                         throw new JsonSyntaxException("Duplicate name " + jsonElementName + " in JSON input.");
                     }
@@ -375,7 +423,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             } else if (potentialUris.size() > 1) {
                 throw new IllegalStateException("Choose suitable module name for element " + nodeNamePart + ":"
                         + toModuleNames(potentialUris));
-            } else if (potentialUris.isEmpty()) {
+            } else if (potentialUris.isEmpty() && !lenient) {
                 throw new IllegalStateException("Schema node with name " + nodeNamePart + " was not found under "
                         + dataSchemaNode.getQName() + ".");
             }
@@ -417,6 +465,16 @@ public final class JsonParserStream implements Closeable, Flushable {
 
     private URI getCurrentNamespace() {
         return namespaces.peek();
+    }
+
+    private static DataSchemaNode validateParent(final SchemaNode parent) {
+        if (parent instanceof DataSchemaNode) {
+            return (DataSchemaNode) parent;
+        } else if (parent instanceof OperationDefinition) {
+            return OperationAsContainer.of((OperationDefinition) parent);
+        } else {
+            throw new IllegalArgumentException("Illegal parent node " + requireNonNull(parent));
+        }
     }
 
     @Override
