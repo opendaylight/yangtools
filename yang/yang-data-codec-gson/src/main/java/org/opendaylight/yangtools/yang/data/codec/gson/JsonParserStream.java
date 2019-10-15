@@ -55,6 +55,8 @@ import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -67,10 +69,12 @@ import org.w3c.dom.Text;
 public final class JsonParserStream implements Closeable, Flushable {
     static final String ANYXML_ARRAY_ELEMENT_ID = "array-element";
 
+    private static final Logger LOG = LoggerFactory.getLogger(JsonParserStream.class);
     private final Deque<URI> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
     private final DataSchemaNode parentNode;
+    private boolean lenient = false;
 
     private JsonParserStream(final NormalizedNodeStreamWriter writer, final JSONCodecFactory codecs,
             final DataSchemaNode parentNode) {
@@ -154,7 +158,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     public JsonParserStream parse(final JsonReader reader) {
         // code copied from gson's JsonParser and Stream classes
 
-        final boolean lenient = reader.isLenient();
+        final boolean readerLenient = reader.isLenient();
         reader.setLenient(true);
         boolean isEmpty = true;
         try {
@@ -178,7 +182,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         } catch (StackOverflowError | OutOfMemoryError e) {
             throw new JsonParseException("Failed parsing JSON source: " + reader + " to Json", e);
         } finally {
-            reader.setLenient(lenient);
+            reader.setLenient(readerLenient);
         }
     }
 
@@ -280,6 +284,12 @@ public final class JsonParserStream implements Closeable, Flushable {
                     }
                     final Entry<String, URI> namespaceAndName = resolveNamespace(jsonElementName, parentSchema);
                     final String localName = namespaceAndName.getKey();
+                    if (lenient && (localName == null || namespaceAndName.getValue() == null)) {
+                        LOG.debug("Schema node with name " + localName + " was not found under "
+                                    + parentSchema.getQName() + ".");
+                        in.skipValue();
+                        continue;
+                    }
                     addNamespace(namespaceAndName.getValue());
                     if (!namesakes.add(jsonElementName)) {
                         throw new JsonSyntaxException("Duplicate name " + jsonElementName + " in JSON input.");
@@ -375,7 +385,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             } else if (potentialUris.size() > 1) {
                 throw new IllegalStateException("Choose suitable module name for element " + nodeNamePart + ":"
                         + toModuleNames(potentialUris));
-            } else if (potentialUris.isEmpty()) {
+            } else if (potentialUris.isEmpty() && !lenient) {
                 throw new IllegalStateException("Schema node with name " + nodeNamePart + " was not found under "
                         + dataSchemaNode.getQName() + ".");
             }
@@ -417,6 +427,26 @@ public final class JsonParserStream implements Closeable, Flushable {
 
     private URI getCurrentNamespace() {
         return namespaces.peek();
+    }
+
+    /**
+     * Set this parser to accept unknown nodes/leafs in the given json to parse.
+     * Default is false.
+     *
+     * @param lenient true/false.
+     */
+    public void setLenient(boolean lenient) {
+        this.lenient = lenient;
+    }
+
+    /**
+     * return weather this parser accept unknown nodes/leafs to parse.
+     * Default is false.
+     *
+     * @return lenient
+     */
+    public boolean isLenient() {
+        return this.lenient;
     }
 
     @Override

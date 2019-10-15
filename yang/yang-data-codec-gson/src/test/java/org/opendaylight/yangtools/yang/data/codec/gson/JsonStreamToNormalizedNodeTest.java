@@ -194,6 +194,25 @@ public class JsonStreamToNormalizedNodeTest {
         }
     }
 
+    /**
+     * Should not fail as we set the parser to be lenient.
+     *
+     * <p>
+     * Json input contains element which doesn't exist in YANG schema
+     */
+    @Test
+    public void parsingSkipNotExistingElement() throws IOException, URISyntaxException {
+        final String inputJson = loadTextFile("/complexjson/not-existing-element.json");
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
+            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
+        jsonParser.setLenient(true);
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        assertNotNull(transformedInput);
+    }
+
     @Test
     public void listItemWithoutArray() throws IOException, URISyntaxException {
         final String inputJson = loadTextFile("/complexjson/keyed-list-restconf-behaviour.json");
