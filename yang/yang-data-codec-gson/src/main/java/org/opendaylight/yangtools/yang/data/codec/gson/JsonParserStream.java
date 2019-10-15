@@ -71,12 +71,14 @@ public final class JsonParserStream implements Closeable, Flushable {
     private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
     private final DataSchemaNode parentNode;
+    private final boolean strictParsing;
 
     private JsonParserStream(final NormalizedNodeStreamWriter writer, final JSONCodecFactory codecs,
-            final DataSchemaNode parentNode) {
+            final DataSchemaNode parentNode, final boolean strictParsing) {
         this.writer = requireNonNull(writer);
         this.codecs = requireNonNull(codecs);
         this.parentNode = parentNode;
+        this.strictParsing = strictParsing;
     }
 
     /**
@@ -91,7 +93,23 @@ public final class JsonParserStream implements Closeable, Flushable {
      */
     public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory) {
-        return new JsonParserStream(writer, codecFactory, codecFactory.getSchemaContext());
+        return new JsonParserStream(writer, codecFactory, codecFactory.getSchemaContext(), true);
+    }
+
+    /**
+     * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
+     * and {@link JSONCodecFactory}. The stream will be logically rooted at the top of the SchemaContext associated
+     * with the specified codec factory.
+     *
+     * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
+     * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
+     * @param strictParsing set false to ignore unknown tree nodes
+     * @return A new {@link JsonParserStream}
+     * @throws NullPointerException if any of the arguments are null
+     */
+    public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
+            final @NonNull JSONCodecFactory codecFactory, final @NonNull boolean strictParsing) {
+        return new JsonParserStream(writer, codecFactory, codecFactory.getSchemaContext(), strictParsing);
     }
 
     /**
@@ -114,7 +132,32 @@ public final class JsonParserStream implements Closeable, Flushable {
         } else {
             throw new IllegalArgumentException("Illegal parent node " + requireNonNull(parentNode));
         }
-        return new JsonParserStream(writer, codecFactory, parent);
+        return new JsonParserStream(writer, codecFactory, parent, true);
+    }
+
+    /**
+     * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
+     * and {@link JSONCodecFactory}. The stream will be logically rooted at the specified parent node.
+     *
+     * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
+     * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
+     * @param parentNode Logical root node
+     * @param strictParsing set false to ignore unknown tree nodes
+     * @return A new {@link JsonParserStream}
+     * @throws NullPointerException if any of the arguments are null
+     */
+    public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
+            final @NonNull JSONCodecFactory codecFactory, final @NonNull SchemaNode parentNode,
+            final @NonNull boolean strictParsing) {
+        final DataSchemaNode parent;
+        if (parentNode instanceof DataSchemaNode) {
+            parent = (DataSchemaNode) parentNode;
+        } else if (parentNode instanceof OperationDefinition) {
+            parent = OperationAsContainer.of((OperationDefinition) parentNode);
+        } else {
+            throw new IllegalArgumentException("Illegal parent node " + requireNonNull(parentNode));
+        }
+        return new JsonParserStream(writer, codecFactory, parent, strictParsing);
     }
 
     /**
@@ -279,6 +322,10 @@ public final class JsonParserStream implements Closeable, Flushable {
                         parentSchema = ((YangModeledAnyXmlSchemaNode) parentSchema).getSchemaOfAnyXmlData();
                     }
                     final Entry<String, URI> namespaceAndName = resolveNamespace(jsonElementName, parentSchema);
+                    if (!strictParsing && (namespaceAndName.getValue() == null || namespaceAndName.getKey() == null)) {
+                        in.skipValue();
+                        continue;
+                    }
                     final String localName = namespaceAndName.getKey();
                     addNamespace(namespaceAndName.getValue());
                     if (!namesakes.add(jsonElementName)) {
@@ -375,7 +422,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             } else if (potentialUris.size() > 1) {
                 throw new IllegalStateException("Choose suitable module name for element " + nodeNamePart + ":"
                         + toModuleNames(potentialUris));
-            } else if (potentialUris.isEmpty()) {
+            } else if (potentialUris.isEmpty() && strictParsing) {
                 throw new IllegalStateException("Schema node with name " + nodeNamePart + " was not found under "
                         + dataSchemaNode.getQName() + ".");
             }
