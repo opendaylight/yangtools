@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f19cc304_01b828f6",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-10-16T06:54:21Z",
+      "side": 1,
+      "message": "this does not make sense for a primitive type. Also rather than adding a boolean flag to public API, create separate \u0027createLenient()\u0027 methods.",
+      "range": {
+        "startLine": 111,
+        "startChar": 64,
+        "endLine": 111,
+        "endChar": 72
+      },
+      "revId": "46cc5b333bb2f56300d4c51b61f4476e681f21d8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fd417ed4_c553ca84",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-10-16T06:54:21Z",
+      "side": 1,
+      "message": "This is code duplication -- at the end of the day both this and (properly renamed) method below should defer to a private method which holds this chunk.",
+      "range": {
+        "startLine": 127,
+        "startChar": 0,
+        "endLine": 135,
+        "endChar": 72
+      },
+      "revId": "46cc5b333bb2f56300d4c51b61f4476e681f21d8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e7ab700_8f33a5fe",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-10-16T06:54:21Z",
+      "side": 1,
+      "message": "createLenient() instead of the boolean flag.",
+      "range": {
+        "startLine": 149,
+        "startChar": 44,
+        "endLine": 149,
+        "endChar": 50
+      },
+      "revId": "46cc5b333bb2f56300d4c51b61f4476e681f21d8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "196b9ee3_f54f9d7d",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 326,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-10-16T06:54:21Z",
+      "side": 1,
+      "message": "LOG.debug() here, plus this block should be be behind ...",
+      "range": {
+        "startLine": 326,
+        "startChar": 24,
+        "endLine": 326,
+        "endChar": 39
+      },
+      "revId": "46cc5b333bb2f56300d4c51b61f4476e681f21d8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d53dd7a2_cbd11c16",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-10-16T06:54:21Z",
+      "side": 1,
+      "message": "... this line and reference extracted localName",
+      "range": {
+        "startLine": 329,
+        "startChar": 20,
+        "endLine": 329,
+        "endChar": 42
+      },
+      "revId": "46cc5b333bb2f56300d4c51b61f4476e681f21d8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
