@@ -60,6 +60,9 @@
         <!-- Combined RFC6020/RFC7960 metamodel implementation -->
         <module>yang-parser-rfc7950</module>
 
+        <!-- Jackson datatype bindings -->
+        <module>yang-jackson-datatype</module>
+
         <!-- OpenConfig (semantic version, hashed value) metamodel support -->
         <module>openconfig-model-api</module>
         <!-- OpenConfig hashed value parser support. Semantic version support
