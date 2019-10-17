@@ -310,6 +310,11 @@
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yang-common-jackson</artifactId>
+                <version>8.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-common-netty</artifactId>
                 <version>8.0.0-SNAPSHOT</version>
             </dependency>
@@ -438,6 +443,13 @@
             </dependency>
 
             <!-- Experimental features -->
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>odl-yangtools-exp-jackson</artifactId>
+                <version>0.1.3-SNAPSHOT</version>
+                <type>xml</type>
+                <classifier>features</classifier>
+            </dependency>
 
             <!-- Documentation -->
             <dependency>

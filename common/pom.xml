@@ -33,6 +33,7 @@
         <module>util</module>
         <module>testutils</module>
         <module>yang-common</module>
+        <module>yang-common-jackson</module>
         <module>yang-common-netty</module>
     </modules>
 </project>
