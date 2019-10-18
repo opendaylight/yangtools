@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.type.RequireInstanceRestrictedT
 //FIXME: 3.0.0: this should require T to be a RequireInstanceRestrictedTypeDefinition
 public abstract class RequireInstanceRestrictedTypeBuilder<T extends TypeDefinition<T>>
         extends AbstractRestrictedTypeBuilder<T> {
-
     private boolean requireInstance;
 
     RequireInstanceRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
