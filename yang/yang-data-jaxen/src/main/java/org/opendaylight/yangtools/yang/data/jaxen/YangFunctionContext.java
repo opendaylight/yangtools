@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.jaxen;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.base.Splitter;
-import com.google.common.base.Verify;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.List;
 import java.util.Map.Entry;
@@ -107,9 +109,7 @@ final class YangFunctionContext implements FunctionContext {
 
         final String bitName = (String) args.get(0);
 
-        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
-
-        final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
+        final NormalizedNodeContext currentNodeContext = verifyContext(context);
         final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(currentNodeContext);
 
         final TypeDefinition<?> nodeType = correspondingSchemaNode.getType();
@@ -123,8 +123,7 @@ final class YangFunctionContext implements FunctionContext {
         }
 
         final BitsTypeDefinition bitsType = (BitsTypeDefinition) nodeType;
-        Preconditions.checkState(containsBit(bitsType, bitName), "Bit %s does not belong to bits %s.", bitName,
-            bitsType);
+        checkState(containsBit(bitsType, bitName), "Bit %s does not belong to bits %s.", bitName, bitsType);
         return ((Set<?>)nodeValue).contains(bitName);
     }
 
@@ -135,8 +134,7 @@ final class YangFunctionContext implements FunctionContext {
             throw new FunctionCallException("current() takes no arguments.");
         }
 
-        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
-        return (NormalizedNodeContext) context;
+        return verifyContext(context);
     }
 
     // deref(node-set nodes) function as per https://tools.ietf.org/html/rfc7950#section-10.3.1
@@ -145,8 +143,7 @@ final class YangFunctionContext implements FunctionContext {
             throw new FunctionCallException("deref() takes only one argument: node-set nodes.");
         }
 
-        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
-        final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
+        final NormalizedNodeContext currentNodeContext = verifyContext(context);
         final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(currentNodeContext);
 
         final Object nodeValue = currentNodeContext.getNode().getValue();
@@ -187,9 +184,8 @@ final class YangFunctionContext implements FunctionContext {
             throw new FunctionCallException("Argument 'identity' of " + functionName
                 + "() function should be a String.");
         }
-        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
 
-        final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
+        final NormalizedNodeContext currentNodeContext = verifyContext(context);
         final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(currentNodeContext);
 
         final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
@@ -206,9 +202,7 @@ final class YangFunctionContext implements FunctionContext {
             throw new FunctionCallException("enum-value() takes one argument: node-set nodes.");
         }
 
-        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
-
-        final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
+        final NormalizedNodeContext currentNodeContext = verifyContext(context);
         final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(currentNodeContext);
 
         final TypeDefinition<?> nodeType = correspondingSchemaNode.getType();
@@ -256,7 +250,7 @@ final class YangFunctionContext implements FunctionContext {
     private static IdentitySchemaNode getIdentitySchemaNodeFromQName(final QName identityQName,
             final SchemaContext schemaContext) {
         final Optional<Module> module = schemaContext.findModule(identityQName.getModule());
-        Preconditions.checkArgument(module.isPresent(), "Module for %s not found", identityQName);
+        checkArgument(module.isPresent(), "Module for %s not found", identityQName);
         return findIdentitySchemaNodeInModule(module.get(), identityQName);
     }
 
@@ -418,15 +412,21 @@ final class YangFunctionContext implements FunctionContext {
 
     private static SchemaContext getSchemaContext(final NormalizedNodeContext normalizedNodeContext) {
         final ContextSupport contextSupport = normalizedNodeContext.getContextSupport();
-        Verify.verify(contextSupport instanceof NormalizedNodeContextSupport, "Unhandled context support %s",
+        verify(contextSupport instanceof NormalizedNodeContextSupport, "Unhandled context support %s",
                 contextSupport.getClass());
         return ((NormalizedNodeContextSupport) contextSupport).getSchemaContext();
     }
 
     private static TypedDataSchemaNode getCorrespondingTypedSchemaNode(final NormalizedNodeContext currentNodeContext) {
         final DataSchemaNode schemaNode = currentNodeContext.getSchema().getDataSchemaNode();
-        Preconditions.checkState(schemaNode instanceof TypedDataSchemaNode, "Node %s must be a leaf or a leaf-list.",
+        checkState(schemaNode instanceof TypedDataSchemaNode, "Node %s must be a leaf or a leaf-list.",
                 currentNodeContext.getNode());
         return (TypedDataSchemaNode) schemaNode;
     }
+
+    private static NormalizedNodeContext verifyContext(final Context context) {
+        verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
+        return (NormalizedNodeContext) context;
+    }
+
 }
