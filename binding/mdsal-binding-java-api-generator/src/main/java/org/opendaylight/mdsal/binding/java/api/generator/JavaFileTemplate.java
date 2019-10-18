@@ -30,6 +30,9 @@ import org.opendaylight.mdsal.binding.model.util.Types;
 class JavaFileTemplate {
     static final JavaTypeName NONNULL = JavaTypeName.create("org.eclipse.jdt.annotation", "NonNull");
     static final JavaTypeName NULLABLE = JavaTypeName.create("org.eclipse.jdt.annotation", "Nullable");
+    static final JavaTypeName DEPRECATED = JavaTypeName.create(Deprecated.class);
+    static final JavaTypeName OVERRIDE = JavaTypeName.create(Override.class);
+    static final JavaTypeName SUPPRESS_WARNINGS = JavaTypeName.create(SuppressWarnings.class);
 
     private final AbstractJavaGeneratedType javaType;
     private final GeneratedType type;

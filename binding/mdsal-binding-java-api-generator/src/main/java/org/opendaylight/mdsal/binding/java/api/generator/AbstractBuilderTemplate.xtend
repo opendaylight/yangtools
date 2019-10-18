@@ -21,7 +21,6 @@ import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
@@ -30,8 +29,6 @@ import org.opendaylight.yangtools.yang.binding.Identifiable
 
 abstract class AbstractBuilderTemplate extends BaseTemplate {
     static val Comparator<GeneratedProperty> KEY_PROPS_COMPARATOR = [ p1, p2 | return p1.name.compareTo(p2.name) ]
-
-    protected static val DEPRECATED = JavaTypeName.create(Deprecated);
 
     /**
      * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME.
@@ -94,7 +91,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
 
     override generateToString(Collection<GeneratedProperty> properties) '''
         «IF properties !== null»
-            @«Override.importedName»
+            @«OVERRIDE.importedName»
             public «String.importedName» toString() {
                 final «MoreObjects.importedName».ToStringHelper helper = «MoreObjects.importedName».toStringHelper("«targetType.name»");
                 «FOR property : properties»
@@ -115,7 +112,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
      */
     def final generateGetters(boolean addOverride) '''
         «IF keyType !== null»
-            «IF addOverride»@«Override.importedName»«ENDIF»
+            «IF addOverride»@«OVERRIDE.importedName»«ENDIF»
             public «keyType.importedName» «BindingMapping.IDENTIFIABLE_KEY_NAME»() {
                 return key;
             }
@@ -123,7 +120,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         «ENDIF»
         «IF !properties.empty»
             «FOR field : properties SEPARATOR '\n'»
-                «IF addOverride»@«Override.importedName»«ENDIF»
+                «IF addOverride»@«OVERRIDE.importedName»«ENDIF»
                 «field.getterMethod»
             «ENDFOR»
         «ENDIF»

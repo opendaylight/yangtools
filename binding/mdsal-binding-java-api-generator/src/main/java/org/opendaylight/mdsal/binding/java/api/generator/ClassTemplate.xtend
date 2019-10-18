@@ -541,7 +541,7 @@ class ClassTemplate extends BaseTemplate {
             return ""
         }
         return '''
-            @«Override.importedName»
+            @«OVERRIDE.importedName»
             public int hashCode() {
                 «IF size != 1»
                     «hashCodeResult(genTO.hashCodeIdentifiers)»
@@ -560,7 +560,7 @@ class ClassTemplate extends BaseTemplate {
      */
     def private generateEquals() '''
         «IF !genTO.equalsIdentifiers.empty»
-            @«Override.importedName»
+            @«OVERRIDE.importedName»
             public final boolean equals(java.lang.Object obj) {
                 if (this == obj) {
                     return true;

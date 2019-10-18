@@ -45,7 +45,6 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     public static val BUILDER = "Builder";
 
     static val AUGMENTATION_FIELD_UPPER = AUGMENTATION_FIELD.toFirstUpper
-    static val SUPPRESS_WARNINGS = JavaTypeName.create(SuppressWarnings)
 
     /**
      * Constructs new instance of this class.
@@ -93,7 +92,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
 
             «generateSetters»
 
-            @«Override.importedName»
+            @«OVERRIDE.importedName»
             public «targetType.name» build() {
                 return new «type.enclosedTypes.get(0).importedName»(this);
             }

@@ -68,7 +68,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
             private int hash = 0;
             private volatile boolean hashValid = false;
 
-            @«Override.importedName»
+            @«OVERRIDE.importedName»
             public int hashCode() {
                 if (hashValid) {
                     return hash;
@@ -93,7 +93,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
      */
     def protected generateEquals() '''
         «IF !properties.empty || augmentType !== null»
-            @«Override.importedName»
+            @«OVERRIDE.importedName»
             public boolean equals(«Object.importedName» obj) {
                 if (this == obj) {
                     return true;

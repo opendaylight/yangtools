@@ -194,7 +194,7 @@ class InterfaceTemplate extends BaseTemplate {
     '''
 
     def private generateDefaultImplementedInterface() '''
-        @«Override.importedName»
+        @«OVERRIDE.importedName»
         default «Class.importedName»<«type.fullyQualifiedName»> «DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»() {
             return «type.fullyQualifiedName».class;
         }
