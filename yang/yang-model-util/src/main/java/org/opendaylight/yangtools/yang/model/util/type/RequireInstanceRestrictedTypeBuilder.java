@@ -14,12 +14,11 @@ import org.opendaylight.yangtools.yang.model.api.type.RequireInstanceRestrictedT
 @Beta
 public abstract class RequireInstanceRestrictedTypeBuilder<T extends RequireInstanceRestrictedTypeDefinition<T>>
         extends AbstractRestrictedTypeBuilder<T> {
-
     private boolean requireInstance;
 
     RequireInstanceRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
         super(baseType, path);
-        requireInstance = baseType != null ? baseType.requireInstance() : true;
+        requireInstance = baseType == null || baseType.requireInstance();
     }
 
     public final void setRequireInstance(final boolean requireInstance) {
