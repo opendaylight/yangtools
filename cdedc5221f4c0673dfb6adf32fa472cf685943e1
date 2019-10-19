@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "63d8c0c7_d0d67991",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-10-19T07:19:14Z",
+      "side": 1,
+      "message": "https://wiki.opendaylight.org/view/BestPractices/Logging_Best_Practices",
+      "range": {
+        "startLine": 288,
+        "startChar": 34,
+        "endLine": 288,
+        "endChar": 96
+      },
+      "revId": "cdedc5221f4c0673dfb6adf32fa472cf685943e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
