@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -34,18 +35,18 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 @Beta
 public class OperationAsContainer extends ForwardingObject implements ContainerSchemaNode, OperationDefinition {
-    private final OperationDefinition delegate;
+    private final @NonNull OperationDefinition delegate;
 
     OperationAsContainer(final OperationDefinition parentNode) {
         delegate = requireNonNull(parentNode);
     }
 
-    public static OperationAsContainer of(final OperationDefinition delegate) {
+    public static @NonNull OperationAsContainer of(final OperationDefinition delegate) {
         return new OperationAsContainer(delegate);
     }
 
     @Override
-    protected final OperationDefinition delegate() {
+    protected final @NonNull OperationDefinition delegate() {
         return delegate;
     }
 
