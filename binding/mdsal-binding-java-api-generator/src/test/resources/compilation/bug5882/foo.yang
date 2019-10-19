@@ -63,19 +63,19 @@ module foo {
         choice container-main-choice-depr {
             status deprecated;
             case depCase {
-            status deprecated;
-                leaf one {
+                status deprecated;
+                leaf dep-one {
                     type string;
                 }
             }
             case depLeaf {
-                leaf one {
-                status deprecated;
+                leaf depr-two {
+                    status deprecated;
                     type string;
                 }
             }
             case cur {
-                leaf two {
+                leaf depr-three {
                     type string;
                 }
             }
@@ -83,19 +83,19 @@ module foo {
 
         choice container-main-choice-cur {
             case depCase {
-            status deprecated;
-                leaf one {
+                status deprecated;
+                leaf cur-one {
                     type string;
                 }
             }
             case depLeaf {
-                leaf one {
-                status deprecated;
+                leaf cur-two {
+                    status deprecated;
                     type string;
                 }
             }
             case cur {
-                leaf two {
+                leaf cur-three {
                     type string;
                 }
             }
@@ -129,19 +129,19 @@ module foo {
     choice container-main-choice-depr {
         status deprecated;
         case depCase {
-        status deprecated;
-            leaf one {
+            status deprecated;
+            leaf depr-one {
                 type string;
             }
         }
         case depLeaf {
-            leaf one {
-            status deprecated;
+            leaf depr-two {
+                status deprecated;
                 type string;
             }
         }
         case cur {
-            leaf two {
+            leaf depr-three {
                 type string;
             }
         }
@@ -149,19 +149,19 @@ module foo {
 
     choice container-main-choice-cur {
         case depCase {
-        status deprecated;
-            leaf one {
+            status deprecated;
+            leaf cur-one {
                 type string;
             }
         }
         case depLeaf {
-            leaf one {
-            status deprecated;
+            leaf cur-two {
+                status deprecated;
                 type string;
             }
         }
         case cur {
-            leaf two {
+            leaf cur-three {
                 type string;
             }
         }
