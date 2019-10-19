@@ -29,6 +29,12 @@ module opendaylight-mdsal-augment-test {
         }
     }
 
+    grouping leaf2-from-grouping {
+        leaf leaf2-from-grouping {
+            type string;
+        }
+    }
+
     grouping complex-from-grouping {
         container container-with-uses {
             uses leaf-from-grouping;
@@ -125,7 +131,7 @@ module opendaylight-mdsal-augment-test {
 
     augment "/test:top/test:top-level-list/test:choice-in-list" {
         case simple-via-uses {
-            uses leaf-from-grouping;
+            uses leaf2-from-grouping;
         }
         case empty-leaf {
             leaf empty-type {
@@ -136,7 +142,7 @@ module opendaylight-mdsal-augment-test {
 
     augment "/test:put-top/test:input/test:top-level-list/test:choice-in-list" {
         case simple-via-uses {
-            uses leaf-from-grouping;
+            uses leaf2-from-grouping;
         }
     }
 
