@@ -426,7 +426,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     private def generateAugmentation() '''
-        @«SuppressWarnings.importedName»({ "unchecked", "checkstyle:methodTypeParameterName"})
+        @«SUPPRESS_WARNINGS.importedName»({ "unchecked", "checkstyle:methodTypeParameterName"})
         public <E$$ extends «augmentType.importedName»> E$$ «AUGMENTABLE_AUGMENTATION_NAME»(«Class.importedName»<E$$> augmentationType) {
             return (E$$) «AUGMENTATION_FIELD».get(«CodeHelpers.importedName».nonNullValue(augmentationType, "augmentationType"));
         }
