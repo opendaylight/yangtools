@@ -15,7 +15,6 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.MODULE_I
 
 import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableSet
-import java.util.Collections
 import java.util.Comparator
 import java.util.HashSet
 import java.util.LinkedHashMap
@@ -78,7 +77,7 @@ class YangModuleInfoTemplate {
                 private static final «QName.importedName» NAME = «QName.importedName».create("«module.namespace.toString»", «IF rev.present»"«rev.get.toString»", «ENDIF»"«module.name»").intern();
                 private static final «YangModuleInfo.importedName» INSTANCE = new «MODULE_INFO_CLASS_NAME»();
 
-                private final «Set.importedName»<«YangModuleInfo.importedName»> importedModules;
+                private final «ImmutableSet.importedName»<«YangModuleInfo.importedName»> importedModules;
 
                 public static «YangModuleInfo.importedName» getInstance() {
                     return INSTANCE;
@@ -146,7 +145,7 @@ class YangModuleInfoTemplate {
                 set.add(«submodule.name.className»Info.getInstance());
             «ENDFOR»
             «IF m.imports.empty && submodules.empty»
-                importedModules = «Collections.importedName».emptySet();
+                importedModules = «ImmutableSet.importedName».of();
             «ELSE»
                 importedModules = «ImmutableSet.importedName».copyOf(set);
             «ENDIF»
@@ -163,7 +162,7 @@ class YangModuleInfoTemplate {
         }
 
         @«Override.importedName»
-        public «Set.importedName»<«YangModuleInfo.importedName»> getImportedModules() {
+        public «ImmutableSet.importedName»<«YangModuleInfo.importedName»> getImportedModules() {
             return importedModules;
         }
         «generateSubInfo(submodules)»
@@ -283,13 +282,13 @@ class YangModuleInfoTemplate {
                     submodule.namespace.toString»", «IF rev.present»"«rev.get.toString»", «ENDIF»"«submodule.name»").intern();
                 private static final «YangModuleInfo.importedName» INSTANCE = new «className»Info();
 
-                private final «Set.importedName»<YangModuleInfo> importedModules;
+                private final «ImmutableSet.importedName»<YangModuleInfo> importedModules;
 
                 public static «YangModuleInfo.importedName» getInstance() {
                     return INSTANCE;
                 }
 
-                «classBody(submodule, className + "Info", Collections.emptySet)»
+                «classBody(submodule, className + "Info", ImmutableSet.of)»
             }
         «ENDFOR»
     '''
