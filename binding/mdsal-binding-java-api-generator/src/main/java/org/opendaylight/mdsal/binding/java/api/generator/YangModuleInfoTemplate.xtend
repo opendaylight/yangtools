@@ -17,22 +17,14 @@ import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableSet
 import java.util.Comparator
 import java.util.HashSet
-import java.util.LinkedHashMap
-import java.util.Map
 import java.util.Optional
 import java.util.Set
 import java.util.TreeMap
 import java.util.function.Function
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.gaul.modernizer_maven_annotations.SuppressModernizer
-import org.opendaylight.mdsal.binding.model.api.ParameterizedType
-import org.opendaylight.mdsal.binding.model.api.Type
-import org.opendaylight.mdsal.binding.model.api.WildcardType
-import org.opendaylight.mdsal.binding.model.util.Types
-import org.opendaylight.yangtools.yang.binding.ResourceYangModuleInfo
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
-import org.opendaylight.yangtools.yang.common.QName
 import org.opendaylight.yangtools.yang.common.Revision
 import org.opendaylight.yangtools.yang.model.api.Module
 import org.opendaylight.yangtools.yang.model.api.SchemaContext
@@ -47,10 +39,34 @@ class YangModuleInfoTemplate {
     static val Comparator<Optional<Revision>> REVISION_COMPARATOR =
         [ Optional<Revision> first, Optional<Revision> second | Revision.compare(first, second) ]
 
+    // These are always imported. Note we need to import even java.lang members, as there can be conflicting definitions
+    // in our package
+    static val CORE_IMPORT_STR = '''
+        import com.google.common.collect.ImmutableSet;
+        import java.lang.Override;
+        import java.lang.String;
+        import org.eclipse.jdt.annotation.NonNull;
+        import org.opendaylight.yangtools.yang.binding.ResourceYangModuleInfo;
+        import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
+        import org.opendaylight.yangtools.yang.common.QName;
+    '''
+    static val EXT_IMPORT_STR = '''
+        import com.google.common.collect.ImmutableSet;
+        import java.lang.Override;
+        import java.lang.String;
+        import java.util.HashSet;
+        import java.util.Set;
+        import org.eclipse.jdt.annotation.NonNull;
+        import org.opendaylight.yangtools.yang.binding.ResourceYangModuleInfo;
+        import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
+        import org.opendaylight.yangtools.yang.common.QName;
+    '''
+
     val Module module
     val SchemaContext ctx
-    val Map<String, String> importMap = new LinkedHashMap()
     val Function<Module, Optional<String>> moduleFilePathResolver
+
+    var importedTypes = CORE_IMPORT_STR
 
     @Accessors
     val String packageName
@@ -72,19 +88,19 @@ class YangModuleInfoTemplate {
         collectSubmodules(submodules, module)
 
         val body = '''
-            public final class «MODULE_INFO_CLASS_NAME» extends «ResourceYangModuleInfo.importedName» {
+            public final class «MODULE_INFO_CLASS_NAME» extends ResourceYangModuleInfo {
                 «val rev = module.revision»
-                private static final «QName.importedName» NAME = «QName.importedName».create("«module.namespace.toString»", «IF rev.present»"«rev.get.toString»", «ENDIF»"«module.name»").intern();
-                private static final «YangModuleInfo.importedName» INSTANCE = new «MODULE_INFO_CLASS_NAME»();
+                private static final @NonNull QName NAME = QName.create("«module.namespace.toString»", «IF rev.present»"«rev.get.toString»", «ENDIF»"«module.name»").intern();
+                private static final @NonNull YangModuleInfo INSTANCE = new «MODULE_INFO_CLASS_NAME»();
 
-                private final «ImmutableSet.importedName»<«YangModuleInfo.importedName»> importedModules;
+                private final @NonNull ImmutableSet<YangModuleInfo> importedModules;
 
-                public static «YangModuleInfo.importedName» getInstance() {
+                public static YangModuleInfo getInstance() {
                     return INSTANCE;
                 }
 
-                public static «QName.importedName» «MODULE_INFO_QNAMEOF_METHOD_NAME»(final «String.importedName» localName) {
-                    return «QName.importedName».create(NAME, localName).intern();
+                public static @NonNull QName «MODULE_INFO_QNAMEOF_METHOD_NAME»(final String localName) {
+                    return QName.create(NAME, localName).intern();
                 }
 
                 «classBody(module, MODULE_INFO_CLASS_NAME, submodules)»
@@ -93,7 +109,7 @@ class YangModuleInfoTemplate {
         return '''
             package «packageName»;
 
-            «imports»
+            «importedTypes»
 
             «body»
         '''.toString
@@ -102,9 +118,13 @@ class YangModuleInfoTemplate {
     def String generateModelProvider() '''
         package «packageName»;
 
-        public final class «MODEL_BINDING_PROVIDER_CLASS_NAME» implements «YangModelBindingProvider.name» {
-            @«Override.importedName»
-            public «YangModuleInfo.name» getModuleInfo() {
+        import java.lang.Override;
+        import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
+        import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
+
+        public final class «MODEL_BINDING_PROVIDER_CLASS_NAME» implements YangModelBindingProvider {
+            @Override
+            public YangModuleInfo getModuleInfo() {
                 return «MODULE_INFO_CLASS_NAME».getInstance();
             }
         }
@@ -121,7 +141,8 @@ class YangModuleInfoTemplate {
     private def CharSequence classBody(Module m, String className, Set<Module> submodules) '''
         private «className»() {
             «IF !m.imports.empty || !submodules.empty»
-                «Set.importedName»<«YangModuleInfo.importedName»> set = new «HashSet.importedName»<>();
+                «extendImports»
+                Set<YangModuleInfo> set = new HashSet<>();
             «ENDIF»
             «IF !m.imports.empty»
                 «FOR imp : m.imports»
@@ -145,28 +166,32 @@ class YangModuleInfoTemplate {
                 set.add(«submodule.name.className»Info.getInstance());
             «ENDFOR»
             «IF m.imports.empty && submodules.empty»
-                importedModules = «ImmutableSet.importedName».of();
+                importedModules = ImmutableSet.of();
             «ELSE»
-                importedModules = «ImmutableSet.importedName».copyOf(set);
+                importedModules = ImmutableSet.copyOf(set);
             «ENDIF»
         }
 
-        @«Override.importedName»
-        public «QName.importedName» getName() {
+        @Override
+        public QName getName() {
             return NAME;
         }
 
-        @«Override.importedName»
-        protected «String.importedName» resourceName() {
+        @Override
+        protected String resourceName() {
             return "«sourcePath(m)»";
         }
 
-        @«Override.importedName»
-        public «ImmutableSet.importedName»<«YangModuleInfo.importedName»> getImportedModules() {
+        @Override
+        public ImmutableSet<YangModuleInfo> getImportedModules() {
             return importedModules;
         }
         «generateSubInfo(submodules)»
     '''
+
+    private def void extendImports() {
+        importedTypes = EXT_IMPORT_STR
+    }
 
     private def sourcePath(Module module) {
         val opt = moduleFilePathResolver.apply(module)
@@ -174,117 +199,19 @@ class YangModuleInfoTemplate {
         return opt.get
     }
 
-    private def imports() '''
-        «IF !importMap.empty»
-            «FOR entry : importMap.entrySet»
-                «IF entry.value != module.QNameModule.rootPackageName»
-                    import «entry.value».«entry.key»;
-                «ENDIF»
-            «ENDFOR»
-        «ENDIF»
-    '''
-
-    final protected def importedName(Class<?> cls) {
-        val Type intype = Types.typeForClass(cls)
-        putTypeIntoImports(intype)
-        intype.explicitType
-    }
-
-    final def void putTypeIntoImports(Type type) {
-        val String typeName = type.name
-        val String typePackageName = type.packageName
-        if (typePackageName.startsWith("java.lang") || typePackageName.empty) {
-            return
-        }
-        importMap.putIfAbsent(typeName, typePackageName)
-        if (type instanceof ParameterizedType) {
-            val Type[] params = type.actualTypeArguments
-            if (params !== null) {
-                for (Type param : params) {
-                    putTypeIntoImports(param)
-                }
-            }
-        }
-    }
-
-    final def String getExplicitType(Type type) {
-        val String typePackageName = type.packageName
-        val String typeName = type.name
-        val String importedPackageName = importMap.get(typeName)
-        var StringBuilder builder
-        if (typePackageName.equals(importedPackageName)) {
-            builder = new StringBuilder(typeName)
-            if (builder.toString().equals("Void")) {
-                return "void"
-            }
-            addActualTypeParameters(builder, type)
-        } else {
-            if (type.equals(Types.voidType())) {
-                return "void"
-            }
-            builder = new StringBuilder()
-            if (!typePackageName.empty) {
-                builder.append(typePackageName).append(Constants.DOT).append(typeName)
-            } else {
-                builder.append(typeName)
-            }
-            addActualTypeParameters(builder, type)
-        }
-        return builder.toString()
-    }
-
-    final def StringBuilder addActualTypeParameters(StringBuilder builder, Type type) {
-        if (type instanceof ParameterizedType) {
-            val Type[] pTypes = type.actualTypeArguments
-            builder.append('<').append(getParameters(pTypes)).append('>')
-        }
-        return builder
-    }
-
-    final def String getParameters(Type[] pTypes) {
-        if (pTypes === null || pTypes.length == 0) {
-            return "?"
-        }
-        val StringBuilder builder = new StringBuilder()
-
-        var int i = 0
-        for (pType : pTypes) {
-            val Type t = pTypes.get(i)
-
-            var String separator = ","
-            if (i == (pTypes.length - 1)) {
-                separator = ""
-            }
-
-            var String wildcardParam = ""
-            if (t.equals(Types.voidType())) {
-                builder.append("java.lang.Void").append(separator)
-            } else {
-
-                if (t instanceof WildcardType) {
-                    wildcardParam = "? extends "
-                }
-
-                builder.append(wildcardParam).append(t.explicitType).append(separator)
-                i = i + 1
-            }
-        }
-        return builder.toString()
-    }
-
     private def generateSubInfo(Set<Module> submodules) '''
         «FOR submodule : submodules»
             «val className = submodule.name.className»
 
-            private static final class «className»Info extends «ResourceYangModuleInfo.importedName» {
+            private static final class «className»Info extends ResourceYangModuleInfo {
                 «val rev = submodule.revision»
-                private final «QName.importedName» NAME = «QName.importedName».create("«
-                    submodule.namespace.toString»", «IF rev.present»"«rev.get.toString»", «ENDIF»"«submodule.name»").intern();
-                private static final «YangModuleInfo.importedName» INSTANCE = new «className»Info();
+                private final @NonNull QName NAME = QName.create("«submodule.namespace.toString»", «
+                IF rev.present»"«rev.get.toString»", «ENDIF»"«submodule.name»").intern();
+                private static final @NonNull YangModuleInfo INSTANCE = new «className»Info();
 
-                private final «ImmutableSet.importedName»<YangModuleInfo> importedModules;
+                private final @NonNull ImmutableSet<YangModuleInfo> importedModules;
 
-                public static «YangModuleInfo.importedName» getInstance() {
+                public static @NonNull YangModuleInfo getInstance() {
                     return INSTANCE;
                 }
 
