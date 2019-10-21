@@ -151,10 +151,6 @@ class JavaFileTemplate {
         return importedName(intype, importedName(NULLABLE));
     }
 
-    final void addImport(final Class<?> cls) {
-        javaType.getReferenceString(JavaTypeName.create(cls));
-    }
-
     // Exposed for BuilderTemplate
     boolean isLocalInnerClass(final JavaTypeName name) {
         final Optional<JavaTypeName> optEnc = name.immediatelyEnclosingClass();
