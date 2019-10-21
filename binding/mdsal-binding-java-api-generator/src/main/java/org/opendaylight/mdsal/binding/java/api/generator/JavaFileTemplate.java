@@ -75,6 +75,10 @@ class JavaFileTemplate {
         return importedName(intype instanceof ParameterizedType ? ((ParameterizedType) intype).getRawType() : intype);
     }
 
+    final String importedName(final Type intype) {
+        return javaType.getReferenceString(intype);
+    }
+
     final String importedName(final Type intype, final String... annotations) {
         return javaType.getReferenceString(intype, annotations);
     }

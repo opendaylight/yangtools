@@ -79,29 +79,38 @@ abstract class AbstractJavaGeneratedType {
         return name.simpleName();
     }
 
-    final String getReferenceString(final Type type, final String... annotations) {
+    final String getReferenceString(final Type type) {
         final String ref = getReferenceString(type.getIdentifier());
-        if (!(type instanceof ParameterizedType)) {
-            return annotations.length == 0 ? ref : annotate(ref, annotations).toString();
+        return type instanceof ParameterizedType ? getReferenceString(new StringBuilder(ref), type,
+            ((ParameterizedType) type).getActualTypeArguments())
+                : ref;
+    }
+
+    final String getReferenceString(final Type type, final String... annotations) {
+        // Package-private method, all callers who would be passing an empty array are bound to the more special
+        // case above, hence we know annotations.length >= 1
+        final String ref = getReferenceString(type.getIdentifier());
+        return type instanceof ParameterizedType ? getReferenceString(annotate(ref, annotations), type,
+            ((ParameterizedType) type).getActualTypeArguments())
+                : annotate(ref, annotations).toString();
+    }
+
+    private String getReferenceString(final StringBuilder sb, final Type type, final Type[] arguments) {
+        if (arguments.length == 0) {
+            return sb.append("<?>").toString();
         }
 
-        final StringBuilder sb = annotate(ref, annotations).append('<');
-        final Type[] types = ((ParameterizedType) type).getActualTypeArguments();
-        if (types.length == 0) {
-            return sb.append("?>").toString();
-        }
-
-        for (int i = 0; i < types.length; i++) {
-            final Type t = types[i];
-            if (t instanceof WildcardType) {
+        sb.append('<');
+        for (int i = 0; i < arguments.length; i++) {
+            final Type arg = arguments[i];
+            if (arg instanceof WildcardType) {
                 sb.append("? extends ");
             }
-            sb.append(getReferenceString(t));
-            if (i != types.length - 1) {
+            sb.append(getReferenceString(arg));
+            if (i != arguments.length - 1) {
                 sb.append(", ");
             }
         }
-
         return sb.append('>').toString();
     }
 
@@ -162,10 +171,6 @@ abstract class AbstractJavaGeneratedType {
 
     private static StringBuilder annotate(final String ref, final String... annotations) {
         final StringBuilder sb = new StringBuilder();
-        if (annotations.length == 0) {
-            return sb.append(ref);
-        }
-
         final int dot = ref.lastIndexOf('.');
         if (dot != -1) {
             sb.append(ref, 0, dot + 1);
