@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
@@ -130,8 +131,8 @@ class JavaFileTemplate {
         return javaType.getReferenceString(intype);
     }
 
-    final String importedName(final Type intype, final String... annotations) {
-        return javaType.getReferenceString(intype, annotations);
+    final String importedName(final Type intype, final @NonNull String annotation) {
+        return javaType.getReferenceString(intype, annotation);
     }
 
     final String importedName(final Class<?> cls) {

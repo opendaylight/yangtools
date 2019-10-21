@@ -86,13 +86,13 @@ abstract class AbstractJavaGeneratedType {
                 : ref;
     }
 
-    final String getReferenceString(final Type type, final String... annotations) {
+    final String getReferenceString(final Type type, final String annotation) {
         // Package-private method, all callers who would be passing an empty array are bound to the more special
         // case above, hence we know annotations.length >= 1
         final String ref = getReferenceString(type.getIdentifier());
-        return type instanceof ParameterizedType ? getReferenceString(annotate(ref, annotations), type,
+        return type instanceof ParameterizedType ? getReferenceString(annotate(ref, annotation), type,
             ((ParameterizedType) type).getActualTypeArguments())
-                : annotate(ref, annotations).toString();
+                : annotate(ref, annotation).toString();
     }
 
     private String getReferenceString(final StringBuilder sb, final Type type, final Type[] arguments) {
@@ -169,16 +169,12 @@ abstract class AbstractJavaGeneratedType {
         return checkAndImportType(type.topLevelClass()) ? type.localName() : type.toString();
     }
 
-    private static StringBuilder annotate(final String ref, final String... annotations) {
+    private static StringBuilder annotate(final String ref, final String annotation) {
         final StringBuilder sb = new StringBuilder();
         final int dot = ref.lastIndexOf('.');
         if (dot != -1) {
             sb.append(ref, 0, dot + 1);
         }
-        for (String annotation : annotations) {
-            sb.append('@').append(annotation).append(' ');
-        }
-
-        return sb.append(ref, dot + 1, ref.length());
+        return sb.append('@').append(annotation).append(' ').append(ref, dot + 1, ref.length());
     }
 }
