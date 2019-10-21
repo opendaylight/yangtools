@@ -12,8 +12,6 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTA
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
 
 import java.util.List
-import java.util.Map
-import java.util.Objects
 import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
@@ -76,7 +74,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
 
                 «hashCodeResult(properties)»
                 «IF augmentType !== null»
-                    result = prime * result + «Objects.importedName».hashCode(augmentations());
+                    result = prime * result + «JU_OBJECTS.importedName».hashCode(augmentations());
                 «ENDIF»
 
                 hash = result;
@@ -115,12 +113,12 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
                     if (getClass() == obj.getClass()) {
                         // Simple case: we are comparing against self
                         «type.name» otherImpl = («type.name») obj;
-                        if (!«Objects.importedName».equals(augmentations(), otherImpl.augmentations())) {
+                        if (!«JU_OBJECTS.importedName».equals(augmentations(), otherImpl.augmentations())) {
                             return false;
                         }
                     } else {
                         // Hard case: compare our augments with presence there...
-                        for («Map.importedName».Entry<«Class.importedName»<? extends «augmentType.importedName»>, «augmentType.importedName»> e : augmentations().entrySet()) {
+                        for («JU_MAP.importedName».Entry<«CLASS.importedName»<? extends «augmentType.importedName»>, «augmentType.importedName»> e : augmentations().entrySet()) {
                             if (!e.getValue().equals(other.«AUGMENTABLE_AUGMENTATION_NAME»(e.getKey()))) {
                                 return false;
                             }

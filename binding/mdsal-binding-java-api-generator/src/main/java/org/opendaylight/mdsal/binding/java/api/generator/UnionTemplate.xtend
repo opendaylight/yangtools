@@ -12,7 +12,6 @@ import static org.opendaylight.mdsal.binding.model.util.Types.BYTE_ARRAY;
 import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
 import static org.opendaylight.mdsal.binding.model.util.Types.getOuterClassName;
 
-import java.util.Arrays
 import java.util.Base64;
 import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
@@ -102,7 +101,7 @@ class UnionTemplate extends ClassTemplate {
          *
          * @return String representation of this union's value.
          */
-        public «String.importedName» stringValue() {
+        public «STRING.importedName» stringValue() {
             «FOR property : finalProperties»
                 «val field = property.fieldName»
             if («field» != null) {
@@ -115,7 +114,7 @@ class UnionTemplate extends ClassTemplate {
                 return «field».toString();
                 «ELSEIF BYTE_ARRAY.equals(propRet)»
                     ««« type binary
-                return new «String.importedName»(«field»);
+                return new «STRING.importedName»(«field»);
                 «ELSEIF propRet.fullyQualifiedName.startsWith("java.lang") || propRet instanceof Enumeration
                         || propRet.fullyQualifiedName.startsWith("java.math")»
                     ««« type int*, decimal64 or enumeration*
@@ -140,7 +139,7 @@ class UnionTemplate extends ClassTemplate {
                         && (propRet as GeneratedTransferObject).typedef  // Is it a typedef
                         && (propRet as GeneratedTransferObject).baseType instanceof BitsTypeDefinition»
                     ««« generated bits typedef
-                return «Arrays.importedName».toString(«field».getValue());
+                return «JU_ARRAYS.importedName».toString(«field».getValue());
                 «ELSE»
                     ««« generated type
                 return «field».getValue().toString();

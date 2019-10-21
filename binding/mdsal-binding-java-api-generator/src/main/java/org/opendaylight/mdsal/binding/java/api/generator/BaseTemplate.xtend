@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static org.opendaylight.mdsal.binding.model.util.BindingGeneratorUtil.encodeAngleBrackets
+import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
 
 import com.google.common.base.CharMatcher
 import com.google.common.base.MoreObjects
@@ -37,7 +38,6 @@ import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Multiple
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
-import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.common.QName
 import org.opendaylight.yangtools.yang.common.Uint8
 import org.opendaylight.yangtools.yang.common.Uint16
@@ -416,10 +416,10 @@ abstract class BaseTemplate extends JavaFileTemplate {
     def protected generateToString(Collection<GeneratedProperty> properties) '''
         «IF !properties.empty»
             @«OVERRIDE.importedName»
-            public «String.importedName» toString() {
+            public «STRING.importedName» toString() {
                 final «MoreObjects.importedName».ToStringHelper helper = «MoreObjects.importedName».toStringHelper(«type.importedName».class);
                 «FOR property : properties»
-                    «CodeHelpers.importedName».appendValue(helper, "«property.fieldName»", «property.fieldName»);
+                    «CODEHELPERS.importedName».appendValue(helper, "«property.fieldName»", «property.fieldName»);
                 «ENDFOR»
                 return helper.toString();
             }
@@ -481,7 +481,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
        «FOR currentConstant : type.getConstantDefinitions»
            «IF currentConstant.getName.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)
                && fieldUpperCase.equals(currentConstant.getName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length))»
-           «CodeHelpers.importedName».checkPattern(value, «Constants.MEMBER_PATTERN_LIST»«fieldName», «Constants.MEMBER_REGEX_LIST»«fieldName»);
+           «CODEHELPERS.importedName».checkPattern(value, «Constants.MEMBER_PATTERN_LIST»«fieldName», «Constants.MEMBER_REGEX_LIST»«fieldName»);
            «ENDIF»
        «ENDFOR»
     '''

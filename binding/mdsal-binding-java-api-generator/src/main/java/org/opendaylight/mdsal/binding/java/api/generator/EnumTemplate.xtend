@@ -8,11 +8,10 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static org.opendaylight.mdsal.binding.model.util.BindingGeneratorUtil.encodeAngleBrackets
+import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
 
 import com.google.common.collect.ImmutableMap
 import com.google.common.collect.ImmutableMap.Builder
-import java.util.Map
-import java.util.Objects
 import java.util.Optional
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
@@ -70,11 +69,11 @@ class EnumTemplate extends BaseTemplate {
         public enum «enums.name» implements «org.opendaylight.yangtools.yang.binding.Enumeration.importedName» {
             «writeEnumeration(enums)»
 
-            private static final «Map.importedName»<«String.importedName», «enums.name»> NAME_MAP;
-            private static final «Map.importedName»<«Integer.importedName», «enums.name»> VALUE_MAP;
+            private static final «JU_MAP.importedName»<«STRING.importedName», «enums.name»> NAME_MAP;
+            private static final «JU_MAP.importedName»<«Integer.importedName», «enums.name»> VALUE_MAP;
 
             static {
-                final «Builder.importedName»<«String.importedName», «enums.name»> nb = «ImmutableMap.importedName».builder();
+                final «Builder.importedName»<«STRING.importedName», «enums.name»> nb = «ImmutableMap.importedName».builder();
                 final «Builder.importedName»<«Integer.importedName», «enums.name»> vb = «ImmutableMap.importedName».builder();
                 for («enums.name» enumItem : «enums.name».values()) {
                     vb.put(enumItem.value, enumItem);
@@ -85,16 +84,16 @@ class EnumTemplate extends BaseTemplate {
                 VALUE_MAP = vb.build();
             }
 
-            private final «String.importedName» name;
+            private final «STRING.importedName» name;
             private final int value;
 
-            private «enums.name»(int value, «String.importedName» name) {
+            private «enums.name»(int value, «STRING.importedName» name) {
                 this.value = value;
                 this.name = name;
             }
 
             @«OVERRIDE.importedName»
-            public «String.importedName» getName() {
+            public «STRING.importedName» getName() {
                 return name;
             }
 
@@ -110,8 +109,8 @@ class EnumTemplate extends BaseTemplate {
              * @return corresponding «enums.name» item, if present
              * @throws NullPointerException if name is null
              */
-            public static «Optional.importedName»<«enums.name»> forName(«String.importedName» name) {
-                return «Optional.importedName».ofNullable(NAME_MAP.get(«Objects.importedName».requireNonNull(name)));
+            public static «Optional.importedName»<«enums.name»> forName(«STRING.importedName» name) {
+                return «Optional.importedName».ofNullable(NAME_MAP.get(«JU_OBJECTS.importedName».requireNonNull(name)));
             }
 
             /**

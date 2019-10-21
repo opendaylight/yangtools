@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
+import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 
 import com.google.common.base.MoreObjects
@@ -15,7 +16,6 @@ import java.util.Collection
 import java.util.Collections
 import java.util.Comparator
 import java.util.List
-import java.util.Map
 import java.util.Set
 import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
@@ -24,7 +24,6 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
-import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.binding.Identifiable
 
 abstract class AbstractBuilderTemplate extends BaseTemplate {
@@ -85,20 +84,20 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     def protected final generateAugmentField() {
         val augmentTypeRef = augmentType.importedName
         return '''
-           «Map.importedName»<«Class.importedName»<? extends «augmentTypeRef»>, «augmentTypeRef»> «AUGMENTATION_FIELD» = «Collections.importedName».emptyMap();
+           «JU_MAP.importedName»<«CLASS.importedName»<? extends «augmentTypeRef»>, «augmentTypeRef»> «AUGMENTATION_FIELD» = «Collections.importedName».emptyMap();
         '''
     }
 
     override generateToString(Collection<GeneratedProperty> properties) '''
         «IF properties !== null»
             @«OVERRIDE.importedName»
-            public «String.importedName» toString() {
+            public «STRING.importedName» toString() {
                 final «MoreObjects.importedName».ToStringHelper helper = «MoreObjects.importedName».toStringHelper("«targetType.name»");
                 «FOR property : properties»
-                    «CodeHelpers.importedName».appendValue(helper, "«property.fieldName»", «property.fieldName»);
+                    «CODEHELPERS.importedName».appendValue(helper, "«property.fieldName»", «property.fieldName»);
                 «ENDFOR»
                 «IF augmentType !== null»
-                    «CodeHelpers.importedName».appendValue(helper, "«AUGMENTATION_FIELD»", augmentations().values());
+                    «CODEHELPERS.importedName».appendValue(helper, "«AUGMENTATION_FIELD»", augmentations().values());
                 «ENDIF»
                 return helper.toString();
             }

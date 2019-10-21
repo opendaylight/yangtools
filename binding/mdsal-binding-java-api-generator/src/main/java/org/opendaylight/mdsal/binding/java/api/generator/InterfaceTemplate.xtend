@@ -21,7 +21,6 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
-import org.opendaylight.yangtools.yang.binding.CodeHelpers
 
 /**
  * Template for generating JAVA interfaces.
@@ -195,7 +194,7 @@ class InterfaceTemplate extends BaseTemplate {
 
     def private generateDefaultImplementedInterface() '''
         @«OVERRIDE.importedName»
-        default «Class.importedName»<«type.fullyQualifiedName»> «DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»() {
+        default «CLASS.importedName»<«type.fullyQualifiedName»> «DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»() {
             return «type.fullyQualifiedName».class;
         }
     '''
@@ -206,7 +205,7 @@ class InterfaceTemplate extends BaseTemplate {
         «formatDataForJavaDoc(method, "@return " + asCode(ret.fullyQualifiedName) + " " + asCode(propertyNameFromGetter(method)) + ", or an empty list if it is not present")»
         «method.annotations.generateAnnotations»
         default «ret.importedNonNull» «name»() {
-            return «CodeHelpers.importedName».nonnull(«getGetterMethodForNonnull(name)»());
+            return «CODEHELPERS.importedName».nonnull(«getGetterMethodForNonnull(name)»());
         }
     '''
 

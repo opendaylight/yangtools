@@ -22,7 +22,6 @@ import java.util.Base64;
 import java.util.Comparator
 import java.util.List
 import java.util.Map
-import java.util.regex.Pattern
 import javax.management.ConstructorParameters
 import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
@@ -33,7 +32,6 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.Restrictions
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
-import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.common.Empty
 import org.opendaylight.yangtools.yang.common.Uint16
 import org.opendaylight.yangtools.yang.common.Uint32
@@ -251,7 +249,7 @@ class ClassTemplate extends BaseTemplate {
          * If we have patterns, we need to apply them to the value field. This is a sad consequence of how this code is
          * structured.
          */»
-        «CodeHelpers.importedName».requireValue(_value);
+        «CODEHELPERS.importedName».requireValue(_value);
         «genPatternEnforcer("_value")»
 
         «FOR p : properties»
@@ -270,7 +268,7 @@ class ClassTemplate extends BaseTemplate {
             return ""
         }
 
-        val compatUint = CodeHelpers.importedName + ".compatUint("
+        val compatUint = CODEHELPERS.importedName + ".compatUint("
         return '''
 
             /**
@@ -316,7 +314,7 @@ class ClassTemplate extends BaseTemplate {
     def private genPatternEnforcer(String ref) '''
         «FOR c : consts»
             «IF c.name == TypeConstants.PATTERN_CONSTANT_NAME»
-            «CodeHelpers.importedName».checkPattern(«ref», «Constants.MEMBER_PATTERN_LIST», «Constants.MEMBER_REGEX_LIST»);
+            «CODEHELPERS.importedName».checkPattern(«ref», «Constants.MEMBER_PATTERN_LIST», «Constants.MEMBER_REGEX_LIST»);
             «ENDIF»
         «ENDFOR»
     '''
@@ -415,7 +413,7 @@ class ClassTemplate extends BaseTemplate {
     '''
 
     def protected bitsArgs() '''
-        «List.importedName»<«String.importedName»> properties = «Lists.importedName».newArrayList(«allProperties.propsAsArgs»);
+        «JU_LIST.importedName»<«STRING.importedName»> properties = «Lists.importedName».newArrayList(«allProperties.propsAsArgs»);
         if (!properties.contains(defaultValue)) {
             throw new «IllegalArgumentException.importedName»("invalid default parameter");
         }
@@ -496,13 +494,14 @@ class ClassTemplate extends BaseTemplate {
             «FOR c : consts»
                 «IF c.name == TypeConstants.PATTERN_CONSTANT_NAME»
                     «val cValue = c.value as Map<String, String>»
-                    public static final «List.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «ImmutableList.importedName».of(«
+                    «val jurPatternRef = JUR_PATTERN.importedName»
+                    public static final «JU_LIST.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «ImmutableList.importedName».of(«
                     FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»);
                     «IF cValue.size == 1»
-                        private static final «Pattern.importedName» «Constants.MEMBER_PATTERN_LIST» = «Pattern.importedName».compile(«TypeConstants.PATTERN_CONSTANT_NAME».get(0));
+                        private static final «jurPatternRef» «Constants.MEMBER_PATTERN_LIST» = «jurPatternRef».compile(«TypeConstants.PATTERN_CONSTANT_NAME».get(0));
                         private static final String «Constants.MEMBER_REGEX_LIST» = "«cValue.values.iterator.next.escapeJava»";
                     «ELSE»
-                        private static final «Pattern.importedName»[] «Constants.MEMBER_PATTERN_LIST» = «CodeHelpers.importedName».compilePatterns(«TypeConstants.PATTERN_CONSTANT_NAME»);
+                        private static final «jurPatternRef»[] «Constants.MEMBER_PATTERN_LIST» = «CODEHELPERS.importedName».compilePatterns(«TypeConstants.PATTERN_CONSTANT_NAME»);
                         private static final String[] «Constants.MEMBER_REGEX_LIST» = { «
                         FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };
                     «ENDIF»
@@ -547,7 +546,7 @@ class ClassTemplate extends BaseTemplate {
                     «hashCodeResult(genTO.hashCodeIdentifiers)»
                     return result;
                 «ELSE»
-                    return «CodeHelpers.importedName».wrapperHashCode(«genTO.hashCodeIdentifiers.get(0).fieldName»);
+                    return «CODEHELPERS.importedName».wrapperHashCode(«genTO.hashCodeIdentifiers.get(0).fieldName»);
                 «ENDIF»
             }
         '''

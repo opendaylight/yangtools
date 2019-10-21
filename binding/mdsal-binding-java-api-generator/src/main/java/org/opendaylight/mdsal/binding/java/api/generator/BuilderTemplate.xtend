@@ -19,7 +19,6 @@ import java.util.HashSet
 import java.util.List
 import java.util.Map
 import java.util.Set
-import java.util.regex.Pattern
 import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
@@ -32,7 +31,6 @@ import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder
-import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.binding.DataObject
 
 /**
@@ -165,7 +163,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                     «FOR impl : targetType.getAllIfcs»
                         «generateIfCheck(impl, done)»
                     «ENDFOR»
-                    «CodeHelpers.importedName».validValue(isValidArg, arg, "«targetType.getAllIfcs.toListOfNames»");
+                    «CODEHELPERS.importedName».validValue(isValidArg, arg, "«targetType.getAllIfcs.toListOfNames»");
                 }
             «ENDIF»
         «ENDIF»
@@ -256,12 +254,13 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             «IF c.getName.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)»
                 «val cValue = c.value as Map<String, String>»
                 «val String fieldSuffix = c.getName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length)»
+                «val jurPatternRef = JUR_PATTERN.importedName»
                 «IF cValue.size == 1»
                    «val firstEntry = cValue.entrySet.iterator.next»
-                   private static final «Pattern.importedName» «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «Pattern.importedName».compile("«firstEntry.key.escapeJava»");
+                   private static final «jurPatternRef» «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «jurPatternRef».compile("«firstEntry.key.escapeJava»");
                    private static final String «Constants.MEMBER_REGEX_LIST»«fieldSuffix» = "«firstEntry.value.escapeJava»";
                 «ELSE»
-                   private static final «Pattern.importedName»[] «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «CodeHelpers.importedName».compilePatterns(«ImmutableList.importedName».of(
+                   private static final «jurPatternRef»[] «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «CODEHELPERS.importedName».compilePatterns(«ImmutableList.importedName».of(
                    «FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»));
                    private static final String[] «Constants.MEMBER_REGEX_LIST»«fieldSuffix» = { «
                    FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };
@@ -320,7 +319,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
              */
             @Deprecated(forRemoval = true)
             public «type.getName» «setterName»(final «uintType.importedName» value) {
-                return «setterName»(«CodeHelpers.importedName».compatUint(value));
+                return «setterName»(«CODEHELPERS.importedName».compatUint(value));
             }
         «ENDIF»
     '''
@@ -351,7 +350,8 @@ class BuilderTemplate extends AbstractBuilderTemplate {
 
         «IF augmentType !== null»
             «val augmentTypeRef = augmentType.importedName»
-            public «type.name» add«AUGMENTATION_FIELD_UPPER»(«Class.importedName»<? extends «augmentTypeRef»> augmentationType, «augmentTypeRef» augmentationValue) {
+            «val jlClassRef = CLASS.importedName»
+            public «type.name» add«AUGMENTATION_FIELD_UPPER»(«jlClassRef»<? extends «augmentTypeRef»> augmentationType, «augmentTypeRef» augmentationValue) {
                 if (augmentationValue == null) {
                     return remove«AUGMENTATION_FIELD_UPPER»(augmentationType);
                 }
@@ -364,7 +364,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                 return this;
             }
 
-            public «type.name» remove«AUGMENTATION_FIELD_UPPER»(«Class.importedName»<? extends «augmentTypeRef»> augmentationType) {
+            public «type.name» remove«AUGMENTATION_FIELD_UPPER»(«jlClassRef»<? extends «augmentTypeRef»> augmentationType) {
                 if (this.«AUGMENTATION_FIELD» instanceof «HashMap.importedName») {
                     this.«AUGMENTATION_FIELD».remove(augmentationType);
                 }
@@ -427,8 +427,8 @@ class BuilderTemplate extends AbstractBuilderTemplate {
 
     private def generateAugmentation() '''
         @«SUPPRESS_WARNINGS.importedName»({ "unchecked", "checkstyle:methodTypeParameterName"})
-        public <E$$ extends «augmentType.importedName»> E$$ «AUGMENTABLE_AUGMENTATION_NAME»(«Class.importedName»<E$$> augmentationType) {
-            return (E$$) «AUGMENTATION_FIELD».get(«CodeHelpers.importedName».nonNullValue(augmentationType, "augmentationType"));
+        public <E$$ extends «augmentType.importedName»> E$$ «AUGMENTABLE_AUGMENTATION_NAME»(«CLASS.importedName»<E$$> augmentationType) {
+            return (E$$) «AUGMENTATION_FIELD».get(«CODEHELPERS.importedName».nonNullValue(augmentationType, "augmentationType"));
         }
     '''
 
@@ -447,7 +447,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         return '''
             if (base instanceof «augmentationHolderRef») {
                 @SuppressWarnings("unchecked")
-                «Map.importedName»<«Class.importedName»<? extends «augmentTypeRef»>, «augmentTypeRef»> aug =((«augmentationHolderRef»<«typeRef»>) base).augmentations();
+                «JU_MAP.importedName»<«CLASS.importedName»<? extends «augmentTypeRef»>, «augmentTypeRef»> aug =((«augmentationHolderRef»<«typeRef»>) base).augmentations();
                 if (!aug.isEmpty()) {
                     this.«AUGMENTATION_FIELD» = new «hashMapRef»<>(aug);
                 }
