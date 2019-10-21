@@ -36,60 +36,60 @@ class JavaFileTemplate {
     /**
      * {@code java.lang.Class} as a JavaTypeName.
      */
-    static final JavaTypeName CLASS = JavaTypeName.create(Class.class);
+    static final @NonNull JavaTypeName CLASS = JavaTypeName.create(Class.class);
     /**
      * {@code java.lang.Deprecated} as a JavaTypeName.
      */
-    static final JavaTypeName DEPRECATED = JavaTypeName.create(Deprecated.class);
+    static final @NonNull JavaTypeName DEPRECATED = JavaTypeName.create(Deprecated.class);
     /**
      * {@code java.lang.Override} as a JavaTypeName.
      */
-    static final JavaTypeName OVERRIDE = JavaTypeName.create(Override.class);
+    static final @NonNull JavaTypeName OVERRIDE = JavaTypeName.create(Override.class);
 
     /**
      * {@code java.lang.SuppressWarnings} as a JavaTypeName.
      */
-    static final JavaTypeName SUPPRESS_WARNINGS = JavaTypeName.create(SuppressWarnings.class);
+    static final @NonNull JavaTypeName SUPPRESS_WARNINGS = JavaTypeName.create(SuppressWarnings.class);
 
     /**
      * {@code java.util.Arrays} as a JavaTypeName.
      */
-    static final JavaTypeName JU_ARRAYS = JavaTypeName.create(Arrays.class);
+    static final @NonNull JavaTypeName JU_ARRAYS = JavaTypeName.create(Arrays.class);
     /**
      * {@code java.util.List} as a JavaTypeName.
      */
-    static final JavaTypeName JU_LIST = JavaTypeName.create(List.class);
+    static final @NonNull JavaTypeName JU_LIST = JavaTypeName.create(List.class);
     /**
      * {@code java.util.Map} as a JavaTypeName.
      */
-    static final JavaTypeName JU_MAP = JavaTypeName.create(Map.class);
+    static final @NonNull JavaTypeName JU_MAP = JavaTypeName.create(Map.class);
     /**
      * {@code java.util.Objects} as a JavaTypeName.
      */
-    static final JavaTypeName JU_OBJECTS = JavaTypeName.create(Objects.class);
+    static final @NonNull JavaTypeName JU_OBJECTS = JavaTypeName.create(Objects.class);
     /**
      * {@code java.util.regex.Pattern} as a JavaTypeName.
      */
-    static final JavaTypeName JUR_PATTERN = JavaTypeName.create(Pattern.class);
+    static final @NonNull JavaTypeName JUR_PATTERN = JavaTypeName.create(Pattern.class);
 
     /**
      * {@code org.eclipse.jdt.annotation.NonNull} as a JavaTypeName.
      */
-    static final JavaTypeName NONNULL = JavaTypeName.create("org.eclipse.jdt.annotation", "NonNull");
+    static final @NonNull JavaTypeName NONNULL = JavaTypeName.create("org.eclipse.jdt.annotation", "NonNull");
     /**
      * {@code org.eclipse.jdt.annotation.Nullable} as a JavaTypeName.
      */
-    static final JavaTypeName NULLABLE = JavaTypeName.create("org.eclipse.jdt.annotation", "Nullable");
+    static final @NonNull JavaTypeName NULLABLE = JavaTypeName.create("org.eclipse.jdt.annotation", "Nullable");
 
     /**
      * {@code org.opendaylight.yangtools.yang.binding.CodeHelpers} as a JavaTypeName.
      */
-    static final JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
+    static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
 
     private final AbstractJavaGeneratedType javaType;
     private final GeneratedType type;
 
-    JavaFileTemplate(final GeneratedType type) {
+    JavaFileTemplate(final @NonNull GeneratedType type) {
         this(new TopLevelJavaGeneratedType(type), type);
     }
 
@@ -123,31 +123,31 @@ class JavaFileTemplate {
                 .collect(Collectors.joining());
     }
 
-    final String importedJavadocName(final Type intype) {
+    final @NonNull String importedJavadocName(final @NonNull Type intype) {
         return importedName(intype instanceof ParameterizedType ? ((ParameterizedType) intype).getRawType() : intype);
     }
 
-    final String importedName(final Type intype) {
+    final @NonNull String importedName(final @NonNull Type intype) {
         return javaType.getReferenceString(intype);
     }
 
-    final String importedName(final Type intype, final @NonNull String annotation) {
+    final @NonNull String importedName(final @NonNull Type intype, final @NonNull String annotation) {
         return javaType.getReferenceString(intype, annotation);
     }
 
-    final String importedName(final Class<?> cls) {
+    final @NonNull String importedName(final Class<?> cls) {
         return importedName(Types.typeForClass(cls));
     }
 
-    final String importedName(final JavaTypeName intype) {
+    final @NonNull String importedName(final @NonNull JavaTypeName intype) {
         return javaType.getReferenceString(intype);
     }
 
-    final String importedNonNull(final Type intype) {
+    final @NonNull String importedNonNull(final @NonNull Type intype) {
         return importedName(intype, importedName(NONNULL));
     }
 
-    final String importedNullable(final Type intype) {
+    final @NonNull String importedNullable(final @NonNull Type intype) {
         return importedName(intype, importedName(NULLABLE));
     }
 

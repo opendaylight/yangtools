@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.Enumeration;
@@ -95,7 +96,7 @@ abstract class AbstractJavaGeneratedType {
                 : annotate(ref, annotation).toString();
     }
 
-    private String getReferenceString(final StringBuilder sb, final Type type, final Type[] arguments) {
+    private String getReferenceString(final StringBuilder sb, final Type type, final @NonNull Type[] arguments) {
         if (arguments.length == 0) {
             return sb.append("<?>").toString();
         }

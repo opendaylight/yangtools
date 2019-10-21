@@ -113,7 +113,7 @@ final class LengthGenerator {
         return sb.append("}\n").toString();
     }
 
-    static String generateLengthChecker(final String member, final Type type,
+    static String generateLengthChecker(final String member, final @NonNull Type type,
             final LengthConstraint constraint, final JavaFileTemplate template) {
         return TypeUtils.getBaseYangType(type).getName().indexOf('[') != -1
                 ? generateArrayLengthChecker(member, constraint, template)
