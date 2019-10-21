@@ -23,7 +23,6 @@ import java.util.TreeMap
 import java.util.function.Function
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.gaul.modernizer_maven_annotations.SuppressModernizer
-import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yangtools.yang.common.Revision
 import org.opendaylight.yangtools.yang.model.api.Module
