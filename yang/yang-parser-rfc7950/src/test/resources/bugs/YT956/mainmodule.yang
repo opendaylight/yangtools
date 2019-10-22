@@ -1,0 +1,8 @@
+module mainmodule {
+    yang-version 1.1;
+    namespace "http://www.example.com/mainmodule";
+    prefix mm;
+
+    include sub-module-1;
+    include sub-module-2;
+}

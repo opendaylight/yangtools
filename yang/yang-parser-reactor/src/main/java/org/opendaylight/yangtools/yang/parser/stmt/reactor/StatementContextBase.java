@@ -99,6 +99,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private final @NonNull StatementDefinitionContext<A, D, E> definition;
     private final @NonNull StatementSourceReference statementDeclSource;
     private final StmtContext<?, ?, ?> originalCtx;
+    private final StmtContext<?, ?, ?> prevCopyCtx;
     private final CopyHistory copyHistory;
     private final String rawArgument;
 
@@ -125,6 +126,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.rawArgument = def.internArgument(rawArgument);
         this.copyHistory = CopyHistory.original();
         this.originalCtx = null;
+        this.prevCopyCtx = null;
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> original, final CopyType copyType) {
@@ -133,6 +135,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.rawArgument = original.rawArgument;
         this.copyHistory = CopyHistory.of(copyType, original.getCopyHistory());
         this.originalCtx = original.getOriginalCtx().orElse(original);
+        this.prevCopyCtx = original;
     }
 
     @Override
@@ -218,6 +221,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public Optional<StmtContext<?, ?, ?>> getOriginalCtx() {
         return Optional.ofNullable(originalCtx);
+    }
+
+    @Override
+    public Optional<? extends StmtContext<?, ?, ?>> getPreviousCopyCtx() {
+        return Optional.ofNullable(prevCopyCtx);
     }
 
     @Override
