@@ -155,13 +155,31 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     boolean isSupportedToBuildEffective();
 
-    Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement();
-
-    CopyHistory getCopyHistory();
-
     boolean isSupportedByFeatures();
 
+    Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement();
+
+    /**
+     * Return the executive summary of the copy process that has produced this context.
+     *
+     * @return A simplified summary of the copy process.
+     */
+    CopyHistory getCopyHistory();
+
+    /**
+     * Return the statement context of the original definition, if this statement is an instantiated copy.
+     *
+     * @return Original definition, if this statement was copied.
+     */
     Optional<StmtContext<?, ?, ?>> getOriginalCtx();
+
+    /**
+     * Return the context of the previous copy of this statement -- effectively walking towards the source origin
+     * of this statement.
+     *
+     * @return Context of the previous copy of this statement, if this statement has been copied.
+     */
+    Optional<? extends StmtContext<?, ?, ?>> getPreviousCopyCtx();
 
     ModelProcessingPhase getCompletedPhase();
 
