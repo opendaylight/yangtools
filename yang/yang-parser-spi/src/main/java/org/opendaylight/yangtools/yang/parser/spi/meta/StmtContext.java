@@ -159,6 +159,19 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement();
 
+    /*
+     * FIXME: YANGTOOLS-784: the next three methods are closely related to the copy process:
+     *        - getCopyHistory() is a brief summary of what went on
+     *        - getOriginalContext() points to the CopyHistory.ORIGINAL
+     *        - getPreviousCopyCtx() points to the immediate predecessor forming a singly-linked list terminated
+     *          at getOriginalContext()
+     *
+     *        When implementing YANGTOOLS-784, this needs to be taken into account and properly forwarded through
+     *        intermediate MutableTrees. Also note this closely relates to current namespace context, as taken into
+     *        account when creating the argument. At least parts of this are only needed during buildEffective()
+     *        and hence should become arguments to that method.
+     */
+
     /**
      * Return the executive summary of the copy process that has produced this context.
      *
