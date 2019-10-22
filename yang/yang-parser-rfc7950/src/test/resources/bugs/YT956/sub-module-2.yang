@@ -1,0 +1,43 @@
+submodule sub-module-2 {
+    yang-version 1.1;
+
+    belongs-to mainmodule {
+        prefix mm;
+    }
+
+    import another-module {
+        prefix am;
+    }
+
+    include sub-module-1;
+
+    grouping dummygrouping {
+        leaf dummyleaf {
+            type string;
+            mandatory true;
+        }
+    }
+
+    grouping first {
+        leaf first-leaf {
+            type string;
+            mandatory true;
+        }
+    }
+
+    grouping second {
+        uses first;
+        leaf second-leaf {
+            type string;
+            mandatory true;
+        }
+    }
+
+    augment '/am:another-container/mm:first-augment' {
+        uses dummygrouping;
+    }
+
+    augment '/am:another-container/mm:first-augment' {
+        uses second;
+    }
+}

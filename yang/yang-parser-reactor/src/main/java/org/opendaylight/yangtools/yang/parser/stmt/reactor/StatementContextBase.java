@@ -101,6 +101,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private final @NonNull StatementDefinitionContext<A, D, E> definition;
     private final @NonNull StatementSourceReference statementDeclSource;
     private final StmtContext<?, ?, ?> originalCtx;
+    private final StmtContext<?, ?, ?> prevCopyCtx;
     private final CopyHistory copyHistory;
     private final String rawArgument;
 
@@ -127,6 +128,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.rawArgument = def.internArgument(rawArgument);
         this.copyHistory = CopyHistory.original();
         this.originalCtx = null;
+        this.prevCopyCtx = null;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
@@ -136,6 +138,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.rawArgument = rawArgument;
         this.copyHistory = CopyHistory.of(copyType, CopyHistory.original());
         this.originalCtx = null;
+        this.prevCopyCtx = null;
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> original, final CopyType copyType) {
@@ -144,6 +147,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.rawArgument = original.rawArgument;
         this.copyHistory = CopyHistory.of(copyType, original.getCopyHistory());
         this.originalCtx = original.getOriginalCtx().orElse(original);
+        this.prevCopyCtx = original;
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> original) {
@@ -152,6 +156,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.rawArgument = original.rawArgument;
         this.copyHistory = original.getCopyHistory();
         this.originalCtx = original.getOriginalCtx().orElse(original);
+        this.prevCopyCtx = original;
         this.substatements = original.substatements;
         this.effective = original.effective;
     }
@@ -239,6 +244,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public Optional<StmtContext<?, ?, ?>> getOriginalCtx() {
         return Optional.ofNullable(originalCtx);
+    }
+
+    @Override
+    public Optional<? extends StmtContext<?, ?, ?>> getPreviousCopyCtx() {
+        return Optional.ofNullable(prevCopyCtx);
     }
 
     @Override
