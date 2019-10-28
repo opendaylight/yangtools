@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
@@ -48,6 +49,7 @@ import org.opendaylight.yangtools.util.SharedSingletonMap;
 import org.opendaylight.yangtools.util.SingletonSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UncheckedQName;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 
 /**
@@ -545,6 +547,14 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
                         return new NodeIdentifier(key);
                     }
                 });
+        private static final LoadingCache<UncheckedQName, NodeIdentifier> UNCHECKED_CACHE = CacheBuilder.newBuilder()
+                .weakValues().build(new CacheLoader<UncheckedQName, NodeIdentifier>() {
+                    @Override
+                    public NodeIdentifier load(final UncheckedQName key) {
+                        return create(key.toQName().intern());
+                    }
+                });
+
 
         public NodeIdentifier(final QName node) {
             super(node);
@@ -559,6 +569,11 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          */
         public static @NonNull NodeIdentifier create(final QName node) {
             return CACHE.getUnchecked(node);
+        }
+
+        @Beta
+        public static @NonNull NodeIdentifier create(QNameModule module, String localName) throws ExecutionException {
+            return UNCHECKED_CACHE.get(UncheckedQName.of(module, localName));
         }
 
         @Override
