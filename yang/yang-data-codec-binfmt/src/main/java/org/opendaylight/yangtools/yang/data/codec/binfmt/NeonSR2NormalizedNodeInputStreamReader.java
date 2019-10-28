@@ -13,6 +13,7 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -131,8 +132,12 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
 
     private QName rawQName() throws IOException {
         final String localName = readCodedString();
-        final QNameModule module = readModule();
-        final QName qname = QNameFactory.create(module, localName);
+        QName qname;
+        try {
+            qname = readModule().createQName(localName);
+        } catch (ExecutionException e) {
+            throw new IOException("Invalid local name \"" + localName + "\"");
+        }
         codedQNames.add(qname);
         return qname;
     }
