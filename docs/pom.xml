@@ -52,6 +52,10 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-data-codec-binfmt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-data-codec-gson</artifactId>
         </dependency>
         <dependency>
@@ -348,6 +352,10 @@
                         <group>
                             <title>Common YANG parser</title>
                             <packages>org.opendaylight.yangtools.yang.parser*</packages>
+                        </group>
+                        <group>
+                            <title>DataInput/DataOutput streaming interfaces</title>
+                            <packages>org.opendaylight.yangtools.yang.data.codec.binfmt*</packages>
                         </group>
                     </groups>
                 </configuration>

@@ -19,7 +19,7 @@
     <artifactId>yang-data-codec-binfmt</artifactId>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
-    <description>${project.artifactId}</description>
+    <description>DataInput/Output for NormalizedNodes</description>
 
     <dependencies>
         <dependency>
@@ -42,11 +42,6 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-test-util</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
