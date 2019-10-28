@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 import com.google.common.annotations.Beta;
 import java.io.DataOutput;
 import java.io.IOException;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -23,10 +23,11 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
  * and {@link SchemaPath}s.
  */
 @Beta
+@NonNullByDefault
 public interface NormalizedNodeDataOutput extends AutoCloseable, DataOutput {
-    void writeQName(@NonNull QName qname) throws IOException;
+    void writeQName(QName qname) throws IOException;
 
-    void writeNormalizedNode(@NonNull NormalizedNode<?, ?> normalizedNode) throws IOException;
+    void writeNormalizedNode(NormalizedNode<?, ?> normalizedNode) throws IOException;
 
     void writePathArgument(PathArgument pathArgument) throws IOException;
 
