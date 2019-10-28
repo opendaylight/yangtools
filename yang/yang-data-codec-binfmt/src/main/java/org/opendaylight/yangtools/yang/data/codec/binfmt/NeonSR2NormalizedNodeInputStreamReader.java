@@ -13,6 +13,8 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -121,7 +123,7 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
         return ret;
     }
 
-    private QName codedQName(final int code) throws IOException {
+    private @NonNull QName codedQName(final int code) throws IOException {
         try {
             return codedQNames.get(code);
         } catch (IndexOutOfBoundsException e) {
@@ -129,10 +131,14 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
         }
     }
 
-    private QName rawQName() throws IOException {
+    private @NonNull QName rawQName() throws IOException {
         final String localName = readCodedString();
-        final QNameModule module = readModule();
-        final QName qname = QNameFactory.create(module, localName);
+        final QName qname;
+        try {
+            qname = readModule().createQName(localName);
+        } catch (ExecutionException e) {
+            throw new IOException("Invalid local name \"" + localName + "\"", e);
+        }
         codedQNames.add(qname);
         return qname;
     }
