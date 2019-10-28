@@ -84,4 +84,31 @@ public interface NormalizedNodeDataInput extends DataInput {
     default Optional<NormalizedNode<?, ?>> readOptionalNormalizedNode() throws IOException {
         return readBoolean() ? Optional.of(readNormalizedNode()) : Optional.empty();
     }
+
+    /**
+     * Creates a new {@link NormalizedNodeDataInput} instance that reads from the given input. This method first reads
+     * and validates that the input contains a valid NormalizedNode stream.
+     *
+     * @param input the DataInput to read from
+     * @return a new {@link NormalizedNodeDataInput} instance
+     * @throws InvalidNormalizedNodeStreamException if the stream version is not supported
+     * @throws IOException if an error occurs reading from the input
+     */
+    static @NonNull NormalizedNodeDataInput newDataInput(final @NonNull DataInput input) throws IOException {
+        return new VersionedNormalizedNodeDataInput(input).delegate();
+    }
+
+    /**
+     * Creates a new {@link NormalizedNodeDataInput} instance that reads from the given input. This method does not
+     * perform any initial validation of the input stream.
+     *
+     * @param input the DataInput to read from
+     * @return a new {@link NormalizedNodeDataInput} instance
+     * @deprecated Use {@link #newDataInput(DataInput)} instead.
+     */
+    // FIXME: 5.0.0: deprecate for removal
+    @Deprecated
+    static @NonNull NormalizedNodeDataInput newDataInputWithoutValidation(final @NonNull DataInput input) {
+        return new VersionedNormalizedNodeDataInput(input);
+    }
 }
