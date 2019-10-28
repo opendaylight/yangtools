@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
-public final class QNameFactory {
+final class QNameFactory {
     private static final class StringQName implements Immutable {
         private final @NonNull String localName;
         private final @NonNull String namespace;
@@ -125,13 +125,6 @@ public final class QNameFactory {
     private static final int MAX_MODULE_CACHE_SIZE = Integer.getInteger(
         "org.opendaylight.controller.cluster.datastore.node.utils.module-cache.max-size", 2000);
 
-    private static final LoadingCache<String, QName> LEGACY_CACHE = CacheBuilder.newBuilder()
-            .maximumSize(MAX_QNAME_CACHE_SIZE).weakValues().build(new CacheLoader<String, QName>() {
-                @Override
-                public QName load(final String key) {
-                    return QName.create(key).intern();
-                }
-            });
     private static final LoadingCache<StringQName, QName> STRING_CACHE = CacheBuilder.newBuilder()
             .maximumSize(MAX_QNAME_CACHE_SIZE).weakValues().build(new CacheLoader<StringQName, QName>() {
                 @Override
@@ -165,24 +158,19 @@ public final class QNameFactory {
 
     }
 
-    @Deprecated
-    public static QName create(final String name) {
-        return LEGACY_CACHE.getUnchecked(name);
-    }
-
-    public static QName create(final String localName, final String namespace, final @Nullable String revision) {
+    static QName create(final String localName, final String namespace, final @Nullable String revision) {
         return STRING_CACHE.getUnchecked(new StringQName(localName, namespace, revision));
     }
 
-    public static QName create(final QNameModule module, final String localName) {
+    static QName create(final QNameModule module, final String localName) {
         return QNAME_CACHE.getUnchecked(new ModuleQName(module, localName));
     }
 
-    public static QNameModule createModule(final String namespace, final @Nullable String revision) {
+    static QNameModule createModule(final String namespace, final @Nullable String revision) {
         return MODULE_CACHE.getUnchecked(new StringModule(namespace, revision));
     }
 
-    public static @NonNull NodeIdentifier getNodeIdentifier(final QNameModule module, final String localName)
+    static @NonNull NodeIdentifier getNodeIdentifier(final QNameModule module, final String localName)
             throws ExecutionException {
         return NODEID_CACHE.get(new ModuleQName(module, localName));
     }
