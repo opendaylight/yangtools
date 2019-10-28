@@ -289,7 +289,7 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
         final String localName = readRefString();
         final NodeIdentifier nodeId;
         try {
-            nodeId = QNameFactory.getNodeIdentifier(module, localName);
+            nodeId = NodeIdentifier.create(module, localName);
         } catch (ExecutionException e) {
             throw new InvalidNormalizedNodeStreamException("Illegal QName module=" + module + " localName="
                     + localName, e);

@@ -9,7 +9,11 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.io.DataInput;
@@ -20,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
@@ -27,8 +32,16 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.WritableObject;
 
 public final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable, Identifier, WritableObject {
-    private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 3L;
+    private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
+
+    private static final LoadingCache<UncheckedQName, QName> QNAME_CACHE = CacheBuilder.newBuilder()
+            .weakValues().build(new CacheLoader<UncheckedQName, QName>() {
+                @Override
+                public QName load(final UncheckedQName key) {
+                    return key.toQName().intern();
+                }
+            });
 
     private final @NonNull URI namespace;
     private final @Nullable Revision revision;
@@ -47,6 +60,11 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      */
     public @NonNull QNameModule intern() {
         return INTERNER.intern(this);
+    }
+
+    @Beta
+    public @NonNull QName createQName(final String localName) throws ExecutionException {
+        return QNAME_CACHE.get(UncheckedQName.of(this, localName));
     }
 
     /**
