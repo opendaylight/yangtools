@@ -63,12 +63,6 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
     private static final byte @NonNull[] BINARY_0 = new byte[0];
     private static final @NonNull AugmentationIdentifier EMPTY_AID = AugmentationIdentifier.create(ImmutableSet.of());
 
-    // FIXME: these should be available as constants
-    private static final @NonNull Uint8 UINT8_0 = Uint8.valueOf(0);
-    private static final @NonNull Uint16 UINT16_0 = Uint16.valueOf(0);
-    private static final @NonNull Uint32 UINT32_0 = Uint32.valueOf(0);
-    private static final @NonNull Uint64 UINT64_0 = Uint64.valueOf(0);
-
     private final List<AugmentationIdentifier> codedAugments = new ArrayList<>();
     private final List<NodeIdentifier> codedNodeIdentifiers = new ArrayList<>();
     private final List<QNameModule> codedModules = new ArrayList<>();
@@ -742,21 +736,21 @@ abstract class AbstractMagnesiumDataInput extends AbstractNormalizedNodeDataInpu
             case MagnesiumValue.UINT8:
                 return Uint8.fromByteBits(input.readByte());
             case MagnesiumValue.UINT8_0:
-                return UINT8_0;
+                return Uint8.ZERO;
             case MagnesiumValue.UINT16:
                 return Uint16.fromShortBits(input.readShort());
             case MagnesiumValue.UINT16_0:
-                return UINT16_0;
+                return Uint16.ZERO;
             case MagnesiumValue.UINT32:
                 return Uint32.fromIntBits(input.readInt());
             case MagnesiumValue.UINT32_0:
-                return UINT32_0;
+                return Uint32.ZERO;
             case MagnesiumValue.UINT32_2B:
                 return Uint32.fromIntBits(input.readShort() & 0xFFFF);
             case MagnesiumValue.UINT64:
                 return Uint64.fromLongBits(input.readLong());
             case MagnesiumValue.UINT64_0:
-                return UINT64_0;
+                return Uint64.ZERO;
             case MagnesiumValue.UINT64_4B:
                 return Uint64.fromLongBits(input.readInt() & 0xFFFFFFFFL);
             case MagnesiumValue.BIGDECIMAL:
