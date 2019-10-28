@@ -19,7 +19,7 @@
     <artifactId>yang-data-codec-binfmt</artifactId>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
-    <description>${project.artifactId}</description>
+    <description>DataInput/Output for NormalizedNodes</description>
 
     <dependencies>
         <dependency>
