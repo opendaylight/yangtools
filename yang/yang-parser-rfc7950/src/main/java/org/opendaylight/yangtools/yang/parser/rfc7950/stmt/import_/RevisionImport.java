@@ -14,6 +14,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -34,6 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToSourceIdentifier;
 
 final class RevisionImport {
@@ -64,12 +67,17 @@ final class RevisionImport {
             public void apply(final InferenceContext ctx) {
                 final StmtContext<?, ?, ?> importedModule = imported.resolve(ctx);
 
+                final QNameModule mod = InferenceException.throwIfNull(stmt.getFromNamespace(
+                    ModuleCtxToModuleQName.class, importedModule), stmt.getStatementSourceReference(),
+                    "Failed to find module of %s", importedModule);
+
                 linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class,
                     stmt.getFromNamespace(ModuleCtxToSourceIdentifier.class, importedModule), importedModule);
                 final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
                 final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(),
                     NamespaceStatement.class);
                 stmt.addToNs(ImportPrefixToModuleCtx.class, impPrefix, importedModule);
+                stmt.addToNs(ModuleQNameToPrefix.class, mod, impPrefix);
                 stmt.addToNs(URIStringToImportPrefix.class, modNs.toString(), impPrefix);
             }
 
