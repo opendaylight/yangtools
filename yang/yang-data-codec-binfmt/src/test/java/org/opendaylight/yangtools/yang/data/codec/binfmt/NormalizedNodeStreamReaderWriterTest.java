@@ -356,25 +356,30 @@ public class NormalizedNodeStreamReaderWriterTest {
     public void testAugmentationIdentifier() throws IOException {
         final List<QName> qnames = new ArrayList<>();
         for (int i = 0; i < 257; ++i) {
-            qnames.add(QName.create(TestModel.TEST_QNAME, "a" + i));
+            qnames.add(QName.create(TestModel.TEST_QNAME, "a" + Integer.toHexString(i)));
         }
 
         for (int i = 0; i < qnames.size(); ++i) {
-            final AugmentationIdentifier expected = AugmentationIdentifier.create(
-                ImmutableSet.copyOf(qnames.subList(0, i)));
-
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-            try (NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(bos))) {
-                nnout.writePathArgument(expected);
-            }
-
-            final byte[] bytes = bos.toByteArray();
-
-            NormalizedNodeDataInput nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
-            PathArgument arg = nnin.readPathArgument();
-            assertEquals(expected, arg);
+            assertAugmentationIdentifier(AugmentationIdentifier.create(ImmutableSet.copyOf(qnames.subList(0, i))));
         }
+
+        for (int i = qnames.size(); i < 65536; ++i) {
+            qnames.add(QName.create(TestModel.TEST_QNAME, "a" + Integer.toHexString(i)));
+        }
+        assertAugmentationIdentifier(AugmentationIdentifier.create(ImmutableSet.copyOf(qnames)));
+    }
+
+    private void assertAugmentationIdentifier(final AugmentationIdentifier expected) throws IOException {
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (NormalizedNodeDataOutput nnout = version.newDataOutput(ByteStreams.newDataOutput(bos))) {
+            nnout.writePathArgument(expected);
+        }
+
+        final byte[] bytes = bos.toByteArray();
+
+        NormalizedNodeDataInput nnin = NormalizedNodeDataInput.newDataInput(ByteStreams.newDataInput(bytes));
+        PathArgument arg = nnin.readPathArgument();
+        assertEquals(expected, arg);
     }
 
     private static <T extends Serializable> T clone(final T obj) {
