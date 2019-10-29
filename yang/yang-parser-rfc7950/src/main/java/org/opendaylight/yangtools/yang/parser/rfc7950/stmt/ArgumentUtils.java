@@ -7,23 +7,25 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_NAMESPACE_STRING;
 import static org.opendaylight.yangtools.yang.common.YangConstants.YANG_XPATH_FUNCTIONS_PREFIX;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableBiMap;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -33,6 +35,9 @@ import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression.QualifiedBound;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,13 +63,16 @@ public final class ArgumentUtils {
     private static final Pattern PATH_ABS = Pattern.compile(PATH_ABS_STR);
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
 
-    // XPathFactory is not thread-safe, rather than locking around a shared instance, we use a thread-local one.
-    private static final ThreadLocal<XPathFactory> XPATH_FACTORY = new ThreadLocal<>() {
-        @Override
-        protected XPathFactory initialValue() {
-            return XPathFactory.newInstance();
+    private static final YangXPathParserFactory XPATH_FACTORY;
+
+    static {
+        final Iterator<YangXPathParserFactory> it = ServiceLoader.load(YangXPathParserFactory.class).iterator();
+        try {
+            XPATH_FACTORY = it.next();
+        } catch (NoSuchElementException e) {
+            throw new ExceptionInInitializerError(e);
         }
-    };
+    }
 
     // these objects are to compare whether range has MAX or MIN value
     // none of these values should appear as Yang number according to spec so they are safe to use
@@ -105,24 +113,49 @@ public final class ArgumentUtils {
     }
 
     public static RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
-        final XPath xPath = XPATH_FACTORY.get().newXPath();
-        xPath.setNamespaceContext(StmtNamespaceContext.create(ctx,
-                ImmutableBiMap.of(RFC6020_YANG_NAMESPACE_STRING, YANG_XPATH_FUNCTIONS_PREFIX)));
+        // FIXME: provide a proper namespace context
+        //        xPath.setNamespaceContext(StmtNamespaceContext.create(ctx,
+        //            ImmutableBiMap.of(RFC6020_YANG_NAMESPACE_STRING, YANG_XPATH_FUNCTIONS_PREFIX)));
+        final YangXPathParser.QualifiedBound parser = XPATH_FACTORY.newParser(new YangNamespaceContext() {
+            @Override
+            public @NonNull Optional<String> findPrefixForNamespace(QNameModule namespace) {
+                // TODO Auto-generated method stub
+                return null;
+            }
 
-        final String trimmed = trimSingleLastSlashFromXPath(path);
+            @Override
+            public @NonNull Optional<QNameModule> findNamespaceForPrefix(String prefix) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+        });
+
+        final QualifiedBound parsed;
         try {
-            // XPath extension functions have to be prefixed
-            // yang-specific XPath functions are in fact extended functions, therefore we have to add
-            // "yang" prefix to them so that they can be properly validated with the XPath.compile() method
-            // the "yang" prefix is bound to RFC6020 YANG namespace
-            final String prefixedXPath = addPrefixToYangXPathFunctions(trimmed, ctx);
-            // TODO: we could capture the result and expose its 'evaluate' method
-            xPath.compile(prefixedXPath);
-        } catch (final XPathExpressionException e) {
+            parsed = parser.parseExpression(path);
+        } catch (XPathExpressionException e) {
             LOG.warn("Argument \"{}\" is not valid XPath string at \"{}\"", path, ctx.getStatementSourceReference(), e);
+            return new RevisionAwareXPathImpl(path, isAbsoluteXPath(path));
         }
 
-        return new RevisionAwareXPathImpl(path, isAbsoluteXPath(path));
+        return new RevisionAwareXPath.WithExpression() {
+
+            @Override
+            public boolean isAbsolute() {
+                // TODO Auto-generated method stub
+                return false;
+            }
+
+            @Override
+            public String getOriginalString() {
+                return path;
+            }
+
+            @Override
+            public QualifiedBound getXPathExpression() {
+                return parsed;
+            }
+        };
     }
 
     public static boolean isAbsoluteXPath(final String path) {
