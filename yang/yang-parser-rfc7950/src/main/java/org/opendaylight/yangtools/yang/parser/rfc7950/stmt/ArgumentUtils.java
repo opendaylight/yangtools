@@ -7,29 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_NAMESPACE_STRING;
-import static org.opendaylight.yangtools.yang.common.YangConstants.YANG_XPATH_FUNCTIONS_PREFIX;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableBiMap;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
-import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -37,9 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility class for dealing with arguments encountered by StatementSupport classes. Note that using this class may
- * result in thread-local state getting attached. To clean up this state, please invoke
- * {@link #detachFromCurrentThread()} when appropriate.
+ * Utility class for dealing with arguments encountered by StatementSupport classes.
  */
 @Beta
 public final class ArgumentUtils {
@@ -49,22 +37,9 @@ public final class ArgumentUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ArgumentUtils.class);
 
     @Regex
-    private static final String YANG_XPATH_FUNCTIONS_STRING =
-            "(re-match|deref|derived-from(-or-self)?|enum-value|bit-is-set)([ \t\r\n]*)(\\()";
-    private static final Pattern YANG_XPATH_FUNCTIONS_PATTERN = Pattern.compile(YANG_XPATH_FUNCTIONS_STRING);
-
-    @Regex
     private static final String PATH_ABS_STR = "/[^/].*";
     private static final Pattern PATH_ABS = Pattern.compile(PATH_ABS_STR);
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
-
-    // XPathFactory is not thread-safe, rather than locking around a shared instance, we use a thread-local one.
-    private static final ThreadLocal<XPathFactory> XPATH_FACTORY = new ThreadLocal<>() {
-        @Override
-        protected XPathFactory initialValue() {
-            return XPathFactory.newInstance();
-        }
-    };
 
     // these objects are to compare whether range has MAX or MIN value
     // none of these values should appear as Yang number according to spec so they are safe to use
@@ -105,24 +80,7 @@ public final class ArgumentUtils {
     }
 
     public static RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
-        final XPath xPath = XPATH_FACTORY.get().newXPath();
-        xPath.setNamespaceContext(StmtNamespaceContext.create(ctx,
-                ImmutableBiMap.of(RFC6020_YANG_NAMESPACE_STRING, YANG_XPATH_FUNCTIONS_PREFIX)));
-
-        final String trimmed = trimSingleLastSlashFromXPath(path);
-        try {
-            // XPath extension functions have to be prefixed
-            // yang-specific XPath functions are in fact extended functions, therefore we have to add
-            // "yang" prefix to them so that they can be properly validated with the XPath.compile() method
-            // the "yang" prefix is bound to RFC6020 YANG namespace
-            final String prefixedXPath = addPrefixToYangXPathFunctions(trimmed, ctx);
-            // TODO: we could capture the result and expose its 'evaluate' method
-            xPath.compile(prefixedXPath);
-        } catch (final XPathExpressionException e) {
-            LOG.warn("Argument \"{}\" is not valid XPath string at \"{}\"", path, ctx.getStatementSourceReference(), e);
-        }
-
-        return new RevisionAwareXPathImpl(path, isAbsoluteXPath(path));
+        return XPathSupport.parseXPath(ctx, path);
     }
 
     public static boolean isAbsoluteXPath(final String path) {
@@ -143,30 +101,6 @@ public final class ArgumentUtils {
         }
 
         return SchemaNodeIdentifier.create(qNames, PATH_ABS.matcher(path).matches());
-    }
-
-    /**
-     * Cleanup any resources attached to the current thread. Threads interacting with this class can cause thread-local
-     * caches to them. Invoke this method if you want to detach those resources.
-     */
-    public static void detachFromCurrentThread() {
-        XPATH_FACTORY.remove();
-    }
-
-    private static String addPrefixToYangXPathFunctions(final String path, final StmtContext<?, ?, ?> ctx) {
-        if (ctx.getRootVersion() == YangVersion.VERSION_1_1) {
-            final StringBuilder result = new StringBuilder();
-            final String prefix = YANG_XPATH_FUNCTIONS_PREFIX + ":";
-            final Matcher matcher = YANG_XPATH_FUNCTIONS_PATTERN.matcher(path);
-            while (matcher.find()) {
-                matcher.appendReplacement(result, prefix + matcher.group());
-            }
-
-            matcher.appendTail(result);
-            return result.toString();
-        }
-
-        return path;
     }
 
     private static String trimSingleLastSlashFromXPath(final String path) {

@@ -16,12 +16,14 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -36,6 +38,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToSemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToSourceIdentifier;
 
 final class SemanticVersionImport {
@@ -147,8 +150,13 @@ final class SemanticVersionImport {
                 stmt.addToNs(ImportPrefixToModuleCtx.class, impPrefix, importedModule);
                 stmt.addToNs(ImportPrefixToSemVerSourceIdentifier.class, impPrefix, semVerModuleIdentifier);
 
+                final QNameModule mod = InferenceException.throwIfNull(stmt.getFromNamespace(
+                    ModuleCtxToModuleQName.class, importedModule), stmt.getStatementSourceReference(),
+                    "Failed to find module of %s", importedModule);
+
                 final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(),
                     NamespaceStatement.class);
+                stmt.addToNs(ModuleQNameToPrefix.class, mod, impPrefix);
                 stmt.addToNs(URIStringToImportPrefix.class, modNs.toString(), impPrefix);
             }
 
