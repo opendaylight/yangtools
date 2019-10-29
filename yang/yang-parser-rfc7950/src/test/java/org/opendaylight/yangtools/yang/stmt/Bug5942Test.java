@@ -5,11 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -19,11 +21,12 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath.WithExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 
 public class Bug5942Test {
     @Test
@@ -41,7 +44,11 @@ public class Bug5942Test {
         assertEquals(Optional.of("uses description"), usesNode.getDescription());
         assertEquals(Optional.of("uses reference"), usesNode.getReference());
         assertEquals(Status.DEPRECATED, usesNode.getStatus());
-        assertEquals(new RevisionAwareXPathImpl("0!=1", false), usesNode.getWhenCondition().get());
+
+        final RevisionAwareXPath when = usesNode.getWhenCondition().get();
+        assertFalse(when.isAbsolute());
+        assertThat(when, instanceOf(WithExpression.class));
+        assertEquals("0!=1", when.getOriginalString());
 
         final List<UnknownSchemaNode> unknownSchemaNodes = usesNode.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
