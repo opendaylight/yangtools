@@ -8,9 +8,11 @@
 
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
@@ -20,9 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath.WithExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 
 public class Bug5481Test {
     @Test
@@ -54,11 +56,13 @@ public class Bug5481Test {
         assertTrue(dataChildByName2 instanceof LeafSchemaNode);
 
         LeafSchemaNode extendedLeaf = (LeafSchemaNode) dataChildByName2;
-        RevisionAwareXPath whenConditionExtendedLeaf = extendedLeaf.getWhenCondition().get();
-
-        assertEquals(new RevisionAwareXPathImpl("module1:top = 'extended'", false), whenConditionExtendedLeaf);
         assertEquals(Status.DEPRECATED, extendedLeaf.getStatus());
         assertEquals(Optional.of("text"), extendedLeaf.getDescription());
         assertEquals(Optional.of("ref"), extendedLeaf.getReference());
+
+        RevisionAwareXPath whenConditionExtendedLeaf = extendedLeaf.getWhenCondition().get();
+        assertFalse(whenConditionExtendedLeaf.isAbsolute());
+        assertThat(whenConditionExtendedLeaf, instanceOf(WithExpression.class));
+        assertEquals("module1:top = 'extended'", whenConditionExtendedLeaf.getOriginalString());
     }
 }
