@@ -42,15 +42,14 @@ public class Bug6878Test {
     public void shouldLogInvalidYang10XPath() throws Exception {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
-        final String testLog;
-
         System.setOut(new PrintStream(output, true, "UTF-8"));
 
         StmtTestUtils.parseYangSource("/rfc7950/bug6878/foo10-invalid.yang");
 
-        testLog = output.toString();
-        assertTrue(testLog.contains("Could not find function: re-match"));
+        final String testLog = output.toString();
         System.setOut(stdout);
+
+        assertTrue(testLog.contains("RFC7950 features required in RFC6020 context to parse expression "));
     }
 
     @Test

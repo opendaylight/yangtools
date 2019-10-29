@@ -115,6 +115,12 @@
             <artifactId>rfc8528-parser-support</artifactId>
         </dependency>
 
+        <!-- XPath reference implementation -->
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-xpath-impl</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
