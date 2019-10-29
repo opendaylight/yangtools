@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleToImportPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -149,6 +150,7 @@ final class SemanticVersionImport {
 
                 final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(),
                     NamespaceStatement.class);
+                stmt.addToNs(ModuleToImportPrefix.class, mod, impPrefix);
                 stmt.addToNs(URIStringToImportPrefix.class, modNs.toString(), impPrefix);
             }
 
