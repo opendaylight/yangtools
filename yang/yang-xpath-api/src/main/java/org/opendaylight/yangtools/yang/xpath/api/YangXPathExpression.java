@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QualifiedQName;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 
 /**
  * An XPath expression. This interface defines a parsed representation of an XPath defined in a YANG context, as
@@ -71,6 +72,17 @@ public interface YangXPathExpression extends Immutable {
      * @return YangXPathMathMode
      */
     YangXPathMathMode getMathMode();
+
+    /**
+     * Return the minimum YangVersion runtime required to interpret this expression. The default implementation returns
+     * {@link YangVersion#VERSION_1_1}. Implementations are encouraged to provide a less conservative estimate.
+     *
+     * @return YangVersion runtime version compatibility level required to accurately interpret this expression.
+     */
+    // FIXME: 5.0.0: make this method non-default.
+    default YangVersion getYangVersion() {
+        return YangVersion.VERSION_1_1;
+    }
 
     /**
      * Attempt to interpret a {@link YangLiteralExpr} referenced by this expression as a {@link QName}. This method
