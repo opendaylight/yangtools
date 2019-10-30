@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import javax.xml.xpath.XPathExpressionException;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLiteralExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
@@ -22,8 +23,9 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
 
 abstract class AntlrYangXPathExpression implements YangXPathExpression {
     static final class Base extends AntlrYangXPathExpression {
-        Base(final YangXPathMathMode mathMode, final YangExpr rootExpr, final String origStr) {
-            super(mathMode, rootExpr, origStr);
+        Base(final YangXPathMathMode mathMode, final YangVersion yangVersion, final YangExpr rootExpr,
+                final String origStr) {
+            super(mathMode, yangVersion, rootExpr, origStr);
         }
 
         @Override
@@ -40,9 +42,9 @@ abstract class AntlrYangXPathExpression implements YangXPathExpression {
     static class Qualified extends AntlrYangXPathExpression implements QualifiedBound {
         final YangNamespaceContext namespaceContext;
 
-        Qualified(final YangXPathMathMode mathMode, final YangExpr rootExpr,
-            final String origStr, final YangNamespaceContext namespaceContext) {
-            super(mathMode, rootExpr, origStr);
+        Qualified(final YangXPathMathMode mathMode, final YangVersion yangVersion, final YangExpr rootExpr,
+                final String origStr, final YangNamespaceContext namespaceContext) {
+            super(mathMode, yangVersion, rootExpr, origStr);
             this.namespaceContext = requireNonNull(namespaceContext);
         }
 
@@ -64,9 +66,9 @@ abstract class AntlrYangXPathExpression implements YangXPathExpression {
     static final class Unqualified extends Qualified implements UnqualifiedBound {
         private final QNameModule defaultNamespace;
 
-        Unqualified(final YangXPathMathMode mathMode, final YangExpr rootExpr,
-            final String origStr, final YangNamespaceContext namespaceContext, final QNameModule defaultNamespace) {
-            super(mathMode, rootExpr, origStr, namespaceContext);
+        Unqualified(final YangXPathMathMode mathMode, final YangVersion yangVersion, final YangExpr rootExpr,
+                final String origStr, final YangNamespaceContext namespaceContext, final QNameModule defaultNamespace) {
+            super(mathMode, yangVersion, rootExpr, origStr, namespaceContext);
             this.defaultNamespace = requireNonNull(defaultNamespace);
         }
 
@@ -77,11 +79,14 @@ abstract class AntlrYangXPathExpression implements YangXPathExpression {
     }
 
     private final YangXPathMathMode mathMode;
+    private final YangVersion yangVersion;
     private final YangExpr rootExpr;
     private final String origStr;
 
-    AntlrYangXPathExpression(final YangXPathMathMode mathMode, final YangExpr rootExpr, final String origStr) {
+    AntlrYangXPathExpression(final YangXPathMathMode mathMode, final YangVersion yangVersion, final YangExpr rootExpr,
+            final String origStr) {
         this.mathMode = requireNonNull(mathMode);
+        this.yangVersion = requireNonNull(yangVersion);
         this.rootExpr = requireNonNull(rootExpr);
         this.origStr = requireNonNull(origStr);
     }
@@ -89,6 +94,11 @@ abstract class AntlrYangXPathExpression implements YangXPathExpression {
     @Override
     public final YangXPathMathMode getMathMode() {
         return mathMode;
+    }
+
+    @Override
+    public final YangVersion getYangVersion() {
+        return yangVersion;
     }
 
     @Override
