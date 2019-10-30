@@ -21,8 +21,8 @@ import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.verifyTr
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import javax.xml.xpath.XPathExpressionException;
@@ -45,6 +46,7 @@ import org.opendaylight.yangtools.yang.common.QualifiedQName;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangBooleanConstantExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
@@ -109,7 +111,8 @@ abstract class AntlrXPathParser implements YangXPathParser {
 
         @Override
         public YangXPathExpression parseExpression(final String xpath) throws XPathExpressionException {
-            return new AntlrYangXPathExpression.Base(mathMode, parseExpr(xpath), xpath);
+            final Entry<YangVersion, YangExpr> result = parseExpr(xpath);
+            return new AntlrYangXPathExpression.Base(mathMode, result.getKey(), result.getValue(), xpath);
         }
 
         @Override
@@ -145,7 +148,9 @@ abstract class AntlrXPathParser implements YangXPathParser {
 
         @Override
         public YangXPathExpression.QualifiedBound parseExpression(final String xpath) throws XPathExpressionException {
-            return new AntlrYangXPathExpression.Qualified(mathMode, parseExpr(xpath), xpath, namespaceContext);
+            final Entry<YangVersion, YangExpr> result = parseExpr(xpath);
+            return new AntlrYangXPathExpression.Qualified(mathMode, result.getKey(), result.getValue(), xpath,
+                namespaceContext);
         }
 
         @Override
@@ -172,8 +177,10 @@ abstract class AntlrXPathParser implements YangXPathParser {
         @Override
         public YangXPathExpression.UnqualifiedBound parseExpression(final String xpath)
                 throws XPathExpressionException {
-            return new AntlrYangXPathExpression.Unqualified(mathMode, parseExpr(xpath), xpath, namespaceContext,
-                defaultNamespace);
+            final Entry<YangVersion, YangExpr> result = parseExpr(xpath);
+
+            return new AntlrYangXPathExpression.Unqualified(mathMode, result.getKey(), result.getValue(), xpath,
+                namespaceContext, defaultNamespace);
         }
 
         @Override
@@ -204,6 +211,8 @@ abstract class AntlrXPathParser implements YangXPathParser {
     private final YangXPathMathSupport mathSupport;
     private final FunctionSupport functionSupport;
 
+    private YangVersion minimumYangVersion = YangVersion.VERSION_1;
+
     AntlrXPathParser(final YangXPathMathMode mathMode) {
         this.mathMode = requireNonNull(mathMode);
         this.mathSupport = mathMode.getSupport();
@@ -230,7 +239,8 @@ abstract class AntlrXPathParser implements YangXPathParser {
         }
     }
 
-    final YangExpr parseExpr(final String xpath) throws XPathExpressionException {
+    @SuppressWarnings("checkstyle:illegalCatch")
+    final Entry<YangVersion, YangExpr> parseExpr(final String xpath) throws XPathExpressionException {
         // Create a parser and disconnect it from console error output
         final xpathLexer lexer = new xpathLexer(CharStreams.fromString(xpath));
         final xpathParser parser = new xpathParser(new CommonTokenStream(lexer));
@@ -240,15 +250,25 @@ abstract class AntlrXPathParser implements YangXPathParser {
         lexer.addErrorListener(listener);
         parser.removeErrorListeners();
         parser.addErrorListener(listener);
-
-        final YangExpr expr = parseExpr(parser.main().expr());
+        final ExprContext antlr = parser.main().expr();
         listener.reportError();
-        return expr;
+
+        // Reset our internal context
+        minimumYangVersion = YangVersion.VERSION_1;
+
+        final YangExpr expr;
+        try {
+            expr = parseExpr(antlr);
+        } catch (RuntimeException e) {
+            throw new XPathExpressionException(e);
+        }
+        return new SimpleImmutableEntry<>(minimumYangVersion, expr);
     }
 
     /**
      * Parse and simplify an XPath expression in {@link ExprContext} representation.
      *
+     * @param ctx Current parsing context
      * @param expr ANTLR ExprContext
      * @return A {@link YangExpr}
      * @throws NullPointerException if {@code expr} is null
@@ -315,9 +335,12 @@ abstract class AntlrXPathParser implements YangXPathParser {
                 throw illegalShape(name);
         }
 
-        final List<YangExpr> args = ImmutableList.copyOf(Lists.transform(expr.expr(), this::parseExpr));
+        final List<YangExpr> args = expr.expr().stream().map(this::parseExpr).collect(ImmutableList.toImmutableList());
         final YangFunction func = YANG_FUNCTIONS.get(parsed);
         if (func != null) {
+            if (minimumYangVersion.compareTo(func.getYangVersion()) < 0) {
+                minimumYangVersion = func.getYangVersion();
+            }
             return functionSupport.functionToExpr(func, args);
         }
 
