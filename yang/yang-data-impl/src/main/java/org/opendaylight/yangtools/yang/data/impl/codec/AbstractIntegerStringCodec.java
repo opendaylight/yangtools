@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
@@ -17,10 +16,12 @@ import com.google.common.collect.RangeSet;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
 import org.opendaylight.yangtools.yang.common.Uint8;
+import org.opendaylight.yangtools.yang.data.api.codec.YangInvalidValueException;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
@@ -46,12 +47,12 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
     // For up to two characters, this is very fast
     private static final CharMatcher X_MATCHER = CharMatcher.anyOf("xX");
 
-    private final RangeSet<N> rangeConstraints;
+    private final RangeConstraint<N> rangeConstraint;
 
     AbstractIntegerStringCodec(final T typeDefinition, final Optional<RangeConstraint<N>> constraint,
             final Class<N> outputClass) {
         super(requireNonNull(typeDefinition), outputClass);
-        rangeConstraints = constraint.map(RangeConstraint::getAllowedRanges).orElse(null);
+        rangeConstraint = constraint.orElse(null);
     }
 
     public static @NonNull AbstractIntegerStringCodec<Byte, Int8TypeDefinition> from(final Int8TypeDefinition type) {
@@ -95,9 +96,12 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
         final int base = provideBase(product);
         final String stringRepresentation = base != 16 ? product : X_MATCHER.removeFrom(product);
         final N deserialized = verifyNotNull(deserialize(stringRepresentation, base));
-        if (rangeConstraints != null) {
-            checkArgument(rangeConstraints.contains(deserialized), "Value '%s'  is not in required ranges %s",
-                deserialized, rangeConstraints);
+        if (rangeConstraint != null) {
+            final RangeSet<N> ranges = rangeConstraint.getAllowedRanges();
+            if (!ranges.contains(deserialized)) {
+                throw new YangInvalidValueException(ErrorType.PROTOCOL, rangeConstraint,
+                    "Value '" + deserialized + "'  is not in required ranges " + ranges);
+            }
         }
         return deserialized;
     }

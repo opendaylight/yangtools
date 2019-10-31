@@ -7,22 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 import java.util.regex.Pattern;
+import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
+import org.opendaylight.yangtools.yang.data.api.codec.YangInvalidValueException;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
-class CompiledPatternContext {
-
+final class CompiledPatternContext {
+    private final PatternConstraint constraint;
     private final Pattern pattern;
-    private final String errorMessage;
-    private final String regEx;
     private final boolean invert;
 
     CompiledPatternContext(final PatternConstraint yangConstraint) {
+        this.constraint = requireNonNull(yangConstraint);
         pattern = Pattern.compile(yangConstraint.getJavaPatternString());
-        errorMessage = yangConstraint.getErrorMessage().orElse(null);
-        regEx = errorMessage == null ? yangConstraint.getRegularExpressionString() : null;
 
         final Optional<ModifierKind> optModifier = yangConstraint.getModifier();
         if (optModifier.isPresent()) {
@@ -41,12 +42,9 @@ class CompiledPatternContext {
 
     void validate(final String str) {
         if (pattern.matcher(str).matches() == invert) {
-            if (errorMessage != null) {
-                throw new IllegalArgumentException(errorMessage);
-            }
-
-            throw new IllegalArgumentException("Value '" + str + "' " + (invert ? "matches" : "does not match")
-                    + " regular expression '" + regEx + "'");
+            throw new YangInvalidValueException(ErrorType.PROTOCOL, constraint,
+                "Value '" + str + "' " + (invert ? "matches" : "does not match") + " regular expression '"
+                        + constraint.getRegularExpressionString() + "'");
         }
     }
 }
