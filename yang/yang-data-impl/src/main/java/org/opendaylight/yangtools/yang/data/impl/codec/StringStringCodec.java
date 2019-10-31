@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.RangeSet;
+import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
 import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.YangInvalidValueException;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
@@ -46,8 +48,11 @@ public class StringStringCodec extends TypeDefinitionAwareCodec<String, StringTy
 
     void validate(final String str) {
         if (lengthConstraint != null) {
-            checkArgument(lengthConstraint.getAllowedRanges().contains(str.length()),
-                    "String '%s' does not match allowed length constraint %s", lengthConstraint);
+            final RangeSet<Integer> ranges = lengthConstraint.getAllowedRanges();
+            if (!ranges.contains(str.length())) {
+                throw new YangInvalidValueException(ErrorType.PROTOCOL, lengthConstraint,
+                    "String " + str + " does not match allowed lengths " + ranges);
+            }
         }
     }
 }

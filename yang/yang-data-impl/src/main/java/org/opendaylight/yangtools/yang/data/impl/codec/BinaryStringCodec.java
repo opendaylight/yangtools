@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.RangeSet;
 import java.util.Base64;
 import javax.xml.bind.DatatypeConverter;
+import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.YangInvalidValueException;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
@@ -33,9 +35,11 @@ public abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[],
 
         @Override
         void validate(final byte[] value) {
-            // FIXME: throw an exception capturing the constraint violation
-            checkArgument(lengthConstraint.getAllowedRanges().contains(value.length),
-                "Value length %s does not match constraint %s", value.length, lengthConstraint);
+            final RangeSet<Integer> ranges = lengthConstraint.getAllowedRanges();
+            if (!ranges.contains(value.length)) {
+                throw new YangInvalidValueException(ErrorType.PROTOCOL, lengthConstraint,
+                        "Value length " + value.length + " is not in required ranges " + ranges);
+            }
         }
     }
 
