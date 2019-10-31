@@ -33,7 +33,7 @@ public abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[],
 
         @Override
         void validate(final byte[] value) {
-            // FIXME: throw an exception capturing the constraint violation
+            // FIXME: YANGTOOLS-763: throw a dedicated exception
             checkArgument(lengthConstraint.getAllowedRanges().contains(value.length),
                 "Value length %s does not match constraint %s", value.length, lengthConstraint);
         }
