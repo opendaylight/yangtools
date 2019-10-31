@@ -42,6 +42,7 @@ class CompiledPatternContext {
     void validate(final String str) {
         if (pattern.matcher(str).matches() == invert) {
             if (errorMessage != null) {
+                // FIXME: YANGTOOLS-763: throw a dedicated exception
                 throw new IllegalArgumentException(errorMessage);
             }
 

@@ -46,6 +46,7 @@ public class StringStringCodec extends TypeDefinitionAwareCodec<String, StringTy
 
     void validate(final String str) {
         if (lengthConstraint != null) {
+            // FIXME: YANGTOOLS-763: throw a dedicated exception
             checkArgument(lengthConstraint.getAllowedRanges().contains(str.length()),
                     "String '%s' does not match allowed length constraint %s", lengthConstraint);
         }
