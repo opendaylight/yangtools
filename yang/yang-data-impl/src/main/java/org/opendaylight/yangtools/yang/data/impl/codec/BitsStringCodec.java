@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -19,7 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.RpcError;
 import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
+import org.opendaylight.yangtools.yang.data.api.codec.IllegalYangValueException;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
@@ -61,8 +62,13 @@ public final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>,
         // an invalid bit.
         if (sorted.size() != strings.size()) {
             for (final String bit : strings) {
-                checkArgument(validBits.contains(bit), "Invalid value '%s' for bits type. Allowed values are: %s", bit,
-                    validBits);
+                if (!validBits.contains(bit)) {
+                    throw new IllegalYangValueException(
+                            RpcError.ErrorSeverity.ERROR,
+                            RpcError.ErrorType.PROTOCOL,
+                            "Invalid value '" + bit + "' for bits type. Allowed values are: " + validBits,
+                            "bad-element");
+                }
             }
         }
 
