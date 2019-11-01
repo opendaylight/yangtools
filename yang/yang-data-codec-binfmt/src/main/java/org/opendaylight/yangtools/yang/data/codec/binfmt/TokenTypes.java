@@ -8,10 +8,6 @@
 package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 final class TokenTypes {
-    private TokenTypes() {
-        throw new UnsupportedOperationException();
-    }
-
     static final byte SIGNATURE_MARKER = (byte) 0xab;
 
     /**
@@ -32,4 +28,8 @@ final class TokenTypes {
      * present.
      */
     static final short MAGNESIUM_VERSION = 4;
+
+    private TokenTypes() {
+        // Utility class
+    }
 }

@@ -31,6 +31,6 @@ final class LithiumValue {
     static final byte EMPTY_TYPE = 15;
 
     private LithiumValue() {
-        throw new UnsupportedOperationException("Utility class");
+        // Utility class
     }
 }
