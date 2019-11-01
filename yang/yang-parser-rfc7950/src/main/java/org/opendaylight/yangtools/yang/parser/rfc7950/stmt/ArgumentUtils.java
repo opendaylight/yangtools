@@ -23,8 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for dealing with arguments encountered by StatementSupport classes.
@@ -33,8 +31,6 @@ import org.slf4j.LoggerFactory;
 public final class ArgumentUtils {
     public static final Splitter PIPE_SPLITTER = Splitter.on('|').trimResults();
     public static final Splitter TWO_DOTS_SPLITTER = Splitter.on("..").trimResults();
-
-    private static final Logger LOG = LoggerFactory.getLogger(ArgumentUtils.class);
 
     @Regex
     private static final String PATH_ABS_STR = "/[^/].*";
