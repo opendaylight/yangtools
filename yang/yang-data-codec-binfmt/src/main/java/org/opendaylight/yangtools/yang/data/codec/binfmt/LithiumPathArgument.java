@@ -20,7 +20,7 @@ final class LithiumPathArgument {
     static final byte NODE_IDENTIFIER_WITH_PREDICATES = 4;
 
     private LithiumPathArgument() {
-        throw new UnsupportedOperationException("Utility class");
+        // Utility class
     }
 
     static byte getSerializablePathArgumentType(final PathArgument pathArgument) {
