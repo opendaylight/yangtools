@@ -5,8 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
-package org.opendaylight.controller.cluster.datastore.util;
+package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
@@ -14,13 +13,12 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -33,80 +31,59 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public final class TestModel {
 
-    public static final QName TEST_QNAME = QName.create(
+    static final QName TEST_QNAME = QName.create(
             "urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test",
             "2014-03-13", "test");
 
-    public static final QName AUG_NAME_QNAME = QName.create(
+    static final QName AUG_NAME_QNAME = QName.create(
             "urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:aug",
             "2014-03-13", "name");
 
-    public static final QName AUG_CONT_QNAME = QName.create(
+    private static final QName AUG_CONT_QNAME = QName.create(
             "urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:aug",
             "2014-03-13", "cont");
 
+    static final QName DESC_QNAME = QName.create(TEST_QNAME, "desc");
+    static final QName SOME_BINARY_DATA_QNAME = QName.create(TEST_QNAME, "some-binary-data");
+    static final QName BINARY_LEAF_LIST_QNAME = QName.create(TEST_QNAME, "binary_leaf_list");
+    private static final QName SOME_REF_QNAME = QName.create(TEST_QNAME, "some-ref");
+    private static final QName MYIDENTITY_QNAME = QName.create(TEST_QNAME, "myidentity");
+    private static final QName SWITCH_FEATURES_QNAME = QName.create(TEST_QNAME, "switch-features");
 
-    public static final QName DESC_QNAME = QName.create(TEST_QNAME, "desc");
-    public static final QName POINTER_QNAME = QName.create(TEST_QNAME, "pointer");
-    public static final QName SOME_BINARY_DATA_QNAME = QName.create(TEST_QNAME, "some-binary-data");
-    public static final QName BINARY_LEAF_LIST_QNAME = QName.create(TEST_QNAME, "binary_leaf_list");
-    public static final QName SOME_REF_QNAME = QName.create(TEST_QNAME, "some-ref");
-    public static final QName MYIDENTITY_QNAME = QName.create(TEST_QNAME, "myidentity");
-    public static final QName SWITCH_FEATURES_QNAME = QName.create(TEST_QNAME, "switch-features");
+    private static final QName AUGMENTED_LIST_QNAME = QName.create(TEST_QNAME, "augmented-list");
+    static final QName AUGMENTED_LIST_ENTRY_QNAME = QName.create(TEST_QNAME, "augmented-list-entry");
 
-    public static final QName AUGMENTED_LIST_QNAME = QName.create(TEST_QNAME, "augmented-list");
-    public static final QName AUGMENTED_LIST_ENTRY_QNAME = QName.create(TEST_QNAME, "augmented-list-entry");
+    static final QName OUTER_LIST_QNAME = QName.create(TEST_QNAME, "outer-list");
+    static final QName INNER_LIST_QNAME = QName.create(TEST_QNAME, "inner-list");
+    static final QName ID_QNAME = QName.create(TEST_QNAME, "id");
+    private static final QName NAME_QNAME = QName.create(TEST_QNAME, "name");
+    static final QName BOOLEAN_LEAF_QNAME = QName.create(TEST_QNAME, "boolean-leaf");
+    private static final QName SHORT_LEAF_QNAME = QName.create(TEST_QNAME, "short-leaf");
+    private static final QName BYTE_LEAF_QNAME = QName.create(TEST_QNAME, "byte-leaf");
+    private static final QName BIGINTEGER_LEAF_QNAME = QName.create(TEST_QNAME, "biginteger-leaf");
+    private static final QName BIGDECIMAL_LEAF_QNAME = QName.create(TEST_QNAME, "bigdecimal-leaf");
+    static final QName ORDERED_LIST_QNAME = QName.create(TEST_QNAME, "ordered-list");
+    static final QName ORDERED_LIST_ENTRY_QNAME = QName.create(TEST_QNAME, "ordered-list-leaf");
+    private static final QName UNKEYED_LIST_QNAME = QName.create(TEST_QNAME, "unkeyed-list");
+    private static final QName SHOE_QNAME = QName.create(TEST_QNAME, "shoe");
+    static final QName ANY_XML_QNAME = QName.create(TEST_QNAME, "any");
+    static final QName EMPTY_QNAME = QName.create(TEST_QNAME, "empty-leaf");
 
-    public static final QName OUTER_LIST_QNAME = QName.create(TEST_QNAME, "outer-list");
-    public static final QName INNER_LIST_QNAME = QName.create(TEST_QNAME, "inner-list");
-    public static final QName INNER_CONTAINER_QNAME = QName.create(TEST_QNAME, "inner-container");
-    public static final QName OUTER_CHOICE_QNAME = QName.create(TEST_QNAME, "outer-choice");
-    public static final QName ID_QNAME = QName.create(TEST_QNAME, "id");
-    public static final QName NAME_QNAME = QName.create(TEST_QNAME, "name");
-    public static final QName VALUE_QNAME = QName.create(TEST_QNAME, "value");
-    public static final QName BOOLEAN_LEAF_QNAME = QName.create(TEST_QNAME, "boolean-leaf");
-    public static final QName SHORT_LEAF_QNAME = QName.create(TEST_QNAME, "short-leaf");
-    public static final QName BYTE_LEAF_QNAME = QName.create(TEST_QNAME, "byte-leaf");
-    public static final QName BIGINTEGER_LEAF_QNAME = QName.create(TEST_QNAME, "biginteger-leaf");
-    public static final QName BIGDECIMAL_LEAF_QNAME = QName.create(TEST_QNAME, "bigdecimal-leaf");
-    public static final QName ORDERED_LIST_QNAME = QName.create(TEST_QNAME, "ordered-list");
-    public static final QName ORDERED_LIST_ENTRY_QNAME = QName.create(TEST_QNAME, "ordered-list-leaf");
-    public static final QName UNKEYED_LIST_QNAME = QName.create(TEST_QNAME, "unkeyed-list");
-    public static final QName UNKEYED_LIST_ENTRY_QNAME = QName.create(TEST_QNAME, "unkeyed-list-entry");
-    public static final QName CHOICE_QNAME = QName.create(TEST_QNAME, "choice");
-    public static final QName SHOE_QNAME = QName.create(TEST_QNAME, "shoe");
-    public static final QName ANY_XML_QNAME = QName.create(TEST_QNAME, "any");
-    public static final QName EMPTY_QNAME = QName.create(TEST_QNAME, "empty-leaf");
-    public static final QName INVALID_QNAME = QName.create(TEST_QNAME, "invalid");
-    private static final String DATASTORE_TEST_YANG = "/odl-datastore-test.yang";
-    private static final String DATASTORE_AUG_YANG = "/odl-datastore-augmentation.yang";
-    private static final String DATASTORE_TEST_NOTIFICATION_YANG = "/odl-datastore-test-notification.yang";
-
-    public static final YangInstanceIdentifier TEST_PATH = YangInstanceIdentifier.of(TEST_QNAME);
-    public static final YangInstanceIdentifier DESC_PATH = YangInstanceIdentifier
-            .builder(TEST_PATH).node(DESC_QNAME).build();
-    public static final YangInstanceIdentifier OUTER_LIST_PATH =
-            YangInstanceIdentifier.builder(TEST_PATH).node(OUTER_LIST_QNAME).build();
-    public static final QName TWO_THREE_QNAME = QName.create(TEST_QNAME, "two");
-    public static final QName TWO_QNAME = QName.create(TEST_QNAME, "two");
-    public static final QName THREE_QNAME = QName.create(TEST_QNAME, "three");
+    static final YangInstanceIdentifier TEST_PATH = YangInstanceIdentifier.of(TEST_QNAME);
+    private static final QName TWO_THREE_QNAME = QName.create(TEST_QNAME, "two");
+    private static final QName TWO_QNAME = QName.create(TEST_QNAME, "two");
 
     private static final Integer ONE_ID = 1;
     private static final Integer TWO_ID = 2;
@@ -117,102 +94,28 @@ public final class TestModel {
     private static final Short SHORT_ID = 1;
     private static final Byte BYTE_ID = 1;
     // Family specific constants
-    public static final QName FAMILY_QNAME = QName.create(
+    private static final QName FAMILY_QNAME = QName.create(
         "urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:notification-test", "2014-04-17", "family");
-    public static final QName CHILDREN_QNAME = QName.create(FAMILY_QNAME, "children");
-    public static final QName GRAND_CHILDREN_QNAME = QName.create(FAMILY_QNAME, "grand-children");
-    public static final QName CHILD_NUMBER_QNAME = QName.create(FAMILY_QNAME, "child-number");
-    public static final QName CHILD_NAME_QNAME = QName.create(FAMILY_QNAME, "child-name");
-    public static final QName GRAND_CHILD_NUMBER_QNAME = QName.create(FAMILY_QNAME, "grand-child-number");
-    public static final QName GRAND_CHILD_NAME_QNAME = QName.create(FAMILY_QNAME,"grand-child-name");
-
-    public static final YangInstanceIdentifier FAMILY_PATH = YangInstanceIdentifier.of(FAMILY_QNAME);
-    public static final YangInstanceIdentifier FAMILY_DESC_PATH =
-            YangInstanceIdentifier.builder(FAMILY_PATH).node(DESC_QNAME).build();
-    public static final YangInstanceIdentifier CHILDREN_PATH =
-            YangInstanceIdentifier.builder(FAMILY_PATH).node(CHILDREN_QNAME).build();
-
-    private static final Integer FIRST_CHILD_ID = 1;
-    private static final Integer SECOND_CHILD_ID = 2;
+    private static final QName CHILDREN_QNAME = QName.create(FAMILY_QNAME, "children");
+    static final QName CHILD_NUMBER_QNAME = QName.create(FAMILY_QNAME, "child-number");
+    static final QName CHILD_NAME_QNAME = QName.create(FAMILY_QNAME, "child-name");
 
     private static final String FIRST_CHILD_NAME = "first child";
-    private static final String SECOND_CHILD_NAME = "second child";
-
-    private static final Integer FIRST_GRAND_CHILD_ID = 1;
-    private static final Integer SECOND_GRAND_CHILD_ID = 2;
-
-    private static final String FIRST_GRAND_CHILD_NAME = "first grand child";
-    private static final String SECOND_GRAND_CHILD_NAME = "second grand child";
 
     private static final MapEntryNode BAR_NODE = mapEntryBuilder(
-            OUTER_LIST_QNAME, ID_QNAME, TWO_ID) //
-            .withChild(mapNodeBuilder(INNER_LIST_QNAME) //
-                    .withChild(mapEntry(INNER_LIST_QNAME, NAME_QNAME, TWO_ONE_NAME)) //
-                    .withChild(mapEntry(INNER_LIST_QNAME, NAME_QNAME, TWO_TWO_NAME)) //
-                    .build()) //
+            OUTER_LIST_QNAME, ID_QNAME, TWO_ID)
+            .withChild(mapNodeBuilder(INNER_LIST_QNAME)
+                    .withChild(mapEntry(INNER_LIST_QNAME, NAME_QNAME, TWO_ONE_NAME))
+                    .withChild(mapEntry(INNER_LIST_QNAME, NAME_QNAME, TWO_TWO_NAME))
+                    .build())
             .build();
 
     private TestModel() {
         throw new UnsupportedOperationException();
     }
 
-    public static InputStream getDatastoreTestInputStream() {
-        return getInputStream(DATASTORE_TEST_YANG);
-    }
-
-    public static InputStream getDatastoreAugInputStream() {
-        return getInputStream(DATASTORE_AUG_YANG);
-    }
-
-    public static InputStream getDatastoreTestNotificationInputStream() {
-        return getInputStream(DATASTORE_TEST_NOTIFICATION_YANG);
-    }
-
-    private static InputStream getInputStream(final String resourceName) {
-        return TestModel.class.getResourceAsStream(resourceName);
-    }
-
-    public static SchemaContext createTestContext() {
-        return YangParserTestUtils.parseYangResources(TestModel.class, DATASTORE_TEST_YANG, DATASTORE_AUG_YANG,
-            DATASTORE_TEST_NOTIFICATION_YANG);
-    }
-
-    public static SchemaContext createTestContextWithoutTestSchema() {
-        return YangParserTestUtils.parseYangResource(DATASTORE_TEST_NOTIFICATION_YANG);
-    }
-
-    public static SchemaContext createTestContextWithoutAugmentationSchema() {
-        return YangParserTestUtils.parseYangResources(TestModel.class, DATASTORE_TEST_YANG,
-            DATASTORE_TEST_NOTIFICATION_YANG);
-    }
-
-    /**
-     * Returns a test document.
-     * <p/>
-     * <p/>
-     * <pre>
-     * test
-     *     outer-list
-     *          id 1
-     *     outer-list
-     *          id 2
-     *          inner-list
-     *                  name "one"
-     *          inner-list
-     *                  name "two"
-     *
-     * </pre>
-     */
-    public static NormalizedNode<?, ?> createDocumentOne(final SchemaContext schemaContext) {
-        return ImmutableContainerNodeBuilder
-                .create()
-                .withNodeIdentifier(
-                        new NodeIdentifier(schemaContext.getQName()))
-                .withChild(createTestContainer()).build();
-
-    }
-
-    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createBaseTestContainerBuilder() {
+    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createBaseTestContainerBuilder(
+            final Function<String, Number> uint64) {
         // Create a list of shoes
         // This is to test leaf list entry
         final LeafSetEntryNode<Object> nike = ImmutableLeafSetEntryNodeBuilder.create().withNodeIdentifier(
@@ -305,7 +208,7 @@ public final class TestModel {
                 .withChild(ImmutableNodes.leafNode(BOOLEAN_LEAF_QNAME, ENABLED))
                 .withChild(ImmutableNodes.leafNode(SHORT_LEAF_QNAME, SHORT_ID))
                 .withChild(ImmutableNodes.leafNode(BYTE_LEAF_QNAME, BYTE_ID))
-                .withChild(ImmutableNodes.leafNode(TestModel.BIGINTEGER_LEAF_QNAME, BigInteger.valueOf(100)))
+                .withChild(ImmutableNodes.leafNode(TestModel.BIGINTEGER_LEAF_QNAME, uint64.apply("100")))
                 .withChild(ImmutableNodes.leafNode(TestModel.BIGDECIMAL_LEAF_QNAME, BigDecimal.valueOf(1.2)))
                 .withChild(ImmutableNodes.leafNode(SOME_REF_QNAME, instanceID))
                 .withChild(ImmutableNodes.leafNode(MYIDENTITY_QNAME, DESC_QNAME))
@@ -331,11 +234,11 @@ public final class TestModel {
                 );
     }
 
-    public static ContainerNode createTestContainer() {
-        return createBaseTestContainerBuilder().build();
+    static ContainerNode createTestContainer(final Function<String, Number> uint64) {
+        return createBaseTestContainerBuilder(uint64).build();
     }
 
-    public static MapEntryNode createAugmentedListEntry(final int id, final String name) {
+    private static MapEntryNode createAugmentedListEntry(final int id, final String name) {
 
         Set<QName> childAugmentations = new HashSet<>();
         childAugmentations.add(AUG_CONT_QNAME);
@@ -364,61 +267,4 @@ public final class TestModel {
                 .withChild(ImmutableNodes.leafNode(ID_QNAME, id))
                 .withChild(augmentationNode).build();
     }
-
-
-    public static ContainerNode createFamily() {
-        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode>
-            familyContainerBuilder = ImmutableContainerNodeBuilder.create().withNodeIdentifier(
-                        new YangInstanceIdentifier.NodeIdentifier(FAMILY_QNAME));
-
-        final CollectionNodeBuilder<MapEntryNode, MapNode> childrenBuilder =
-                mapNodeBuilder(CHILDREN_QNAME);
-
-        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode>
-            firstChildBuilder = mapEntryBuilder(CHILDREN_QNAME, CHILD_NUMBER_QNAME, FIRST_CHILD_ID);
-        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode>
-            secondChildBuilder = mapEntryBuilder(CHILDREN_QNAME, CHILD_NUMBER_QNAME, SECOND_CHILD_ID);
-
-        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode>
-            firstGrandChildBuilder = mapEntryBuilder(GRAND_CHILDREN_QNAME, GRAND_CHILD_NUMBER_QNAME,
-                    FIRST_GRAND_CHILD_ID);
-        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode>
-            secondGrandChildBuilder = mapEntryBuilder(GRAND_CHILDREN_QNAME, GRAND_CHILD_NUMBER_QNAME,
-                    SECOND_GRAND_CHILD_ID);
-
-        firstGrandChildBuilder
-                .withChild(
-                        ImmutableNodes.leafNode(GRAND_CHILD_NUMBER_QNAME,
-                                FIRST_GRAND_CHILD_ID)).withChild(
-                ImmutableNodes.leafNode(GRAND_CHILD_NAME_QNAME,
-                        FIRST_GRAND_CHILD_NAME));
-
-        secondGrandChildBuilder.withChild(
-                ImmutableNodes
-                        .leafNode(GRAND_CHILD_NUMBER_QNAME, SECOND_GRAND_CHILD_ID))
-                .withChild(
-                        ImmutableNodes.leafNode(GRAND_CHILD_NAME_QNAME,
-                                SECOND_GRAND_CHILD_NAME));
-
-        firstChildBuilder
-                .withChild(ImmutableNodes.leafNode(CHILD_NUMBER_QNAME, FIRST_CHILD_ID))
-                .withChild(ImmutableNodes.leafNode(CHILD_NAME_QNAME, FIRST_CHILD_NAME))
-                .withChild(
-                        mapNodeBuilder(GRAND_CHILDREN_QNAME).withChild(
-                                firstGrandChildBuilder.build()).build());
-
-
-        secondChildBuilder
-                .withChild(ImmutableNodes.leafNode(CHILD_NUMBER_QNAME, SECOND_CHILD_ID))
-                .withChild(ImmutableNodes.leafNode(CHILD_NAME_QNAME, SECOND_CHILD_NAME))
-                .withChild(
-                        mapNodeBuilder(GRAND_CHILDREN_QNAME).withChild(
-                                firstGrandChildBuilder.build()).build());
-
-        childrenBuilder.withChild(firstChildBuilder.build());
-        childrenBuilder.withChild(secondChildBuilder.build());
-
-        return familyContainerBuilder.withChild(childrenBuilder.build()).build();
-    }
-
 }
