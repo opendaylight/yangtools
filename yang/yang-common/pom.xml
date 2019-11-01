@@ -19,7 +19,7 @@
     <artifactId>yang-common</artifactId>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
-    <description>ODL :: YANG Tools :: ${project.artifactId}</description>
+    <description>Common YANG definitions</description>
 
     <dependencies>
         <dependency>
