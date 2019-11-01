@@ -19,7 +19,7 @@
     <artifactId>yang-data-codec-xml</artifactId>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
-    <description>${project.artifactId}</description>
+    <description>XML (RFC7950) encoding for NormalizedNodes</description>
 
     <dependencies>
         <dependency>

@@ -19,7 +19,7 @@
     <artifactId>yang-data-codec-gson</artifactId>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
-    <description>${project.artifactId}</description>
+    <description>JSON (RFC7951) encoding for NormalizedNodes</description>
 
     <dependencies>
         <dependency>
