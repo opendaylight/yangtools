@@ -59,7 +59,7 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
             case NeonSR2Tokens.IS_AUGMENT_VALUE:
                 return rawAugmentId();
             default:
-                throw new IOException("Unhandled QName value type " + valueType);
+                throw new IOException("Unhandled AugmentationIdentifier value type " + valueType);
         }
     }
 
@@ -74,7 +74,7 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
             case NeonSR2Tokens.IS_QNAME_VALUE:
                 return rawNodeIdentifier();
             default:
-                throw new IOException("Unhandled QName value type " + valueType);
+                throw new IOException("Unhandled NodeIdentifier value type " + valueType);
         }
     }
 
@@ -86,7 +86,7 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
             case NeonSR2Tokens.IS_MODULE_VALUE:
                 return rawModule();
             default:
-                throw new IOException("Unhandled QName value type " + valueType);
+                throw new IOException("Unhandled QNameModule value type " + valueType);
         }
     }
 
@@ -122,11 +122,7 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
     }
 
     private QName codedQName(final int code) throws IOException {
-        try {
-            return codedQNames.get(code);
-        } catch (IndexOutOfBoundsException e) {
-            throw new IOException("QName code " + code + " was not found", e);
-        }
+        return getCode("QName", codedQNames, code);
     }
 
     private QName rawQName() throws IOException {
@@ -138,11 +134,7 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
     }
 
     private AugmentationIdentifier codedAugmentId(final int code) throws IOException {
-        try {
-            return codedAugments.get(code);
-        } catch (IndexOutOfBoundsException e) {
-            throw new IOException("QName set code " + code + " was not found", e);
-        }
+        return getCode("QName set", codedAugments, code);
     }
 
     private AugmentationIdentifier rawAugmentId() throws IOException {
@@ -152,11 +144,7 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
     }
 
     private QNameModule codedModule(final int code) throws IOException {
-        try {
-            return codedModules.get(code);
-        } catch (IndexOutOfBoundsException e) {
-            throw new IOException("Module code " + code + " was not found", e);
-        }
+        return getCode("Module", codedModules, code);
     }
 
     private QNameModule rawModule() throws IOException {
@@ -165,5 +153,13 @@ final class NeonSR2NormalizedNodeInputStreamReader extends AbstractLithiumDataIn
         final QNameModule mod = QNameFactory.createModule(namespace, revision);
         codedModules.add(mod);
         return mod;
+    }
+
+    private static <T> T getCode(final String name, final List<T> list, final int code) throws IOException {
+        try {
+            return list.get(code);
+        } catch (IndexOutOfBoundsException e) {
+            throw new IOException(name + " code " + code + " was not found", e);
+        }
     }
 }
