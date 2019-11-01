@@ -5,8 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
-package org.opendaylight.controller.cluster.datastore.node.utils.stream;
+import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,9 +18,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 public class SampleNormalizedNodeSerializable implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private transient NormalizedNodeStreamVersion version;
     private NormalizedNode<?, ?> input;
 
-    public SampleNormalizedNodeSerializable(final NormalizedNode<?, ?> input) {
+    public SampleNormalizedNodeSerializable(final NormalizedNodeStreamVersion version,
+            final NormalizedNode<?, ?> input) {
+        this.version = requireNonNull(version);
         this.input = input;
     }
 
@@ -28,11 +32,12 @@ public class SampleNormalizedNodeSerializable implements Serializable {
     }
 
     private void readObject(final ObjectInputStream stream) throws IOException {
-        this.input = NormalizedNodeInputOutput.newDataInput(stream).readNormalizedNode();
+        final NormalizedNodeDataInput in = NormalizedNodeDataInput.newDataInput(stream);
+        this.input = in.readNormalizedNode();
+        this.version = in.getVersion();
     }
 
     private void writeObject(final ObjectOutputStream stream) throws IOException {
-        NormalizedNodeInputOutput.newDataOutput(stream).writeNormalizedNode(input);
+        version.newDataOutput(stream).writeNormalizedNode(input);
     }
-
 }
