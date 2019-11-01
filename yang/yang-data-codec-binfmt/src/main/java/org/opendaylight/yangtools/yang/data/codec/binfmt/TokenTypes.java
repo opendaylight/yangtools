@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
 
 final class TokenTypes {
     private TokenTypes() {
-        throw new UnsupportedOperationException();
+        // Utility class
     }
 
     static final byte SIGNATURE_MARKER = (byte) 0xab;

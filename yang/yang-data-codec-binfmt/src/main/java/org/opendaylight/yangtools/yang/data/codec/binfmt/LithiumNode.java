@@ -28,6 +28,6 @@ final class LithiumNode {
     static final byte YANG_MODELED_ANY_XML_NODE = 15;
 
     private LithiumNode() {
-        throw new UnsupportedOperationException("utility class");
+        // Utility class
     }
 }
