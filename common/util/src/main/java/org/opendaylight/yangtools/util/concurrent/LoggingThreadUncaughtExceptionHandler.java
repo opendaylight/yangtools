@@ -14,8 +14,10 @@ import org.slf4j.Logger;
 /**
  * Thread's UncaughtExceptionHandler which logs to slf4j.
  *
+ * @deprecated This class forms a hard dependency on SLF4J API and is therefore deprecated for removal.
  * @author Michael Vorburger.ch
  */
+@Deprecated(forRemoval = true)
 @SuppressWarnings({"checkstyle:LoggerVariableName", "LoggerVariableModifiers"})
 public final class LoggingThreadUncaughtExceptionHandler implements UncaughtExceptionHandler {
 

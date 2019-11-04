@@ -57,10 +57,11 @@ public abstract class ThreadFactoryProvider {
     }
 
     public ThreadFactory get() {
-        ThreadFactoryBuilder guavaBuilder = new ThreadFactoryBuilder();
-        guavaBuilder.setNameFormat(namePrefix() + "-%d");
-        guavaBuilder.setUncaughtExceptionHandler(LoggingThreadUncaughtExceptionHandler.toLogger(logger()));
-        guavaBuilder.setDaemon(daemon());
+        ThreadFactoryBuilder guavaBuilder = new ThreadFactoryBuilder()
+                .setNameFormat(namePrefix() + "-%d")
+                .setUncaughtExceptionHandler((thread, exception)
+                    -> logger().error("Thread terminated due to uncaught exception: {}", thread.getName(), exception))
+                .setDaemon(daemon());
         priority().ifPresent(guavaBuilder::setPriority);
         logger().info("ThreadFactory created: {}", namePrefix());
         return guavaBuilder.build();
