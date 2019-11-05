@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_b5953de6",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/QName.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-04-05T10:04:46Z",
+      "side": 1,
+      "message": "this should be in a separate patch",
+      "revId": "09452849e66ea34cd37ea06baf781f5a164e4bca",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
