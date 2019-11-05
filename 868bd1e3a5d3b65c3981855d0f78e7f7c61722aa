@@ -68,6 +68,30 @@
       "revId": "868bd1e3a5d3b65c3981855d0f78e7f7c61722aa",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_f5e95d1b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/PrefixToModule.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-05-10T07:59:27Z",
+      "side": 1,
+      "message": "Yang and Yin statement parsers need this information. It is used by Utils.getValidStatementDefinition().",
+      "parentUuid": "fa57193c_c4c8ed76",
+      "range": {
+        "startLine": 54,
+        "startChar": 12,
+        "endLine": 54,
+        "endChar": 30
+      },
+      "revId": "868bd1e3a5d3b65c3981855d0f78e7f7c61722aa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
