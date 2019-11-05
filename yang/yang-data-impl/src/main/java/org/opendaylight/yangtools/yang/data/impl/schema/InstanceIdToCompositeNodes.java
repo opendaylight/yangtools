@@ -8,17 +8,23 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -47,11 +53,15 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base strategy for converting an instance identifier into a normalized node structure for container-like types.
  */
 abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends InstanceIdToNodes<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(InstanceIdToCompositeNodes.class);
+
     InstanceIdToCompositeNodes(final T identifier) {
         super(identifier);
     }
@@ -143,9 +153,19 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         }
 
         @Override
+        boolean isMixin() {
+            return false;
+        }
+
+        @Override
         DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> createBuilder(
                 final PathArgument currentArg) {
             final NodeIdentifierWithPredicates arg = (NodeIdentifierWithPredicates) currentArg;
+            return createBuilder(arg.size() < 2 ? arg : reorderPredicates(schema().getKeyDefinition(), arg));
+        }
+
+        private static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> createBuilder(
+                final NodeIdentifierWithPredicates arg) {
             final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> builder = Builders
                     .mapEntryBuilder().withNodeIdentifier(arg);
             for (final Entry<QName, Object> keyValue : arg.entrySet()) {
@@ -156,9 +176,34 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             return builder;
         }
 
-        @Override
-        boolean isMixin() {
-            return false;
+        private static NodeIdentifierWithPredicates reorderPredicates(final List<QName> keys,
+                final NodeIdentifierWithPredicates arg) {
+            if (Iterables.elementsEqual(keys, arg.keySet())) {
+                // Iteration order matches key order, reuse the identifier
+                return arg;
+            }
+
+            // We care about iteration order here!
+            final LinkedHashMap<QName, Object> map = Maps.newLinkedHashMapWithExpectedSize(arg.size());
+            for (QName qname : keys) {
+                final Object value = arg.getValue(qname);
+                if (value != null) {
+                    map.put(qname, value);
+                }
+            }
+            if (map.size() < arg.size()) {
+                // Okay, this should not happen, but let's handle that anyway
+                LOG.debug("Extra predicates in {} while expecting {}", arg, keys);
+                for (Entry<QName, Object> entry : arg.entrySet()) {
+                    map.putIfAbsent(entry.getKey(), entry.getValue());
+                }
+            }
+
+            // This copy retains iteration order and since we have more than one argument, it should always be
+            // and ImmutableOffsetMap -- which is guaranteed to be taken as-is
+            final Map<QName, Object> copy = ImmutableOffsetMap.orderedCopyOf(map);
+            verify(copy instanceof ImmutableOffsetMap);
+            return NodeIdentifierWithPredicates.of(arg.getNodeType(), (ImmutableOffsetMap<QName, Object>) copy);
         }
     }
 
