@@ -7,12 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
+import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -32,6 +39,10 @@ public class InstanceIdToNodesTest {
     private static final String NS = "urn:opendaylight:params:xml:ns:yang:controller:md:sal:normalization:test";
     private static final String REVISION = "2014-03-13";
     private static final QName ID = QName.create(NS, REVISION, "id");
+    private static final QName FOO = QName.create(ID, "foo");
+    private static final QName BAR = QName.create(ID, "bar");
+    private static final NodeIdentifier TWO_KEY_LIST = NodeIdentifier.create(QName.create(ID, "two-key-list"));
+
     private static SchemaContext ctx;
 
     private final NodeIdentifier rootContainer = new NodeIdentifier(QName.create(NS, REVISION, "test"));
@@ -203,5 +214,23 @@ public class InstanceIdToNodesTest {
     public void testEmptyInstanceIdentifier() {
         assertEquals(ImmutableNodes.containerNode(SchemaContext.NAME),
             ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.EMPTY));
+    }
+
+    @Test
+    public void testKeyOrdering() {
+        final Map<QName, Object> misordered = ImmutableOffsetMap.orderedCopyOf(ImmutableMap.of(BAR, "bar", FOO, "foo"));
+        final NodeIdentifierWithPredicates id = new NodeIdentifierWithPredicates(TWO_KEY_LIST.getNodeType(),
+            misordered);
+        assertArrayEquals(new Object[] { BAR, FOO }, id.getKeyValues().keySet().toArray());
+
+        final NormalizedNode<?, ?> filter = ImmutableNodes.fromInstanceId(ctx,
+            YangInstanceIdentifier.create(TWO_KEY_LIST, id));
+        assertThat(filter, instanceOf(MapNode.class));
+        final Collection<MapEntryNode> value = ((MapNode) filter).getValue();
+        assertEquals(1, value.size());
+        final MapEntryNode entry = value.iterator().next();
+
+        // The entry must have a the proper order
+        assertArrayEquals(new Object[] { FOO, BAR }, entry.getIdentifier().getKeyValues().keySet().toArray());
     }
 }
