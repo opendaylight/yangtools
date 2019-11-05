@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_a676ae3c",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/SingleModuleYinStatementWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2019-11-05T21:57:10Z",
+      "side": 1,
+      "message": "Possible problem to build with this import, review of pom.xml is needed.",
+      "range": {
+        "startLine": 29,
+        "startChar": 50,
+        "endLine": 29,
+        "endChar": 68
+      },
+      "revId": "73b0112a11c7863658727bfab43eaa3dec03e9a2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
