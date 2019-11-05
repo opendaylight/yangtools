@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_fd4d03c6",
+        "filename": "docs/src/main/asciidoc/developer/YANGTOOLS, mdsal, netconf and restconf introductions.adoc",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-04-18T11:02:09Z",
+      "side": 1,
+      "message": "Please find \u0026 remove all trailing white-spaces. \nIt is considered to be commit noise.",
+      "revId": "9e4cd713297f481adae386b4fdde0e36a194f7e5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
