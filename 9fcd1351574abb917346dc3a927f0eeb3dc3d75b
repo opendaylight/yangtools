@@ -22,6 +22,30 @@
       "revId": "9fcd1351574abb917346dc3a927f0eeb3dc3d75b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_08a3ecb2",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/ModuleIdentifier.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-05-20T09:36:09Z",
+      "side": 1,
+      "message": "However, the method always returns a SemVer object.",
+      "parentUuid": "fa57193c_fc8be865",
+      "range": {
+        "startLine": 57,
+        "startChar": 6,
+        "endLine": 57,
+        "endChar": 47
+      },
+      "revId": "9fcd1351574abb917346dc3a927f0eeb3dc3d75b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
