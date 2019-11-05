@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_980af8d0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/ModelProcessingPhase.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-04-05T12:35:28Z",
+      "side": 1,
+      "message": "preliminary?",
+      "range": {
+        "startLine": 16,
+        "startChar": 6,
+        "endLine": 16,
+        "endChar": 17
+      },
+      "revId": "abf0b60bf529a146243bb6fc4de937a1885745a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_d81480f7",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/ModelProcessingPhase.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-04-05T12:35:28Z",
+      "side": 1,
+      "message": "module namespaces?",
+      "range": {
+        "startLine": 17,
+        "startChar": 48,
+        "endLine": 17,
+        "endChar": 58
+      },
+      "revId": "abf0b60bf529a146243bb6fc4de937a1885745a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_f8ddfc43",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/ImpPrefixToNamespace.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-04-05T12:35:28Z",
+      "side": 1,
+      "message": "do you mean module namespaces?",
+      "range": {
+        "startLine": 15,
+        "startChar": 54,
+        "endLine": 15,
+        "endChar": 64
+      },
+      "revId": "abf0b60bf529a146243bb6fc4de937a1885745a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_98bf98d0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/YinStatementSourceImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-04-05T12:35:28Z",
+      "side": 1,
+      "message": "in case of passing source via inputStream rather than file, this works only for pre-linkage phase and then throws XMLStreamException",
+      "range": {
+        "startLine": 91,
+        "startChar": 9,
+        "endLine": 91,
+        "endChar": 78
+      },
+      "revId": "abf0b60bf529a146243bb6fc4de937a1885745a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
