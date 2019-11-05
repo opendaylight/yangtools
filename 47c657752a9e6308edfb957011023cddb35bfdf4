@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_374ab2ac",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ImportStatementDefinition.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-12T08:20:47Z",
+      "side": 1,
+      "message": "verifyNotNull()",
+      "range": {
+        "startLine": 95,
+        "startChar": 23,
+        "endLine": 95,
+        "endChar": 29
+      },
+      "revId": "47c657752a9e6308edfb957011023cddb35bfdf4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_f74f9abc",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ImportStatementDefinition.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-12T08:20:47Z",
+      "side": 1,
+      "message": "verifyNotNull()",
+      "range": {
+        "startLine": 97,
+        "startChar": 23,
+        "endLine": 97,
+        "endChar": 29
+      },
+      "revId": "47c657752a9e6308edfb957011023cddb35bfdf4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_b75ec274",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ImportStatementDefinition.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-12T08:20:47Z",
+      "side": 1,
+      "message": "InferenceException.throwIf()",
+      "range": {
+        "startLine": 103,
+        "startChar": 16,
+        "endLine": 106,
+        "endChar": 17
+      },
+      "revId": "47c657752a9e6308edfb957011023cddb35bfdf4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_17dccee3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ModuleStatementSupport.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-12T08:20:47Z",
+      "side": 1,
+      "message": "How about storing the URI in a local field, guarded via SourceException.throwIfNull (note its return)?\n\nThat way we do not have this funky Optional boxing.",
+      "range": {
+        "startLine": 100,
+        "startChar": 8,
+        "endLine": 100,
+        "endChar": 54
+      },
+      "revId": "47c657752a9e6308edfb957011023cddb35bfdf4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_d75b7685",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-12T08:20:47Z",
+      "side": 1,
+      "message": "This is just plain unreadable. There are multiple checks for prefixes !\u003d null and qNameModule !\u003d null.\n\nIt is obvious that prefixes \u003d\u003d null implies qNameModule \u003d\u003d null, which implies a \u0027return null\u0027 -- except this fact is heavily obfuscated.",
+      "range": {
+        "startLine": 399,
+        "startChar": 16,
+        "endLine": 408,
+        "endChar": 17
+      },
+      "revId": "47c657752a9e6308edfb957011023cddb35bfdf4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
