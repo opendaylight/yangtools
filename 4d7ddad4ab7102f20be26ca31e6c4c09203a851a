@@ -1,0 +1,28 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a494da4_73c75b13",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-04-14T06:32:11Z",
+      "side": 1,
+      "message": "see 1st IF section of this method",
+      "parentUuid": "1a494da4_fdc05a2c",
+      "range": {
+        "startLine": 396,
+        "startChar": 26,
+        "endLine": 396,
+        "endChar": 30
+      },
+      "revId": "4d7ddad4ab7102f20be26ca31e6c4c09203a851a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
