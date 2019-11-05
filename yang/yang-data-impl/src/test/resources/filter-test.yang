@@ -65,6 +65,16 @@ module normalization-test {
         anyxml any-xml-data;
     }
 
+    list two-key-list {
+        key "foo bar";
+        leaf bar {
+            type string;
+        }
+        leaf foo {
+            type string;
+        }
+    }
+
     augment /norm-test:test/norm-test:outer-container {
 
         leaf augmented-leaf {
