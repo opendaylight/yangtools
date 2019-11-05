@@ -131,9 +131,9 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         }
     }
 
-    static final class ListItemNormalization extends DataContainerNormalizationOperation<NodeIdentifierWithPredicates> {
-        ListItemNormalization(final NodeIdentifierWithPredicates identifier, final ListSchemaNode schema) {
-            super(identifier, schema);
+    static final class MapEntryNormalization extends DataContainerNormalizationOperation<NodeIdentifierWithPredicates> {
+        MapEntryNormalization(final ListSchemaNode schema) {
+            super(NodeIdentifierWithPredicates.of(schema.getQName()), schema);
         }
 
         @Override
@@ -243,11 +243,11 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
     }
 
     static class UnorderedMapMixinNormalization extends InstanceIdToCompositeNodes<NodeIdentifier> {
-        private final ListItemNormalization innerNode;
+        private final MapEntryNormalization innerNode;
 
         UnorderedMapMixinNormalization(final ListSchemaNode list) {
             super(NodeIdentifier.create(list.getQName()));
-            this.innerNode = new ListItemNormalization(NodeIdentifierWithPredicates.of(list.getQName()), list);
+            this.innerNode = new MapEntryNormalization(list);
         }
 
         @Override
