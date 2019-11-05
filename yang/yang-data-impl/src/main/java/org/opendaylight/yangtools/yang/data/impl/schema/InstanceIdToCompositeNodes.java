@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -94,15 +96,15 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
 
     abstract NormalizedNodeContainerBuilder<?, ?, ?, ?> createBuilder(PathArgument compositeNode);
 
-    abstract static class DataContainerNormalizationOperation<T extends PathArgument>
+    abstract static class DataContainerNormalizationOperation<T extends PathArgument, S extends DataNodeContainer>
             extends InstanceIdToCompositeNodes<T> {
 
         private final Map<PathArgument, InstanceIdToNodes<?>> byArg = new ConcurrentHashMap<>();
-        private final DataNodeContainer schema;
+        private final @NonNull S schema;
 
-        DataContainerNormalizationOperation(final T identifier, final DataNodeContainer schema) {
+        DataContainerNormalizationOperation(final T identifier, final S schema) {
             super(identifier);
-            this.schema = schema;
+            this.schema = requireNonNull(schema);
         }
 
         @Override
@@ -113,6 +115,10 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             }
             potential = fromLocalSchema(child);
             return register(potential);
+        }
+
+        final @NonNull S schema() {
+            return schema;
         }
 
         private InstanceIdToNodes<?> fromLocalSchema(final PathArgument child) {
@@ -131,7 +137,8 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         }
     }
 
-    static final class MapEntryNormalization extends DataContainerNormalizationOperation<NodeIdentifierWithPredicates> {
+    static final class MapEntryNormalization
+            extends DataContainerNormalizationOperation<NodeIdentifierWithPredicates, ListSchemaNode> {
         MapEntryNormalization(final ListSchemaNode schema) {
             super(NodeIdentifierWithPredicates.of(schema.getQName()), schema);
         }
@@ -140,6 +147,9 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> createBuilder(
                 final PathArgument currentArg) {
             final NodeIdentifierWithPredicates arg = (NodeIdentifierWithPredicates) currentArg;
+
+
+
             final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> builder = Builders
                     .mapEntryBuilder().withNodeIdentifier(arg);
             for (final Entry<QName, Object> keyValue : arg.entrySet()) {
@@ -156,7 +166,8 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         }
     }
 
-    static final class UnkeyedListItemNormalization extends DataContainerNormalizationOperation<NodeIdentifier> {
+    static final class UnkeyedListItemNormalization
+            extends DataContainerNormalizationOperation<NodeIdentifier, ListSchemaNode> {
         UnkeyedListItemNormalization(final ListSchemaNode schema) {
             super(NodeIdentifier.create(schema.getQName()), schema);
         }
@@ -173,7 +184,8 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         }
     }
 
-    static final class ContainerTransformation extends DataContainerNormalizationOperation<NodeIdentifier> {
+    static final class ContainerTransformation
+            extends DataContainerNormalizationOperation<NodeIdentifier, ContainerSchemaNode> {
         ContainerTransformation(final ContainerSchemaNode schema) {
             super(NodeIdentifier.create(schema.getQName()), schema);
         }
@@ -224,7 +236,8 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         }
     }
 
-    static final class AugmentationNormalization extends DataContainerNormalizationOperation<AugmentationIdentifier> {
+    static final class AugmentationNormalization
+            extends DataContainerNormalizationOperation<AugmentationIdentifier, AugmentationSchemaNode> {
         AugmentationNormalization(final AugmentationSchemaNode augmentation, final DataNodeContainer schema) {
             super(DataSchemaContextNode.augmentationIdentifierFrom(augmentation),
                     EffectiveAugmentationSchema.create(augmentation, schema));
