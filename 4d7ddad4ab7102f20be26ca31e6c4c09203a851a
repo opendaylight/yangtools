@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "fa57193c_b9bb8271",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/QNameToStatementDefinitionMap.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-04-27T09:29:14Z",
+      "side": 1,
+      "message": "can it be null?",
+      "range": {
+        "startLine": 36,
+        "startChar": 58,
+        "endLine": 36,
+        "endChar": 89
+      },
+      "revId": "4d7ddad4ab7102f20be26ca31e6c4c09203a851a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a494da4_73c75b13",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
         "patchSetId": 8
