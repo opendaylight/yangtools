@@ -22,6 +22,30 @@
       "revId": "47c37b607e7582dd7779fed6ce22ae91295c5e94",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_c1a61e10",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/Bug6874Test.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5153
+      },
+      "writtenOn": "2019-11-13T21:42:34Z",
+      "side": 1,
+      "message": "Okie, I will remove the version check. Looks like I missed to validate the models for Import statement -I\u0027ll add that test as well.",
+      "parentUuid": "1a622d24_bbb7cf85",
+      "range": {
+        "startLine": 53,
+        "startChar": 8,
+        "endLine": 53,
+        "endChar": 57
+      },
+      "revId": "47c37b607e7582dd7779fed6ce22ae91295c5e94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
