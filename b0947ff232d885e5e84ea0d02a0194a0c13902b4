@@ -1,0 +1,28 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_74ef1db1",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/ImportStatementRfc7950Definition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-12-09T08:06:23Z",
+      "side": 1,
+      "message": "Yes, I mean Yang 1.1 patches. I tried to add you to these patches on code review, but I got this message: \"Rashmi Pujar \u003crpujar@inocybe.com\u003e does not identify a registered user or group\".",
+      "parentUuid": "1a622d24_166a311a",
+      "range": {
+        "startLine": 32,
+        "startChar": 8,
+        "endLine": 32,
+        "endChar": 45
+      },
+      "revId": "b0947ff232d885e5e84ea0d02a0194a0c13902b4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
