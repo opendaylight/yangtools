@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_2936afe7",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/LeafStatementImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 5153
+      },
+      "writtenOn": "2019-11-13T21:42:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_a60497c0",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 22
+      },
+      "revId": "e2c5af21f3227bca4c8b75054b36880ba18c7043",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_46f5ebc9",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/LeafStatementImpl.java",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2017-02-14T09:11:46Z",
       "side": 1,
       "message": "this must not be in the \u0027if\u0027 condition, please move it at the first line of the method",
+      "range": {
+        "startLine": 102,
+        "startChar": 16,
+        "endLine": 102,
+        "endChar": 52
+      },
+      "revId": "e2c5af21f3227bca4c8b75054b36880ba18c7043",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_89351bdc",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/LeafStatementImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 5153
+      },
+      "writtenOn": "2019-11-13T21:42:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_46f5ebc9",
       "range": {
         "startLine": 102,
         "startChar": 16,
@@ -82,6 +130,30 @@
       "writtenOn": "2017-02-14T09:11:46Z",
       "side": 1,
       "message": "please write a test, where key statement will be at the end of a list as the last statement of list. I have suspicion there will be a problem with that.",
+      "range": {
+        "startLine": 7,
+        "startChar": 7,
+        "endLine": 7,
+        "endChar": 20
+      },
+      "revId": "e2c5af21f3227bca4c8b75054b36880ba18c7043",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_2964efe3",
+        "filename": "yang/yang-parser-impl/src/test/resources/rfc7950/list-keys-test/correct-list-keys-test.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 5153
+      },
+      "writtenOn": "2019-11-13T21:42:34Z",
+      "side": 1,
+      "message": "Hi Peter. Yes the test fails for Yang 1.1 when key is the last stmt for list. I see that list\u0027s declared statements no longer has a Keystatement and hence no keys are extracted.. For 1.0 this works fine.\n\nKeys get logged coorectly in KeyStatementImpl.Definition.parseArgumentValue(). Looks like i\u0027d have to reuse this to get the key names to get rid of this issue..",
+      "parentUuid": "fafc7978_e6897f27",
       "range": {
         "startLine": 7,
         "startChar": 7,
