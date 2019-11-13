@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_a60497c0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/LeafStatementImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-14T09:11:46Z",
+      "side": 1,
+      "message": "please organize imports",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 22
+      },
+      "revId": "e2c5af21f3227bca4c8b75054b36880ba18c7043",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_46f5ebc9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/LeafStatementImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-14T09:11:46Z",
+      "side": 1,
+      "message": "this must not be in the \u0027if\u0027 condition, please move it at the first line of the method",
+      "range": {
+        "startLine": 102,
+        "startChar": 16,
+        "endLine": 102,
+        "endChar": 52
+      },
+      "revId": "e2c5af21f3227bca4c8b75054b36880ba18c7043",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_46ca0b6f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/LeafStatementImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-14T09:11:46Z",
+      "side": 1,
+      "message": "argument of a key statement has been parsed in KeyStatementImpl.Definition.parseArgumentValue() already. Moreover, leaf names in key statement argument could be prefixed (e.g. foo:bar), therefore the comparison based on localName and rawStatementArgument does not have to match.",
+      "range": {
+        "startLine": 106,
+        "startChar": 24,
+        "endLine": 108,
+        "endChar": 67
+      },
+      "revId": "e2c5af21f3227bca4c8b75054b36880ba18c7043",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_e6897f27",
+        "filename": "yang/yang-parser-impl/src/test/resources/rfc7950/list-keys-test/correct-list-keys-test.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-14T09:11:46Z",
+      "side": 1,
+      "message": "please write a test, where key statement will be at the end of a list as the last statement of list. I have suspicion there will be a problem with that.",
+      "range": {
+        "startLine": 7,
+        "startChar": 7,
+        "endLine": 7,
+        "endChar": 20
+      },
+      "revId": "e2c5af21f3227bca4c8b75054b36880ba18c7043",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
