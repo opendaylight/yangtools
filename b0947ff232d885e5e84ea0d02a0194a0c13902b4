@@ -46,6 +46,30 @@
       "revId": "b0947ff232d885e5e84ea0d02a0194a0c13902b4",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_166a311a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/ImportStatementRfc7950Definition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5153
+      },
+      "writtenOn": "2019-11-13T21:42:34Z",
+      "side": 1,
+      "message": "Indeed, I believe I do not even need to call the superclass method. Just the validation should be enough. I will take a relook at this. I\u0027m not added to any patch as code-review, so I assume you refer to the open Yang 1.1 patches?",
+      "parentUuid": "1a622d24_4c489f2d",
+      "range": {
+        "startLine": 32,
+        "startChar": 8,
+        "endLine": 32,
+        "endChar": 45
+      },
+      "revId": "b0947ff232d885e5e84ea0d02a0194a0c13902b4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
