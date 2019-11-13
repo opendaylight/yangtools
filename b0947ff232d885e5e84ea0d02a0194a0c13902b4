@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "1a622d24_4c489f2d",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/ImportStatementRfc7950Definition.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-12-08T08:59:05Z",
+      "side": 1,
+      "message": "Calling of superclass method will run also validation in ImportStatementDefinition (i.e. Rfc6020 definition), where DESCRIPTION and REFERENCE are not allowed, so I suppose it will throw validation exception also for YANG 1.1. Please inspire with other patches, I will add you to code-review.",
+      "range": {
+        "startLine": 32,
+        "startChar": 8,
+        "endLine": 32,
+        "endChar": 45
+      },
+      "revId": "b0947ff232d885e5e84ea0d02a0194a0c13902b4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a622d24_74ef1db1",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/ImportStatementRfc7950Definition.java",
         "patchSetId": 1
