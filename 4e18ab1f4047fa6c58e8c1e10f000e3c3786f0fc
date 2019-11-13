@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_5cd3e503",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/UsesStatementImpl.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-20T13:18:08Z",
+      "side": 1,
+      "message": "this is almost the same code as in LeafStatementImpl class, so please create a common method for both classes.",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 159,
+        "endChar": 9
+      },
+      "revId": "4e18ab1f4047fa6c58e8c1e10f000e3c3786f0fc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_dc2d1500",
+        "filename": "yang/yang-parser-impl/src/test/resources/rfc7950/list-keys-test/correct-list-keys-test.yang",
+        "patchSetId": 9
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-20T13:18:08Z",
+      "side": 1,
+      "message": "I do not think this is valid, because RFC7950 allows only the following two options: \"The leafs can be defined directly in substatements to the list or in groupings used in the list.\"",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 5
+      },
+      "revId": "4e18ab1f4047fa6c58e8c1e10f000e3c3786f0fc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_bc32d15c",
+        "filename": "yang/yang-parser-impl/src/test/resources/rfc7950/list-keys-test/correct-list-keys-test.yang",
+        "patchSetId": 9
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-20T13:18:08Z",
+      "side": 1,
+      "message": "please add a test with key names, which will be prefixed by a module prefix.",
+      "range": {
+        "startLine": 67,
+        "startChar": 8,
+        "endLine": 67,
+        "endChar": 15
+      },
+      "revId": "4e18ab1f4047fa6c58e8c1e10f000e3c3786f0fc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
