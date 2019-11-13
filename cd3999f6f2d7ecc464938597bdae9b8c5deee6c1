@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_745c16ee",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/IfFeatureStatement.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-11-18T10:04:34Z",
+      "side": 1,
+      "message": "please update also javadoc",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 46
+      },
+      "revId": "cd3999f6f2d7ecc464938597bdae9b8c5deee6c1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_d4c40a94",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/IfFeatureStatement.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-11-18T09:56:32Z",
+      "side": 1,
+      "message": "This have to be Predicate\u003cSet\u003cQName\u003e\u003e.",
+      "range": {
+        "startLine": 48,
+        "startChar": 21,
+        "endLine": 48,
+        "endChar": 37
+      },
+      "revId": "cd3999f6f2d7ecc464938597bdae9b8c5deee6c1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_f4b94616",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/IfFeatureStatement.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-11-18T09:56:32Z",
+      "side": 1,
+      "message": "return set -\u003e set.contains(getName());",
+      "range": {
+        "startLine": 49,
+        "startChar": 8,
+        "endLine": 49,
+        "endChar": 29
+      },
+      "revId": "cd3999f6f2d7ecc464938597bdae9b8c5deee6c1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
