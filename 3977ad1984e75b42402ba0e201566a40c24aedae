@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_ef7c40ee",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-09-25T10:06:39Z",
+      "side": 1,
+      "message": "a better commit message is needed",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 54
+      },
+      "revId": "3977ad1984e75b42402ba0e201566a40c24aedae",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_2f5ad882",
+        "filename": "yang/odl-yang-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-09-25T10:06:39Z",
+      "side": 1,
+      "message": "this should note that the output file will be overwritten",
+      "range": {
+        "startLine": 77,
+        "startChar": 63,
+        "endLine": 77,
+        "endChar": 92
+      },
+      "revId": "3977ad1984e75b42402ba0e201566a40c24aedae",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_8f71440e",
+        "filename": "yang/odl-yang-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-09-25T10:06:39Z",
+      "side": 1,
+      "message": "use diamond syntax",
+      "range": {
+        "startLine": 132,
+        "startChar": 75,
+        "endLine": 132,
+        "endChar": 90
+      },
+      "revId": "3977ad1984e75b42402ba0e201566a40c24aedae",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
