@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_912d3fab",
+        "filename": "yang/yang-maven-plugin/src/test/java/org/opendaylight/yangtools/yang2sources/plugin/UtilTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-17T14:08:45Z",
+      "side": 1,
+      "message": "one more empty line",
+      "revId": "65567069d97b0c416bcd4030825e4d7c07bf5bda",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_712a3b91",
+        "filename": "yang/yang-maven-plugin/src/test/java/org/opendaylight/yangtools/yang2sources/plugin/UtilTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-17T14:08:45Z",
+      "side": 1,
+      "message": "please clarify method name. What are you adding...",
+      "range": {
+        "startLine": 196,
+        "startChar": 17,
+        "endLine": 196,
+        "endChar": 20
+      },
+      "revId": "65567069d97b0c416bcd4030825e4d7c07bf5bda",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
