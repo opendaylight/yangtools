@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a245df4_c153e66a",
+        "filename": "yang/yang-model-validator/src/main/java/org/opendaylight/yangtools/yang/validator/SystemTestUtils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-10-03T08:28:21Z",
+      "side": 1,
+      "message": "YangConstants.RFC6020_YANG_FILE_EXTENSION",
+      "range": {
+        "startLine": 64,
+        "startChar": 39,
+        "endLine": 64,
+        "endChar": 46
+      },
+      "revId": "6c565f88ece16c5ec68a24cdfbfd1c0a9564d365",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
