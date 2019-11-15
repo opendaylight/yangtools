@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_6f4701bd",
+        "filename": "yang/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/repo/util/SchemaSourceTransformerTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-15T10:21:59Z",
+      "side": 1,
+      "message": "please check naming conventions for constants, even class types should be upper case",
+      "revId": "7027e97721e120f7b4aeacbbaf9e07a0c93847d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
