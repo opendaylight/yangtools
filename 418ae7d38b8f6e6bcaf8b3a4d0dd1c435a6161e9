@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_1c2b2831",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/InstanceIdentifierForXmlCodecTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-09T12:43:04Z",
+      "side": 1,
+      "message": "set up your IDE to get proper year",
+      "revId": "418ae7d38b8f6e6bcaf8b3a4d0dd1c435a6161e9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_7c21944c",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/InstanceIdentifierForXmlCodecTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-09T12:43:04Z",
+      "side": 1,
+      "message": "missing assert?",
+      "revId": "418ae7d38b8f6e6bcaf8b3a4d0dd1c435a6161e9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
