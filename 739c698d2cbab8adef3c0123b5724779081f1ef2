@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_2f0c9893",
+        "filename": "yang/odl-yang-validator/pom.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-09-25T10:03:52Z",
+      "side": 1,
+      "message": "drop the odl- prefix",
+      "range": {
+        "startLine": 12,
+        "startChar": 16,
+        "endLine": 12,
+        "endChar": 20
+      },
+      "revId": "739c698d2cbab8adef3c0123b5724779081f1ef2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_0f0f1489",
+        "filename": "yang/odl-yang-validator/pom.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-09-25T10:03:52Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 15,
+        "startChar": 17,
+        "endLine": 15,
+        "endChar": 21
+      },
+      "revId": "739c698d2cbab8adef3c0123b5724779081f1ef2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_af1fe8b5",
+        "filename": "yang/pom.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-09-25T10:03:52Z",
+      "side": 1,
+      "message": "yang-model-validator is probably a better name",
+      "range": {
+        "startLine": 44,
+        "startChar": 16,
+        "endLine": 44,
+        "endChar": 34
+      },
+      "revId": "739c698d2cbab8adef3c0123b5724779081f1ef2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
