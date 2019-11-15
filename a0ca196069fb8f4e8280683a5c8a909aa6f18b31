@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_0b847c5c",
+        "filename": "yang/yang-data-impl/src/test/resources/org/opendaylight/yangtools/yang/data/impl/codec/xml/xml-doc-test.yang",
+        "patchSetId": 10
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-10T09:45:14Z",
+      "side": 1,
+      "message": "year in header?",
+      "revId": "a0ca196069fb8f4e8280683a5c8a909aa6f18b31",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
