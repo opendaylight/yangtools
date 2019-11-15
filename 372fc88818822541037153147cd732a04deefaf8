@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_22ee2a23",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/Rfc6020ModuleWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 7786
+      },
+      "writtenOn": "2019-11-15T23:09:16Z",
+      "side": 1,
+      "message": "If you want to use only flush method, try Flushable interface from java.io.",
+      "range": {
+        "startLine": 144,
+        "startChar": 4,
+        "endLine": 144,
+        "endChar": 17
+      },
+      "revId": "372fc88818822541037153147cd732a04deefaf8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_a2923a9d",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/SchemaContextEmitter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 7786
+      },
+      "writtenOn": "2019-11-15T23:09:16Z",
+      "side": 1,
+      "message": "Do you really need this method for call flush() on writer? You used it only once.",
+      "range": {
+        "startLine": 118,
+        "startChar": 4,
+        "endLine": 120,
+        "endChar": 5
+      },
+      "revId": "372fc88818822541037153147cd732a04deefaf8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_e2ba8209",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/SingleModuleYinStatementWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 7786
+      },
+      "writtenOn": "2019-11-15T23:09:16Z",
+      "side": 1,
+      "message": "Do you need to create new method for flush()?",
+      "range": {
+        "startLine": 95,
+        "startChar": 12,
+        "endLine": 95,
+        "endChar": 26
+      },
+      "revId": "372fc88818822541037153147cd732a04deefaf8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_e251e2d9",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/StatementTextWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 7786
+      },
+      "writtenOn": "2019-11-15T23:09:16Z",
+      "side": 1,
+      "message": "If you want to use only flush method, try Flushable interface from java.io.",
+      "range": {
+        "startLine": 31,
+        "startChar": 4,
+        "endLine": 31,
+        "endChar": 17
+      },
+      "revId": "372fc88818822541037153147cd732a04deefaf8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
