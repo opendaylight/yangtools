@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_6f57b058",
+        "filename": "yang/odl-yang-validator/src/main/java/org/opendaylight/yangtools/yang/validator/Main.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-09-25T10:07:50Z",
+      "side": 1,
+      "message": "this looks like an unrelated change. should it be part of the previous patch?",
+      "range": {
+        "startLine": 112,
+        "startChar": 0,
+        "endLine": 116,
+        "endChar": 9
+      },
+      "revId": "c25130ada8d98a49d251767a3cc926289c4c1ebc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_af4d28c6",
+        "filename": "yang/odl-yang-validator/src/main/java/org/opendaylight/yangtools/yang/validator/SystemTestUtils.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-09-25T10:09:35Z",
+      "side": 1,
+      "message": "this is utterly wrong, it is even worse than inlining the pattern here.\nwhat.replaceAll(regex, replacement) -\u003e Pattern.compile(String).matcher(what).replaceAll(replacement).",
+      "range": {
+        "startLine": 98,
+        "startChar": 53,
+        "endLine": 98,
+        "endChar": 75
+      },
+      "revId": "c25130ada8d98a49d251767a3cc926289c4c1ebc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
