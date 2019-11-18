@@ -289,7 +289,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         public «type.getName» set«field.getName.toFirstUpper»(final «field.returnType.importedName» values) {
         «IF restrictions !== null»
             if (values != null) {
-               for («actualType.getFullyQualifiedName» value : values) {
+               for («actualType.importedName» value : values) {
                    «checkArgument(field, restrictions, actualType, "value")»
                }
             }
