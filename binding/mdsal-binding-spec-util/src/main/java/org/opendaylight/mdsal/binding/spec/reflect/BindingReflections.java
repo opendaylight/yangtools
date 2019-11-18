@@ -457,7 +457,7 @@ public final class BindingReflections {
         return getChildrenClassToMethod(type, BindingMapping.NONNULL_PREFIX);
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes", "checkstyle:illegalCatch" })
+    @SuppressWarnings("checkstyle:illegalCatch")
     private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method,
             final String prefix) {
         final String methodName = method.getName();
@@ -465,16 +465,14 @@ public final class BindingReflections {
             return Optional.empty();
         }
 
-        Class returnType = method.getReturnType();
+        final Class<?> returnType = method.getReturnType();
         if (DataContainer.class.isAssignableFrom(returnType)) {
-            return Optional.of(returnType);
-        }
-        if (List.class.isAssignableFrom(returnType)) {
+            return optionalDataContainer(returnType);
+        } else if (List.class.isAssignableFrom(returnType)) {
             try {
                 return ClassLoaderUtils.callWithClassLoader(method.getDeclaringClass().getClassLoader(), () -> {
                     return ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType()).flatMap(
-                        result -> result instanceof Class && DataContainer.class.isAssignableFrom((Class) result)
-                            ? Optional.of((Class<? extends DataContainer>) result) : Optional.empty());
+                        result -> result instanceof Class ? optionalCast((Class<?>) result) : Optional.empty());
                 });
             } catch (Exception e) {
                 /*
@@ -486,6 +484,14 @@ public final class BindingReflections {
             }
         }
         return Optional.empty();
+    }
+
+    private static Optional<Class<? extends DataContainer>> optionalCast(final Class<?> type) {
+        return DataContainer.class.isAssignableFrom(type) ? optionalDataContainer(type) : Optional.empty();
+    }
+
+    private static Optional<Class<? extends DataContainer>> optionalDataContainer(final Class<?> type) {
+        return Optional.of(type.asSubclass(DataContainer.class));
     }
 
     private static class ClassToQNameLoader extends CacheLoader<Class<?>, Optional<QName>> {
