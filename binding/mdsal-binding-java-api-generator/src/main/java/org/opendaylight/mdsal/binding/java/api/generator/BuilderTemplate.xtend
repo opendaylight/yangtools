@@ -317,21 +317,6 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             this.«field.fieldName» = value;
             return this;
         }
-        «val uintType = UINT_TYPES.get(field.returnType)»
-        «IF uintType !== null»
-
-            /**
-             * Utility migration setter.
-             *
-             * @param value field value in legacy type
-             * @return this builder
-             * @deprecated Use {#link «setterName»(«field.returnType.importedJavadocName»)} instead.
-             */
-            @Deprecated(forRemoval = true)
-            public «type.getName» «setterName»(final «uintType.importedName» value) {
-                return «setterName»(«CODEHELPERS.importedName».compatUint(value));
-            }
-        «ENDIF»
     '''
 
     /**

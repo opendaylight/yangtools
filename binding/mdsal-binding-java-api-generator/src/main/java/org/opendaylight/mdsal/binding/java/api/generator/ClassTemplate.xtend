@@ -201,10 +201,8 @@ class ClassTemplate extends BaseTemplate {
             «genUnionConstructor»
         «ELSEIF genTO.typedef && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
             «typedefConstructor»
-            «legacyConstructor»
         «ELSE»
             «allValuesConstructor»
-            «legacyConstructor»
         «ENDIF»
 
         «IF !allProperties.empty»
@@ -262,29 +260,6 @@ class ClassTemplate extends BaseTemplate {
         «ENDFOR»
     }
     '''
-
-    def private legacyConstructor() {
-        if (!hasUintProperties) {
-            return ""
-        }
-
-        val compatUint = CODEHELPERS.importedName + ".compatUint("
-        return '''
-
-            /**
-             * Utility migration constructor.
-             *
-             «FOR prop : allProperties»
-             * @param «prop.fieldName» «prop.name»«IF prop.isUintType» in legacy Java type«ENDIF»
-             «ENDFOR»
-             * @deprecated Use {#link «type.name»(«FOR prop : allProperties SEPARATOR ", "»«prop.returnType.importedJavadocName»«ENDFOR»)} instead.
-             */
-            @Deprecated(forRemoval = true)
-            public «type.getName»(«FOR prop : allProperties SEPARATOR ", "»«prop.legacyType.importedName» «prop.fieldName»«ENDFOR») {
-                this(«FOR prop : allProperties SEPARATOR ", "»«IF prop.isUintType»«compatUint»«prop.fieldName»)«ELSE»«prop.fieldName»«ENDIF»«ENDFOR»);
-            }
-        '''
-    }
 
     def protected genUnionConstructor() '''
     «FOR p : allProperties»
@@ -586,27 +561,5 @@ class ClassTemplate extends BaseTemplate {
             }
         }
         return null
-    }
-
-    def private hasUintProperties() {
-        for (GeneratedProperty prop : allProperties) {
-            if (prop.isUintType) {
-                return true
-            }
-        }
-        return false
-    }
-
-    def private static isUintType(GeneratedProperty prop) {
-        UINT_TYPES.containsKey(prop.returnType)
-    }
-
-    def private static legacyType(GeneratedProperty prop) {
-        val type = prop.returnType
-        val uint = UINT_TYPES.get(type)
-        if (uint !== null) {
-            return uint
-        }
-        return type
     }
 }
