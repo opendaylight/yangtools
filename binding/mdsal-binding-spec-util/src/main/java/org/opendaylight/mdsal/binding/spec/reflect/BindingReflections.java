@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -457,7 +458,6 @@ public final class BindingReflections {
         return getChildrenClassToMethod(type, BindingMapping.NONNULL_PREFIX);
     }
 
-    @SuppressWarnings("checkstyle:illegalCatch")
     private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method,
             final String prefix) {
         final String methodName = method.getName();
@@ -469,19 +469,28 @@ public final class BindingReflections {
         if (DataContainer.class.isAssignableFrom(returnType)) {
             return optionalDataContainer(returnType);
         } else if (List.class.isAssignableFrom(returnType)) {
-            try {
-                return ClassLoaderUtils.callWithClassLoader(method.getDeclaringClass().getClassLoader(), () -> {
-                    return ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType()).flatMap(
-                        result -> result instanceof Class ? optionalCast((Class<?>) result) : Optional.empty());
-                });
-            } catch (Exception e) {
-                /*
-                 * It is safe to log this this exception on debug, since this
-                 * method should not fail. Only failures are possible if the
-                 * runtime / backing.
-                 */
-                LOG.debug("Unable to find YANG modeled return type for {}", method, e);
-            }
+            return getYangModeledReturnType(method, 0);
+        } else if (Map.class.isAssignableFrom(returnType)) {
+            return getYangModeledReturnType(method, 1);
+        }
+        return Optional.empty();
+    }
+
+    @SuppressWarnings("checkstyle:illegalCatch")
+    private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method,
+            final int parameterOffset) {
+        try {
+            return ClassLoaderUtils.callWithClassLoader(method.getDeclaringClass().getClassLoader(), () -> {
+                return genericParameter(method.getGenericReturnType(), parameterOffset).flatMap(
+                    result -> result instanceof Class ? optionalCast((Class<?>) result) : Optional.empty());
+            });
+        } catch (Exception e) {
+            /*
+             * It is safe to log this this exception on debug, since this
+             * method should not fail. Only failures are possible if the
+             * runtime / backing.
+             */
+            LOG.debug("Unable to find YANG modeled return type for {}", method, e);
         }
         return Optional.empty();
     }
@@ -492,6 +501,16 @@ public final class BindingReflections {
 
     private static Optional<Class<? extends DataContainer>> optionalDataContainer(final Class<?> type) {
         return Optional.of(type.asSubclass(DataContainer.class));
+    }
+
+    private static Optional<Type> genericParameter(final Type type, final int offset) {
+        if (type instanceof ParameterizedType) {
+            final Type[] parameters = ((ParameterizedType) type).getActualTypeArguments();
+            if (parameters.length > offset) {
+                return Optional.of(parameters[offset]);
+            }
+        }
+        return Optional.empty();
     }
 
     private static class ClassToQNameLoader extends CacheLoader<Class<?>, Optional<QName>> {
