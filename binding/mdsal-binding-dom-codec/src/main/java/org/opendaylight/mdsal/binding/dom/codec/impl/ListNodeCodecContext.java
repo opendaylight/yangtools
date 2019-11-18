@@ -56,17 +56,17 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
         }
     }
 
-    private List<D> fromMap(final MapNode nodes) {
+    Object fromMap(final MapNode nodes) {
         final Collection<MapEntryNode> value = nodes.getValue();
         final Builder<D> builder = ImmutableList.builderWithExpectedSize(value.size());
         // FIXME: Could be this lazy transformed list?
         for (MapEntryNode node : value) {
-            builder.add(fromMapEntry(node));
+            builder.add(createBindingProxy(node));
         }
         return builder.build();
     }
 
-    private D fromMapEntry(final MapEntryNode node) {
+    final D fromMapEntry(final MapEntryNode node) {
         return createBindingProxy(node);
     }
 

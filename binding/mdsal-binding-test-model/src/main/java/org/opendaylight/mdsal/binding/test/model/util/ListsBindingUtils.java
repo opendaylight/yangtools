@@ -7,7 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.test.model.util;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import java.util.Arrays;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugmentBuilder;
@@ -59,7 +60,7 @@ public final class ListsBindingUtils {
     }
 
     public static Top top(final TopLevelList... listItems) {
-        return new TopBuilder().setTopLevelList(Arrays.asList(listItems)).build();
+        return new TopBuilder().setTopLevelList(Maps.uniqueIndex(Arrays.asList(listItems), TopLevelList::key)).build();
     }
 
     public static TopLevelList topLevelList(final TopLevelListKey key) {
@@ -71,9 +72,9 @@ public final class ListsBindingUtils {
     }
 
     public static TreeComplexUsesAugment complexUsesAugment(final ListViaUsesKey... keys) {
-        final ImmutableList.Builder<ListViaUses> listViaUses = ImmutableList.builder();
+        final ImmutableMap.Builder<ListViaUsesKey, ListViaUses> listViaUses = ImmutableMap.builder();
         for (final ListViaUsesKey key : keys) {
-            listViaUses.add(new ListViaUsesBuilder().withKey(key).build());
+            listViaUses.put(key, new ListViaUsesBuilder().withKey(key).build());
         }
         return new TreeComplexUsesAugmentBuilder().setListViaUses(listViaUses.build()).build();
     }

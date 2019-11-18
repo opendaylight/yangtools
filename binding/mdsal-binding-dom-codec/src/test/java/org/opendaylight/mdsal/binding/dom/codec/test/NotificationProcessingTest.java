@@ -10,7 +10,7 @@ package org.opendaylight.mdsal.binding.dom.codec.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import java.time.Instant;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.TwoLevelListChanged;
@@ -31,9 +31,9 @@ public class NotificationProcessingTest extends AbstractBindingCodecTest {
     private static final QName NAME = QName.create(TopLevelList.QNAME, "name");
 
     private static TwoLevelListChanged createTestBindingData() {
+        final TopLevelListKey key = new TopLevelListKey("test");
         return new TwoLevelListChangedBuilder()
-                .setTopLevelList(ImmutableList.of(
-                    new TopLevelListBuilder().withKey(new TopLevelListKey("test")).build()))
+                .setTopLevelList(ImmutableMap.of(key, new TopLevelListBuilder().withKey(key).build()))
                 .build();
     }
 

@@ -230,7 +230,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         for (Entry<Class<? extends Augmentation<Top>>, ? extends Augmentation<Top>> augment : augments.entrySet()) {
             topBuilder.addAugmentation(augment.getKey(), augment.getValue());
         }
-        return topBuilder.setTopLevelList(Collections.emptyList()).build();
+        return topBuilder.setTopLevelList(Collections.emptyMap()).build();
     }
 
     @Test

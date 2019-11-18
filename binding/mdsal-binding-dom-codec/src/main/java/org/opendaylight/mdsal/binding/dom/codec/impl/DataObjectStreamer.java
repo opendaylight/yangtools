@@ -144,10 +144,10 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
 
     protected static final <E extends DataObject & Identifiable<?>> void streamMap(final Class<E> childClass,
             final DataObjectStreamer<E> childStreamer, final DataObjectSerializerRegistry registry,
-            final BindingStreamEventWriter writer, final List<? extends E> value) throws IOException {
+            final BindingStreamEventWriter writer, final Map<?, ? extends E> value) throws IOException {
         if (value != null) {
             writer.startMapNode(childClass, value.size());
-            commonStreamList(registry, writer, childStreamer, value);
+            commonStreamList(registry, writer, childStreamer, value.values());
         }
     }
 

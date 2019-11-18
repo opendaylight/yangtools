@@ -14,10 +14,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
@@ -47,8 +47,8 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
 
     private static final NodeIdentifier TOP_LEVEL_LIST_ARG = new NodeIdentifier(TopLevelList.QNAME);
     private static final InstanceIdentifier<Top> TOP_PATH = InstanceIdentifier.create(Top.class);
-    private static final List<TopLevelList> TWO_LIST = createList(2);
-    private static final List<TopLevelList> THREE_LIST = createList(3);
+    private static final Map<TopLevelListKey, TopLevelList> TWO_LIST = createList(2);
+    private static final Map<TopLevelListKey, TopLevelList> THREE_LIST = createList(3);
 
     private static final Top TOP_TWO_LIST_DATA = new TopBuilder().setTopLevelList(TWO_LIST).build();
     private static final Top TOP_THREE_LIST_DATA = new TopBuilder().setTopLevelList(THREE_LIST).build();
@@ -77,12 +77,11 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
         contNode = registry.getCodecContext().getSubtreeCodec(CONT_PATH);
     }
 
-    private static List<TopLevelList> createList(final int num) {
-
-        final ImmutableList.Builder<TopLevelList> builder = ImmutableList.builder();
+    private static Map<TopLevelListKey, TopLevelList> createList(final int num) {
+        final ImmutableMap.Builder<TopLevelListKey, TopLevelList> builder = ImmutableMap.builder();
         for (int i = 0; i < num; i++) {
             final TopLevelListKey key = new TopLevelListKey("test-" + i);
-            builder.add(new TopLevelListBuilder().withKey(key).build());
+            builder.put(key, new TopLevelListBuilder().withKey(key).build());
         }
         return builder.build();
     }
@@ -134,7 +133,7 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
 
         final Top input = new TopBuilder().build();
         assertNull(input.getTopLevelList());
-        assertEquals(ImmutableList.of(), input.nonnullTopLevelList());
+        assertEquals(ImmutableMap.of(), input.nonnullTopLevelList());
 
         final NormalizedNode<?, ?> dom = cachingCodec.serialize(input);
         final Top output = cachingCodec.deserialize(dom);
@@ -142,7 +141,7 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
         assertTrue(output.equals(input));
 
         assertNull(output.getTopLevelList());
-        assertEquals(ImmutableList.of(), output.nonnullTopLevelList());
+        assertEquals(ImmutableMap.of(), output.nonnullTopLevelList());
     }
 
     @SafeVarargs

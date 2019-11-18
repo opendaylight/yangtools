@@ -58,13 +58,11 @@ public class EmptyLeafTest extends AbstractBindingCodecTest {
         assertNotNull(((EmptyLeaf) list).getEmptyType());
     }
 
+    // FIXME: either remove this method or take advantage of it
     private static RpcComplexUsesAugment createComplexData() {
         return new RpcComplexUsesAugmentBuilder()
-        .setContainerWithUses(new ContainerWithUsesBuilder()
-            .setLeafFromGrouping("foo")
-        .build())
-        .setListViaUses(Collections.emptyList())
-        .build();
+                .setContainerWithUses(new ContainerWithUsesBuilder().setLeafFromGrouping("foo").build())
+                .setListViaUses(Collections.emptyMap())
+                .build();
     }
-
 }

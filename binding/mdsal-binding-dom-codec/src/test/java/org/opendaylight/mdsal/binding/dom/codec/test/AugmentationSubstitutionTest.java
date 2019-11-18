@@ -71,10 +71,8 @@ public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
 
     private static RpcComplexUsesAugment createComplexData() {
         return new RpcComplexUsesAugmentBuilder()
-                .setContainerWithUses(new ContainerWithUsesBuilder()
-                    .setLeafFromGrouping("foo")
-                    .build())
-                .setListViaUses(Collections.emptyList())
+                .setContainerWithUses(new ContainerWithUsesBuilder().setLeafFromGrouping("foo").build())
+                .setListViaUses(Collections.emptyMap())
                 .build();
     }
 }

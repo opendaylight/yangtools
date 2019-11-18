@@ -144,7 +144,7 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         BindingStreamEventWriter.class, List.class);
     private static final StackManipulation STREAM_MAP = invokeMethod(DataObjectStreamer.class,
         "streamMap", Class.class, DataObjectStreamer.class, DataObjectSerializerRegistry.class,
-        BindingStreamEventWriter.class, List.class);
+        BindingStreamEventWriter.class, Map.class);
     private static final StackManipulation STREAM_ORDERED_MAP = invokeMethod(DataObjectStreamer.class,
         "streamOrderedMap", Class.class, DataObjectStreamer.class, DataObjectSerializerRegistry.class,
         BindingStreamEventWriter.class, List.class);
@@ -257,14 +257,17 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
             final String getterName = getter.getName();
             final Type childType = props.get(getterName);
             verify(childType instanceof ParameterizedType, "Unexpected type %s for %s", childType, getterName);
-            final Type valueType = ((ParameterizedType) childType).getActualTypeArguments()[0];
+            final Type[] params = ((ParameterizedType) childType).getActualTypeArguments();
+            final ListSchemaNode listSchema = (ListSchemaNode) childSchema;
             final Class<?> valueClass;
-            try {
-                valueClass = loader.loadClass(valueType.getFullyQualifiedName());
-            } catch (ClassNotFoundException e) {
-                throw new LinkageError("Failed to load " + valueType, e);
+            if (!listSchema.isUserOrdered() && !listSchema.getKeyDefinition().isEmpty()) {
+                loadTypeClass(loader, params[0]);
+                valueClass = loadTypeClass(loader, params[1]);
+            } else {
+                valueClass = loadTypeClass(loader, params[0]);
             }
-            return listChildStream(getter, valueClass.asSubclass(DataObject.class), (ListSchemaNode) childSchema);
+
+            return listChildStream(getter, valueClass.asSubclass(DataObject.class), listSchema);
         }
         if (childSchema instanceof ChoiceSchemaNode) {
             return choiceChildStream(getter);
@@ -371,6 +374,14 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
             if (parent instanceof GeneratedType) {
                 collectAllProperties((GeneratedType) parent, hashMap);
             }
+        }
+    }
+
+    private static Class<?> loadTypeClass(final CodecClassLoader loader, final Type type) {
+        try {
+            return loader.loadClass(type.getFullyQualifiedName());
+        } catch (ClassNotFoundException e) {
+            throw new LinkageError("Failed to load " + type, e);
         }
     }
 

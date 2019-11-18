@@ -10,7 +10,7 @@ package org.opendaylight.mdsal.binding.dom.codec.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.GetTopOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.GetTopOutputBuilder;
@@ -31,11 +31,13 @@ public class RpcDataSerializationTest extends AbstractBindingCodecTest {
     private static final SchemaPath PUT_TOP_INPUT = SchemaPath.create(true, PUT_TOP, PutTopInput.QNAME);
     private static final SchemaPath GET_TOP_OUTPUT = SchemaPath.create(true, GET_TOP, GetTopOutput.QNAME);
 
+    private static final TopLevelListKey LIST_KEY = new TopLevelListKey("test");
+
     @Test
     public void testRpcInputToNormalized() {
-        final PutTopInputBuilder tb = new PutTopInputBuilder();
-        tb.setTopLevelList(ImmutableList.of(new TopLevelListBuilder().withKey(new TopLevelListKey("test")).build()));
-        final PutTopInput bindingOriginal = tb.build();
+        final PutTopInput bindingOriginal = new PutTopInputBuilder()
+                .setTopLevelList(ImmutableMap.of(LIST_KEY, new TopLevelListBuilder().withKey(LIST_KEY).build()))
+                .build();
         final ContainerNode dom = registry.toNormalizedNodeRpcData(bindingOriginal);
         assertNotNull(dom);
         assertEquals(PutTopInput.QNAME, dom.getIdentifier().getNodeType());
@@ -46,16 +48,14 @@ public class RpcDataSerializationTest extends AbstractBindingCodecTest {
 
     @Test
     public void testRpcOutputToNormalized() {
-        final GetTopOutputBuilder tb = new GetTopOutputBuilder();
-        tb.setTopLevelList(ImmutableList.of(new TopLevelListBuilder().withKey(new TopLevelListKey("test")).build()));
-        final GetTopOutput bindingOriginal = tb.build();
+        final GetTopOutput bindingOriginal = new GetTopOutputBuilder()
+                .setTopLevelList(ImmutableMap.of(LIST_KEY, new TopLevelListBuilder().withKey(LIST_KEY).build()))
+                .build();
         final ContainerNode dom = registry.toNormalizedNodeRpcData(bindingOriginal);
         assertNotNull(dom);
         assertEquals(GetTopOutput.QNAME, dom.getIdentifier().getNodeType());
 
         final DataObject bindingDeserialized = registry.fromNormalizedNodeRpcData(GET_TOP_OUTPUT, dom);
         assertEquals(bindingOriginal, bindingDeserialized);
-
     }
-
 }

@@ -9,7 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.test;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import java.util.Map.Entry;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.mdsal442.keydef.norev.Def;
@@ -29,10 +29,10 @@ public class KeyInheritenceTest extends AbstractBindingCodecTest {
     private static final InstanceIdentifier<Use> USE_IID = InstanceIdentifier.create(Use.class);
 
     private static final Def DEF = new DefBuilder()
-            .setLst(ImmutableList.of(new LstBuilder().setFoo("foo").withKey(KEY).build()))
+            .setLst(ImmutableMap.of(KEY, new LstBuilder().setFoo("foo").withKey(KEY).build()))
             .build();
     private static final Use USE = new UseBuilder()
-            .setLst(ImmutableList.of(new LstBuilder().setFoo("foo").withKey(KEY).build()))
+            .setLst(ImmutableMap.of(KEY, new LstBuilder().setFoo("foo").withKey(KEY).build()))
             .build();
 
     @Test

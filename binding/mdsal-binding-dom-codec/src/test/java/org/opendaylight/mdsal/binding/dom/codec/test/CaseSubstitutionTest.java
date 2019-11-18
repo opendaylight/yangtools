@@ -60,11 +60,8 @@ public class CaseSubstitutionTest extends AbstractBindingCodecTest {
 
     private static RpcComplexUsesAugment createComplexData() {
         return new RpcComplexUsesAugmentBuilder()
-        .setContainerWithUses(new ContainerWithUsesBuilder()
-            .setLeafFromGrouping("foo")
-        .build())
-        .setListViaUses(Collections.emptyList())
-        .build();
+                .setContainerWithUses(new ContainerWithUsesBuilder().setLeafFromGrouping("foo").build())
+                .setListViaUses(Collections.emptyMap())
+                .build();
     }
-
 }

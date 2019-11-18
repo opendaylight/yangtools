@@ -25,17 +25,19 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 public class Bug5845booleanKeyTest extends AbstractBindingCodecTest {
     @Test
     public void testBug5845() throws Exception {
-        final BooleanContainer booleanContainer = new BooleanContainerBuilder().setBooleanList(Collections
-                .singletonList(new BooleanListBuilder()
-                        .withKey(new BooleanListKey(true, true))
-                        .setBooleanLeaf1(true)
-                        .setBooleanLeaf2(true)
-                        .build()))
+        final BooleanListKey blk = new BooleanListKey(true, true);
+        final BooleanContainer booleanContainer = new BooleanContainerBuilder()
+                .setBooleanList(Collections.singletonMap(blk, new BooleanListBuilder()
+                    .withKey(blk)
+                    .setBooleanLeaf1(true)
+                    .setBooleanLeaf2(true)
+                    .build()))
                 .build();
 
-        final BooleanContainer booleanContainerInt = new BooleanContainerBuilder().setBooleanListInt(Collections
-                .singletonList(new BooleanListIntBuilder()
-                        .withKey(new BooleanListIntKey((byte) 1))
+        final BooleanListIntKey blik = new BooleanListIntKey((byte) 1);
+        final BooleanContainer booleanContainerInt = new BooleanContainerBuilder()
+                .setBooleanListInt(Collections.singletonMap(blik, new BooleanListIntBuilder()
+                        .withKey(blik)
                         .setBooleanLeafInt((byte) 1)
                         .build()))
                 .build();
