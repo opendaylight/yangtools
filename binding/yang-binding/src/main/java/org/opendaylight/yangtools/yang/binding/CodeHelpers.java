@@ -14,8 +14,10 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
@@ -251,6 +253,17 @@ public final class CodeHelpers {
      */
     public static <T> @NonNull List<T> nonnull(final @Nullable List<T> input) {
         return input != null ? input : ImmutableList.of();
+    }
+
+    /**
+     * Check whether specified Map is null and if so return an immutable map instead. This method supports
+     * non-null default getter methods.
+     *
+     * @param input input map, may be null
+     * @return Input map or an empty map.
+     */
+    public static <K, V> @NonNull Map<K, V> nonnull(final @Nullable Map<K, V> input) {
+        return input != null ? input : ImmutableMap.of();
     }
 
     /**
