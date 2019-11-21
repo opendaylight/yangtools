@@ -94,7 +94,7 @@ class YangModuleInfoTemplate {
 
                 private final @NonNull ImmutableSet<YangModuleInfo> importedModules;
 
-                public static YangModuleInfo getInstance() {
+                public static @NonNull YangModuleInfo getInstance() {
                     return INSTANCE;
                 }
 
