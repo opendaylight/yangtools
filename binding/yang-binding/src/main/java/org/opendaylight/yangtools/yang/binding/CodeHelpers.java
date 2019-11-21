@@ -254,7 +254,7 @@ public final class CodeHelpers {
      * @param input input list, may be null
      * @return Input list or an empty list.
      */
-    public static <T> List<T> nonnull(final @Nullable List<T> input) {
+    public static <T> @NonNull List<T> nonnull(final @Nullable List<T> input) {
         return input != null ? input : ImmutableList.of();
     }
 
