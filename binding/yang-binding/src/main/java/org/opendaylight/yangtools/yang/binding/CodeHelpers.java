@@ -120,10 +120,10 @@ public final class CodeHelpers {
      * @throws NullPointerException if the list or any of its elements is null
      * @throws VerifyException if the list has fewer than two elements
      */
-    public static @NonNull Pattern[] compilePatterns(final @NonNull List<String> patterns) {
+    public static Pattern @NonNull[] compilePatterns(final @NonNull List<String> patterns) {
         final int size = patterns.size();
         verify(size > 1, "Patterns has to have at least 2 elements");
-        final @NonNull Pattern[] result = new Pattern[size];
+        final Pattern[] result = new Pattern[size];
         for (int i = 0; i < size; ++i) {
             result[i] = Pattern.compile(patterns.get(i));
         }
