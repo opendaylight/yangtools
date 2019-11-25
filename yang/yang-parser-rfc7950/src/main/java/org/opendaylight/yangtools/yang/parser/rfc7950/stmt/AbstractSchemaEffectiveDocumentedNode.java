@@ -7,12 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
+import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
@@ -41,7 +46,10 @@ public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends Declare
     protected AbstractSchemaEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx) {
         super(ctx);
 
-        if (this instanceof SchemaTreeAwareEffectiveStatement) {
+        // This check is rather weird, but comes from our desire to lower memory footprint while providing both
+        // EffectiveStatements and SchemaNode interfaces -- which do not overlap completely where child lookups are
+        // concerned. This ensures that we have SchemaTree index available for use with child lookups.
+        if (this instanceof SchemaTreeAwareEffectiveStatement || this instanceof DataNodeContainer) {
             final StatementSourceReference ref = ctx.getStatementSourceReference();
             final Map<QName, SchemaTreeEffectiveStatement<?>> schemaChildren = new LinkedHashMap<>();
             streamEffectiveSubstatements(SchemaTreeEffectiveStatement.class).forEach(child -> {
@@ -88,6 +96,16 @@ public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends Declare
             return Optional.of((Map<K, V>) dataTreeNamespace);
         }
         return super.getNamespaceContents(namespace);
+    }
+
+    /**
+     * Indexing support for {@link DataNodeContainer#findDataChildByName(QName)}.
+     */
+    protected final Optional<DataSchemaNode> findDataSchemaNode(final QName name) {
+        // Only DataNodeContainer subclasses should be calling this method
+        verify(this instanceof DataNodeContainer);
+        final SchemaTreeEffectiveStatement<?> child = schemaTreeNamespace.get(requireNonNull(name));
+        return child instanceof DataSchemaNode ? Optional.of((DataSchemaNode) child) : Optional.empty();
     }
 
     private static <T extends SchemaTreeEffectiveStatement<?>> void putChild(final Map<QName, T> map,
