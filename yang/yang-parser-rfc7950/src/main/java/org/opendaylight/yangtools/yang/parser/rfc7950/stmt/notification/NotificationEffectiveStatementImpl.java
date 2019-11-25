@@ -7,12 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -21,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
@@ -36,7 +32,6 @@ final class NotificationEffectiveStatementImpl
     private final @NonNull QName qname;
     private final @NonNull SchemaPath path;
     private final ImmutableSet<AugmentationSchemaNode> augmentations;
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final boolean augmenting;
     private final boolean addedByUses;
     private final ImmutableSet<MustDefinition> mustConstraints;
@@ -48,19 +43,13 @@ final class NotificationEffectiveStatementImpl
         this.path = ctx.getSchemaPath().get();
 
         // initSubstatementCollections
-        final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
         final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                final UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
-            }
             if (effectiveStatement instanceof AugmentationSchemaNode) {
                 final AugmentationSchemaNode augmentationSchema = (AugmentationSchemaNode) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
             }
         }
-        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.mustConstraints = ImmutableSet.copyOf(this.allSubstatementsOfType(MustDefinition.class));
 
@@ -93,11 +82,6 @@ final class NotificationEffectiveStatementImpl
     @Override
     public Set<AugmentationSchemaNode> getAvailableAugmentations() {
         return augmentations;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
     }
 
     @Deprecated
