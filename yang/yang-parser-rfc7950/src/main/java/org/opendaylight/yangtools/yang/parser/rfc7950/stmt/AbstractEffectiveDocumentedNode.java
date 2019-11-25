@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.collect.ImmutableList;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -22,8 +24,21 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 // FIXME: 5.0.0: rename to AbstractEffectiveDocumentedNodeWithStatus
 public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
         extends AbstractEffectiveDocumentedNodeWithoutStatus<A, D> implements DocumentedNode.WithStatus {
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
+    private static final VarHandle UNKNOWN_NODES;
+
+    static {
+        try {
+            UNKNOWN_NODES = MethodHandles.lookup().findVarHandle(AbstractEffectiveDocumentedNode.class,
+                "unknownNodes", ImmutableList.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private final @NonNull Status status;
+
+    @SuppressWarnings("unused")
+    private volatile ImmutableList<UnknownSchemaNode> unknownNodes;
 
     /**
      * Constructor.
@@ -34,14 +49,6 @@ public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredState
     protected AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx) {
         super(ctx);
         status = findFirstEffectiveSubstatementArgument(StatusEffectiveStatement.class).orElse(Status.CURRENT);
-
-        final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
-        for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof UnknownSchemaNode) {
-                unknownNodesInit.add((UnknownSchemaNode) stmt);
-            }
-        }
-        unknownNodes = ImmutableList.copyOf(unknownNodesInit);
     }
 
     @Override
@@ -51,6 +58,22 @@ public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredState
 
     @Override
     public final ImmutableList<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
+        final ImmutableList<UnknownSchemaNode> existing =
+                (ImmutableList<UnknownSchemaNode>) UNKNOWN_NODES.getAcquire(this);
+        return existing != null ? existing : calculatenknownSchemaNodes();
+    }
+
+    @SuppressWarnings("unchecked")
+    private @NonNull ImmutableList<UnknownSchemaNode> calculatenknownSchemaNodes() {
+        final List<UnknownSchemaNode> init = new ArrayList<>();
+        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+            if (stmt instanceof UnknownSchemaNode) {
+                init.add((UnknownSchemaNode) stmt);
+            }
+        }
+
+        final ImmutableList<UnknownSchemaNode> computed = ImmutableList.copyOf(init);
+        final Object witness = UNKNOWN_NODES.compareAndExchangeRelease(this, null, computed);
+        return witness == null ? computed : (ImmutableList<UnknownSchemaNode>) witness;
     }
 }
