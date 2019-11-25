@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStat
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.range.RangeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-// FIXME: hide this class
 @VisibleForTesting
+//FIXME: 5.0.0: hide this class
 public final class Decimal64SpecificationEffectiveStatement
         extends DeclaredEffectiveStatementBase<String, Decimal64Specification>
         implements TypeEffectiveStatement<Decimal64Specification> {

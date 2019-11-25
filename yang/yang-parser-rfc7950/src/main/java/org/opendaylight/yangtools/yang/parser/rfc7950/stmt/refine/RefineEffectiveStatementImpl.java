@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-// FIXME: hide this class
+// FIXME: 5.0.0: hide this class
 public final class RefineEffectiveStatementImpl
         extends AbstractEffectiveDocumentedNode<SchemaNodeIdentifier, RefineStatement>
         implements RefineEffectiveStatement, SchemaNode {

@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStat
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @VisibleForTesting
-// FIXME: hide this class
+// FIXME: 5.0.0: hide this class
 public final class UnionSpecificationEffectiveStatement extends
         DeclaredEffectiveStatementBase<String, UnionSpecification> implements
         TypeEffectiveStatement<UnionSpecification> {

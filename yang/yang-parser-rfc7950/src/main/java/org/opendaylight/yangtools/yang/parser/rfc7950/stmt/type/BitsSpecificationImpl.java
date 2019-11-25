@@ -11,6 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecific
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
+// FIXME: 5.0.0: hide this class
 public class BitsSpecificationImpl extends AbstractDeclaredStatement<String> implements BitsSpecification {
     protected BitsSpecificationImpl(final StmtContext<String, BitsSpecification, ?> context) {
         super(context);
