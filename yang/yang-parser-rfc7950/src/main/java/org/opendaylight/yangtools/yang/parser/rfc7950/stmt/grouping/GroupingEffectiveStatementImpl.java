@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -18,7 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
@@ -38,7 +35,6 @@ final class GroupingEffectiveStatementImpl
     private final boolean addedByUses;
     private final @NonNull ImmutableSet<ActionDefinition> actions;
     private final @NonNull ImmutableSet<NotificationDefinition> notifications;
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
 
     GroupingEffectiveStatementImpl(
             final StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {
@@ -50,24 +46,17 @@ final class GroupingEffectiveStatementImpl
 
         final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
         final ImmutableSet.Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
-        final ImmutableList.Builder<UnknownSchemaNode> b = ImmutableList.builder();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof ActionDefinition) {
                 actionsBuilder.add((ActionDefinition) effectiveStatement);
             }
-
             if (effectiveStatement instanceof NotificationDefinition) {
                 notificationsBuilder.add((NotificationDefinition) effectiveStatement);
-            }
-
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                b.add((UnknownSchemaNode) effectiveStatement);
             }
         }
 
         this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
-        unknownNodes = b.build();
     }
 
     @Override
@@ -93,11 +82,6 @@ final class GroupingEffectiveStatementImpl
     @Override
     public Set<NotificationDefinition> getNotifications() {
         return notifications;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
     }
 
     @Override

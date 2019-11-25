@@ -41,7 +41,6 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -72,7 +71,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     private final ImmutableSet<Deviation> deviations;
     private final ImmutableList<ExtensionDefinition> extensionNodes;
     private final ImmutableSet<IdentitySchemaNode> identities;
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final ImmutableMap<QName, DataSchemaNode> childNodes;
     private final ImmutableSet<GroupingDefinition> groupings;
     private final ImmutableSet<UsesNode> uses;
@@ -96,7 +94,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         this.contact = findFirstEffectiveSubstatementArgument(ContactEffectiveStatement.class)
                 .orElse(null);
 
-        final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
         final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
         final Set<ModuleImport> importsInit = new HashSet<>();
         final Set<NotificationDefinition> notificationsInit = new HashSet<>();
@@ -113,9 +110,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         final Set<DataSchemaNode> mutablePublicChildNodes = new LinkedHashSet<>();
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
-            }
             if (effectiveStatement instanceof AugmentationSchemaNode) {
                 augmentationsInit.add((AugmentationSchemaNode) effectiveStatement);
             }
@@ -176,7 +170,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
             }
         }
 
-        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.imports = ImmutableSet.copyOf(importsInit);
         this.notifications = ImmutableSet.copyOf(notificationsInit);
@@ -191,7 +184,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         this.publicChildNodes = ImmutableSet.copyOf(mutablePublicChildNodes);
         this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
         this.uses = ImmutableSet.copyOf(mutableUses);
-
     }
 
     @Override
@@ -267,11 +259,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     @Override
     public Set<IdentitySchemaNode> getIdentities() {
         return identities;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
     }
 
     @Override
