@@ -7,14 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf;
 
-import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
@@ -28,14 +25,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDataSchemaNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveMustConstraintAwareDataSchemaNode;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement>
+final class LeafEffectiveStatementImpl extends AbstractEffectiveMustConstraintAwareDataSchemaNode<LeafStatement>
         implements LeafEffectiveStatement, LeafSchemaNode, DerivableSchemaNode {
-    private final ImmutableSet<MustDefinition> mustConstraints;
     private final LeafSchemaNode original;
     private final TypeDefinition<?> type;
     private final String defaultStr;
@@ -80,7 +76,6 @@ final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<L
         type = builder.build();
         mandatory = findFirstEffectiveSubstatementArgument(MandatoryEffectiveStatement.class).orElse(Boolean.FALSE)
                 .booleanValue();
-        mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
     }
 
     @Override
@@ -96,11 +91,6 @@ final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<L
     @Override
     public TypeDefinition<?> getType() {
         return type;
-    }
-
-    @Override
-    public Collection<MustDefinition> getMustConstraints() {
-        return mustConstraints;
     }
 
     @Override
