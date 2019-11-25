@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.ArrayList;
@@ -71,7 +70,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     private final ImmutableSet<Deviation> deviations;
     private final ImmutableList<ExtensionDefinition> extensionNodes;
     private final ImmutableSet<IdentitySchemaNode> identities;
-    private final ImmutableMap<QName, DataSchemaNode> childNodes;
     private final ImmutableSet<GroupingDefinition> groupings;
     private final ImmutableSet<UsesNode> uses;
     private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
@@ -179,7 +177,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         this.features = ImmutableSet.copyOf(featuresInit);
         this.extensionNodes = ImmutableList.copyOf(extensionNodesInit);
 
-        this.childNodes = ImmutableMap.copyOf(mutableChildNodes);
         this.groupings = ImmutableSet.copyOf(mutableGroupings);
         this.publicChildNodes = ImmutableSet.copyOf(mutablePublicChildNodes);
         this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
@@ -279,8 +276,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     @Override
     @SuppressWarnings("checkstyle:hiddenField")
     public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
-        // Child nodes are keyed by their container name, so we can do a direct lookup
-        return Optional.ofNullable(childNodes.get(requireNonNull(name)));
+        return findDataSchemaNode(name);
     }
 
     @Override
