@@ -7,24 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml;
 
-import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDataSchemaNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveMustConstraintAwareDataSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class AnyxmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnyxmlStatement>
+final class AnyxmlEffectiveStatementImpl extends AbstractEffectiveMustConstraintAwareDataSchemaNode<AnyxmlStatement>
         implements AnyxmlEffectiveStatement, AnyxmlSchemaNode, DerivableSchemaNode {
 
-    private final ImmutableSet<MustDefinition> mustConstraints;
     private final AnyxmlSchemaNode original;
     private final boolean mandatory;
 
@@ -33,17 +29,11 @@ final class AnyxmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode
         this.original = (AnyxmlSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
         mandatory = findFirstEffectiveSubstatementArgument(MandatoryEffectiveStatement.class).orElse(Boolean.FALSE)
                 .booleanValue();
-        mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
     }
 
     @Override
     public boolean isMandatory() {
         return mandatory;
-    }
-
-    @Override
-    public Collection<MustDefinition> getMustConstraints() {
-        return mustConstraints;
     }
 
     @Override
