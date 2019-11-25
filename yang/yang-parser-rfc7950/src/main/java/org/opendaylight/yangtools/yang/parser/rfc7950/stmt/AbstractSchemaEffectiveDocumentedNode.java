@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -16,6 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
@@ -96,6 +99,11 @@ public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends Declare
     protected final <T> @NonNull ImmutableSet<T> derivedSet(final VarHandle vh, final @NonNull Class<T> clazz) {
         final ImmutableSet<T> existing = (ImmutableSet<T>) vh.getAcquire(this);
         return existing != null ? existing : calculateSet(vh, clazz);
+    }
+
+    protected final Optional<DataSchemaNode> findDataSchemaNode(final QName name) {
+        final SchemaTreeEffectiveStatement<?> child = schemaTreeNamespace.get(requireNonNull(name));
+        return child instanceof DataSchemaNode ? Optional.of((DataSchemaNode) child) : Optional.empty();
     }
 
     @SuppressWarnings("unchecked")
