@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -21,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
@@ -33,7 +29,6 @@ public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends Declare
         AbstractEffectiveDocumentedDataNodeContainer<QName, D> implements AugmentationTarget, DataSchemaNode {
 
     private final ImmutableSet<AugmentationSchemaNode> augmentations;
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final RevisionAwareXPath whenCondition;
     private final @NonNull SchemaPath path;
     private final boolean configuration;
@@ -50,17 +45,12 @@ public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends Declare
 
         // initSubstatementCollectionsAndFields
 
-        List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
         Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
-            }
             if (effectiveStatement instanceof AugmentationSchemaNode) {
                 augmentationsInit.add((AugmentationSchemaNode) effectiveStatement);
             }
         }
-        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
 
         // initCopyType
@@ -104,11 +94,6 @@ public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends Declare
     @Override
     public Set<AugmentationSchemaNode> getAvailableAugmentations() {
         return augmentations;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
     }
 
     @Override

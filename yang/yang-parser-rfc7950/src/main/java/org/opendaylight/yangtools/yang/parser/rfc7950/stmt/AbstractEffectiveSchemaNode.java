@@ -7,34 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import com.google.common.collect.ImmutableList;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class AbstractEffectiveSchemaNode<D extends DeclaredStatement<QName>> extends
         AbstractSchemaEffectiveDocumentedNode<QName, D> implements SchemaNode {
 
     private final @NonNull SchemaPath path;
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
 
     protected AbstractEffectiveSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
         this.path = ctx.getSchemaPath().get();
-
-        ImmutableList.Builder<UnknownSchemaNode> listBuilder = new ImmutableList.Builder<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                listBuilder.add((UnknownSchemaNode) effectiveStatement);
-            }
-        }
-        this.unknownNodes = listBuilder.build();
     }
 
     @Override
@@ -45,10 +32,5 @@ public abstract class AbstractEffectiveSchemaNode<D extends DeclaredStatement<QN
     @Override
     public final SchemaPath getPath() {
         return path;
-    }
-
-    @Override
-    public final List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
     }
 }

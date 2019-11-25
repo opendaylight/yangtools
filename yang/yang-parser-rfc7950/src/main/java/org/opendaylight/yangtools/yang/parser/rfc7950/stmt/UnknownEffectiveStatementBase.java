@@ -8,10 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
-import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -31,7 +27,6 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
     private final boolean addedByAugmentation;
 
     private final ExtensionDefinition extension;
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final QName nodeType;
     private final String nodeParameter;
 
@@ -63,15 +58,6 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
         }
 
         nodeParameter = ctx.rawStatementArgument() == null ? "" : ctx.rawStatementArgument();
-
-        // TODO init other fields (see Bug1412Test)
-        final Builder<UnknownSchemaNode> builder = ImmutableList.builder();
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                builder.add((UnknownSchemaNode) effectiveStatement);
-            }
-        }
-        unknownNodes = builder.build();
     }
 
     @Deprecated
@@ -99,11 +85,6 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
     @Override
     public ExtensionDefinition getExtensionDefinition() {
         return extension;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
     }
 
     @Override
