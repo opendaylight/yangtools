@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import static java.util.Objects.requireNonNull;
-
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -31,7 +28,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends DeclaredStatement<A>>
         extends AbstractSchemaEffectiveDocumentedNode<A, D> implements DataNodeContainer {
 
-    private final ImmutableMap<QName, DataSchemaNode> childNodes;
     private final ImmutableSet<GroupingDefinition> groupings;
     private final ImmutableSet<UsesNode> uses;
     private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
@@ -68,7 +64,6 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
             }
         }
 
-        this.childNodes = ImmutableMap.copyOf(mutableChildNodes);
         this.groupings = ImmutableSet.copyOf(mutableGroupings);
         this.publicChildNodes = ImmutableSet.copyOf(mutablePublicChildNodes);
         this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
@@ -92,8 +87,7 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
 
     @Override
     public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
-        // Child nodes are keyed by their container name, so we can do a direct lookup
-        return Optional.ofNullable(childNodes.get(requireNonNull(name)));
+        return findDataSchemaNode(name);
     }
 
     @Override
