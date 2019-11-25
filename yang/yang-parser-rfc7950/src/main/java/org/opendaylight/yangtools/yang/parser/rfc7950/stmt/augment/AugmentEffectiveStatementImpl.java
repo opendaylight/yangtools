@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -50,7 +49,6 @@ final class AugmentEffectiveStatementImpl
     private final Revision revision;
     private final @NonNull ImmutableSet<ActionDefinition> actions;
     private final @NonNull ImmutableSet<NotificationDefinition> notifications;
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final RevisionAwareXPath whenCondition;
     private final AugmentationSchemaNode copyOf;
 
@@ -76,14 +74,11 @@ final class AugmentEffectiveStatementImpl
                 actionsBuilder.add((ActionDefinition) effectiveStatement);
             } else if (effectiveStatement instanceof NotificationDefinition) {
                 notificationsBuilder.add((NotificationDefinition) effectiveStatement);
-            } else if (effectiveStatement instanceof UnknownSchemaNode) {
-                listBuilder.add((UnknownSchemaNode) effectiveStatement);
             }
         }
 
         this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
-        this.unknownNodes = listBuilder.build();
     }
 
     @Override
@@ -114,11 +109,6 @@ final class AugmentEffectiveStatementImpl
     @Override
     public Optional<RevisionAwareXPath> getWhenCondition() {
         return Optional.ofNullable(whenCondition);
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
     }
 
     @Override
