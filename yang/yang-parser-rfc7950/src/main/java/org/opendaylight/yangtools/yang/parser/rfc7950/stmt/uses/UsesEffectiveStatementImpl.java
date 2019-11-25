@@ -7,13 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
@@ -46,7 +42,6 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     private final boolean addedByUses;
     private final @NonNull ImmutableMap<SchemaPath, SchemaNode> refines;
     private final @NonNull ImmutableSet<AugmentationSchemaNode> augmentations;
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final @Nullable RevisionAwareXPath whenCondition;
 
     UsesEffectiveStatementImpl(final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
@@ -61,14 +56,9 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         addedByUses = ctx.getCopyHistory().contains(CopyType.ADDED_BY_USES);
 
         // initSubstatementCollections
-        final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
         final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
         final Map<SchemaPath, SchemaNode> refinesInit = new HashMap<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                final UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
-            }
             if (effectiveStatement instanceof AugmentationSchemaNode) {
                 final AugmentationSchemaNode augmentationSchema = (AugmentationSchemaNode) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
@@ -79,7 +69,6 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
                 refinesInit.put(identifier.asSchemaPath(), refineStmt.getRefineTargetNode());
             }
         }
-        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.refines = ImmutableMap.copyOf(refinesInit);
 
@@ -111,11 +100,6 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     @Override
     public Map<SchemaPath, SchemaNode> getRefines() {
         return refines;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
     }
 
     @Override
