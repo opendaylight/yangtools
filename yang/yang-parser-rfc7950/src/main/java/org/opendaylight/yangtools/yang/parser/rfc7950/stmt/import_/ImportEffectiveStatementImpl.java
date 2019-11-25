@@ -14,29 +14,25 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNodeWithoutStatus;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToSemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, ImportStatement>
+final class ImportEffectiveStatementImpl extends AbstractEffectiveDocumentedNodeWithoutStatus<String, ImportStatement>
         implements ImportEffectiveStatement, ModuleImport {
 
     private final String moduleName;
     private final Revision revision;
     private final SemVer semVer;
     private final String prefix;
-    private final String description;
-    private final String reference;
 
     ImportEffectiveStatementImpl(final StmtContext<String, ImportStatement, ?> ctx) {
         super(ctx);
@@ -58,9 +54,6 @@ final class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<
             revision = importedModuleIdentifier.getRevision().orElse(null);
             semVer = importedModuleIdentifier.getSemanticVersion().orElse(null);
         }
-
-        description = findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class).orElse(null);
-        reference = findFirstEffectiveSubstatementArgument(ReferenceEffectiveStatement.class).orElse(null);
     }
 
     private Revision getImportedRevision(final StmtContext<String, ImportStatement, ?> ctx) {
@@ -95,18 +88,8 @@ final class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<
     }
 
     @Override
-    public Optional<String> getDescription() {
-        return Optional.ofNullable(description);
-    }
-
-    @Override
-    public Optional<String> getReference() {
-        return Optional.ofNullable(reference);
-    }
-
-    @Override
     public int hashCode() {
-        return Objects.hash(moduleName, revision, prefix, semVer, description, reference);
+        return Objects.hash(moduleName, revision, prefix, semVer, nullableDescription(), nullableReference());
     }
 
     @Override
@@ -123,13 +106,14 @@ final class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<
         final ImportEffectiveStatementImpl other = (ImportEffectiveStatementImpl) obj;
         return Objects.equals(moduleName, other.moduleName) && Objects.equals(revision, other.revision)
                 && Objects.equals(semVer, other.semVer) && Objects.equals(prefix, other.prefix)
-                && Objects.equals(description, other.description) && Objects.equals(reference, other.reference);
+                && Objects.equals(nullableDescription(), other.nullableDescription())
+                && Objects.equals(nullableReference(), other.nullableReference());
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).omitNullValues().add("moduleName", getModuleName())
                 .add("revision", revision).add("version", semVer).add("prefix", getPrefix())
-                .add("description", description).add("reference", reference).toString();
+                .add("description", nullableDescription()).add("reference", nullableReference()).toString();
     }
 }

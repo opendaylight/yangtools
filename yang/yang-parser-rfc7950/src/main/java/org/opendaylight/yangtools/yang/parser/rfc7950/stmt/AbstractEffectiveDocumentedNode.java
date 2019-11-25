@@ -7,21 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
+// FIXME: 5.0.0: rename to AbstractEffectiveDocumentedNodeWithStatus
 public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
-        extends DeclaredEffectiveStatementBase<A, D> implements DocumentedNode.WithStatus {
-
-    private final String description;
-    private final String reference;
+        extends AbstractEffectiveDocumentedNodeWithoutStatus<A, D> implements DocumentedNode.WithStatus {
     private final @NonNull Status status;
 
     /**
@@ -32,19 +27,7 @@ public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredState
      */
     protected AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx) {
         super(ctx);
-        description = findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class).orElse(null);
-        reference = findFirstEffectiveSubstatementArgument(ReferenceEffectiveStatement.class).orElse(null);
         status = findFirstEffectiveSubstatementArgument(StatusEffectiveStatement.class).orElse(Status.CURRENT);
-    }
-
-    @Override
-    public final Optional<String> getDescription() {
-        return Optional.ofNullable(description);
-    }
-
-    @Override
-    public final Optional<String> getReference() {
-        return Optional.ofNullable(reference);
     }
 
     @Override
