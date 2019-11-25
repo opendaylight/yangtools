@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -35,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSimpleDataNodeContainer;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveMustConstraintAwareSimpleDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -47,7 +46,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  */
 // FIXME: 4.0.0: hide this class
 @Deprecated
-public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<ListStatement>
+public final class ListEffectiveStatementImpl
+        extends AbstractEffectiveMustConstraintAwareSimpleDataNodeContainer<ListStatement>
         implements ListEffectiveStatement, ListSchemaNode, DerivableSchemaNode,
             ActionNodeContainerCompat<QName, ListStatement>, NotificationNodeContainerCompat<QName, ListStatement> {
     private static final String ORDER_BY_USER_KEYWORD = "user";
@@ -59,7 +59,6 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     private final @NonNull ImmutableSet<NotificationDefinition> notifications;
     private final @NonNull ImmutableList<UniqueConstraint> uniqueConstraints;
     private final ElementCountConstraint elementCountConstraint;
-    private final ImmutableSet<MustDefinition> mustConstraints;
 
     ListEffectiveStatementImpl(
             final StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
@@ -113,7 +112,6 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
         this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
         elementCountConstraint = EffectiveStmtUtils.createElementCountConstraint(this).orElse(null);
-        mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
     }
 
     @Override
@@ -149,11 +147,6 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     @Override
     public Optional<ElementCountConstraint> getElementCountConstraint() {
         return Optional.ofNullable(elementCountConstraint);
-    }
-
-    @Override
-    public Collection<MustDefinition> getMustConstraints() {
-        return mustConstraints;
     }
 
     @Override

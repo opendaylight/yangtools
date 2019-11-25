@@ -9,30 +9,26 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDataSchemaNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveMustConstraintAwareDataSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * YANG 1.1 AnyData effective statement implementation.
  */
 @Beta
-final class AnydataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnydataStatement>
+final class AnydataEffectiveStatementImpl extends AbstractEffectiveMustConstraintAwareDataSchemaNode<AnydataStatement>
         implements AnydataEffectiveStatement, AnyDataSchemaNode, DerivableSchemaNode {
 
-    private final ImmutableSet<MustDefinition> mustConstraints;
     private final AnyDataSchemaNode original;
     private final ContainerSchemaNode schema;
     private final boolean mandatory;
@@ -43,7 +39,6 @@ final class AnydataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
         this.original = (AnyDataSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
         mandatory = findFirstEffectiveSubstatementArgument(MandatoryEffectiveStatement.class).orElse(Boolean.FALSE)
                 .booleanValue();
-        mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
 
         /*
          * :TODO we need to determine a way how to set schema of AnyData
@@ -64,11 +59,6 @@ final class AnydataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
     @Override
     public boolean isMandatory() {
         return mandatory;
-    }
-
-    @Override
-    public Collection<MustDefinition> getMustConstraints() {
-        return mustConstraints;
     }
 
     @Override
