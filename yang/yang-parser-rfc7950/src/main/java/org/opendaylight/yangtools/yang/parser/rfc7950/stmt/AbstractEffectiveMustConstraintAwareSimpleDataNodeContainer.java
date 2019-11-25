@@ -9,7 +9,8 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import org.eclipse.jdt.annotation.NonNull;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.MustConstraintAware;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
@@ -19,15 +20,27 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 @Beta
 public abstract class AbstractEffectiveMustConstraintAwareSimpleDataNodeContainer<D extends DeclaredStatement<QName>>
         extends AbstractEffectiveSimpleDataNodeContainer<D> implements MustConstraintAware {
-    private final @NonNull ImmutableSet<MustDefinition> mustConstraints;
+    private static final VarHandle MUST_CONSTRAINTS;
+
+    static {
+        try {
+            MUST_CONSTRAINTS = MethodHandles.lookup().findVarHandle(
+                AbstractEffectiveMustConstraintAwareSimpleDataNodeContainer.class, "mustConstraints",
+                ImmutableSet.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private volatile ImmutableSet<MustDefinition> mustConstraints;
 
     protected AbstractEffectiveMustConstraintAwareSimpleDataNodeContainer(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
-        mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
     }
 
     @Override
     public final ImmutableSet<MustDefinition> getMustConstraints() {
-        return mustConstraints;
+        return derivedSet(MUST_CONSTRAINTS, MustDefinition.class);
     }
 }
