@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.VarHandle;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -24,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -35,24 +36,41 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSimpleDataNodeContainer;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveMustConstraintAwareSimpleDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<ListStatement>
+final class ListEffectiveStatementImpl
+        extends AbstractEffectiveMustConstraintAwareSimpleDataNodeContainer<ListStatement>
         implements ListEffectiveStatement, ListSchemaNode, DerivableSchemaNode,
             ActionNodeContainerCompat<QName, ListStatement>, NotificationNodeContainerCompat<QName, ListStatement> {
     private static final String ORDER_BY_USER_KEYWORD = "user";
+    private static final VarHandle ACTIONS;
+    private static final VarHandle NOTIFICATIONS;
+
+    static {
+        final Lookup lookup = MethodHandles.lookup();
+
+        try {
+            ACTIONS = lookup.findVarHandle(ListEffectiveStatementImpl.class, "actions", ImmutableSet.class);
+            NOTIFICATIONS = lookup.findVarHandle(ListEffectiveStatementImpl.class, "notifications",
+                ImmutableSet.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     private final boolean userOrdered;
     private final ImmutableList<QName> keyDefinition;
     private final ListSchemaNode original;
-    private final @NonNull ImmutableSet<ActionDefinition> actions;
-    private final @NonNull ImmutableSet<NotificationDefinition> notifications;
     private final @NonNull ImmutableList<UniqueConstraint> uniqueConstraints;
     private final ElementCountConstraint elementCountConstraint;
-    private final ImmutableSet<MustDefinition> mustConstraints;
+
+    @SuppressWarnings("unused")
+    private volatile ImmutableSet<NotificationDefinition> notifications;
+    @SuppressWarnings("unused")
+    private volatile ImmutableSet<ActionDefinition> actions;
 
     ListEffectiveStatementImpl(
             final StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
@@ -89,24 +107,8 @@ final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeCo
             this.keyDefinition = ImmutableList.of();
         }
 
-        this.uniqueConstraints = ImmutableList.copyOf(allSubstatementsOfType(UniqueConstraint.class));
-
-        final Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
-        final Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof ActionDefinition) {
-                actionsBuilder.add((ActionDefinition) effectiveStatement);
-            }
-
-            if (effectiveStatement instanceof NotificationDefinition) {
-                notificationsBuilder.add((NotificationDefinition) effectiveStatement);
-            }
-        }
-
-        this.actions = actionsBuilder.build();
-        this.notifications = notificationsBuilder.build();
+        uniqueConstraints = ImmutableList.copyOf(allSubstatementsOfType(UniqueConstraint.class));
         elementCountConstraint = EffectiveStmtUtils.createElementCountConstraint(this).orElse(null);
-        mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
     }
 
     @Override
@@ -120,13 +122,13 @@ final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeCo
     }
 
     @Override
-    public Set<ActionDefinition> getActions() {
-        return actions;
+    public ImmutableSet<ActionDefinition> getActions() {
+        return derivedSet(ACTIONS, ActionDefinition.class);
     }
 
     @Override
-    public Set<NotificationDefinition> getNotifications() {
-        return notifications;
+    public ImmutableSet<NotificationDefinition> getNotifications() {
+        return derivedSet(NOTIFICATIONS, NotificationDefinition.class);
     }
 
     @Override
@@ -142,11 +144,6 @@ final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeCo
     @Override
     public Optional<ElementCountConstraint> getElementCountConstraint() {
         return Optional.ofNullable(elementCountConstraint);
-    }
-
-    @Override
-    public Collection<MustDefinition> getMustConstraints() {
-        return mustConstraints;
     }
 
     @Override

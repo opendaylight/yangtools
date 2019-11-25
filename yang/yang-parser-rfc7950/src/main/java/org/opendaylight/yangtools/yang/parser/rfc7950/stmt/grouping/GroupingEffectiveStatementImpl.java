@@ -7,18 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.util.List;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.VarHandle;
 import java.util.Objects;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
@@ -33,12 +32,27 @@ final class GroupingEffectiveStatementImpl
         implements GroupingDefinition, GroupingEffectiveStatement,
             ActionNodeContainerCompat<QName, GroupingStatement>,
             NotificationNodeContainerCompat<QName, GroupingStatement> {
+    private static final VarHandle ACTIONS;
+    private static final VarHandle NOTIFICATIONS;
+
+    static {
+        final Lookup lookup = MethodHandles.lookup();
+
+        try {
+            ACTIONS = lookup.findVarHandle(GroupingEffectiveStatementImpl.class, "actions", ImmutableSet.class);
+            NOTIFICATIONS = lookup.findVarHandle(GroupingEffectiveStatementImpl.class, "notifications",
+                ImmutableSet.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private final @NonNull QName qname;
     private final @NonNull SchemaPath path;
     private final boolean addedByUses;
-    private final @NonNull ImmutableSet<ActionDefinition> actions;
-    private final @NonNull ImmutableSet<NotificationDefinition> notifications;
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
+
+    private volatile ImmutableSet<ActionDefinition> actions;
+    private volatile ImmutableSet<NotificationDefinition> notifications;
 
     GroupingEffectiveStatementImpl(
             final StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {
@@ -47,27 +61,6 @@ final class GroupingEffectiveStatementImpl
         qname = ctx.coerceStatementArgument();
         path = ctx.getSchemaPath().get();
         addedByUses = ctx.getCopyHistory().contains(CopyType.ADDED_BY_USES);
-
-        final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
-        final ImmutableSet.Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
-        final ImmutableList.Builder<UnknownSchemaNode> b = ImmutableList.builder();
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof ActionDefinition) {
-                actionsBuilder.add((ActionDefinition) effectiveStatement);
-            }
-
-            if (effectiveStatement instanceof NotificationDefinition) {
-                notificationsBuilder.add((NotificationDefinition) effectiveStatement);
-            }
-
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                b.add((UnknownSchemaNode) effectiveStatement);
-            }
-        }
-
-        this.actions = actionsBuilder.build();
-        this.notifications = notificationsBuilder.build();
-        unknownNodes = b.build();
     }
 
     @Override
@@ -86,18 +79,13 @@ final class GroupingEffectiveStatementImpl
     }
 
     @Override
-    public Set<ActionDefinition> getActions() {
-        return actions;
+    public ImmutableSet<ActionDefinition> getActions() {
+        return derivedSet(ACTIONS, ActionDefinition.class);
     }
 
     @Override
-    public Set<NotificationDefinition> getNotifications() {
-        return notifications;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
+    public ImmutableSet<NotificationDefinition> getNotifications() {
+        return derivedSet(NOTIFICATIONS, NotificationDefinition.class);
     }
 
     @Override

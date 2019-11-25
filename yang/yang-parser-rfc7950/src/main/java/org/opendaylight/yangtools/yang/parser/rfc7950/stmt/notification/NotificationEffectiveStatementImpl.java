@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -21,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
@@ -33,13 +30,25 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class NotificationEffectiveStatementImpl
         extends AbstractEffectiveDocumentedDataNodeContainer<QName, NotificationStatement>
         implements NotificationDefinition, NotificationEffectiveStatement {
+    private static final VarHandle MUST_CONSTRAINTS;
+
+    static {
+        try {
+            MUST_CONSTRAINTS = MethodHandles.lookup().findVarHandle(NotificationEffectiveStatementImpl.class,
+                "mustConstraints", ImmutableSet.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private final @NonNull QName qname;
     private final @NonNull SchemaPath path;
     private final ImmutableSet<AugmentationSchemaNode> augmentations;
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final boolean augmenting;
     private final boolean addedByUses;
-    private final ImmutableSet<MustDefinition> mustConstraints;
+
+    @SuppressWarnings("unused")
+    private volatile ImmutableSet<MustDefinition> mustConstraints;
 
     NotificationEffectiveStatementImpl(
             final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
@@ -48,21 +57,14 @@ final class NotificationEffectiveStatementImpl
         this.path = ctx.getSchemaPath().get();
 
         // initSubstatementCollections
-        final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
         final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                final UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
-            }
             if (effectiveStatement instanceof AugmentationSchemaNode) {
                 final AugmentationSchemaNode augmentationSchema = (AugmentationSchemaNode) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
             }
         }
-        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
-        this.mustConstraints = ImmutableSet.copyOf(this.allSubstatementsOfType(MustDefinition.class));
 
         // initCopyType
         final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
@@ -86,18 +88,13 @@ final class NotificationEffectiveStatementImpl
     }
 
     @Override
-    public Collection<MustDefinition> getMustConstraints() {
-        return mustConstraints;
+    public ImmutableSet<MustDefinition> getMustConstraints() {
+        return derivedSet(MUST_CONSTRAINTS, MustDefinition.class);
     }
 
     @Override
     public Set<AugmentationSchemaNode> getAvailableAugmentations() {
         return augmentations;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
     }
 
     @Deprecated
