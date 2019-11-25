@@ -7,12 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
-import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -21,7 +18,6 @@ import org.opendaylight.yangtools.util.RecursiveObjectLeaker;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
@@ -70,7 +66,6 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
     private final @Nullable String argument;
     private final @NonNull SchemaPath schemaPath;
 
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final boolean yin;
 
     private ExtensionEffectiveStatementImpl(
@@ -78,14 +73,6 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
         super(ctx);
         this.qname = ctx.coerceStatementArgument();
         this.schemaPath = ctx.getSchemaPath().get();
-
-        final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
-        for (EffectiveStatement<?, ?> unknownNode : effectiveSubstatements()) {
-            if (unknownNode instanceof UnknownSchemaNode) {
-                unknownNodesInit.add((UnknownSchemaNode) unknownNode);
-            }
-        }
-        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
 
         // initFields
         final Optional<ArgumentEffectiveStatement> optArgumentSubstatement = findFirstEffectiveSubstatement(
@@ -146,11 +133,6 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
     }
 
     @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
-    }
-
-    @Override
     public String getArgument() {
         return argument;
     }
@@ -196,7 +178,7 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
                     + "argument=" + argument
                     + ", qname=" + qname
                     + ", schemaPath=" + schemaPath
-                    + ", extensionSchemaNodes=" + unknownNodes
+                    + ", extensionSchemaNodes=" + getUnknownSchemaNodes()
                     + ", yin=" + yin
                     + "]";
         } finally {

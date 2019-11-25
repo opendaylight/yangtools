@@ -9,14 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
-import com.google.common.collect.ImmutableList;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -30,7 +26,6 @@ public final class RefineEffectiveStatementImpl
 
     private final @NonNull QName qname;
     private final @NonNull SchemaPath path;
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final SchemaNode refineTargetNode;
 
     RefineEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> ctx) {
@@ -38,12 +33,6 @@ public final class RefineEffectiveStatementImpl
         qname = verifyNotNull(ctx.coerceStatementArgument().getLastComponent());
         path = ctx.getSchemaPath().get();
         refineTargetNode = (SchemaNode) ctx.getEffectOfStatement().iterator().next().buildEffective();
-
-        // initSubstatementCollectionsAndFields
-        this.unknownNodes = ImmutableList.copyOf(effectiveSubstatements().stream()
-            .filter(UnknownSchemaNode.class::isInstance)
-            .map(UnknownSchemaNode.class::cast)
-            .collect(Collectors.toList()));
     }
 
     public SchemaNode getRefineTargetNode() {
@@ -58,10 +47,5 @@ public final class RefineEffectiveStatementImpl
     @Override
     public SchemaPath getPath() {
         return path;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
     }
 }

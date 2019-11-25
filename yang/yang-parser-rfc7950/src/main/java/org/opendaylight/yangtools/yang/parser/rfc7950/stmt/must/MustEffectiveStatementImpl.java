@@ -11,41 +11,31 @@ import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNodeWithoutStatus;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class MustEffectiveStatementImpl extends DeclaredEffectiveStatementBase<RevisionAwareXPath, MustStatement>
+final class MustEffectiveStatementImpl
+        extends AbstractEffectiveDocumentedNodeWithoutStatus<RevisionAwareXPath, MustStatement>
         implements MustDefinition, MustEffectiveStatement {
 
     private final RevisionAwareXPath xpath;
-    private final String description;
     private final String errorAppTag;
     private final String errorMessage;
-    private final String reference;
 
     MustEffectiveStatementImpl(final StmtContext<RevisionAwareXPath, MustStatement, ?> ctx) {
         super(ctx);
         xpath = ctx.getStatementArgument();
-        description = findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class).orElse(null);
         errorAppTag = findFirstEffectiveSubstatementArgument(ErrorAppTagEffectiveStatement.class).orElse(null);
         errorMessage = findFirstEffectiveSubstatementArgument(ErrorMessageEffectiveStatement.class).orElse(null);
-        reference = findFirstEffectiveSubstatementArgument(ReferenceEffectiveStatement.class).orElse(null);
     }
 
     @Override
     public RevisionAwareXPath getXpath() {
         return xpath;
-    }
-
-    @Override
-    public Optional<String> getDescription() {
-        return Optional.ofNullable(description);
     }
 
     @Override
@@ -59,13 +49,8 @@ final class MustEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Re
     }
 
     @Override
-    public Optional<String> getReference() {
-        return Optional.ofNullable(reference);
-    }
-
-    @Override
     public int hashCode() {
-        return Objects.hash(xpath, description, reference);
+        return Objects.hash(xpath, getDescription().orElse(null), getReference().orElse(null));
     }
 
     @Override
@@ -77,8 +62,9 @@ final class MustEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Re
             return false;
         }
         final MustEffectiveStatementImpl other = (MustEffectiveStatementImpl) obj;
-        return Objects.equals(xpath, other.xpath) && Objects.equals(description, other.description)
-                && Objects.equals(reference, other.reference);
+        return Objects.equals(xpath, other.xpath)
+                && getDescription().equals(other.getDescription())
+                && getReference().equals(other.getReference());
     }
 
     @Override

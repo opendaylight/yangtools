@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.container;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.VarHandle;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
@@ -28,29 +28,33 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement>
         implements ContainerEffectiveStatement, DerivableSchemaNode {
-    private final @NonNull ImmutableSet<ActionDefinition> actions;
-    private final @NonNull ImmutableSet<NotificationDefinition> notifications;
+    private static final VarHandle ACTIONS;
+    private static final VarHandle NOTIFICATIONS;
+
+    static {
+        final Lookup lookup = MethodHandles.lookup();
+
+        try {
+            ACTIONS = lookup.findVarHandle(ContainerEffectiveStatementImpl.class, "actions", ImmutableSet.class);
+            NOTIFICATIONS = lookup.findVarHandle(ContainerEffectiveStatementImpl.class, "notifications",
+                ImmutableSet.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private final @Nullable ContainerSchemaNode original;
     private final boolean presence;
+
+    @SuppressWarnings("unused")
+    private volatile ImmutableSet<NotificationDefinition> notifications;
+    @SuppressWarnings("unused")
+    private volatile ImmutableSet<ActionDefinition> actions;
 
     ContainerEffectiveStatementImpl(
             final StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
         super(ctx);
-        this.original = (ContainerSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
-        final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
-        final Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof ActionDefinition) {
-                actionsBuilder.add((ActionDefinition) effectiveStatement);
-            }
-
-            if (effectiveStatement instanceof NotificationDefinition) {
-                notificationsBuilder.add((NotificationDefinition) effectiveStatement);
-            }
-        }
-
-        this.actions = actionsBuilder.build();
-        this.notifications = notificationsBuilder.build();
+        original = (ContainerSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
         presence = findFirstEffectiveSubstatement(PresenceEffectiveStatement.class).isPresent();
     }
 
@@ -60,13 +64,13 @@ final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSc
     }
 
     @Override
-    public Set<ActionDefinition> getActions() {
-        return actions;
+    public ImmutableSet<ActionDefinition> getActions() {
+        return derivedSet(ACTIONS, ActionDefinition.class);
     }
 
     @Override
-    public Set<NotificationDefinition> getNotifications() {
-        return notifications;
+    public ImmutableSet<NotificationDefinition> getNotifications() {
+        return derivedSet(NOTIFICATIONS, NotificationDefinition.class);
     }
 
     @Override

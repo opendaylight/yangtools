@@ -10,15 +10,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.VarHandle;
 import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
@@ -27,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -45,14 +43,31 @@ final class AugmentEffectiveStatementImpl
         implements AugmentEffectiveStatement, AugmentationSchemaNode, NamespaceRevisionAware,
             ActionNodeContainerCompat<SchemaNodeIdentifier, AugmentStatement>,
             NotificationNodeContainerCompat<SchemaNodeIdentifier, AugmentStatement> {
+    private static final VarHandle ACTIONS;
+    private static final VarHandle NOTIFICATIONS;
+
+    static {
+        final Lookup lookup = MethodHandles.lookup();
+
+        try {
+            ACTIONS = lookup.findVarHandle(AugmentEffectiveStatementImpl.class, "actions", ImmutableSet.class);
+            NOTIFICATIONS = lookup.findVarHandle(AugmentEffectiveStatementImpl.class, "notifications",
+                ImmutableSet.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private final SchemaPath targetPath;
     private final URI namespace;
     private final Revision revision;
-    private final @NonNull ImmutableSet<ActionDefinition> actions;
-    private final @NonNull ImmutableSet<NotificationDefinition> notifications;
-    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final RevisionAwareXPath whenCondition;
     private final AugmentationSchemaNode copyOf;
+
+    @SuppressWarnings("unused")
+    private volatile ImmutableSet<ActionDefinition> actions;
+    @SuppressWarnings("unused")
+    private volatile ImmutableSet<NotificationDefinition> notifications;
 
     AugmentEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, AugmentStatement,
             EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
@@ -66,24 +81,6 @@ final class AugmentEffectiveStatementImpl
 
         this.copyOf = (AugmentationSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
         whenCondition = findFirstEffectiveSubstatementArgument(WhenEffectiveStatement.class).orElse(null);
-
-        // initSubstatementCollections
-        final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
-        final ImmutableSet.Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
-        final ImmutableList.Builder<UnknownSchemaNode> listBuilder = new ImmutableList.Builder<>();
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof ActionDefinition) {
-                actionsBuilder.add((ActionDefinition) effectiveStatement);
-            } else if (effectiveStatement instanceof NotificationDefinition) {
-                notificationsBuilder.add((NotificationDefinition) effectiveStatement);
-            } else if (effectiveStatement instanceof UnknownSchemaNode) {
-                listBuilder.add((UnknownSchemaNode) effectiveStatement);
-            }
-        }
-
-        this.actions = actionsBuilder.build();
-        this.notifications = notificationsBuilder.build();
-        this.unknownNodes = listBuilder.build();
     }
 
     @Override
@@ -117,23 +114,18 @@ final class AugmentEffectiveStatementImpl
     }
 
     @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
-    }
-
-    @Override
     public URI getNamespace() {
         return namespace;
     }
 
     @Override
-    public Set<ActionDefinition> getActions() {
-        return actions;
+    public ImmutableSet<ActionDefinition> getActions() {
+        return derivedSet(ACTIONS, ActionDefinition.class);
     }
 
     @Override
-    public Set<NotificationDefinition> getNotifications() {
-        return notifications;
+    public ImmutableSet<NotificationDefinition> getNotifications() {
+        return derivedSet(NOTIFICATIONS, NotificationDefinition.class);
     }
 
     @Override
