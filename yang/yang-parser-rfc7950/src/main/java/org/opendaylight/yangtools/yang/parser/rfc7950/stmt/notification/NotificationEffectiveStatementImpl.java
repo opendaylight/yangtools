@@ -8,7 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -29,12 +30,25 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class NotificationEffectiveStatementImpl
         extends AbstractEffectiveDocumentedDataNodeContainer<QName, NotificationStatement>
         implements NotificationDefinition, NotificationEffectiveStatement {
+    private static final VarHandle MUST_CONSTRAINTS;
+
+    static {
+        try {
+            MUST_CONSTRAINTS = MethodHandles.lookup().findVarHandle(
+                NotificationEffectiveStatementImpl.class, "mustConstraints", ImmutableSet.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private final @NonNull QName qname;
     private final @NonNull SchemaPath path;
     private final ImmutableSet<AugmentationSchemaNode> augmentations;
     private final boolean augmenting;
     private final boolean addedByUses;
-    private final ImmutableSet<MustDefinition> mustConstraints;
+
+    @SuppressWarnings("unused")
+    private volatile ImmutableSet<MustDefinition> mustConstraints;
 
     NotificationEffectiveStatementImpl(
             final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
@@ -51,7 +65,6 @@ final class NotificationEffectiveStatementImpl
             }
         }
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
-        this.mustConstraints = ImmutableSet.copyOf(this.allSubstatementsOfType(MustDefinition.class));
 
         // initCopyType
         final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
@@ -75,8 +88,8 @@ final class NotificationEffectiveStatementImpl
     }
 
     @Override
-    public Collection<MustDefinition> getMustConstraints() {
-        return mustConstraints;
+    public ImmutableSet<MustDefinition> getMustConstraints() {
+        return derivedSet(MUST_CONSTRAINTS, MustDefinition.class);
     }
 
     @Override
