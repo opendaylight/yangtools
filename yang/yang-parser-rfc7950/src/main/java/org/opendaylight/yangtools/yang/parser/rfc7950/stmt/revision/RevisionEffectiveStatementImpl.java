@@ -7,35 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision;
 
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNodeWithoutStatus;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class RevisionEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Revision, RevisionStatement>
-        implements DocumentedNode, RevisionEffectiveStatement {
-
-    private final String reference;
-    private final String description;
-
+final class RevisionEffectiveStatementImpl
+        extends AbstractEffectiveDocumentedNodeWithoutStatus<Revision, RevisionStatement>
+        implements RevisionEffectiveStatement {
     RevisionEffectiveStatementImpl(final StmtContext<Revision, RevisionStatement, ?> ctx) {
         super(ctx);
-        description = findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class).orElse(null);
-        reference = findFirstEffectiveSubstatementArgument(ReferenceEffectiveStatement.class).orElse(null);
-    }
-
-    @Override
-    public Optional<String> getDescription() {
-        return Optional.ofNullable(description);
-    }
-
-    @Override
-    public Optional<String> getReference() {
-        return Optional.ofNullable(reference);
     }
 }
