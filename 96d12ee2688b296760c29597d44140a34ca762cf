@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "442ad184_706d486e",
+        "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/AbstractEffectiveModule.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-11-25T15:47:45Z",
+      "side": 0,
+      "message": "This won\u0027t work because of YANGTOOLS-1042",
+      "range": {
+        "startLine": 206,
+        "startChar": 0,
+        "endLine": 208,
+        "endChar": 13
+      },
+      "revId": "96d12ee2688b296760c29597d44140a34ca762cf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": true
+    }
+  ]
+}
