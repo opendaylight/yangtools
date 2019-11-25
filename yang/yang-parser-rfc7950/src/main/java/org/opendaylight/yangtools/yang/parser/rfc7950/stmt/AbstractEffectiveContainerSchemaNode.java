@@ -7,28 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class AbstractEffectiveContainerSchemaNode<D extends DeclaredStatement<QName>>
-        extends AbstractEffectiveSimpleDataNodeContainer<D>
+        extends AbstractEffectiveMustConstraintAwareSimpleDataNodeContainer<D>
         implements ContainerSchemaNode, ActionNodeContainerCompat<QName, D>, NotificationNodeContainerCompat<QName, D> {
-    private final ImmutableSet<MustDefinition> mustConstraints;
-
     protected AbstractEffectiveContainerSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
-        mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
-    }
-
-    @Override
-    public final Collection<MustDefinition> getMustConstraints() {
-        return mustConstraints;
     }
 }
