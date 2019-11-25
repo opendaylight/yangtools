@@ -9,9 +9,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import java.lang.invoke.VarHandle;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -88,6 +91,18 @@ public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends Declare
             return Optional.of((Map<K, V>) dataTreeNamespace);
         }
         return super.getNamespaceContents(namespace);
+    }
+
+    protected final <T> @NonNull ImmutableSet<T> derivedSet(final VarHandle vh, final @NonNull Class<T> clazz) {
+        final ImmutableSet<T> existing = (ImmutableSet<T>) vh.getAcquire(this);
+        return existing != null ? existing : calculateSet(vh, clazz);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> @NonNull ImmutableSet<T> calculateSet(final VarHandle vh, final @NonNull Class<T> clazz) {
+        final ImmutableSet<T> computed = ImmutableSet.copyOf(allSubstatementsOfType(clazz));
+        final Object witness = vh.compareAndExchangeRelease(this, null, computed);
+        return witness == null ? computed : (ImmutableSet<T>) witness;
     }
 
     private static <T extends SchemaTreeEffectiveStatement<?>> void putChild(final Map<QName, T> map,
