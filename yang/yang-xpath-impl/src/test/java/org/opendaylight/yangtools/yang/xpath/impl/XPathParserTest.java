@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.xpath.impl;
 
+import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 import com.google.common.collect.ImmutableBiMap;
 import java.net.URI;
@@ -16,10 +18,15 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.BiMapYangNamespaceContext;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
+import org.opendaylight.yangtools.yang.xpath.api.YangBinaryExpr;
+import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangBooleanConstantExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
 
 @SuppressWarnings("null")
@@ -100,6 +107,18 @@ public class XPathParserTest {
         assertEquals(YangBooleanConstantExpr.FALSE, parseExpr("2 != (1 + 1)"));
         assertEquals(YangBooleanConstantExpr.TRUE, parseExpr("2 = 2"));
         assertEquals(YangBooleanConstantExpr.TRUE, parseExpr("2 = (1 + 1)"));
+    }
+
+    @Test
+    public void testGreaterEqualReference() throws XPathExpressionException {
+        final YangExpr expr = parseExpr(". >= ../lower-port");
+        assertThat(expr, isA(YangBinaryExpr.class));
+
+        final YangBinaryExpr binary = (YangBinaryExpr) expr;
+        assertEquals(YangBinaryOperator.GTE, binary.getOperator());
+        assertEquals(YangLocationPath.self(), binary.getLeftExpr());
+        assertEquals(YangLocationPath.relative(YangXPathAxis.PARENT.asStep(),
+            YangXPathAxis.CHILD.asStep(QName.create(DEFNS, "lower-port"))), binary.getRightExpr());
     }
 
     private YangExpr parseExpr(final String xpath) throws XPathExpressionException {
