@@ -45,15 +45,12 @@ public abstract class AbstractEffectiveOperationDefinition<D extends DeclaredSta
         final Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof GroupingDefinition) {
-                final GroupingDefinition groupingDefinition = (GroupingDefinition) effectiveStatement;
-                groupingsInit.add(groupingDefinition);
+                // FIXME: add collision detection
+                groupingsInit.add((GroupingDefinition) effectiveStatement);
             }
             if (effectiveStatement instanceof TypedefEffectiveStatement) {
-                final TypedefEffectiveStatement typeDef = (TypedefEffectiveStatement) effectiveStatement;
-                final TypeDefinition<?> type = typeDef.getTypeDefinition();
-                if (!mutableTypeDefinitions.contains(type)) {
-                    mutableTypeDefinitions.add(type);
-                } else {
+                final TypeDefinition<?> type = ((TypedefEffectiveStatement) effectiveStatement).getTypeDefinition();
+                if (!mutableTypeDefinitions.add(type)) {
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
                 }
             }
