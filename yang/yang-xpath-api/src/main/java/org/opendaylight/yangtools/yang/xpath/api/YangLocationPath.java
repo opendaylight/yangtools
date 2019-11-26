@@ -433,7 +433,13 @@ public abstract class YangLocationPath implements YangExpr {
     }
 
     public static final Relative relative(final Collection<Step> steps) {
-        return steps.isEmpty() ? SELF : new Relative(ImmutableList.copyOf(steps));
+        for (Step step : steps) {
+            if (!YangXPathAxis.SELF.asStep().equals(step)) {
+                // TODO: compress SELF steps better?
+                return new Relative(ImmutableList.copyOf(steps));
+            }
+        }
+        return SELF;
     }
 
     /**
