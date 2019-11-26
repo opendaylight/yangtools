@@ -15,18 +15,18 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
     private final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
@@ -37,21 +37,60 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
      * @param ctx context of statement.
      */
     protected EffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
-        final Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements = ctx.effectiveSubstatements();
         final Collection<StmtContext<?, ?, ?>> substatementsInit = new ArrayList<>();
 
+        /*
+         * This dance is required to ensure that effects of 'uses' nodes are applied in the same order as
+         * the statements were defined -- i.e. if we have something like this:
+         *
+         * container foo {
+         *   uses bar;
+         *   uses baz;
+         * }
+         *
+         * grouping baz {
+         *   leaf baz {
+         *     type string;
+         *   }
+         * }
+         *
+         * grouping bar {
+         *   leaf bar {
+         *     type string;
+         *   }
+         * }
+         *
+         * The reactor would first inline 'uses baz' as that definition is the first one completely resolved and then
+         * inline 'uses bar'. Here we are iterating in declaration order re-inline the statements.
+         *
+         * TODO: this really should be handled by UsesStatementSupport such that 'uses baz' would have a prerequisite
+         *       of a resolved 'uses bar'.
+         */
+        Set<StmtContext<?, ?, ?>> filteredStatements = null;
         for (final StmtContext<?, ?, ?> declaredSubstatement : ctx.declaredSubstatements()) {
             if (declaredSubstatement.isSupportedByFeatures()) {
                 substatementsInit.add(declaredSubstatement);
-                if (YangStmtMapping.USES == declaredSubstatement.getPublicDefinition()) {
-                    final Collection<? extends StmtContext<?, ?, ?>> effect =
-                            declaredSubstatement.getEffectOfStatement();
+
+                final Collection<? extends StmtContext<?, ?, ?>> effect = declaredSubstatement.getEffectOfStatement();
+                if (!effect.isEmpty()) {
+                    if (filteredStatements == null) {
+                        filteredStatements = new HashSet<>();
+                    }
+                    filteredStatements.addAll(effect);
                     substatementsInit.addAll(effect);
-                    ((StatementContextBase<?, ?, ?>) ctx).removeStatementsFromEffectiveSubstatements(effect);
                 }
             }
         }
-        substatementsInit.addAll(effectiveSubstatements);
+
+        if (filteredStatements != null) {
+            for (StmtContext<?, ?, ?> stmt : ctx.effectiveSubstatements()) {
+                if (!filteredStatements.contains(stmt)) {
+                    substatementsInit.add(stmt);
+                }
+            }
+        } else {
+            substatementsInit.addAll(ctx.effectiveSubstatements());
+        }
 
         this.substatements = ImmutableList.copyOf(initSubstatements(ctx, substatementsInit));
     }
