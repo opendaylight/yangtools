@@ -1,0 +1,13 @@
+submodule bar {
+    belongs-to foo {
+        prefix foo;
+    }
+
+    choice bar {
+        case foo {
+            leaf foo {
+                type string;
+            }
+        }
+    }
+}
