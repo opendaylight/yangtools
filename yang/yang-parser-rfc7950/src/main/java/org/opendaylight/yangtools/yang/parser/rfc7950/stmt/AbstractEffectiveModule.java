@@ -237,30 +237,18 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
                 }
             }
-            if (effectiveStatement instanceof UsesNode) {
-                final UsesNode usesNode = (UsesNode) effectiveStatement;
-                if (!mutableUses.contains(usesNode)) {
-                    mutableUses.add(usesNode);
-                } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
-                }
+            if (effectiveStatement instanceof UsesNode && !mutableUses.add((UsesNode) effectiveStatement)) {
+                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
             }
             if (effectiveStatement instanceof TypedefEffectiveStatement) {
-                final TypedefEffectiveStatement typeDef = (TypedefEffectiveStatement) effectiveStatement;
-                final TypeDefinition<?> type = typeDef.getTypeDefinition();
-                if (!mutableTypeDefinitions.contains(type)) {
-                    mutableTypeDefinitions.add(type);
-                } else {
+                final TypeDefinition<?> type = ((TypedefEffectiveStatement) effectiveStatement).getTypeDefinition();
+                if (!mutableTypeDefinitions.add(type)) {
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
                 }
             }
-            if (effectiveStatement instanceof GroupingDefinition) {
-                final GroupingDefinition grp = (GroupingDefinition) effectiveStatement;
-                if (!mutableGroupings.contains(grp)) {
-                    mutableGroupings.add(grp);
-                } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
-                }
+            if (effectiveStatement instanceof GroupingDefinition
+                    && !mutableGroupings.add((GroupingDefinition) effectiveStatement)) {
+                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
             }
         }
 
