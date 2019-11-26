@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatementNamespace;
@@ -52,10 +54,13 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     private final ImmutableMap<String, ModuleEffectiveStatement> prefixToModule;
     private final ImmutableMap<QNameModule, String> namespaceToPrefix;
     private final @NonNull QNameModule qnameModule;
+    private final ImmutableSet<Module> submodules;
 
-    ModuleEffectiveStatementImpl(final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx) {
-        super(ctx);
-        qnameModule = verifyNotNull(ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx));
+    private ModuleEffectiveStatementImpl(final @NonNull ModuleStmtContext ctx) {
+        super(ctx, findPrefix(ctx.delegate(), "module", ctx.getStatementArgument()));
+        submodules = ctx.getSubmodules();
+
+        qnameModule = verifyNotNull(ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.delegate()));
 
         final String localPrefix = findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class).get();
         final Builder<String, ModuleEffectiveStatement> prefixToModuleBuilder = ImmutableMap.builder();
@@ -98,6 +103,10 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
                 : ImmutableMap.copyOf(Maps.transformValues(identities, StmtContext::buildEffective));
     }
 
+    ModuleEffectiveStatementImpl(final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx) {
+        this(ModuleStmtContext.create(ctx));
+    }
+
     @Override
     public @NonNull QNameModule localQNameModule() {
         return qnameModule;
@@ -106,6 +115,11 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     @Override
     public @NonNull QNameModule getQNameModule() {
         return qnameModule;
+    }
+
+    @Override
+    public ImmutableSet<Module> getSubmodules() {
+        return submodules;
     }
 
     @Override
