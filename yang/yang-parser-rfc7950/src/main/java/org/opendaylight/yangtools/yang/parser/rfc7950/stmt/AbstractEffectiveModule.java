@@ -7,16 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
@@ -34,7 +30,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -45,31 +40,24 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
-import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> extends
-        AbstractSchemaEffectiveDocumentedNode<String, D> implements Module, MutableStatement,
+        AbstractSchemaEffectiveDocumentedNode<String, D> implements Module,
         NotificationNodeContainerCompat<String, D> {
     private final String name;
     private final String prefix;
@@ -92,32 +80,13 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     private final ImmutableSet<DataSchemaNode> publicChildNodes;
     private final SemVer semanticVersion;
 
-    private Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>>
-        submoduleContextsToBuild;
-    private ImmutableSet<Module> submodules;
-    private boolean sealed;
-
-    protected AbstractEffectiveModule(final StmtContext<String, D, ? extends EffectiveStatement<String, ?>> ctx) {
+    protected AbstractEffectiveModule(
+            final @NonNull StmtContext<String, D, ? extends EffectiveStatement<String, ?>> ctx,
+            final @NonNull String prefix) {
         super(ctx);
 
         this.name = argument();
-
-        final EffectiveStatement<?, ?> parentOfPrefix;
-        if (ctx.getPublicDefinition() == YangStmtMapping.SUBMODULE) {
-            final Optional<BelongsToEffectiveStatement> optParent =
-                    findFirstEffectiveSubstatement(BelongsToEffectiveStatement.class);
-            SourceException.throwIf(!optParent.isPresent(), ctx.getStatementSourceReference(),
-                    "Unable to find belongs-to statement in submodule %s.", ctx.getStatementArgument());
-            parentOfPrefix = optParent.get();
-        } else {
-            parentOfPrefix = this;
-        }
-
-        final Optional<@NonNull PrefixEffectiveStatement> prefixStmt = parentOfPrefix.findFirstEffectiveSubstatement(
-            PrefixEffectiveStatement.class);
-        SourceException.throwIf(!prefixStmt.isPresent(), ctx.getStatementSourceReference(),
-                "Unable to resolve prefix for module or submodule %s.", ctx.getStatementArgument());
-        this.prefix = prefixStmt.get().argument();
+        this.prefix = requireNonNull(prefix);
         this.yangVersion = findFirstEffectiveSubstatementArgument(YangVersionEffectiveStatement.class)
                 .orElse(YangVersion.VERSION_1);
         this.semanticVersion = findFirstEffectiveSubstatementArgument(OpenConfigVersionEffectiveStatement.class)
@@ -126,65 +95,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
                 .orElse(null);
         this.contact = findFirstEffectiveSubstatementArgument(ContactEffectiveStatement.class)
                 .orElse(null);
-
-        // init submodules and substatements of submodules
-        final List<EffectiveStatement<?, ?>> substatementsOfSubmodules;
-        final Map<String, StmtContext<?, ?, ?>> includedSubmodulesMap = ctx
-                .getAllFromCurrentStmtCtxNamespace(IncludedSubmoduleNameToModuleCtx.class);
-
-        if (includedSubmodulesMap == null || includedSubmodulesMap.isEmpty()) {
-            this.submodules = ImmutableSet.of();
-            this.submoduleContextsToBuild = ImmutableSet.of();
-            substatementsOfSubmodules = ImmutableList.of();
-        } else if (YangStmtMapping.MODULE.equals(ctx.getPublicDefinition())) {
-            /*
-             * Aggregation of substatements from submodules should be done only
-             * for modules. In case of submodules it does not make sense because
-             * of possible circular chains of includes between submodules.
-             */
-            final Set<Module> submodulesInit = new HashSet<>();
-            final List<EffectiveStatement<?, ?>> substatementsOfSubmodulesInit = new ArrayList<>();
-            for (final StmtContext<?, ?, ?> submoduleCtx : includedSubmodulesMap.values()) {
-                final EffectiveStatement<?, ?> submodule = submoduleCtx.buildEffective();
-                Verify.verify(submodule instanceof SubmoduleEffectiveStatement);
-                Verify.verify(submodule instanceof Module, "Submodule statement %s is not a Module", submodule);
-                submodulesInit.add((Module) submodule);
-                substatementsOfSubmodulesInit.addAll(submodule.effectiveSubstatements().stream()
-                        .filter(sub -> sub instanceof SchemaNode || sub instanceof DataNodeContainer)
-                        .collect(Collectors.toList()));
-            }
-
-            this.submodules = ImmutableSet.copyOf(submodulesInit);
-            this.submoduleContextsToBuild = ImmutableSet.of();
-            substatementsOfSubmodules = ImmutableList.copyOf(substatementsOfSubmodulesInit);
-        } else {
-            /*
-             * Because of possible circular chains of includes between submodules we can
-             * collect only submodule contexts here and then build them during
-             * sealing of this statement.
-             */
-            final Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>>
-                submoduleContextsInit = new HashSet<>();
-            for (final StmtContext<?, ?, ?> submoduleCtx : includedSubmodulesMap.values()) {
-                submoduleContextsInit.add(
-                    (StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>)submoduleCtx);
-            }
-
-            this.submoduleContextsToBuild = ImmutableSet.copyOf(submoduleContextsInit);
-            substatementsOfSubmodules = ImmutableList.of();
-        }
-
-        if (!submoduleContextsToBuild.isEmpty()) {
-            ((Mutable<?, ?, ?>) ctx).addMutableStmtToSeal(this);
-            sealed = false;
-        } else {
-            sealed = true;
-        }
-
-        // init substatements collections
-        final List<EffectiveStatement<?, ?>> effectiveSubstatements = new ArrayList<>();
-        effectiveSubstatements.addAll(effectiveSubstatements());
-        effectiveSubstatements.addAll(substatementsOfSubmodules);
 
         final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
         final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
@@ -202,7 +112,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         final Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
         final Set<DataSchemaNode> mutablePublicChildNodes = new LinkedHashSet<>();
 
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
             }
@@ -313,13 +223,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     }
 
     @Override
-    public Set<Module> getSubmodules() {
-        checkState(sealed, "Attempt to get base submodules from unsealed submodule effective statement %s",
-            getQNameModule());
-        return submodules;
-    }
-
-    @Override
     public Set<FeatureDefinition> getFeatures() {
         return features;
     }
@@ -402,13 +305,10 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
                 .toString();
     }
 
-    @Override
-    public void seal() {
-        if (!sealed) {
-            submodules = ImmutableSet.copyOf(Iterables.transform(submoduleContextsToBuild,
-                ctx -> (Module) ctx.buildEffective()));
-            submoduleContextsToBuild = ImmutableSet.of();
-            sealed = true;
-        }
+    protected static final @NonNull String findPrefix(final @NonNull StmtContext<?, ?, ?> ctx,
+            final String type, final String name) {
+        return SourceException.throwIfNull(
+            StmtContextUtils.firstAttributeOf(ctx.declaredSubstatements(), PrefixStatement.class),
+            ctx.getStatementSourceReference(), "Unable to resolve prefix for %s %s.", type, name);
     }
 }
