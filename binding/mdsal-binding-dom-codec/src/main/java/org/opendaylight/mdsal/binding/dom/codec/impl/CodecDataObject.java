@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -33,11 +34,25 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     // An object representing a null value in a member field.
     private static final @NonNull Object NULL_VALUE = new Object();
 
+    private static final VarHandle CACHED_HASH_CODE;
+
+    static {
+        try {
+            CACHED_HASH_CODE = MethodHandles.lookup().findVarHandle(CodecDataObject.class, "cachedHashcode",
+                Integer.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private final @NonNull DataObjectCodecContext<T, ?> context;
     @SuppressWarnings("rawtypes")
     private final @NonNull NormalizedNodeContainer data;
 
-    private volatile Integer cachedHashcode = null;
+    // Accessed via a VarHandle
+    @SuppressWarnings("unused")
+    // FIXME: consider using a primitive int-based cache (with 0 being uninit)
+    private volatile Integer cachedHashcode;
 
     protected CodecDataObject(final DataObjectCodecContext<T, ?> context, final NormalizedNodeContainer<?, ?, ?> data) {
         this.data = requireNonNull(data, "Data must not be null");
@@ -46,14 +61,8 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     @Override
     public final int hashCode() {
-        final Integer cached = cachedHashcode;
-        if (cached != null) {
-            return cached;
-        }
-
-        final int result = codecAugmentedHashCode();
-        cachedHashcode = result;
-        return result;
+        final Integer cached = (Integer) CACHED_HASH_CODE.getAcquire(this);
+        return cached != null ? cached : loadHashCode();
     }
 
     @Override
@@ -129,7 +138,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         return codecFillToString(helper);
     }
 
-    // Helpers split out of codecMember to aid its inlining
+    // Helper split out of codecMember to aid its inlining
     private Object loadMember(final VarHandle handle, final NodeCodecContext childCtx) {
         @SuppressWarnings("unchecked")
         final Optional<NormalizedNode<?, ?>> child = data.getChild(childCtx.getDomPathArgument());
@@ -141,7 +150,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         return witness == null ? obj : unmaskNull(witness);
     }
 
-    // Helpers split out of codecMember to aid its inlining
+    // Helper split out of codecKey to aid its inlining
     private Object loadKey(final VarHandle handle) {
         verify(data instanceof MapEntryNode, "Unsupported value %s", data);
         verify(context instanceof KeyedListNodeCodecContext, "Unexpected context %s", context);
@@ -149,6 +158,13 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         // key is known to be non-null, no need to mask it
         final Object witness = handle.compareAndExchangeRelease(this, null, obj);
         return witness == null ? obj : witness;
+    }
+
+    // Helper split out of hashCode() to aid its inlining
+    private int loadHashCode() {
+        final int result = codecAugmentedHashCode();
+        final Object witness = CACHED_HASH_CODE.compareAndExchangeRelease(this, null, Integer.valueOf(result));
+        return witness == null ? result : (Integer) witness;
     }
 
     private static @NonNull Object maskNull(final @Nullable Object unmasked) {
