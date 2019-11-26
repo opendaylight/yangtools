@@ -538,7 +538,7 @@ abstract class AntlrXPathParser implements YangXPathParser {
             final YangBinaryOperator operator = nextOperator(it);
             final YangExpr right = parseAdditive(nextContext(it, AdditiveExprContext.class));
             final Optional<YangExpr> simple = simplifyNumbers(operator, ret, right);
-            ret = simple.isPresent() ? simple.get() : nextOperator(it).exprWith(ret, right);
+            ret = simple.isPresent() ? simple.get() : operator.exprWith(ret, right);
         } while (it.hasNext());
 
         return ret;
