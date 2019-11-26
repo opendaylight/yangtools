@@ -9,9 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -36,7 +34,6 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
     protected AbstractEffectiveDocumentedDataNodeContainer(final StmtContext<A, D, ?> ctx) {
         super(ctx);
 
-        Map<QName, DataSchemaNode> mutableChildNodes = new LinkedHashMap<>();
         Set<GroupingDefinition> mutableGroupings = new HashSet<>();
         Set<UsesNode> mutableUses = new HashSet<>();
         Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
@@ -44,13 +41,7 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DataSchemaNode) {
-                final DataSchemaNode dataSchemaNode = (DataSchemaNode) stmt;
-                if (mutableChildNodes.containsKey(dataSchemaNode.getQName())) {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
-                }
-
-                mutableChildNodes.put(dataSchemaNode.getQName(), dataSchemaNode);
-                mutablePublicChildNodes.add(dataSchemaNode);
+                mutablePublicChildNodes.add((DataSchemaNode) stmt);
             }
             if (stmt instanceof UsesNode) {
                 UsesNode usesNode = (UsesNode) stmt;
