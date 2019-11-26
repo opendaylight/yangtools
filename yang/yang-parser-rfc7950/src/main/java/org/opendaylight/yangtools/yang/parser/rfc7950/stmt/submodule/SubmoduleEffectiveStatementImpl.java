@@ -7,27 +7,47 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule;
 
+import static com.google.common.base.Preconditions.checkState;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModule;
+import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModule<SubmoduleStatement>
-        implements SubmoduleEffectiveStatement {
+        implements SubmoduleEffectiveStatement, MutableStatement {
 
     private final QNameModule qnameModule;
 
+    private Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>> submoduleContexts;
+    private ImmutableSet<Module> submodules;
+    private boolean sealed;
+
     SubmoduleEffectiveStatementImpl(final StmtContext<String, SubmoduleStatement, SubmoduleEffectiveStatement> ctx) {
-        super(ctx);
+        super(ctx, findSubmodulePrefix(ctx));
 
         final String belongsToModuleName = firstAttributeOf(ctx.declaredSubstatements(), BelongsToStatement.class);
         final QNameModule belongsToModuleQName = ctx.getFromNamespace(ModuleNameToModuleQName.class,
@@ -36,11 +56,41 @@ final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModule<Subm
         final Optional<Revision> submoduleRevision = findFirstEffectiveSubstatementArgument(
             RevisionEffectiveStatement.class);
         this.qnameModule = QNameModule.create(belongsToModuleQName.getNamespace(), submoduleRevision).intern();
+
+        /*
+         * Because of possible circular chains of includes between submodules we can
+         * collect only submodule contexts here and then build them during
+         * sealing of this statement.
+         */
+        final Map<String, StmtContext<?, ?, ?>> includedSubmodulesMap = ctx.getAllFromCurrentStmtCtxNamespace(
+            IncludedSubmoduleNameToModuleCtx.class);
+
+        final Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>>
+            submoduleContextsInit = new HashSet<>();
+        for (final StmtContext<?, ?, ?> submoduleCtx : includedSubmodulesMap.values()) {
+            submoduleContextsInit.add(
+                (StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>)submoduleCtx);
+        }
+
+        submoduleContexts = ImmutableSet.copyOf(submoduleContextsInit);
+        if (!submoduleContexts.isEmpty()) {
+            ((Mutable<?, ?, ?>) ctx).addMutableStmtToSeal(this);
+            sealed = false;
+        } else {
+            sealed = true;
+        }
     }
 
     @Override
     public QNameModule getQNameModule() {
         return qnameModule;
+    }
+
+    @Override
+    public Set<Module> getSubmodules() {
+        checkState(sealed, "Attempt to get base submodules from unsealed submodule effective statement %s",
+            getQNameModule());
+        return submodules;
     }
 
     @Override
@@ -59,5 +109,31 @@ final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModule<Subm
         final SubmoduleEffectiveStatementImpl other = (SubmoduleEffectiveStatementImpl) obj;
         return Objects.equals(getName(), other.getName()) && qnameModule.equals(other.qnameModule)
                 && Objects.equals(getYangVersion(), other.getYangVersion());
+    }
+
+    @Override
+    public void seal() {
+        if (!sealed) {
+            submodules = ImmutableSet.copyOf(Iterables.transform(submoduleContexts,
+                ctx -> (Module) ctx.buildEffective()));
+            submoduleContexts = ImmutableSet.of();
+            sealed = true;
+        }
+    }
+
+    private static @NonNull PrefixEffectiveStatement findSubmodulePrefix(final StmtContext<?, ?, ?> ctx) {
+        final BelongsToEffectiveStatement belongsTo;
+        try {
+            belongsTo = ctx.effectiveSubstatements().stream()
+                    .map(StmtContext::buildEffective)
+                    .filter(BelongsToEffectiveStatement.class::isInstance)
+                    .map(BelongsToEffectiveStatement.class::cast)
+                    .findFirst()
+                    .get();
+        } catch (NoSuchElementException e) {
+            throw new SourceException(ctx.getStatementSourceReference(), e,
+                "Unable to find belongs-to statement in submodule %s.", ctx.getStatementArgument());
+        }
+        return findPrefix(belongsTo);
     }
 }
