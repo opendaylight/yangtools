@@ -8,6 +8,8 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.collect.Iterables;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import org.checkerframework.checker.lock.qual.Holding;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode.ChildAddressabilitySummary;
@@ -39,6 +41,17 @@ import org.slf4j.LoggerFactory;
 final class DataContainerCodecPrototype<T extends WithStatus> implements NodeContextSupplier {
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerCodecPrototype.class);
 
+    private static final VarHandle INSTANCE;
+
+    static {
+        try {
+            INSTANCE = MethodHandles.lookup().findVarHandle(DataContainerCodecPrototype.class,
+                "instance", DataContainerCodecContext.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private final T schema;
     private final QNameModule namespace;
     private final CodecContextFactory factory;
@@ -47,36 +60,22 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
     private final ChildAddressabilitySummary childAddressabilitySummary;
 
     /*
-     * FIXME: This field is now utterly in the hot path of CodecDataObject's instantiation of data. It is volatile
-     *        support double-checked locking, as detailed in
-     *        https://en.wikipedia.org/wiki/Double-checked_locking#Usage_in_Java.
+     * This field is now utterly in the hot path of CodecDataObject's instantiation of data. It is a volatile support
+     * double-checked locking, as detailed in https://en.wikipedia.org/wiki/Double-checked_locking#Usage_in_Java
      *
-     *        Removing volatile here would seem to be worthwhile, as it would mean that in the initialized case we end
-     *        up with no happens-before synchronization between threads, allowing JIT to perform better.
+     * We are opting for the document Java 9 equivalent, forsaking our usual CAS-based approach, where we'd re-assert
+     * concurrent loads. This improves safety a bit (by forcing a synchronized() block), as we expect prototypes to be
+     * long-lived.
      *
-     *        Since we are on Java 5+, DataContainerCodecContext and its subclasses play a role here. All of their
-     *        fields are either final or volatile, so intuition would indicate they themselves could (already?) be
-     *        acting in the same capacity as "FinalWrapper" in the above example does -- in which case we can safely
-     *        remove the volatile access altogether, after documenting this fact there (and potentially placing some
-     *        guards).
+     * In terms of safe publication, we have two volatile fields in DataObjectCodecContext to worry about, so given
+     * above access trade-off, we opt for the additional safety.
      *
-     *        The presence of volatile fields seems to violate this, as
-     *        http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html mentions "such that all of the
-     *        fields of Helper are final".
-     *
-     *        There are only two violations, both relating to dynamic discovery of augmentations, which should be
-     *        eliminated once we have constant class loader visibility (and thus can discover all valid augmentations
-     *        and aliases). Alternatively, adding an indirection could be considered after the effects are fully
-     *        understood.
-     *
-     *        Alternatively we can consider the use of VarHandle acquire/release mechanics to remove this instance
-     *        from global synchronization order -- that would be a Java 9+ concern, though.
-     *
-     *        Finally, the benefits of addressing this are masked by CodecDataObject operating on volatiles, hence
-     *        already doing a barrier very close to us -- thus reducing the scope in which code can be reordered.
-     *        If CodecDataObject moves to VarHandles and uses acquire/release there, we will be put on the spot here,
-     *        though.
+     * TODO: all we need is safe publish semantics here, we can most probably tolerate concurrent value loads -- and
+     *       everything except the the above volatiles seems to be ready. Those volatile should disappear once we have
+     *       constant class loader visibility (and thus can discover all valid augmentations and aliases). That would
+     *       mean dropping @Holding from createInstance().
      */
+    @SuppressWarnings("unused")
     private volatile DataContainerCodecContext<?, T> instance;
 
     @SuppressWarnings("unchecked")
@@ -235,17 +234,23 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
 
     @Override
     public DataContainerCodecContext<?, T> get() {
-        DataContainerCodecContext<?, T> tmp = instance;
-        if (tmp == null) {
-            synchronized (this) {
-                tmp = instance;
-                if (tmp == null) {
-                    instance = tmp = createInstance();
-                }
-            }
-        }
+        final DataContainerCodecContext<?, T> existing = getInstance();
+        return existing != null ? existing : loadInstance();
+    }
 
+    private synchronized @NonNull DataContainerCodecContext<?, T> loadInstance() {
+        // re-acquire under lock
+        DataContainerCodecContext<?, T> tmp = getInstance();
+        if (tmp == null) {
+            tmp = createInstance();
+            INSTANCE.setRelease(this, tmp);
+        }
         return tmp;
+    }
+
+    // Helper for getAcquire access to instance
+    private DataContainerCodecContext<?, T> getInstance() {
+        return (DataContainerCodecContext<?, T>) INSTANCE.getAcquire(this);
     }
 
     @Holding("this")
