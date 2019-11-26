@@ -12,6 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -33,11 +35,24 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 
 abstract class DataContainerCodecContext<D extends DataObject, T extends WithStatus> extends NodeCodecContext
         implements BindingDataObjectCodecTreeNode<D>  {
+    private static final VarHandle EVENT_STREAM_SERIALIZER;
+
+    static {
+        try {
+            EVENT_STREAM_SERIALIZER = MethodHandles.lookup().findVarHandle(DataContainerCodecContext.class,
+                "eventStreamSerializer", DataObjectSerializer.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private final @NonNull DataContainerCodecPrototype<T> prototype;
 
+    // Accessed via a VarHandle
+    @SuppressWarnings("unused")
     private volatile DataObjectSerializer eventStreamSerializer;
 
-    protected DataContainerCodecContext(final DataContainerCodecPrototype<T> prototype) {
+    DataContainerCodecContext(final DataContainerCodecPrototype<T> prototype) {
         this.prototype = requireNonNull(prototype);
     }
 
@@ -169,11 +184,16 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
         throw IncorrectNestingException.create(message, args);
     }
 
-    DataObjectSerializer eventStreamSerializer() {
-        if (eventStreamSerializer == null) {
-            eventStreamSerializer = factory().getEventStreamSerializer(getBindingClass());
-        }
-        return eventStreamSerializer;
+    final DataObjectSerializer eventStreamSerializer() {
+        final DataObjectSerializer existing = (DataObjectSerializer) EVENT_STREAM_SERIALIZER.getAcquire(this);
+        return existing != null ? existing : loadEventStreamSerializer();
+    }
+
+    // Split out to aid inlining
+    private DataObjectSerializer loadEventStreamSerializer() {
+        final DataObjectSerializer loaded = factory().getEventStreamSerializer(getBindingClass());
+        final Object witness = EVENT_STREAM_SERIALIZER.compareAndExchangeRelease(this, null, loaded);
+        return witness == null ? loaded : (DataObjectSerializer) witness;
     }
 
     @Override
