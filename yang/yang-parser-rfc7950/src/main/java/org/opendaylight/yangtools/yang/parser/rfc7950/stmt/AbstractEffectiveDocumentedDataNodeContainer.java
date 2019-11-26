@@ -56,30 +56,15 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
                 mutableChildNodes.put(dataSchemaNode.getQName(), dataSchemaNode);
                 mutablePublicChildNodes.add(dataSchemaNode);
             }
-            if (stmt instanceof UsesNode) {
-                UsesNode usesNode = (UsesNode) stmt;
-                if (!mutableUses.contains(usesNode)) {
-                    mutableUses.add(usesNode);
-                } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
-                }
+            if (stmt instanceof UsesNode && !mutableUses.add((UsesNode) stmt)) {
+                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
             }
-            if (stmt instanceof TypedefEffectiveStatement) {
-                TypedefEffectiveStatement typeDef = (TypedefEffectiveStatement) stmt;
-                TypeDefinition<?> type = typeDef.getTypeDefinition();
-                if (!mutableTypeDefinitions.contains(type)) {
-                    mutableTypeDefinitions.add(type);
-                } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
-                }
+            if (stmt instanceof TypedefEffectiveStatement
+                    && !mutableTypeDefinitions.add(((TypedefEffectiveStatement) stmt).getTypeDefinition())) {
+                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
             }
-            if (stmt instanceof GroupingDefinition) {
-                GroupingDefinition grp = (GroupingDefinition) stmt;
-                if (!mutableGroupings.contains(grp)) {
-                    mutableGroupings.add(grp);
-                } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
-                }
+            if (stmt instanceof GroupingDefinition && !mutableGroupings.add((GroupingDefinition) stmt)) {
+                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
             }
         }
 
