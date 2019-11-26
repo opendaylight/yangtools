@@ -39,16 +39,15 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         final Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements = ctx.effectiveSubstatements();
         final Collection<StmtContext<?, ?, ?>> substatementsInit = new ArrayList<>();
 
-        final Collection<? extends StmtContext<?, ?, ?>> supportedDeclaredSubStmts = Collections2.filter(
-                ctx.declaredSubstatements(), StmtContext::isSupportedByFeatures);
-        for (final StmtContext<?, ?, ?> declaredSubstatement : supportedDeclaredSubStmts) {
-            if (YangStmtMapping.USES == declaredSubstatement.getPublicDefinition()) {
+        for (final StmtContext<?, ?, ?> declaredSubstatement : ctx.declaredSubstatements()) {
+            if (declaredSubstatement.isSupportedByFeatures()) {
                 substatementsInit.add(declaredSubstatement);
-                substatementsInit.addAll(declaredSubstatement.getEffectOfStatement());
-                ((StatementContextBase<?, ?, ?>) ctx).removeStatementsFromEffectiveSubstatements(declaredSubstatement
-                        .getEffectOfStatement());
-            } else {
-                substatementsInit.add(declaredSubstatement);
+                if (YangStmtMapping.USES == declaredSubstatement.getPublicDefinition()) {
+                    final Collection<? extends StmtContext<?, ?, ?>> effect =
+                            declaredSubstatement.getEffectOfStatement();
+                    substatementsInit.addAll(effect);
+                    ((StatementContextBase<?, ?, ?>) ctx).removeStatementsFromEffectiveSubstatements(effect);
+                }
             }
         }
         substatementsInit.addAll(effectiveSubstatements);
