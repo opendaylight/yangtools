@@ -58,26 +58,20 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
             }
             if (stmt instanceof UsesNode) {
                 UsesNode usesNode = (UsesNode) stmt;
-                if (!mutableUses.contains(usesNode)) {
-                    mutableUses.add(usesNode);
-                } else {
+                if (!mutableUses.add(usesNode)) {
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
                 }
             }
             if (stmt instanceof TypedefEffectiveStatement) {
                 TypedefEffectiveStatement typeDef = (TypedefEffectiveStatement) stmt;
                 TypeDefinition<?> type = typeDef.getTypeDefinition();
-                if (!mutableTypeDefinitions.contains(type)) {
-                    mutableTypeDefinitions.add(type);
-                } else {
+                if (!mutableTypeDefinitions.add(type)) {
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
                 }
             }
             if (stmt instanceof GroupingDefinition) {
                 GroupingDefinition grp = (GroupingDefinition) stmt;
-                if (!mutableGroupings.contains(grp)) {
-                    mutableGroupings.add(grp);
-                } else {
+                if (!mutableGroupings.add(grp)) {
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
                 }
             }

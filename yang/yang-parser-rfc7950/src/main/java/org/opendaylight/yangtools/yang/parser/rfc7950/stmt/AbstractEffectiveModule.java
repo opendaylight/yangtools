@@ -241,26 +241,20 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
             }
             if (effectiveStatement instanceof UsesNode) {
                 final UsesNode usesNode = (UsesNode) effectiveStatement;
-                if (!mutableUses.contains(usesNode)) {
-                    mutableUses.add(usesNode);
-                } else {
+                if (!mutableUses.add(usesNode)) {
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
                 }
             }
             if (effectiveStatement instanceof TypedefEffectiveStatement) {
                 final TypedefEffectiveStatement typeDef = (TypedefEffectiveStatement) effectiveStatement;
                 final TypeDefinition<?> type = typeDef.getTypeDefinition();
-                if (!mutableTypeDefinitions.contains(type)) {
-                    mutableTypeDefinitions.add(type);
-                } else {
+                if (!mutableTypeDefinitions.add(type)) {
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
                 }
             }
             if (effectiveStatement instanceof GroupingDefinition) {
                 final GroupingDefinition grp = (GroupingDefinition) effectiveStatement;
-                if (!mutableGroupings.contains(grp)) {
-                    mutableGroupings.add(grp);
-                } else {
+                if (!mutableGroupings.add(grp)) {
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
                 }
             }
