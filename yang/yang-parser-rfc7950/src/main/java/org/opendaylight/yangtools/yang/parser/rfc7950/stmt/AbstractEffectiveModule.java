@@ -16,10 +16,8 @@ import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -101,7 +99,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         final Set<FeatureDefinition> featuresInit = new HashSet<>();
         final List<ExtensionDefinition> extensionNodesInit = new ArrayList<>();
 
-        final Map<QName, DataSchemaNode> mutableChildNodes = new LinkedHashMap<>();
         final Set<GroupingDefinition> mutableGroupings = new HashSet<>();
         final Set<UsesNode> mutableUses = new HashSet<>();
         final Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
@@ -133,13 +130,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
                 extensionNodesInit.add((ExtensionDefinition) effectiveStatement);
             }
             if (effectiveStatement instanceof DataSchemaNode) {
-                final DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
-                if (!mutableChildNodes.containsKey(dataSchemaNode.getQName())) {
-                    mutableChildNodes.put(dataSchemaNode.getQName(), dataSchemaNode);
-                    mutablePublicChildNodes.add(dataSchemaNode);
-                } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
-                }
+                mutablePublicChildNodes.add((DataSchemaNode) effectiveStatement);
             }
             if (effectiveStatement instanceof UsesNode && !mutableUses.add((UsesNode) effectiveStatement)) {
                 throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
