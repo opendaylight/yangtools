@@ -68,9 +68,11 @@ import org.slf4j.LoggerFactory;
  *
  * <p>
  * Code generation here is probably more involved than usual mainly due to the fact we *really* want to express the
- * strong connection between a generated class and BindingCodecContext in terms of a true constant, which boils down to
- * {@code private static final NodeContextSupplier NCS}. Having such constants provides significant boost to JITs
- * ability to optimize code -- especially with inlining and constant propagation.
+ * strong connection between a generated class to the extent possible. In most cases (grouping-generated types) this
+ * involves one level of indirection, which is a safe approach. If we are dealing with a type generated outside of a
+ * grouping statement, though, we are guaranteed instantiation-invariance and hence can hard-wire to a runtime-constant
+ * {@link NodeContextSupplier} -- which  provides significant boost to JITs ability to optimize code -- especially with
+ * inlining and constant propagation.
  *
  * <p>
  * The accessor mapping performance is critical due to users typically not taking care of storing the results acquired
@@ -160,6 +162,8 @@ import org.slf4j.LoggerFactory;
  */
 abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements ClassGenerator<T> {
     // Not reusable definition: we can inline NodeContextSuppliers without a problem
+    // FIXME: 6.0.0: wire this implementation, which requires that BindingRuntimeTypes provides information about types
+    //               being genenerated from within a grouping
     private static final class Fixed<T extends CodecDataObject<?>> extends CodecDataObjectGenerator<T>
             implements NodeContextSupplierProvider<T> {
         private final ImmutableMap<Method, NodeContextSupplier> properties;
