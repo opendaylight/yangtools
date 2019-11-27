@@ -434,19 +434,22 @@ abstract class AntlrXPathParser implements YangXPathParser {
     private Deque<Step> parseLocationPathSteps(final RelativeLocationPathContext expr) {
         final Deque<Step> steps = new ArrayDeque<>(expr.getChildCount());
         final Iterator<ParseTree> it = expr.children.iterator();
-        steps.add(parseStep(nextContext(it, StepContext.class)));
+        addNotSelfStep(steps, parseStep(nextContext(it, StepContext.class)));
 
         while (it.hasNext()) {
             parseStepShorthand(it.next()).ifPresent(steps::add);
 
             // Parse step and add it if it's not SELF_STEP
-            final Step step = parseStep(nextContext(it, StepContext.class));
-            if (!SELF_STEP.equals(step)) {
-                steps.add(step);
-            }
+            addNotSelfStep(steps, parseStep(nextContext(it, StepContext.class)));
         }
 
         return steps;
+    }
+
+    private static void addNotSelfStep(final Deque<Step> steps, final Step step) {
+        if (!SELF_STEP.equals(step)) {
+            steps.add(step);
+        }
     }
 
     private YangExpr parseTerminal(final TerminalNode term) {
