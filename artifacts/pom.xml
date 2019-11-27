@@ -250,6 +250,12 @@
                 <version>4.0.3-SNAPSHOT</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yang-common-netty</artifactId>
+                <version>4.0.3-SNAPSHOT</version>
+            </dependency>
+
             <!-- Test utilities, not packaged in features -->
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
@@ -333,6 +339,13 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-export</artifactId>
+                <version>4.0.3-SNAPSHOT</version>
+                <type>xml</type>
+                <classifier>features</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>odl-yangtools-netty</artifactId>
                 <version>4.0.3-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
