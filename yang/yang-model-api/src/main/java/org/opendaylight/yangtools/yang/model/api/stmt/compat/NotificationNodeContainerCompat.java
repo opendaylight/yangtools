@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 /**
  * Compatibility bridge between {@link NotificationNodeContainer#findNotification(QName)} and
@@ -28,7 +27,9 @@ public interface NotificationNodeContainerCompat<A, D extends DeclaredStatement<
     default Optional<NotificationDefinition> findNotification(final QName qname) {
         // 'notification' identifier must never collide with another element, hence if we look it up and it ends up
         // being an NotificationDefinition, we have found a match.
-        final SchemaTreeEffectiveStatement<?> child = get(Namespace.class, qname);
+        //
+        // Note: JDK 11 does not like the statement constraint here, hence we go through object (which is just as fine)
+        final Object child = get(Namespace.class, qname);
         return child instanceof NotificationDefinition ? Optional.of((NotificationDefinition) child) : Optional.empty();
     }
 }
