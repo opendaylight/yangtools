@@ -275,7 +275,7 @@ public final class BindingReflections {
         });
     }
 
-    public static String getModuleInfoClassName(final String packageName) {
+    public static @NonNull String getModuleInfoClassName(final String packageName) {
         return packageName + "." + BindingMapping.MODULE_INFO_CLASS_NAME;
     }
 
@@ -328,7 +328,7 @@ public final class BindingReflections {
      *
      * @return Set of {@link YangModuleInfo} available for current classloader.
      */
-    public static ImmutableSet<YangModuleInfo> loadModuleInfos() {
+    public static @NonNull ImmutableSet<YangModuleInfo> loadModuleInfos() {
         return loadModuleInfos(Thread.currentThread().getContextClassLoader());
     }
 
@@ -350,7 +350,7 @@ public final class BindingReflections {
      * @param loader Classloader for which {@link YangModuleInfo} should be retrieved.
      * @return Set of {@link YangModuleInfo} available for supplied classloader.
      */
-    public static ImmutableSet<YangModuleInfo> loadModuleInfos(final ClassLoader loader) {
+    public static @NonNull ImmutableSet<YangModuleInfo> loadModuleInfos(final ClassLoader loader) {
         Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.builder();
         ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class,
                 loader);
@@ -379,7 +379,7 @@ public final class BindingReflections {
      * @return Set of {@link YangModuleInfo} available for supplied classloader.
      */
     @Beta
-    public static ImmutableSet<YangModuleInfo> cacheModuleInfos(final ClassLoader loader) {
+    public static @NonNull ImmutableSet<YangModuleInfo> cacheModuleInfos(final ClassLoader loader) {
         return MODULE_INFO_CACHE.getUnchecked(loader);
     }
 
