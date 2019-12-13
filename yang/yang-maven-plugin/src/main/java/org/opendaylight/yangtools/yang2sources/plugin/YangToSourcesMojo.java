@@ -48,7 +48,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * </ol>
  */
 @Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
-    requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true)
+    requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true)
 public final class YangToSourcesMojo extends AbstractMojo {
     public static final String PLUGIN_NAME = "org.opendaylight.yangtools:yang-maven-plugin";
 
