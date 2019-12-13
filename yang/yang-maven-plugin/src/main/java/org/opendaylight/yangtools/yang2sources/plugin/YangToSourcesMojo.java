@@ -55,7 +55,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
     /**
      * Classes implementing {@link BasicCodeGenerator} interface. An instance will be
      * created out of every class using default constructor. Method {@link
-     * BasicCodeGenerator#generateSources(SchemaContext, File, Set)} will be called on every instance.
+     * BasicCodeGenerator#generateSources(EffectiveModelContext, File, Set)} will be called on every instance.
      */
     @Parameter(required = false)
     private CodeGeneratorArg[] codeGenerators;
