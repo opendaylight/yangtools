@@ -1,0 +1,13 @@
+module mdsal-500 {
+    namespace "rpc";
+    prefix "rpc";
+
+    rpc switch {
+        input {
+            leaf foo {
+                type string;
+            }
+        }
+    }
+}
+

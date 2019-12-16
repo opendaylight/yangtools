@@ -291,6 +291,18 @@ public final class BindingMapping {
     }
 
     /**
+     * Returns the {@link String} {@code s} with a '$' character as suffix.
+     *
+     * @param qname RPC QName
+     * @return The RPC method name as determined by considering the localname against the JLS.
+     * @throws NullPointerException if {@code qname} is null
+     */
+    public static @NonNull String getRpcMethodName(final @NonNull QName qname) {
+        final String methodName = getMethodName(qname);
+        return JAVA_RESERVED_WORDS.contains(methodName) ? methodName + "$" : methodName;
+    }
+
+    /**
      * Returns Java identifiers, conforming to JLS9 Section 3.8 to use for specified YANG assigned names
      * (RFC7950 Section 9.6.4). This method considers two distinct encodings: one the pre-Fluorine mapping, which is
      * okay and convenient for sane strings, and an escaping-based bijective mapping which works for all possible
