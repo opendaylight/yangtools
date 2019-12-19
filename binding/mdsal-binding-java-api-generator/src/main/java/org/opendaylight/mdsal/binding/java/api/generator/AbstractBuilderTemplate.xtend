@@ -22,9 +22,8 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.Type
-import org.opendaylight.mdsal.binding.model.util.Types
+import org.opendaylight.mdsal.binding.model.util.BindingTypes
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
-import org.opendaylight.yangtools.yang.binding.Identifiable
 
 abstract class AbstractBuilderTemplate extends BaseTemplate {
     static val Comparator<GeneratedProperty> KEY_PROPS_COMPARATOR = [ p1, p2 | return p1.name.compareTo(p2.name) ]
@@ -131,7 +130,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
                 «generateCopyAugmentation(implType)»
             «ENDIF»
             «val allProps = new ArrayList(properties)»
-            «val isList = implementsIfc(targetType, Types.parameterizedTypeFor(Types.typeForClass(Identifiable), targetType))»
+            «val isList = implementsIfc(targetType, BindingTypes.identifiable(targetType))»
             «IF isList && keyType !== null»
                 «val keyProps = new ArrayList((keyType as GeneratedTransferObject).properties)»
                 «keyProps.sort(KEY_PROPS_COMPARATOR)»
