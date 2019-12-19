@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.test;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Collections;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugment;
@@ -72,7 +71,6 @@ public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
     private static RpcComplexUsesAugment createComplexData() {
         return new RpcComplexUsesAugmentBuilder()
                 .setContainerWithUses(new ContainerWithUsesBuilder().setLeafFromGrouping("foo").build())
-                .setListViaUses(Collections.emptyMap())
                 .build();
     }
 }
