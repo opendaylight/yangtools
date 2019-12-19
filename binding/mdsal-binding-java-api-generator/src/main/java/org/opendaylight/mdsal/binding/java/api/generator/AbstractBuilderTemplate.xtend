@@ -168,14 +168,12 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
     }
 
     private def void removeProperty(Collection<GeneratedProperty> props, String name) {
-        var GeneratedProperty toRemove = null
-        for (p : props) {
-            if (p.name.equals(name)) {
-                toRemove = p;
+        val iter = props.iterator
+        while (iter.hasNext) {
+            if (name.equals(iter.next.name)) {
+                iter.remove
+                return
             }
-        }
-        if (toRemove !== null) {
-            props.remove(toRemove);
         }
     }
 
