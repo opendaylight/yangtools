@@ -25,8 +25,8 @@ import org.eclipse.xtend.lib.annotations.Accessors
 import org.gaul.modernizer_maven_annotations.SuppressModernizer
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yangtools.yang.common.Revision
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext
 import org.opendaylight.yangtools.yang.model.api.Module
-import org.opendaylight.yangtools.yang.model.api.SchemaContext
 
 /**
  * Template for {@link YangModuleInfo} implementation for a particular module. Aside from fulfilling that contract,
@@ -62,7 +62,7 @@ class YangModuleInfoTemplate {
     '''
 
     val Module module
-    val SchemaContext ctx
+    val EffectiveModelContext ctx
     val Function<Module, Optional<String>> moduleFilePathResolver
 
     var importedTypes = CORE_IMPORT_STR
@@ -73,7 +73,7 @@ class YangModuleInfoTemplate {
     @Accessors
     val String modelBindingProviderName
 
-    new(Module module, SchemaContext ctx, Function<Module, Optional<String>> moduleFilePathResolver) {
+    new(Module module, EffectiveModelContext ctx, Function<Module, Optional<String>> moduleFilePathResolver) {
         Preconditions.checkArgument(module !== null, "Module must not be null.")
         this.module = module
         this.ctx = ctx
