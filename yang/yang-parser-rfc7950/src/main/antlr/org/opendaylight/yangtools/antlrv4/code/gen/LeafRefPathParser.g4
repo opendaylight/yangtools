@@ -4,7 +4,7 @@ options {
     tokenVocab = LeafRefPathLexer;
 }
 
-path_arg : absolute_path | relative_path;
+path_arg : (absolute_path | relative_path) EOF;
 
 absolute_path : (SLASH node_identifier (path_predicate)*)+;
 
