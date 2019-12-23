@@ -40,6 +40,8 @@
         <module>yang-model-api</module>
         <module>yang-model-export</module>
         <module>yang-model-util</module>
+        <!-- FIXME: YANGTOOLS-1052: fold back to yang-model-util once yang-model-spi is created -->
+        <module>yang-model-util-ut</module>
 
         <!-- YANG XPath API and implementation -->
         <module>yang-xpath-api</module>
