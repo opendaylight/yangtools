@@ -13,9 +13,12 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +27,10 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -41,15 +47,24 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.AxisStep;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.QNameStep;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.ResolvedQNameStep;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Step;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.UnresolvedQNameStep;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +77,7 @@ public final class SchemaContextUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaContextUtil.class);
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings();
+    private static final CharMatcher SPACE = CharMatcher.is(' ');
 
     private SchemaContextUtil() {
     }
@@ -197,17 +213,12 @@ public final class SchemaContextUtil {
     //
     //        which would then be passed in to a method similar to this one. In static contexts, like MD-SAL codegen,
     //        that feels like an overkill.
+    // FIXME: YANGTOOLS-1052: this is a static analysis util, move it to yang-model-sa
     public static SchemaNode findDataSchemaNodeForRelativeXPath(final SchemaContext context, final Module module,
             final SchemaNode actualSchemaNode, final PathExpression relativeXPath) {
         checkState(!relativeXPath.isAbsolute(), "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
                 + "for non relative Revision Aware XPath use findDataSchemaNode method");
-
-        final Iterable<QName> qnamePath = resolveRelativeXPath(context, module, relativeXPath, actualSchemaNode);
-
-        // We do not have enough information about resolution context, hence cannot account for actions, RPCs
-        // and notifications. We therefore attempt to make a best estimate, but this can still fail.
-        final Optional<DataSchemaNode> pureData = context.findDataTreeChild(qnamePath);
-        return pureData.isPresent() ? pureData.get() : findNodeInSchemaContext(context, qnamePath);
+        return resolveRelativeXPath(context, module, relativeXPath, actualSchemaNode);
     }
 
     /**
@@ -590,32 +601,116 @@ public final class SchemaContextUtil {
      *            Non conditional Revision Aware Relative XPath
      * @param actualSchemaNode
      *            actual schema node
-     * @return list of QName
+     * @return target schema node
      * @throws IllegalArgumentException if any arguments are null
      */
-    private static Iterable<QName> resolveRelativeXPath(final SchemaContext context, final Module module,
+    private static @Nullable SchemaNode resolveRelativeXPath(final SchemaContext context, final Module module,
             final PathExpression relativeXPath, final SchemaNode actualSchemaNode) {
         checkState(!relativeXPath.isAbsolute(), "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
                 + "for non relative Revision Aware XPath use findDataSchemaNode method");
         checkState(actualSchemaNode.getPath() != null, "Schema Path reference for Leafref cannot be NULL");
 
-        List<String> xpaths = new ArrayList<>();
-        splitXPath(relativeXPath.getOriginalString(), xpaths);
+        final String orig = relativeXPath.getOriginalString();
+        return  orig.startsWith("deref(") ? resolveDerefPath(context, module, actualSchemaNode, orig)
+                : findTargetNode(context, resolveRelativePath(context, module, actualSchemaNode, doSplitXPath(orig)));
+    }
 
+    private static Iterable<QName> resolveRelativePath(final SchemaContext context, final Module module,
+            final SchemaNode actualSchemaNode, final List<String> steps) {
         // Find out how many "parent" components there are and trim them
-        final int colCount = normalizeXPath(xpaths);
-        if (colCount != 0) {
-            xpaths = xpaths.subList(colCount, xpaths.size());
-        }
+        final int colCount = normalizeXPath(steps);
+        final List<String> xpaths = colCount == 0 ? steps : steps.subList(colCount, steps.size());
 
         final Iterable<QName> schemaNodePath = actualSchemaNode.getPath().getPathFromRoot();
-
         if (Iterables.size(schemaNodePath) - colCount >= 0) {
             return Iterables.concat(Iterables.limit(schemaNodePath, Iterables.size(schemaNodePath) - colCount),
                 Iterables.transform(xpaths, input -> stringPathPartToQName(context, module, input)));
         }
         return Iterables.concat(schemaNodePath,
                 Iterables.transform(xpaths, input -> stringPathPartToQName(context, module, input)));
+    }
+
+    private static SchemaNode resolveDerefPath(final SchemaContext context, final Module module,
+            final SchemaNode actualSchemaNode, final String xpath) {
+        final int paren = xpath.indexOf(')', 6);
+        checkArgument(paren != -1, "Cannot find matching parentheses in %s", xpath);
+
+        final String derefArg = xpath.substring(6, paren);
+        // Look up the node which we need to reference
+        final SchemaNode derefTarget = findTargetNode(context, resolveRelativePath(context, module, actualSchemaNode,
+            doSplitXPath(derefArg)));
+        checkArgument(derefTarget != null, "Cannot find deref(%s) target node %s in context of %s", derefArg,
+                actualSchemaNode);
+        checkArgument(derefTarget instanceof TypedDataSchemaNode, "deref(%s) resolved to non-typed %s", derefArg,
+            derefTarget);
+
+        // We have a deref() target, decide what to do about it
+        final TypeDefinition<?> targetType = ((TypedDataSchemaNode) derefTarget).getType();
+        if (targetType instanceof InstanceIdentifierTypeDefinition) {
+            // Static inference breaks down, we cannot determine where this points to
+            // FIXME: dedicated exception, users can recover from it, derive from IAE
+            throw new UnsupportedOperationException("Cannot infer instance-identifier reference " + targetType);
+        }
+
+        // deref() is define only for instance-identifier and leafref types, handle the latter
+        checkArgument(targetType instanceof LeafrefTypeDefinition, "Illegal target type %s", targetType);
+
+        final PathExpression targetPath = ((LeafrefTypeDefinition) targetType).getPathStatement();
+        LOG.debug("Derefencing path {}", targetPath);
+
+        final SchemaNode deref = targetPath.isAbsolute()
+                ? findTargetNode(context, actualSchemaNode,
+                    ((LocationPathSteps) targetPath.getSteps()).getLocationPath())
+                        : findDataSchemaNodeForRelativeXPath(context, module, actualSchemaNode, targetPath);
+        if (deref == null) {
+            LOG.debug("Path {} could not be derefenced", targetPath);
+            return null;
+        }
+
+        checkArgument(deref instanceof LeafSchemaNode, "Unexpected %s reference in %s", deref, targetPath);
+
+        final List<String> qnames = doSplitXPath(SPACE.trimLeadingFrom(xpath.substring(paren + 1)));
+        return findTargetNode(context, resolveRelativePath(context, module, deref, qnames));
+    }
+
+    private static @Nullable SchemaNode findTargetNode(final SchemaContext context, final SchemaNode actualSchemaNode,
+            final YangLocationPath path) {
+        final QNameModule defaultModule = actualSchemaNode.getQName().getModule();
+        final Deque<QName> ret = new ArrayDeque<>();
+        for (Step step : path.getSteps()) {
+            if (step instanceof AxisStep) {
+                // We only support parent axis steps
+                final YangXPathAxis axis = ((AxisStep) step).getAxis();
+                checkState(axis == YangXPathAxis.PARENT, "Unexpected axis %s", axis);
+                ret.removeLast();
+                continue;
+            }
+
+            // This has to be a QNameStep
+            checkState(step instanceof QNameStep, "Unhandled step %s in %s", step, path);
+            final QName qname;
+            if (step instanceof ResolvedQNameStep) {
+                qname = ((ResolvedQNameStep) step).getQName();
+            } else if (step instanceof UnresolvedQNameStep) {
+                final AbstractQName toResolve = ((UnresolvedQNameStep) step).getQName();
+                // TODO: should handle qualified QNames, too? parser should have resolved them when we get here...
+                checkState(toResolve instanceof UnqualifiedQName, "Unhandled qname %s in %s", toResolve, path);
+                qname = QName.create(defaultModule, toResolve.getLocalName());
+            } else {
+                throw new IllegalStateException("Unhandled step " + step);
+            }
+
+            ret.addLast(qname);
+        }
+
+        return findTargetNode(context, ret);
+    }
+
+    private static @Nullable SchemaNode findTargetNode(final SchemaContext context, final Iterable<QName> qnamePath) {
+        // We do not have enough information about resolution context, hence cannot account for actions, RPCs
+        // and notifications. We therefore attempt to make a best estimate, but this can still fail.
+        final Optional<DataSchemaNode> pureData = context.findDataTreeChild(qnamePath);
+        return pureData.isPresent() ? pureData.get() : findNodeInSchemaContext(context, qnamePath);
     }
 
     @VisibleForTesting
@@ -660,31 +755,8 @@ public final class SchemaContextUtil {
         return -1;
     }
 
-    private static void splitXPath(final String xpath, final List<String> output) {
-        // This is a major hack, but should do the trick for now.
-        final int deref = xpath.indexOf("deref(");
-        if (deref == -1) {
-            doSplitXPath(xpath, output);
-            return;
-        }
-
-        // Interpret leading part
-        doSplitXPath(xpath.substring(0, deref), output);
-
-        // Find matching parentheses
-        final int start = deref + 6;
-        final int paren = xpath.indexOf(')', start);
-        checkArgument(paren != -1, "Cannot find matching parentheses in %s", xpath);
-
-        // Interpret the argument
-        doSplitXPath(xpath.substring(start, paren), output);
-
-        // And now the last bit
-        splitXPath(xpath.substring(paren + 1), output);
-    }
-
-    private static void doSplitXPath(final String xpath, final List<String> output) {
-        SLASH_SPLITTER.split(xpath).forEach(output::add);
+    private static List<String> doSplitXPath(final String xpath) {
+        return SLASH_SPLITTER.splitToList(xpath);
     }
 
     /**
