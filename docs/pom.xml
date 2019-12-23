@@ -76,6 +76,10 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-model-sa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-model-util</artifactId>
         </dependency>
         <dependency>
@@ -344,6 +348,10 @@
                         <group>
                             <title>YANG schema interfaces</title>
                             <packages>org.opendaylight.yangtools.yang.model.api*:org.opendaylight.yangtools.yang.model.util*</packages>
+                        </group>
+                        <group>
+                            <title>YANG schema static analysis</title>
+                            <packages>org.opendaylight.yangtools.yang.model.sa*</packages>
                         </group>
                         <group>
                             <title>YANG data tree interfaces</title>

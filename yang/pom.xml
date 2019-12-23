@@ -39,6 +39,7 @@
         <module>yang-maven-plugin-spi</module>
         <module>yang-model-api</module>
         <module>yang-model-export</module>
+        <module>yang-model-sa</module>
         <module>yang-model-util</module>
 
         <!-- YANG XPath API and implementation -->
