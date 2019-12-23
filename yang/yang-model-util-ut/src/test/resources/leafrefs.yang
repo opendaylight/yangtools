@@ -1,0 +1,93 @@
+module leafrefs {
+  yang-version 1.1;
+  namespace "leafrefs";
+  prefix "lrs";
+
+  typedef str-type {
+    type string {
+      length 1..max;
+    }
+  }
+
+  typedef int-type {
+    type int8 {
+      range min..0;
+    }
+  }
+
+  grouping grp {
+    leaf outer-id {
+      type leafref {
+        // points outside of the grouping
+        path ../../id;
+      }
+    }
+
+    leaf outer-indirect-prop {
+      type leafref {
+        path deref(../outer-id)/../prop;
+      }
+    }
+
+    leaf absolute {
+      type leafref {
+        // direct path to an instantiation
+        path /foo/id;
+      }
+    }
+
+    leaf indirect {
+      type leafref {
+        // deref through absolute to prop
+        path deref(../absolute)/../prop;
+      }
+    }
+
+    leaf non-existent-abs {
+      type leafref {
+        path /xyzzy;
+      }
+    }
+
+    leaf non-existent-rel {
+      type leafref {
+        path ../xyzzy;
+      }
+    }
+
+    leaf deref-non-existent {
+      type leafref {
+        path deref(../non-existent-rel)/../absolute;
+      }
+    }
+
+    leaf non-existent-deref {
+      type leafref {
+        path deref(../absolute)/../xyzzy;
+      }
+    }
+  }
+
+  list foo {
+    key id;
+
+    leaf id {
+      type str-type;
+    }
+
+    leaf id-copy {
+      type leafref {
+        path ../id;
+      }
+    }
+
+    leaf prop {
+      type int-type;
+    }
+
+    container bar {
+      uses grp;
+    }
+  }
+}
+
