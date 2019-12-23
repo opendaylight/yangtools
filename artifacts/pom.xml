@@ -91,6 +91,11 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yang-model-sa</artifactId>
+                <version>4.0.4-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-model-util</artifactId>
                 <version>4.0.4-SNAPSHOT</version>
             </dependency>

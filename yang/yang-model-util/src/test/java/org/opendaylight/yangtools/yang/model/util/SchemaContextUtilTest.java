@@ -38,23 +38,6 @@ public class SchemaContextUtilTest {
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ');
     private static final URI NAMESPACE = URI.create("abc");
 
-    // The idea is:
-    // container baz {
-    //     leaf xyzzy {
-    //         type leafref;
-    //     }
-    //     leaf foo {
-    //         type string;
-    //     }
-    //     leaf bar {
-    //         type string;
-    //     }
-    // }
-    private static final QName FOO = QName.create(NAMESPACE, "foo");
-    private static final QName BAR = QName.create(NAMESPACE, "bar");
-    private static final QName BAZ = QName.create(NAMESPACE, "baz");
-    private static final QName XYZZY = QName.create(NAMESPACE, "xyzzy");
-
     @Mock
     private SchemaContext mockSchemaContext;
     @Mock
@@ -73,8 +56,6 @@ public class SchemaContextUtilTest {
         doReturn(NAMESPACE).when(mockModule).getNamespace();
         doReturn(QNameModule.create(NAMESPACE)).when(mockModule).getQNameModule();
         doReturn(Optional.empty()).when(mockModule).getRevision();
-
-        doReturn(SchemaPath.create(true, BAZ, XYZZY)).when(schemaNode).getPath();
     }
 
     @Test
@@ -99,13 +80,6 @@ public class SchemaContextUtilTest {
                 SchemaContextUtil.findNodeInSchemaContext(mockSchemaContext, Collections.singleton(qname)));
 
         assertNull("Should be null.", SchemaContextUtil.findParentModule(mockSchemaContext, int32node));
-    }
-
-    @Test
-    public void testDeref() {
-        PathExpression xpath = new PathExpressionImpl("deref(../foo)/../bar", false);
-        assertNull(SchemaContextUtil.findDataSchemaNodeForRelativeXPath(mockSchemaContext, mockModule, schemaNode,
-            xpath));
     }
 
     @Test
