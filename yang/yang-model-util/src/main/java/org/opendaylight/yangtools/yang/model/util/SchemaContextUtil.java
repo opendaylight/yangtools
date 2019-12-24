@@ -635,7 +635,7 @@ public final class SchemaContextUtil {
         final int paren = xpath.indexOf(')', 6);
         checkArgument(paren != -1, "Cannot find matching parentheses in %s", xpath);
 
-        final String derefArg = xpath.substring(6, paren);
+        final String derefArg = SPACE.trimFrom(xpath.substring(6, paren));
         // Look up the node which we need to reference
         final SchemaNode derefTarget = findTargetNode(context, resolveRelativePath(context, module, actualSchemaNode,
             doSplitXPath(derefArg)));
