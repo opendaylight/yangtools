@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static java.util.Objects.requireNonNull;
 
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.util.LeafsetEntryInterner;
@@ -30,7 +29,8 @@ final class InterningLeafSetNodeBuilder<T> extends ImmutableLeafSetNodeBuilder<T
     }
 
     private static LeafsetEntryInterner getInterner(final DataSchemaNode schema) {
-        return schema instanceof LeafSetNode ? LeafsetEntryInterner.forSchema((LeafListSchemaNode) schema) : null;
+        return schema instanceof LeafListSchemaNode ? LeafsetEntryInterner.forSchema((LeafListSchemaNode) schema)
+                : null;
     }
 
     static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final DataSchemaNode schema) {
