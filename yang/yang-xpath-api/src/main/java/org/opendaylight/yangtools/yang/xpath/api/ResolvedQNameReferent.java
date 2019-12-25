@@ -22,10 +22,6 @@ public interface ResolvedQNameReferent extends QNameReferentBehavior<ResolvedQNa
      *
      * @return A QName
      */
-    QName getQName();
-
     @Override
-    default String getLocalName() {
-        return getQName().getLocalName();
-    }
+    QName getQName();
 }
