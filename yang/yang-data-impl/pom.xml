@@ -18,11 +18,6 @@
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
-    <properties>
-        <!-- FIXME: fixup/suppress remaining bugs and remove this -->
-        <odlparent.spotbugs.enforce>false</odlparent.spotbugs.enforce>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
