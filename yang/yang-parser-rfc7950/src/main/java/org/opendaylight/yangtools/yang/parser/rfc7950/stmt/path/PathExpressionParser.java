@@ -193,7 +193,7 @@ class PathExpressionParser {
         final List<Step> steps = new ArrayList<>();
         int offset = 0;
         while (offset < children - 1) {
-            final ParseTree child = expr.getChild(offset);
+            final ParseTree child = relPath.getChild(offset);
             if (child instanceof Node_identifierContext) {
                 break;
             }
@@ -207,7 +207,7 @@ class PathExpressionParser {
 
         // Process node identifiers
         while (offset < children) {
-            final ParseTree child = expr.getChild(offset);
+            final ParseTree child = relPath.getChild(offset);
             if (child instanceof Node_identifierContext) {
                 steps.add(createChildStep(ctx, (Node_identifierContext) child, ImmutableList.of()));
             }
