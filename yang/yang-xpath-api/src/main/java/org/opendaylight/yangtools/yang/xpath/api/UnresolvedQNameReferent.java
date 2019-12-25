@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.xpath.api;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.common.AbstractQName;
 
 /**
  * A {@link QNameReferent} referencing an unresolved QName.
@@ -18,15 +17,5 @@ import org.opendaylight.yangtools.yang.common.AbstractQName;
 @Beta
 public interface UnresolvedQNameReferent<T extends ResolvedQNameReferent> extends
         QNameReferentBehavior<UnresolvedQNameReferent<T>> {
-    /**
-     * Return the referenced {@link AbstractQName}.
-     *
-     * @return An AbstractQName
-     */
-    AbstractQName getQName();
 
-    @Override
-    default String getLocalName() {
-        return getQName().getLocalName();
-    }
 }

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.AbstractQName;
 
 /**
  * An object referencing a QName, either resolved or unresolved.
@@ -18,9 +19,18 @@ import org.opendaylight.yangtools.concepts.Immutable;
 @Beta
 public interface QNameReferent extends Immutable {
     /**
+     * Return the referenced {@link AbstractQName}.
+     *
+     * @return An AbstractQName
+     */
+    AbstractQName getQName();
+
+    /**
      * Return local name part of the referenced QName.
      *
      * @return Local name string.
      */
-    String getLocalName();
+    default String getLocalName() {
+        return getQName().getLocalName();
+    }
 }
