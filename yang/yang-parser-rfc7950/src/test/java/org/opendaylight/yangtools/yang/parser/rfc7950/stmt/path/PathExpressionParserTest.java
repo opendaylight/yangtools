@@ -13,9 +13,12 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,11 +27,18 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
+import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
+import org.opendaylight.yangtools.yang.xpath.api.YangFunction;
+import org.opendaylight.yangtools.yang.xpath.api.YangFunctionCallExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Relative;
+import org.opendaylight.yangtools.yang.xpath.api.YangPathExpr;
+import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
@@ -92,5 +102,23 @@ public class PathExpressionParserTest {
             assertSame(ref, e.getSourceReference());
             assertThat(e.getMessage(), startsWith("token recognition error at: '%' at 1:3 [at "));
         }
+    }
+
+    @Test
+    public void testCurrentPredicateParsing() {
+        final YangLocationPath path = ((LocationPathSteps) parser.parseExpression(ctx,
+            "/device_types/device_type[type = current()/../type_text]/desc").getSteps()).getLocationPath();
+        assertTrue(path.isAbsolute());
+
+        path.getSteps();
+        assertEquals(ImmutableList.of(
+            YangXPathAxis.CHILD.asStep(UnqualifiedQName.of("device_types")),
+            YangXPathAxis.CHILD.asStep(UnqualifiedQName.of("device_type"),
+                ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(
+                    YangQNameExpr.of(UnqualifiedQName.of("type")),
+                    YangPathExpr.of(YangFunctionCallExpr.of(YangFunction.CURRENT.getIdentifier()), Relative.relative(
+                        YangXPathAxis.PARENT.asStep(),
+                        YangXPathAxis.CHILD.asStep(UnqualifiedQName.of("type_text"))))))),
+            YangXPathAxis.CHILD.asStep(UnqualifiedQName.of("desc"))), path.getSteps());
     }
 }
