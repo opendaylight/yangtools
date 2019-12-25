@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
@@ -144,10 +143,11 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
         if (candidate instanceof NoopDataTreeCandidate) {
             return;
         }
-        checkArgument(candidate instanceof InMemoryDataTreeCandidate, "Invalid candidate class %s",
-            candidate.getClass());
-        final InMemoryDataTreeCandidate c = (InMemoryDataTreeCandidate)candidate;
+        if (!(candidate instanceof InMemoryDataTreeCandidate)) {
+            throw new IllegalArgumentException("Invalid candidate class " + candidate.getClass());
+        }
 
+        final InMemoryDataTreeCandidate c = (InMemoryDataTreeCandidate)candidate;
         if (LOG.isTraceEnabled()) {
             LOG.trace("Data Tree is {}", NormalizedNodes.toStringTree(c.getTipRoot().getData()));
         }
