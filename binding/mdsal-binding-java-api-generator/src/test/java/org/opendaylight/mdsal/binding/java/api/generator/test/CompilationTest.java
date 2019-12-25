@@ -93,7 +93,7 @@ public class CompilationTest extends BaseCompilationTest {
         assertTrue(nodeList.exists());
         assertTrue(nodeListBuilder.exists());
         assertTrue(nodesType.exists());
-        CompilationTestUtils.assertFilesCount(parent, 7);
+        CompilationTestUtils.assertFilesCount(parent, 8);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
@@ -115,8 +115,7 @@ public class CompilationTest extends BaseCompilationTest {
         // Test generated 'list links'
         assertTrue(linksClass.isInterface());
         CompilationTestUtils.assertImplementsIfc(linksClass, keyArgsClass);
-        // TODO: anyxml
-        assertEquals(6, abstractMethods(linksClass).size());
+        assertEquals(7, abstractMethods(linksClass).size());
 
         // Test list key constructor arguments ordering
         CompilationTestUtils.assertContainsConstructor(linksKeyClass, Byte.class, String.class, Integer.class);
