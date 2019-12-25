@@ -46,14 +46,6 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
     // For up to two characters, this is very fast
     private static final CharMatcher X_MATCHER = CharMatcher.anyOf("xX");
 
-    // FIXME: inline this
-    private static final String INCORRECT_LEXICAL_REPRESENTATION =
-            "Incorrect lexical representation of integer value: %s."
-                    + "\nAn integer value can be defined as: "
-                    + "\n  - a decimal number,"
-                    + "\n  - a hexadecimal number (prefix 0x)," + "%n  - an octal number (prefix 0)."
-                    + "\nSigned values are allowed. Spaces between digits are NOT allowed.";
-
     private final RangeSet<N> rangeConstraints;
 
     AbstractIntegerStringCodec(final T typeDefinition, final Optional<RangeConstraint<N>> constraint,
@@ -140,7 +132,11 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
         } else if (OCT_PATTERN.matcher(integer).matches()) {
             return 8;
         } else {
-            throw new NumberFormatException(String.format(INCORRECT_LEXICAL_REPRESENTATION, integer));
+            throw new NumberFormatException("Incorrect lexical representation of integer value: " + integer + ".\n"
+                        + "An integer value can be defined as:\n"
+                        + "  - a decimal number,\n"
+                        + "  - a hexadecimal number (prefix 0x)," + "%n  - an octal number (prefix 0).\n"
+                        + "Signed values are allowed. Spaces between digits are NOT allowed.");
         }
     }
 }
