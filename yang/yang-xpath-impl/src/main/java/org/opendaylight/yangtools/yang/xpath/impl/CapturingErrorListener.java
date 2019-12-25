@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.xpath.impl;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import javax.xml.xpath.XPathExpressionException;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
@@ -14,6 +15,8 @@ import org.antlr.v4.runtime.Recognizer;
 import org.eclipse.jdt.annotation.Nullable;
 
 final class CapturingErrorListener extends BaseErrorListener {
+    @SuppressFBWarnings(value = "NP_NONNULL_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR",
+            justification = "SB does not grok CDT")
     private @Nullable XPathExpressionException error;
 
     @Override

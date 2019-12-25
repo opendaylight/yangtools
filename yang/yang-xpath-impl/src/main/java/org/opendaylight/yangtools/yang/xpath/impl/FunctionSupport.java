@@ -224,10 +224,10 @@ final class FunctionSupport {
         if (args.isEmpty()) {
             return NORMALIZE_SPACE;
         }
-        final YangExpr arg = args.get(0);
-        if (arg instanceof YangLiteralExpr) {
-            // TODO: normalize value
-        }
+        // final YangExpr arg = args.get(0);
+        // if (arg instanceof YangLiteralExpr) {
+        //     // TODO: normalize value
+        // }
 
         return YangFunctionCallExpr.of(YangFunction.NORMALIZE_SPACE.getIdentifier(), args);
     }
