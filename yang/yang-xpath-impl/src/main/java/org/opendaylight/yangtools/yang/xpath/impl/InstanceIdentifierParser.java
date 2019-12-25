@@ -22,6 +22,19 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.yang.common.QualifiedQName;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
+import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser;
+import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.EqQuotedStringContext;
+import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.InstanceIdentifierContext;
+import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.KeyPredicateContext;
+import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.KeyPredicateExprContext;
+import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.LeafListPredicateContext;
+import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.LeafListPredicateExprContext;
+import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.NodeIdentifierContext;
+import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.PathArgumentContext;
+import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.PosContext;
+import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.PredicateContext;
+import org.opendaylight.yangtools.yang.xpath.antlr.instanceIdentifierParser.QuotedStringContext;
+import org.opendaylight.yangtools.yang.xpath.antlr.xpathLexer;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLiteralExpr;
@@ -33,17 +46,6 @@ import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathSupport;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.EqQuotedStringContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.InstanceIdentifierContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.KeyPredicateContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.KeyPredicateExprContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.LeafListPredicateContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.LeafListPredicateExprContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.NodeIdentifierContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.PathArgumentContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.PosContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.PredicateContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.QuotedStringContext;
 
 abstract class InstanceIdentifierParser {
     static final class Base extends InstanceIdentifierParser {
