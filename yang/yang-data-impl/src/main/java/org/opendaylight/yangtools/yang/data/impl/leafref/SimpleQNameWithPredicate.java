@@ -15,8 +15,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 public class SimpleQNameWithPredicate extends AbstractQNameWithPredicate {
-    private static final long serialVersionUID = 1L;
-
     private final QName qname;
 
     SimpleQNameWithPredicate(final QName qname) {
