@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -64,8 +65,7 @@ final class LeafRefContextTreeBuilder {
         return rootBuilder.build();
     }
 
-    private LeafRefContext buildLeafRefContextReferencingTree(final DataSchemaNode node, final Module currentModule)
-            throws LeafRefYangSyntaxErrorException {
+    private LeafRefContext buildLeafRefContextReferencingTree(final DataSchemaNode node, final Module currentModule) {
         final LeafRefContextBuilder currentLeafRefContextBuilder = new LeafRefContextBuilder(node.getQName(),
             node.getPath(), schemaContext);
 
@@ -93,13 +93,13 @@ final class LeafRefContextTreeBuilder {
             // FIXME: fix case when type is e.g. typedef -> typedef -> leafref
             if (type instanceof LeafrefTypeDefinition) {
                 final LeafrefTypeDefinition leafrefType = (LeafrefTypeDefinition) type;
-                final String leafRefPathString = leafrefType.getPathStatement().getOriginalString();
+                final PathExpression path = leafrefType.getPathStatement();
                 final LeafRefPathParserImpl leafRefPathParser = new LeafRefPathParserImpl(schemaContext,
                         checkNotNull(getBaseTypeModule(leafrefType), "Unable to find base module for leafref %s", node),
                         node);
-                final LeafRefPath leafRefPath = leafRefPathParser.parseLeafRefPath(leafRefPathString);
+                final LeafRefPath leafRefPath = leafRefPathParser.parseLeafRefPath(path);
 
-                currentLeafRefContextBuilder.setLeafRefTargetPathString(leafRefPathString);
+                currentLeafRefContextBuilder.setLeafRefTargetPathString(path.getOriginalString());
                 currentLeafRefContextBuilder.setReferencing(true);
                 currentLeafRefContextBuilder.setLeafRefTargetPath(leafRefPath);
 

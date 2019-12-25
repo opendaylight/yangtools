@@ -7,13 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefPathParser.Path_argContext;
+import com.google.common.collect.ImmutableList;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.common.AbstractQName;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.ResolvedQNameStep;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Step;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.UnresolvedQNameStep;
 
 final class LeafRefPathParserImpl {
     private final SchemaContext schemaContext;
@@ -26,29 +39,58 @@ final class LeafRefPathParserImpl {
         this.node = currentNode;
     }
 
-    LeafRefPath parseLeafRefPath(final String path) throws LeafRefYangSyntaxErrorException {
-        final Path_argContext pathCtx = parseLeafRefPathSource(path);
-
-        final ParseTreeWalker walker = new ParseTreeWalker();
-        final LeafRefPathParserListenerImpl leafRefPathParserListenerImpl = new LeafRefPathParserListenerImpl(
-            schemaContext, module, node);
-        walker.walk(leafRefPathParserListenerImpl, pathCtx);
-
-        return leafRefPathParserListenerImpl.getLeafRefPath();
+    LeafRefPath parseLeafRefPath(final PathExpression path) {
+        final Steps steps = path.getSteps();
+        if (steps instanceof LocationPathSteps) {
+            return parseLocationPath(((LocationPathSteps) steps).getLocationPath());
+        } else if (steps instanceof DerefSteps) {
+            throw new UnsupportedOperationException("deref() leafrefs are not implemented yet");
+        } else {
+            throw new IllegalStateException("Unsupported steps " + steps);
+        }
     }
 
-    private Path_argContext parseLeafRefPathSource(final String path) throws LeafRefYangSyntaxErrorException {
-        final LeafRefPathLexer lexer = new LeafRefPathLexer(CharStreams.fromString(path));
-        final LeafRefPathParser parser = new LeafRefPathParser(new CommonTokenStream(lexer));
+    private LeafRefPath parseLocationPath(final YangLocationPath locationPath) {
+        final ImmutableList<Step> steps = locationPath.getSteps();
+        final Deque<QNameWithPredicate> path = new ArrayDeque<>(steps.size());
+        for (Step step : steps) {
+            switch (step.getAxis()) {
+                case CHILD:
+                    path.add(parseStep(step));
+                    break;
+                case PARENT:
+                    path.add(QNameWithPredicate.UP_PARENT);
+                    break;
+                default:
+                    throw new IllegalStateException("Unsupported axis in step " + step);
+            }
+        }
 
-        final LeafRefPathErrorListener errorListener = new LeafRefPathErrorListener(module);
-        lexer.removeErrorListeners();
-        lexer.addErrorListener(errorListener);
-        parser.removeErrorListeners();
-        parser.addErrorListener(errorListener);
+        return LeafRefPath.create(path, locationPath.isAbsolute());
+    }
 
-        final Path_argContext result = parser.path_arg();
-        errorListener.validate();
-        return result;
+    private QNameWithPredicate parseStep(final Step step) {
+        final QName qname;
+        if (step instanceof ResolvedQNameStep) {
+            qname = ((ResolvedQNameStep) step).getQName();
+        } else if (step instanceof UnresolvedQNameStep) {
+            final AbstractQName unresolved = ((UnresolvedQNameStep) step).getQName();
+            if (unresolved instanceof UnqualifiedQName) {
+                qname = QName.create(node.getQName(), unresolved.getLocalName());
+            } else if (unresolved instanceof QualifiedQName) {
+                throw new UnsupportedOperationException("QName resolution not implemented for " + unresolved);
+            } else {
+                throw new IllegalStateException("Unhandled unresolved QName " + unresolved);
+            }
+        } else {
+            throw new IllegalStateException("Unsupported step " + step);
+        }
+
+        final Set<YangExpr> predicates = step.getPredicates();
+        if (predicates.isEmpty()) {
+            return new SimpleQNameWithPredicate(qname);
+        }
+
+        throw new UnsupportedOperationException("Predicate translation not implemented for " + predicates);
     }
 }
