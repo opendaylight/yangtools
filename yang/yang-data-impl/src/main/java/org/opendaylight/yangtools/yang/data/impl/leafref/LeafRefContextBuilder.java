@@ -97,7 +97,7 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
     }
 
     void setLeafRefTargetPath(final LeafRefPath leafRefPath) {
-        this.leafRefTargetPath = leafRefPath;
+        this.leafRefTargetPath = requireNonNull(leafRefPath);
     }
 
     String getLeafRefTargetPathString() {
@@ -105,7 +105,7 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
     }
 
     void setLeafRefTargetPathString(final String leafRefPathString) {
-        this.leafRefTargetPathString = leafRefPathString;
+        this.leafRefTargetPathString = requireNonNull(leafRefPathString);
     }
 
     QName getCurrentNodeQName() {
