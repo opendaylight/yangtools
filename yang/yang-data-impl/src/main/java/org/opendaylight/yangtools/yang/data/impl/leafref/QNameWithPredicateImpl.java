@@ -13,9 +13,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 final class QNameWithPredicateImpl extends AbstractQNameWithPredicate {
-
-    private static final long serialVersionUID = 1L;
-
     private final ImmutableList<QNamePredicate> qnamePredicates;
     private final QNameModule moduleQname;
     private final String localName;
