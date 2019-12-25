@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -160,24 +161,18 @@ public abstract class YangLocationPath implements YangExpr {
         }
     }
 
-    public static class ResolvedQNameStep extends QNameStep implements ResolvedQNameReferent {
+    private abstract static class AbstractQNameStep<T extends AbstractQName> extends QNameStep {
         private static final long serialVersionUID = 1L;
 
-        private final QName qname;
+        private final T qname;
 
-        ResolvedQNameStep(final YangXPathAxis axis, final QName qname) {
+        AbstractQNameStep(final YangXPathAxis axis, final T qname) {
             super(axis);
             this.qname = requireNonNull(qname);
         }
 
-        static ResolvedQNameStep of(final YangXPathAxis axis, final QName qname,
-                final Collection<YangExpr> predicates) {
-            return predicates.isEmpty() ? new ResolvedQNameStep(axis, qname)
-                    : new ResolvedQNameStepWithPredicates(axis, qname, ImmutableSet.copyOf(predicates));
-        }
-
         @Override
-        public final QName getQName() {
+        public final @NonNull T getQName() {
             return qname;
         }
 
@@ -187,14 +182,16 @@ public abstract class YangLocationPath implements YangExpr {
         }
 
         @Override
-        public final boolean equals(@Nullable final Object obj) {
+        public final boolean equals(final @Nullable Object obj) {
             if (this == obj) {
                 return true;
             }
-            if (!(obj instanceof ResolvedQNameStep)) {
+            final Class<? extends AbstractQNameStep<?>> eq = equalityClass();
+            if (!equalityClass().isInstance(obj)) {
                 return false;
             }
-            final ResolvedQNameStep other = (ResolvedQNameStep) obj;
+
+            final AbstractQNameStep<?> other = eq.cast(obj);
             return getAxis().equals(other.getAxis()) && qname.equals(other.qname)
                     && getPredicates().equals(other.getPredicates());
         }
@@ -202,6 +199,27 @@ public abstract class YangLocationPath implements YangExpr {
         @Override
         protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
             return super.addToStringAttributes(helper).add("qname", qname);
+        }
+
+        abstract Class<? extends AbstractQNameStep<?>> equalityClass();
+    }
+
+    public static class ResolvedQNameStep extends AbstractQNameStep<QName> implements ResolvedQNameReferent {
+        private static final long serialVersionUID = 1L;
+
+        ResolvedQNameStep(final YangXPathAxis axis, final QName qname) {
+            super(axis, qname);
+        }
+
+        static ResolvedQNameStep of(final YangXPathAxis axis, final QName qname,
+                final Collection<YangExpr> predicates) {
+            return predicates.isEmpty() ? new ResolvedQNameStep(axis, qname)
+                    : new ResolvedQNameStepWithPredicates(axis, qname, ImmutableSet.copyOf(predicates));
+        }
+
+        @Override
+        final Class<ResolvedQNameStep> equalityClass() {
+            return ResolvedQNameStep.class;
         }
     }
 
@@ -223,14 +241,12 @@ public abstract class YangLocationPath implements YangExpr {
     }
 
     // FIXME: 5.0.0: integrate this into QName step once QName is a subclass AbstractQName
-    public static class UnresolvedQNameStep extends QNameStep implements UnresolvedQNameReferent<ResolvedQNameStep> {
+    public static class UnresolvedQNameStep extends AbstractQNameStep<AbstractQName>
+            implements UnresolvedQNameReferent<ResolvedQNameStep> {
         private static final long serialVersionUID = 1L;
 
-        private final AbstractQName qname;
-
         UnresolvedQNameStep(final YangXPathAxis axis, final AbstractQName qname) {
-            super(axis);
-            this.qname = requireNonNull(qname);
+            super(axis, qname);
         }
 
         static UnresolvedQNameStep of(final YangXPathAxis axis, final AbstractQName qname,
@@ -240,26 +256,8 @@ public abstract class YangLocationPath implements YangExpr {
         }
 
         @Override
-        public final AbstractQName getQName() {
-            return qname;
-        }
-
-        @Override
-        public final int hashCode() {
-            return Objects.hash(getAxis(), qname, getPredicates());
-        }
-
-        @Override
-        public final boolean equals(final @Nullable Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof UnresolvedQNameStep)) {
-                return false;
-            }
-            final UnresolvedQNameStep other = (UnresolvedQNameStep) obj;
-            return getAxis().equals(other.getAxis()) && qname.equals(other.qname)
-                    && getPredicates().equals(other.getPredicates());
+        final Class<UnresolvedQNameStep> equalityClass() {
+            return UnresolvedQNameStep.class;
         }
     }
 
