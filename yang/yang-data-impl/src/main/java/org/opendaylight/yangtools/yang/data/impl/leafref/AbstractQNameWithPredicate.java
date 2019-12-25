@@ -7,16 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 
-abstract class AbstractQNameWithPredicate implements Immutable, Serializable, QNameWithPredicate {
-    private static final long serialVersionUID = 1L;
-
+abstract class AbstractQNameWithPredicate implements Immutable, QNameWithPredicate {
     @Override
     public final boolean equals(final Object obj) {
         if (this == obj) {
