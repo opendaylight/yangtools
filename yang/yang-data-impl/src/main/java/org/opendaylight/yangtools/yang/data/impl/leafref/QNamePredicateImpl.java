@@ -9,13 +9,10 @@ package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.Serializable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
-class QNamePredicateImpl implements Immutable, Serializable, QNamePredicate {
-    private static final long serialVersionUID = 1L;
-
+class QNamePredicateImpl implements Immutable, QNamePredicate {
     private final QName identifier;
     private final LeafRefPath pathKeyExpression;
 
