@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yang.file.api;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,12 +18,12 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
 
 /**
- * A resource-backed {@link YinTextSchemaSource}.
+ * A resource-backed {@link YangTextSchemaSource}.
  */
-final class ResourceYangTextSchemaSource extends YangTextSchemaSource implements Delegator<URL> {
+final class ResourceYinTextSchemaSource extends YinTextSchemaSource implements Delegator<URL> {
     private final @NonNull URL url;
 
-    ResourceYangTextSchemaSource(final SourceIdentifier identifier, final URL url) {
+    ResourceYinTextSchemaSource(final SourceIdentifier identifier, final URL url) {
         super(identifier);
         this.url = requireNonNull(url);
     }

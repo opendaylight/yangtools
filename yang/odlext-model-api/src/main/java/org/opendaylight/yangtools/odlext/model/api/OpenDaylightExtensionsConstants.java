@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.odlext.model.api;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.Collection;
+import org.opendaylight.yang.file.api.RevisionSourceIdentifier;
+import org.opendaylight.yang.file.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
  * Constants associated with OpenDaylight extension in yang-ext.yang.

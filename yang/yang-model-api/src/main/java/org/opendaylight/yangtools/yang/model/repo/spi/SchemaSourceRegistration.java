@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yang.file.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 
 /**
  * Registration of a schema source.
