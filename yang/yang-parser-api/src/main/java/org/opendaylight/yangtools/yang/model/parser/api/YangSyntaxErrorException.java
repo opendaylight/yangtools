@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.parser.api;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yang.file.api.SourceIdentifier;
 
 public class YangSyntaxErrorException extends YangParserException {
     private static final long serialVersionUID = 2L;

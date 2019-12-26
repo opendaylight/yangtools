@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import com.google.common.annotations.Beta;
 import javax.xml.transform.Source;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yang.file.api.YinSchemaSourceRepresentation;
 
 /**
  * YIN text schema source representation. Exposes an RFC6020 or RFC7950 XML representation as an XML {@link Source}.

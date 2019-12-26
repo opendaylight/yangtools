@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.model.repo.util;
 
 import static java.util.Objects.requireNonNull;
 
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yang.file.api.SchemaSourceRepresentation;
+import org.opendaylight.yang.file.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
