@@ -21,11 +21,6 @@
     <name>${project.artifactId}</name>
     <description>RFC6020/RFC7950 parser support</description>
 
-    <properties>
-        <!-- FIXME: YANGTOOLS-1056: remove this knob -->
-        <odlparent.spotbugs.enforce>false</odlparent.spotbugs.enforce>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
