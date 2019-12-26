@@ -35,6 +35,7 @@
         <module>yang-data-codec-gson</module>
         <module>yang-data-codec-xml</module>
         <module>yang-file-api</module>
+        <module>yang-file-xml</module>
         <module>yang-maven-plugin</module>
         <module>yang-maven-plugin-it</module>
         <module>yang-maven-plugin-spi</module>
