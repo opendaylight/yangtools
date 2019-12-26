@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
 import com.google.common.base.Verify;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -137,6 +138,8 @@ public final class UsesStatementSupport
      * @throws SourceException
      *             instance of SourceException
      */
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
+            justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static void copyFromSourceToTarget(final Mutable<?, ?, ?> sourceGrpStmtCtx,
             final StatementContextBase<?, ?, ?> targetCtx,
             final Mutable<QName, UsesStatement, UsesEffectiveStatement> usesNode) {
@@ -160,7 +163,6 @@ public final class UsesStatementSupport
         targetCtx.addEffectiveSubstatements(buffer);
         usesNode.addAsEffectOfStatement(buffer);
     }
-
 
     private static boolean shouldCopy(final StmtContext<?, ?, ?> stmt) {
         // https://tools.ietf.org/html/rfc7950#section-7.13:
@@ -216,6 +218,8 @@ public final class UsesStatementSupport
         return null;
     }
 
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
+            justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static void resolveUsesNode(final Mutable<QName, UsesStatement, UsesEffectiveStatement> usesNode,
             final StmtContext<?, ?, ?> targetNodeStmtCtx) {
         for (final Mutable<?, ?, ?> subStmtCtx : usesNode.mutableDeclaredSubstatements()) {

@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMix
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 abstract class AbstractContainerStatementSupport
         extends BaseQNameStatementSupport<ContainerStatement, ContainerEffectiveStatement> {
@@ -59,7 +58,6 @@ abstract class AbstractContainerStatementSupport
             final StmtContext<QName, ContainerStatement, ContainerEffectiveStatement> ctx,
             final ContainerStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
 
-        final StatementSourceReference ref = ctx.getStatementSourceReference();
         final SchemaPath path = ctx.getSchemaPath().get();
         final ContainerSchemaNode original = (ContainerSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective)
                 .orElse(null);
