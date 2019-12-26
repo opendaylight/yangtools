@@ -14,8 +14,8 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.file.api.YinTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.xml.sax.SAXException;
 

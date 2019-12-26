@@ -13,6 +13,7 @@ import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
+import org.opendaylight.yangtools.yang.file.api.SchemaSourceRepresentation;
 
 /**
  * A filter of schema sources. This is used to restrict which sources representation instances are allowed
@@ -25,7 +26,7 @@ public interface SchemaSourceFilter {
      * A {@link SchemaSourceFilter} which accepts any schema source it is presented with.
      */
     @NonNull SchemaSourceFilter ALWAYS_ACCEPT = new SchemaSourceFilter() {
-        private final ImmutableList<Class<? extends SchemaSourceRepresentation>> representations =
+        private ImmutableList<Class<? extends SchemaSourceRepresentation>> representations =
                 ImmutableList.of(SchemaSourceRepresentation.class);
 
         @Override

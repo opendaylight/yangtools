@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.repo.api;
+package org.opendaylight.yangtools.yang.file.api;
 
 import static java.util.Objects.requireNonNull;
 
@@ -65,7 +65,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      * @param name Name of schema
      * @param revision Revision of source, possibly not present
      */
-    SourceIdentifier(final String name, final Optional<Revision> revision) {
+    protected SourceIdentifier(final String name, final Optional<Revision> revision) {
         this(name, revision.orElse(null));
     }
 

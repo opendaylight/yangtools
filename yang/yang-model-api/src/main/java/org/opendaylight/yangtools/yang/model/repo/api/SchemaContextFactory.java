@@ -12,6 +12,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Arrays;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.file.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**

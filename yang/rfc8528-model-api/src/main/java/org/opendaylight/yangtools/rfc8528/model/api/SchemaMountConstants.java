@@ -13,8 +13,8 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.file.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.file.api.SourceIdentifier;
 
 /**
  * Constants associated with RFC8528.
