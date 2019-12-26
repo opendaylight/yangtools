@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
 import java.util.EventListener;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
+import org.opendaylight.yang.file.api.SchemaSourceRepresentation;
 
 /**
  * Listener for schema source lifecycle events.

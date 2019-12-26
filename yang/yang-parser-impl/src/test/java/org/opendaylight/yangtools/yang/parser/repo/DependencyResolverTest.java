@@ -13,8 +13,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yang.file.api.RevisionSourceIdentifier;
+import org.opendaylight.yang.file.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
 
 @Deprecated

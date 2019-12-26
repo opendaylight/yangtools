@@ -14,6 +14,8 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
+import org.opendaylight.yang.file.api.RevisionSourceIdentifier;
+import org.opendaylight.yang.file.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -21,8 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ModuleQNameToPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;

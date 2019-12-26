@@ -68,6 +68,10 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-file-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-model-api</artifactId>
         </dependency>
         <dependency>
@@ -348,6 +352,10 @@
                         <group>
                             <title>Common YANG constructs</title>
                             <packages>org.opendaylight.yangtools.yang.common*</packages>
+                        </group>
+                        <group>
+                            <title>YANG file interfaces</title>
+                            <packages>org.opendaylight.yangtools.yang.file.api*</packages>
                         </group>
                         <group>
                             <title>YANG schema interfaces</title>

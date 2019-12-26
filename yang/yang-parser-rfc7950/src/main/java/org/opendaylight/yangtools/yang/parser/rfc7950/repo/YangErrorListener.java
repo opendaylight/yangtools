@@ -14,8 +14,8 @@ import java.util.List;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
+import org.opendaylight.yang.file.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
