@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import static java.util.Objects.requireNonNull;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import javax.xml.namespace.NamespaceContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -20,11 +21,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 /**
  * A {@link NamespaceContext} implementation based on the set of imports and local module namespace.
  */
-// TODO: this is a useful utility, so it may be useful to expose it either in this package, or yang.parser.spi.source.
+// TODO: this is a useful utility, so it may be useful to expose it either in this package, or yang.parser.spi.source,
+//       but that requires dealing with serialization below.
 final class StmtNamespaceContext implements YangNamespaceContext {
-    // FIXME: add serialization barrier
     private static final long serialVersionUID = 1L;
 
+    // FIXME: deal with serialization by serializing the underlying namespace Map
+    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "Not passed to serialization")
     private final StmtContext<?, ?, ?> ctx;
 
     StmtNamespaceContext(final StmtContext<?, ?, ?> ctx) {

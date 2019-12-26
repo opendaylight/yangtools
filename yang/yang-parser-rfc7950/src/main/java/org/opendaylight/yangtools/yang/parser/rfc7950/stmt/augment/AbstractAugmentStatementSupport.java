@@ -88,14 +88,11 @@ abstract class AbstractAugmentStatementSupport
             return;
         }
 
-        final ModelActionBuilder augmentAction = augmentNode.newInferenceAction(
-            ModelProcessingPhase.EFFECTIVE_MODEL);
-        final Prerequisite<StmtContext<SchemaNodeIdentifier, AugmentStatement,
-                AugmentEffectiveStatement>> sourceCtxPrereq =
-                    augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
-        final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target =
-                augmentAction.mutatesEffectiveCtxPath(getSearchRoot(augmentNode),
-                    ChildSchemaNodeNamespace.class, augmentNode.coerceStatementArgument().getPathFromRoot());
+        final ModelActionBuilder augmentAction = augmentNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+        augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
+        final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target = augmentAction.mutatesEffectiveCtxPath(
+            getSearchRoot(augmentNode), ChildSchemaNodeNamespace.class,
+            augmentNode.coerceStatementArgument().getPathFromRoot());
 
         augmentAction.apply(new InferenceAction() {
             @Override

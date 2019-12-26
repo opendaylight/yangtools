@@ -60,8 +60,7 @@ abstract class AbstractImportStatementSupport
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> imported = importAction.requiresCtx(stmt,
                 PreLinkageModuleNamespace.class, moduleName, SOURCE_PRE_LINKAGE);
-        final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction
-                .mutatesCtx(stmt.getRoot(), SOURCE_PRE_LINKAGE);
+        importAction.mutatesCtx(stmt.getRoot(), SOURCE_PRE_LINKAGE);
 
         importAction.apply(new InferenceAction() {
             @Override

@@ -62,10 +62,9 @@ public final class BaseStatementSupport extends AbstractQNameStatementSupport<Ba
             final QName baseIdentityQName = baseStmtCtx.coerceStatementArgument();
             final ModelActionBuilder baseIdentityAction = baseStmtCtx.newInferenceAction(
                 ModelProcessingPhase.STATEMENT_DEFINITION);
-            final Prerequisite<StmtContext<?, ?, ?>> requiresPrereq = baseIdentityAction.requiresCtx(baseStmtCtx,
-                IdentityNamespace.class, baseIdentityQName, ModelProcessingPhase.STATEMENT_DEFINITION);
-            final Prerequisite<Mutable<?, ?, ?>> mutatesPrereq = baseIdentityAction.mutatesCtx(baseParentCtx,
+            baseIdentityAction.requiresCtx(baseStmtCtx, IdentityNamespace.class, baseIdentityQName,
                 ModelProcessingPhase.STATEMENT_DEFINITION);
+            baseIdentityAction.mutatesCtx(baseParentCtx, ModelProcessingPhase.STATEMENT_DEFINITION);
 
             baseIdentityAction.apply(new InferenceAction() {
                 @Override
