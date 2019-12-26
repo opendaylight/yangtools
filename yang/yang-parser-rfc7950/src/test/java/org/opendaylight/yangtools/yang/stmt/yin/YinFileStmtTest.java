@@ -15,8 +15,8 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import org.junit.Test;
+import org.opendaylight.yang.file.api.YinTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;

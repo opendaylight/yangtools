@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yang.file.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 
 /**

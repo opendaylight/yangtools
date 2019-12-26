@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
+import org.opendaylight.yang.file.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 
 public interface YangTextSchemaSourceRegistration extends ObjectRegistration<YangTextSchemaSource> {
     @Override

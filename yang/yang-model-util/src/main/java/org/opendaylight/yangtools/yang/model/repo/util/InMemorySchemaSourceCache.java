@@ -17,10 +17,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import org.opendaylight.yang.file.api.SchemaSourceRepresentation;
+import org.opendaylight.yang.file.api.SourceIdentifier;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
@@ -65,7 +65,7 @@ public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> ext
             cache.put(source.getIdentifier(), source);
 
             final SchemaSourceRegistration<T> reg = register(source.getIdentifier());
-            final FinalizablePhantomReference<T> ref = new FinalizablePhantomReference<T>(source, queue) {
+            final FinalizablePhantomReference<T> ref = new FinalizablePhantomReference<>(source, queue) {
                 @Override
                 public void finalizeReferent() {
                     reg.close();

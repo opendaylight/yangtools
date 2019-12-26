@@ -12,10 +12,10 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
 import java.util.Set;
+import org.opendaylight.yang.file.api.SourceIdentifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 final class ContextHolder implements Immutable {
     private final EffectiveModelContext context;
