@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -231,6 +232,8 @@ abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<
         return false;
     }
 
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
+            justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static void performDeviateAdd(final StatementContextBase<?, ?, ?> deviateStmtCtx,
             final StatementContextBase<?, ?, ?> targetCtx) {
         for (Mutable<?, ?, ?> originalStmtCtx : deviateStmtCtx.mutableDeclaredSubstatements()) {
@@ -258,6 +261,8 @@ abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<
         copyStatement(stmtCtxToBeAdded, targetCtx);
     }
 
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
+            justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static void performDeviateReplace(final StatementContextBase<?, ?, ?> deviateStmtCtx,
             final StatementContextBase<?, ?, ?> targetCtx) {
         for (Mutable<?, ?, ?> originalStmtCtx : deviateStmtCtx.mutableDeclaredSubstatements()) {
@@ -307,6 +312,8 @@ abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<
                 stmtToBeReplaced.getStatementName(), targetCtx.getStatementArgument());
     }
 
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
+            justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static void performDeviateDelete(final StatementContextBase<?, ?, ?> deviateStmtCtx,
             final StatementContextBase<?, ?, ?> targetCtx) {
         for (Mutable<?, ?, ?> originalStmtCtx : deviateStmtCtx.mutableDeclaredSubstatements()) {
