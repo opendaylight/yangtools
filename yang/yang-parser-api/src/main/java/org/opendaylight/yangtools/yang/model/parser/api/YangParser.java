@@ -14,12 +14,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yang.file.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 
 /**
  * Configurable single-use YANG parser. Each instance can be configured to use a different set of models after
