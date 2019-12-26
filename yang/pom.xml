@@ -62,6 +62,7 @@
         <module>yang-parser-reactor</module>
 
         <!-- Combined RFC6020/RFC7960 metamodel implementation -->
+        <module>yang-parser-antlr</module>
         <module>yang-parser-rfc7950</module>
 
         <!-- OpenConfig (semantic version, hashed value) metamodel support -->

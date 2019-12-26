@@ -23,8 +23,6 @@ import java.util.Set;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.ArgumentContext;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -35,6 +33,8 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ArgumentContext;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 

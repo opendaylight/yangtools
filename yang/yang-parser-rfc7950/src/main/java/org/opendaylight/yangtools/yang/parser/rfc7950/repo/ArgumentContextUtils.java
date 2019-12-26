@@ -13,8 +13,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.parser.antlr.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
