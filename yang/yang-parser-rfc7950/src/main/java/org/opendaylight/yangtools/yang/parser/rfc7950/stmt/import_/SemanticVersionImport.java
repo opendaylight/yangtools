@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPha
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
@@ -175,10 +176,14 @@ final class SemanticVersionImport {
         return Optional.ofNullable(stmt.getFromNamespace(SemanticVersionNamespace.class, stmt));
     }
 
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
+            justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static String getRequestedImportVersionString(final StmtContext<?, ?, ?> stmt) {
         return getRequestedImportVersion(stmt).map(SemVer::toString).orElse("<any>");
     }
 
+    @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
+            justification = "https://github.com/spotbugs/spotbugs/issues/811")
     private static SemVerSourceIdentifier createSemVerModuleIdentifier(
             final SourceIdentifier importedModuleIdentifier, final SemVer semVer) {
         return SemVerSourceIdentifier.create(importedModuleIdentifier.getName(),
