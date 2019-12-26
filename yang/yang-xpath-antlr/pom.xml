@@ -50,16 +50,6 @@
                     <listener>false</listener>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Automatic-Module-Name>org.opendaylight.yangtools.yang.xpath.antlr</Automatic-Module-Name>
-                    </instructions>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
