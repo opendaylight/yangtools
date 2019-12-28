@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainerCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
@@ -46,7 +47,6 @@ final class ListEffectiveStatementImpl
         implements ListEffectiveStatement, ListSchemaNode, DerivableSchemaNode,
             ActionNodeContainerCompat<QName, ListStatement>, NotificationNodeContainerCompat<QName, ListStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(ListEffectiveStatementImpl.class);
-    private static final String ORDER_BY_USER_KEYWORD = "user";
 
     private final boolean userOrdered;
     private final ImmutableList<QName> keyDefinition;
@@ -62,7 +62,7 @@ final class ListEffectiveStatementImpl
 
         this.original = (ListSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
         this.userOrdered = findFirstEffectiveSubstatementArgument(OrderedByEffectiveStatement.class)
-                .map(ORDER_BY_USER_KEYWORD::equals).orElse(Boolean.FALSE).booleanValue();
+                .map(Ordering.USER::equals).orElse(Boolean.FALSE).booleanValue();
 
         // initKeyDefinition
         final Optional<KeyEffectiveStatement> optKeyStmt = findFirstEffectiveSubstatement(KeyEffectiveStatement.class);

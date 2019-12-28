@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -36,9 +37,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class LeafListEffectiveStatementImpl extends AbstractEffectiveMustConstraintAwareDataSchemaNode<LeafListStatement>
         implements LeafListEffectiveStatement, LeafListSchemaNode, DerivableSchemaNode {
-
-    private static final String ORDER_BY_USER_KEYWORD = "user";
-
     private final TypeDefinition<?> type;
     private final LeafListSchemaNode original;
     private final boolean userOrdered;
@@ -60,7 +58,7 @@ final class LeafListEffectiveStatementImpl extends AbstractEffectiveMustConstrai
         boolean isUserOrdered = false;
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof OrderedByEffectiveStatement) {
-                isUserOrdered = ORDER_BY_USER_KEYWORD.equals(stmt.argument());
+                isUserOrdered = Ordering.USER.equals(stmt.argument());
             }
 
             if (stmt instanceof DefaultEffectiveStatement) {
