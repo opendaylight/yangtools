@@ -62,15 +62,4 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
     public final Optional<RevisionAwareXPath> getWhenCondition() {
         return Optional.ofNullable(whenCondition);
     }
-
-    /**
-     * Reset {@link #isAugmenting()} to false.
-     *
-     * @deprecated This method is a violation of immutable contract and is a side-effect of bad/incomplete lifecycle,
-     *             which needs to be fixed. Do not introduce new callers. This deficiency is tracked in YANGTOOLS-724.
-     */
-    @Deprecated(forRemoval = true)
-    public final void resetAugmenting() {
-        // Intentional no-op
-    }
 }
