@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
@@ -100,8 +101,8 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
                 .setHistory(ctx.getCopyHistory())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .setConfiguration(configuration)
-                .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, "system")
-                    .equals("user"))
+                .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
+                    .equals(Ordering.USER))
                 .toFlags();
         if (configuration && keyDefinition.isEmpty() && !inGrouping(ctx)) {
             LOG.info("Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While "
