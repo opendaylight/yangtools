@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
@@ -70,8 +71,8 @@ abstract class AbstractLeafListStatementSupport
                 .setHistory(ctx.getCopyHistory())
                 .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
                 .setConfiguration(ctx.isConfiguration())
-                .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, "system")
-                    .equals("user"))
+                .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, Ordering.SYSTEM)
+                    .equals(Ordering.USER))
                 .toFlags();
         final ImmutableSet<String> defaultValues = substatements.stream()
                 .filter(DefaultEffectiveStatement.class::isInstance)
