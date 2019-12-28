@@ -12,12 +12,14 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class OrderedByStatementSupport
-        extends BaseStringStatementSupport<OrderedByStatement, OrderedByEffectiveStatement> {
+        extends BaseStatementSupport<Ordering, OrderedByStatement, OrderedByEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.ORDERED_BY).build();
     private static final OrderedByStatementSupport INSTANCE = new OrderedByStatementSupport();
@@ -31,12 +33,16 @@ public final class OrderedByStatementSupport
     }
 
     @Override
-    public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
+    public Ordering parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        try {
+            return Ordering.forArgumentString(value);
+        } catch (IllegalArgumentException e) {
+            throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid ordered-by argument '%s'", value);
+        }
     }
 
     @Override
-    public OrderedByStatement createDeclared(final StmtContext<String, OrderedByStatement, ?> ctx) {
+    public OrderedByStatement createDeclared(final StmtContext<Ordering, OrderedByStatement, ?> ctx) {
         return new OrderedByStatementImpl(ctx);
     }
 
@@ -47,7 +53,7 @@ public final class OrderedByStatementSupport
 
     @Override
     protected OrderedByEffectiveStatement createEffective(
-            final StmtContext<String, OrderedByStatement, OrderedByEffectiveStatement> ctx,
+            final StmtContext<Ordering, OrderedByStatement, OrderedByEffectiveStatement> ctx,
             final OrderedByStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new RegularOrderedByEffectiveStatement(declared, substatements);
@@ -55,7 +61,7 @@ public final class OrderedByStatementSupport
 
     @Override
     protected OrderedByEffectiveStatement createEmptyEffective(
-            final StmtContext<String, OrderedByStatement, OrderedByEffectiveStatement> ctx,
+            final StmtContext<Ordering, OrderedByStatement, OrderedByEffectiveStatement> ctx,
             final OrderedByStatement declared) {
         return new EmptyOrderedByEffectiveStatement(declared);
     }

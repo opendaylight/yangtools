@@ -9,8 +9,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
 
 @Beta
-public interface OrderedByEffectiveStatement extends EffectiveStatement<String, OrderedByStatement> {
+public interface OrderedByEffectiveStatement extends EffectiveStatement<Ordering, OrderedByStatement> {
 
 }
