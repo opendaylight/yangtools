@@ -69,7 +69,7 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
      * @deprecated This method is a violation of immutable contract and is a side-effect of bad/incomplete lifecycle,
      *             which needs to be fixed. Do not introduce new callers. This deficiency is tracked in YANGTOOLS-724.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public final void resetAugmenting() {
         // Intentional no-op
     }
