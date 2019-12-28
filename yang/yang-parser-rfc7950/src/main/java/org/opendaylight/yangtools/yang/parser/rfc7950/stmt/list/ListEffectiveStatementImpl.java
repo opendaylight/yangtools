@@ -37,10 +37,13 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSimp
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // FIXME: hide this class
 public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<ListStatement>
         implements ListEffectiveStatement, ListSchemaNode, DerivableSchemaNode {
+    private static final Logger LOG = LoggerFactory.getLogger(ListEffectiveStatementImpl.class);
     private static final String ORDER_BY_USER_KEYWORD = "user";
 
     private final boolean userOrdered;
@@ -85,6 +88,12 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
             this.keyDefinition = ImmutableList.copyOf(keyDefinitionInit);
         } else {
             this.keyDefinition = ImmutableList.of();
+        }
+
+        if (isConfiguration() && keyDefinition.isEmpty()) {
+            LOG.info("Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While "
+                    + " this is fine with OpenDaylight, it can cause interoperability issues with other systems "
+                    + "[at {}]", ctx.getStatementArgument(), ctx.getStatementSourceReference());
         }
 
         this.uniqueConstraints = ImmutableList.copyOf(allSubstatementsOfType(UniqueConstraint.class));
