@@ -11,8 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class OrderedByStatementImpl extends AbstractDeclaredStatement<String> implements OrderedByStatement {
-    OrderedByStatementImpl(final StmtContext<String, OrderedByStatement, ?> context) {
+final class OrderedByStatementImpl extends AbstractDeclaredStatement<Ordering> implements OrderedByStatement {
+    OrderedByStatementImpl(final StmtContext<Ordering, OrderedByStatement, ?> context) {
         super(context);
     }
 }

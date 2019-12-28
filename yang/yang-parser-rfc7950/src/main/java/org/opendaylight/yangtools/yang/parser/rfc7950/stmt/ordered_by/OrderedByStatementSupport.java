@@ -10,12 +10,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ordered_by;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class OrderedByStatementSupport
-        extends AbstractStatementSupport<String, OrderedByStatement, EffectiveStatement<String, OrderedByStatement>> {
+public final class OrderedByStatementSupport extends AbstractStatementSupport<Ordering, OrderedByStatement,
+        EffectiveStatement<Ordering, OrderedByStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.ORDERED_BY)
         .build();
@@ -30,18 +32,22 @@ public final class OrderedByStatementSupport
     }
 
     @Override
-    public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return value;
+    public Ordering parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        try {
+            return Ordering.forArgumentString(value);
+        } catch (IllegalArgumentException e) {
+            throw new SourceException(ctx.getStatementSourceReference(), "Invalid ordered-by argument '%s'", value);
+        }
     }
 
     @Override
-    public OrderedByStatement createDeclared(final StmtContext<String, OrderedByStatement, ?> ctx) {
+    public OrderedByStatement createDeclared(final StmtContext<Ordering, OrderedByStatement, ?> ctx) {
         return new OrderedByStatementImpl(ctx);
     }
 
     @Override
-    public EffectiveStatement<String, OrderedByStatement> createEffective(
-            final StmtContext<String, OrderedByStatement, EffectiveStatement<String, OrderedByStatement>> ctx) {
+    public EffectiveStatement<Ordering, OrderedByStatement> createEffective(
+            final StmtContext<Ordering, OrderedByStatement, EffectiveStatement<Ordering, OrderedByStatement>> ctx) {
         return new OrderedByEffectiveStatementImpl(ctx);
     }
 
