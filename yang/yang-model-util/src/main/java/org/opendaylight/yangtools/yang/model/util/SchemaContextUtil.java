@@ -16,7 +16,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -47,6 +46,7 @@ import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -147,6 +147,9 @@ public final class SchemaContextUtil {
     //
     //        which would then be passed in to a method similar to this one. In static contexts, like MD-SAL codegen,
     //        that feels like an overkill.
+    // FIXME: YANGTOOLS-1052: this is a static analysis util, move it to a dedicated class
+    // FIXME: YANGTOOLS-1052: this method should be merged with findDataSchemaNodeForRelativeXPath() and work on
+    //                        a context node
     public static SchemaNode findDataSchemaNode(final SchemaContext context, final Module module,
             final PathExpression nonCondXPath) {
         requireNonNull(context, "context");
@@ -154,10 +157,18 @@ public final class SchemaContextUtil {
 
         final String strXPath = nonCondXPath.getOriginalString();
         checkArgument(strXPath.indexOf('[') == -1, "Revision Aware XPath may not contain a condition");
-        if (nonCondXPath.isAbsolute()) {
-            return findTargetNode(context, xpathToQNamePath(context, module, strXPath));
+
+        final Steps pathSteps = nonCondXPath.getSteps();
+        if (!(pathSteps instanceof LocationPathSteps)) {
+            // We do not support deref() at this point
+            return null;
         }
-        return null;
+        final YangLocationPath location = ((LocationPathSteps) pathSteps).getLocationPath();
+        if (!location.isAbsolute()) {
+            // We handle only absolute paths
+            return null;
+        }
+        return findTargetNode(context, module.getQNameModule(), location);
     }
 
     /**
@@ -207,7 +218,7 @@ public final class SchemaContextUtil {
     //
     //        which would then be passed in to a method similar to this one. In static contexts, like MD-SAL codegen,
     //        that feels like an overkill.
-    // FIXME: YANGTOOLS-1052: this is a static analysis util, move it to yang-model-sa
+    // FIXME: YANGTOOLS-1052: this is a static analysis util, move it to a dedicated class
     public static SchemaNode findDataSchemaNodeForRelativeXPath(final SchemaContext context, final Module module,
             final SchemaNode actualSchemaNode, final PathExpression relativeXPath) {
         checkState(!relativeXPath.isAbsolute(), "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
@@ -497,30 +508,6 @@ public final class SchemaContextUtil {
     }
 
     /**
-     * Transforms string representation of XPath to Queue of QNames. The XPath
-     * is split by "/" and for each part of XPath is assigned correct module in
-     * Schema Path. <br>
-     * If Schema Context, Parent Module or XPath string contains
-     * <code>null</code> values, the method will throws IllegalArgumentException
-     *
-     * @param context
-     *            Schema Context
-     * @param parentModule
-     *            Parent Module
-     * @param xpath
-     *            XPath String
-     * @return return a list of QName
-     */
-    private static List<QName> xpathToQNamePath(final SchemaContext context, final Module parentModule,
-            final String xpath) {
-        final List<QName> path = new ArrayList<>();
-        for (final String pathComponent : SLASH_SPLITTER.split(xpath)) {
-            path.add(stringPathPartToQName(context, parentModule, pathComponent));
-        }
-        return path;
-    }
-
-    /**
      * Transforms part of Prefixed Path as java String to QName. <br>
      * If the string contains module prefix separated by ":" (i.e.
      * mod:container) this module is provided from from Parent Module list of
@@ -653,7 +640,7 @@ public final class SchemaContextUtil {
         LOG.debug("Derefencing path {}", targetPath);
 
         final SchemaNode deref = targetPath.isAbsolute()
-                ? findTargetNode(context, actualSchemaNode,
+                ? findTargetNode(context, actualSchemaNode.getQName().getModule(),
                     ((LocationPathSteps) targetPath.getSteps()).getLocationPath())
                         : findDataSchemaNodeForRelativeXPath(context, module, actualSchemaNode, targetPath);
         if (deref == null) {
@@ -667,9 +654,8 @@ public final class SchemaContextUtil {
         return findTargetNode(context, resolveRelativePath(context, module, deref, qnames));
     }
 
-    private static @Nullable SchemaNode findTargetNode(final SchemaContext context, final SchemaNode actualSchemaNode,
+    private static @Nullable SchemaNode findTargetNode(final SchemaContext context, final QNameModule defaultModule,
             final YangLocationPath path) {
-        final QNameModule defaultModule = actualSchemaNode.getQName().getModule();
         final Deque<QName> ret = new ArrayDeque<>();
         for (Step step : path.getSteps()) {
             if (step instanceof AxisStep) {

@@ -1,0 +1,6 @@
+module parent {
+  namespace "parent";
+  prefix par;
+
+  include child;
+}
