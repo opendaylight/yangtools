@@ -43,7 +43,7 @@ public final class ExecutorServiceUtil {
     private static final @NonNull RejectedExecutionHandler WAIT_IN_QUEUE_HANDLER = new WaitInQueueExecutionHandler();
 
     private ExecutorServiceUtil() {
-        throw new UnsupportedOperationException("Utility class");
+        // Hidden on purpose
     }
 
     /**

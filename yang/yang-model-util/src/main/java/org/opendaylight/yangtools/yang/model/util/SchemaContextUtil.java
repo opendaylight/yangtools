@@ -78,6 +78,7 @@ public final class SchemaContextUtil {
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings();
 
     private SchemaContextUtil() {
+        // Hidden on purpose
     }
 
     /**

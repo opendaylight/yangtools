@@ -45,7 +45,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class StmtContextUtils {
     private StmtContextUtils() {
-        throw new UnsupportedOperationException("Utility class");
+        // Hidden on purpose
     }
 
     @SuppressWarnings("unchecked")

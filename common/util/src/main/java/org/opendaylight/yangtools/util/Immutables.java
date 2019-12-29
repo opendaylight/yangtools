@@ -16,14 +16,13 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
 
 public final class Immutables {
-
-    private Immutables() {
-        throw new UnsupportedOperationException("Helper class");
-    }
-
     private static final ImmutableSet<Class<?>> KNOWN_IMMUTABLES = ImmutableSet.of(
             Integer.class, Short.class, BigDecimal.class, BigInteger.class, Byte.class, Character.class, Double.class,
             Float.class, String.class, Boolean.class, Void.class);
+
+    private Immutables() {
+        // Hidden on purpose
+    }
 
     /**
      * Determines if object is known to be immutable

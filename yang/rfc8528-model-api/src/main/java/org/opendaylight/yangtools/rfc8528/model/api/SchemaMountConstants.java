@@ -44,7 +44,7 @@ public final class SchemaMountConstants {
     public static final String MODULE_PREFIX = "yangmnt";
 
     private SchemaMountConstants() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

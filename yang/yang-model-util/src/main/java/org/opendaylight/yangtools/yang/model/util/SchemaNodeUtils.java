@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
 public final class SchemaNodeUtils {
     private SchemaNodeUtils() {
-        throw new UnsupportedOperationException("Utility class");
+        // Hidden on purpose
     }
 
     public static Optional<SchemaNode> getOriginalIfPossible(final SchemaNode node) {

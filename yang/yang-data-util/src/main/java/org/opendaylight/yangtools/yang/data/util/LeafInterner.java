@@ -45,7 +45,7 @@ public final class LeafInterner {
     private static final Interner<Object> INTERNER = Interners.newWeakInterner();
 
     private LeafInterner() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     private static <T extends LeafNode<?>> T intern(final T sample) {

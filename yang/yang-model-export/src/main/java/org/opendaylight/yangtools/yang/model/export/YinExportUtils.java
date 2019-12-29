@@ -31,7 +31,7 @@ public final class YinExportUtils {
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 
     private YinExportUtils() {
-        throw new UnsupportedOperationException("Utility class");
+        // Hidden on purpose
     }
 
     /**

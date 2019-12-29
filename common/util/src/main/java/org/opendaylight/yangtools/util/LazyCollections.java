@@ -12,14 +12,12 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Utility methods for lazily instantiated collections. These are useful for
- * situations when we start off with an empty collection (where Collections.empty()
- * can be reused), but need to add more things.
+ * Utility methods for lazily instantiated collections. These are useful for situations when we start off with an empty
+ * collection (where Collections.empty() * can be reused), but need to add more things.
  */
 public final class LazyCollections {
-
     private LazyCollections() {
-        throw new UnsupportedOperationException("Utility class should not be instantiated");
+        // Hidden on purpose
     }
 
     /**
@@ -46,5 +44,4 @@ public final class LazyCollections {
         ret.add(obj);
         return ret;
     }
-
 }

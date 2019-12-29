@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 @Beta
 public final class StoreTreeNodes {
     private StoreTreeNodes() {
-        throw new UnsupportedOperationException("Utility class should not be instantiated");
+        // Hidden on purpose
     }
 
     /**

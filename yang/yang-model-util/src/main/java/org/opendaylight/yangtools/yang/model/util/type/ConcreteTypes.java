@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 @NonNullByDefault
 public final class ConcreteTypes {
     private ConcreteTypes() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     public static ConcreteTypeBuilder<?> concreteTypeBuilder(final TypeDefinition<?> baseType, final SchemaPath path) {

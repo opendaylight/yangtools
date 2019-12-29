@@ -40,9 +40,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToSourceIdentifier;
 
 final class RevisionImport {
-
     private RevisionImport() {
-        throw new UnsupportedOperationException("Utility class");
+        // Hidden on purpose
     }
 
     static void onLinkageDeclared(

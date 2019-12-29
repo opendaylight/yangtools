@@ -332,7 +332,7 @@ public final class RFC7950Reactors {
     private static final CrossSourceStatementReactor VANILLA_RFC6020_RFC7950_REACTOR = vanillaReactorBuilder().build();
 
     private RFC7950Reactors() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

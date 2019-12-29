@@ -52,7 +52,7 @@ final class SystemTestUtils {
     }
 
     private SystemTestUtils() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     static final FileFilter YANG_FILE_FILTER = file -> {

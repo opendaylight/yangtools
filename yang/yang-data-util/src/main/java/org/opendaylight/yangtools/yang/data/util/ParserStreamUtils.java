@@ -21,9 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 public final class ParserStreamUtils {
-
     private ParserStreamUtils() {
-        throw new UnsupportedOperationException("Utility class should not be instantiated.");
+        // Hidden on purpose
     }
 
     /**

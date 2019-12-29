@@ -59,7 +59,7 @@ public final class YangParserTestUtils {
     }
 
     private YangParserTestUtils() {
-        throw new UnsupportedOperationException("Utility class should not be instantiated.");
+        // Hidden on purpose
     }
 
     /**

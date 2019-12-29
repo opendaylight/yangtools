@@ -92,7 +92,7 @@ public final class YangConstants {
     private static final QName DUMMY_OPERATION_OUTPUT = QName.create("DUMMY", "output");
 
     private YangConstants() {
-        throw new UnsupportedOperationException("Utility class");
+        // Hidden on purpose
     }
 
     /**

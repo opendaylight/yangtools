@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.enum_.EnumEffectiveSt
 @Beta
 final class EffectiveTypeUtil {
     private EffectiveTypeUtil() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     static @NonNull Bit buildBit(final @NonNull BitEffectiveStatementImpl stmt, final long effectivePos) {

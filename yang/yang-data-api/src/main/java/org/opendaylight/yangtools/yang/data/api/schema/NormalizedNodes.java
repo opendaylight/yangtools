@@ -34,7 +34,7 @@ public final class NormalizedNodes {
     private static final int STRINGTREE_INDENT = 4;
 
     private NormalizedNodes() {
-        throw new UnsupportedOperationException("Utility class should not be instantiated");
+        // Hidden on purpose
     }
 
     /**

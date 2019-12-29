@@ -44,7 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 @Beta
 public final class DerivedTypes {
     private DerivedTypes() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     public static @NonNull DerivedTypeBuilder<?> derivedTypeBuilder(final @NonNull TypeDefinition<?> baseType,
