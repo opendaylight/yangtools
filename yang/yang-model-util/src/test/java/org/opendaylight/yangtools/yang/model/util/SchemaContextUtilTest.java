@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
@@ -26,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -42,7 +44,6 @@ public class SchemaContextUtilTest {
     private SchemaContext mockSchemaContext;
     @Mock
     private Module mockModule;
-
     @Mock
     private SchemaNode schemaNode;
 
@@ -70,6 +71,11 @@ public class SchemaContextUtilTest {
         assertNull("Should be null. Module bookstore not found",
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xpath));
 
+
+        final PathExpression xPath = new PathExpressionImpl("/bookstore/book/title", true);
+        assertEquals("Should be null. Module bookstore not found", null,
+                SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xPath));
+
         SchemaNode int32node = BaseTypes.int32Type();
         PathExpression xpathRelative = new PathExpressionImpl("../prefix", false);
         assertNull("Should be null, Module prefix not found",
@@ -80,6 +86,67 @@ public class SchemaContextUtilTest {
                 SchemaContextUtil.findNodeInSchemaContext(mockSchemaContext, Collections.singleton(qname)));
 
         assertNull("Should be null.", SchemaContextUtil.findParentModule(mockSchemaContext, int32node));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void findDataSchemaNodeFromXPathIllegalArgumentTest() {
+        SchemaContextUtil.findDataSchemaNode(mock(SchemaContext.class), mock(Module.class), null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void findDataSchemaNodeFromXPathIllegalArgumentTest2() {
+        final SchemaContext mockContext = mock(SchemaContext.class);
+        final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
+
+        SchemaContextUtil.findDataSchemaNode(mockContext, null, xpath);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void findDataSchemaNodeFromXPathIllegalArgumentTest3() {
+        final Module module = mock(Module.class);
+        final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
+
+        SchemaContextUtil.findDataSchemaNode(null, module, xpath);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void findDataSchemaNodeFromXPathIllegalArgumentTest4() {
+        final SchemaContext mockContext = mock(SchemaContext.class);
+        final Module module = mock(Module.class);
+        final PathExpression xpath = new PathExpressionImpl("my:my-grouping[@con='NULL']/my:my-leaf-in-gouping2", true);
+
+        SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void findParentModuleIllegalArgumentTest() {
+        SchemaContextUtil.findParentModule(mock(SchemaContext.class), null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void findParentModuleIllegalArgumentTest2() {
+        doReturn(SchemaPath.create(true, QName.create("foo", "bar"))).when(schemaNode).getPath();
+        SchemaContextUtil.findParentModule(null, schemaNode);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void findDataSchemaNodeIllegalArgumentTest() {
+        SchemaContextUtil.findDataSchemaNode(mock(SchemaContext.class), null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void findDataSchemaNodeIllegalArgumentTest2() {
+        SchemaContextUtil.findDataSchemaNode(null, SchemaPath.create(true,
+            QName.create(URI.create("uri:my-module"), Revision.of("2014-10-07"), "foo")));
+    }
+
+    @Test
+    public void findDataSchemaNodeFromXPathNullTest2() {
+        final SchemaContext mockContext = mock(SchemaContext.class);
+        final Module module = mock(Module.class);
+        final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", false);
+
+        assertNull(SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath));
     }
 
     @Test
