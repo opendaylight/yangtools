@@ -20,7 +20,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * @deprecated This is a transitional class to transition from {@link RevisionAwareXPathImpl}. Users are advised to
  *             supply their own implementation of PathExpression.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 @NonNullByDefault
 public final class PathExpressionImpl extends AbstractPathExpression {
     private final @Nullable Steps steps;
