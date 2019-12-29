@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.net.URI;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -33,12 +34,17 @@ import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class SchemaContextUtilTest {
+    private static SchemaContext context;
+    private static Module myModule;
+
+    @BeforeClass
+    public static void beforeClass() {
+        context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
+        myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
+    }
+
     @Test
     public void findNodeInSchemaContextTest() {
-        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
-
-        final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
-
         SchemaNode testNode = ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
                 myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
                 "my-leaf-in-container"));
@@ -152,11 +158,6 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findNodeInSchemaContextTest2() {
-
-        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
-
-        final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
-
         SchemaNode testNode = ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
                 myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
                 "my-leaf-not-in-container"));
@@ -250,11 +251,6 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findNodeInSchemaContextTest3() {
-
-        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
-
-        final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
-
         SchemaNode testNode = myModule.getDataChildByName(QName.create(myModule.getQNameModule(), "my-container"));
 
         SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"));
@@ -310,16 +306,10 @@ public class SchemaContextUtilTest {
         assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
-
     }
 
     @Test
     public void findParentModuleTest() {
-
-        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
-
-        final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
-
         final DataSchemaNode node = myModule.getDataChildByName(QName.create(myModule.getQNameModule(),
             "my-container"));
 
@@ -330,8 +320,6 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findDataSchemaNodeTest() {
-        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
-        final Module module = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
         final Module importedModule = context.findModule(URI.create("uri:imported-module"),
             Revision.of("2014-10-07")).get();
 
@@ -341,7 +329,7 @@ public class SchemaContextUtilTest {
 
         final PathExpression xpath = new PathExpressionImpl("imp:my-imported-container/imp:my-imported-leaf", true);
 
-        final SchemaNode foundNode = SchemaContextUtil.findDataSchemaNode(context, module, xpath);
+        final SchemaNode foundNode = SchemaContextUtil.findDataSchemaNode(context, myModule, xpath);
 
         assertNotNull(foundNode);
         assertNotNull(testNode);
@@ -350,16 +338,13 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findDataSchemaNodeTest2() {
-        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
-        final Module module = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
-
-        final GroupingDefinition grouping = getGroupingByName(module, "my-grouping");
-        final SchemaNode testNode = grouping.getDataChildByName(QName.create(module.getQNameModule(),
+        final GroupingDefinition grouping = getGroupingByName(myModule, "my-grouping");
+        final SchemaNode testNode = grouping.getDataChildByName(QName.create(myModule.getQNameModule(),
                 "my-leaf-in-gouping2"));
 
         final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
 
-        final SchemaNode foundNode = SchemaContextUtil.findDataSchemaNode(context, module, xpath);
+        final SchemaNode foundNode = SchemaContextUtil.findDataSchemaNode(context, myModule, xpath);
 
         assertNotNull(foundNode);
         assertNotNull(testNode);
@@ -369,9 +354,6 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findNodeInSchemaContextGroupingsTest() {
-        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
-        final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
-
         // find grouping in container
         DataNodeContainer dataContainer = (DataNodeContainer) myModule.getDataChildByName(QName.create(
                 myModule.getQNameModule(), "my-container"));
@@ -566,10 +548,6 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findNodeInSchemaContextGroupingsTest2() {
-
-        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
-        final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
-
         // find grouping in container
         DataNodeContainer dataContainer = (DataNodeContainer) myModule.getDataChildByName(QName.create(
                 myModule.getQNameModule(), "my-container"));
@@ -703,9 +681,6 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findNodeInSchemaContextTheSameNameOfSiblingsTest() {
-        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
-
-        final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
         final ChoiceSchemaNode choice = (ChoiceSchemaNode) getRpcByName(myModule, "my-name").getInput()
                 .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice"));
         final SchemaNode testNode = choice.findCaseNodes("case-two").iterator().next()
