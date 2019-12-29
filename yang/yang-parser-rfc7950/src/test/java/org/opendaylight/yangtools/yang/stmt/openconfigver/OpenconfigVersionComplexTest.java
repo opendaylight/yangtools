@@ -32,7 +32,7 @@ public class OpenconfigVersionComplexTest {
 
     @Test
     public void complexTest1Yang1_1() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/rfc7950/openconfig-version/complex-1",
+        final SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/complex/complex-1-rfc7950",
                 StatementParserMode.SEMVER_MODE);
         verifySchemaContextTest1(context);
     }
@@ -78,7 +78,7 @@ public class OpenconfigVersionComplexTest {
 
     @Test
     public void complexTest2Yang1_1() throws Exception {
-        final SchemaContext context = StmtTestUtils.parseYangSources("/rfc7950/openconfig-version/complex-2",
+        final SchemaContext context = StmtTestUtils.parseYangSources("/openconfig-version/complex/complex-2-rfc7950",
                 StatementParserMode.SEMVER_MODE);
         verifySchemaContextTest2(context);
     }
