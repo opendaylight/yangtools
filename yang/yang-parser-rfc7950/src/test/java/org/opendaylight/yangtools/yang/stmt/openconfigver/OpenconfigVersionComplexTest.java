@@ -14,10 +14,10 @@ import static org.junit.Assert.assertNull;
 import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-import org.opendaylight.yangtools.yang.model.util.PathExpressionImpl;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
@@ -55,18 +55,22 @@ public class OpenconfigVersionComplexTest {
         assertEquals(SemVer.valueOf("2.26.465"), foobar.getSemanticVersion().get());
 
         // check imported components
-        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context, foo,
-                new PathExpressionImpl("/bar:root/bar:test-container/bar:number", true)));
+        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context,
+            QName.create(bar.getQNameModule(), "root"),
+            QName.create(bar.getQNameModule(), "test-container"),
+            QName.create(bar.getQNameModule(), "number")));
 
-        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context, foo,
-                new PathExpressionImpl("/bar:should-present", true)));
+        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context,
+            QName.create(bar.getQNameModule(), "should-present")));
 
         // check not imported components
-        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context, foo,
-                new PathExpressionImpl("/bar:root/bar:test-container/bar:oldnumber", true)));
+        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context,
+            QName.create(bar.getQNameModule(), "root"),
+            QName.create(bar.getQNameModule(), "test-container"),
+            QName.create(bar.getQNameModule(), "oldnumber")));
 
-        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context, foo,
-                new PathExpressionImpl("/bar:should-not-be-present", true)));
+        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context,
+            QName.create(bar.getQNameModule(), "should-not-be-present")));
     }
 
     @Test
@@ -101,26 +105,33 @@ public class OpenconfigVersionComplexTest {
         assertEquals(SemVer.valueOf("7.13.99"), foobar.getSemanticVersion().get());
 
         // check used augmentations
-        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context, bar,
-                new PathExpressionImpl("/foobar:root/foobar:test-container/bar:should-present-leaf-1", true)));
+        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context,
+            QName.create(foobar.getQNameModule(), "root"),
+            QName.create(foobar.getQNameModule(), "test-container"),
+            QName.create(bar.getQNameModule(), "should-present-leaf-1")));
 
-        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context, bar,
-                new PathExpressionImpl("/foobar:root/foobar:test-container/bar:should-present-leaf-2", true)));
+        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context,
+            QName.create(foobar.getQNameModule(), "root"),
+            QName.create(foobar.getQNameModule(), "test-container"),
+            QName.create(bar.getQNameModule(), "should-present-leaf-2")));
 
         // check not used augmentations
-        assertNull("This component should not be present",
-                SchemaContextUtil.findDataSchemaNode(context, bar, new PathExpressionImpl(
-                        "/foobar:root/foobar:test-container/bar:should-not-be-present-leaf-1", true)));
-
-        assertNull("This component should not be present",
-                SchemaContextUtil.findDataSchemaNode(context, bar, new PathExpressionImpl(
-                        "/foobar:root/foobar:test-container/bar:should-not-be-present-leaf-2", true)));
+        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context,
+            QName.create(foobar.getQNameModule(), "root"),
+            QName.create(foobar.getQNameModule(), "test-container"),
+            QName.create(bar.getQNameModule(), "should-not-be-present-leaf-1")));
+        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context,
+            QName.create(foobar.getQNameModule(), "root"),
+            QName.create(foobar.getQNameModule(), "test-container"),
+            QName.create(bar.getQNameModule(), "should-not-be-present-leaf-2")));
 
         // check if correct foobar module was included
-        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context, bar,
-                new PathExpressionImpl("/foobar:root/foobar:included-correct-mark", true)));
+        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context,
+            QName.create(foobar.getQNameModule(), "root"),
+            QName.create(foobar.getQNameModule(), "included-correct-mark")));
 
-        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context, bar,
-                new PathExpressionImpl("/foobar:root/foobar:included-not-correct-mark", true)));
+        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context,
+            QName.create(foobar.getQNameModule(), "root"),
+            QName.create(foobar.getQNameModule(), "included-not--correct-mark")));
     }
 }

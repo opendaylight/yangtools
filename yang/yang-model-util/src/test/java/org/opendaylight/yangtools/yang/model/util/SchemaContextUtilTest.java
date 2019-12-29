@@ -28,17 +28,22 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class SchemaContextUtilTest {
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ');
     private static final URI NAMESPACE = URI.create("abc");
+    private static final QNameModule MODULE = QNameModule.create(NAMESPACE);
 
     @Mock
     private SchemaContext mockSchemaContext;
@@ -52,10 +57,8 @@ public class SchemaContextUtilTest {
         doReturn(Optional.empty()).when(mockSchemaContext).findModule(any(QNameModule.class));
         doReturn(Optional.empty()).when(mockSchemaContext).findDataTreeChild(any(Iterable.class));
 
-        doReturn("test").when(mockModule).getName();
-        doReturn("test").when(mockModule).getPrefix();
         doReturn(NAMESPACE).when(mockModule).getNamespace();
-        doReturn(QNameModule.create(NAMESPACE)).when(mockModule).getQNameModule();
+        doReturn(MODULE).when(mockModule).getQNameModule();
         doReturn(Optional.empty()).when(mockModule).getRevision();
     }
 
@@ -67,12 +70,19 @@ public class SchemaContextUtilTest {
         assertNull("Should be null. Module TestQName not found",
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, schemaPath));
 
-        PathExpression xpath = new PathExpressionImpl("/test:bookstore/test:book/test:title", true);
+        PathExpression xpath = new PathExpressionImpl("/test:bookstore/test:book/test:title", new LocationPathSteps(
+            YangLocationPath.absolute(
+                YangXPathAxis.CHILD.asStep(QName.create(MODULE, "bookstore")),
+                YangXPathAxis.CHILD.asStep(QName.create(MODULE, "book")),
+                YangXPathAxis.CHILD.asStep(QName.create(MODULE, "title")))));
         assertNull("Should be null. Module bookstore not found",
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xpath));
 
-
-        final PathExpression xPath = new PathExpressionImpl("/bookstore/book/title", true);
+        final PathExpression xPath = new PathExpressionImpl("/bookstore/book/title", new LocationPathSteps(
+            YangLocationPath.absolute(
+            YangXPathAxis.CHILD.asStep(UnqualifiedQName.of("bookstore")),
+            YangXPathAxis.CHILD.asStep(UnqualifiedQName.of("book")),
+            YangXPathAxis.CHILD.asStep(UnqualifiedQName.of("title")))));
         assertEquals("Should be null. Module bookstore not found", null,
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xPath));
 
