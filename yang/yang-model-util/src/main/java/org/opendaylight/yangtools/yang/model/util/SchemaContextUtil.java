@@ -156,12 +156,7 @@ public final class SchemaContextUtil {
         final String strXPath = nonCondXPath.getOriginalString();
         checkArgument(strXPath.indexOf('[') == -1, "Revision Aware XPath may not contain a condition");
         if (nonCondXPath.isAbsolute()) {
-            final List<QName> path = xpathToQNamePath(context, module, strXPath);
-
-            // We do not have enough information about resolution context, hence cannot account for actions, RPCs
-            // and notifications. We therefore attempt to make a best estimate, but this can still fail.
-            final Optional<DataSchemaNode> pureData = context.findDataTreeChild(path);
-            return pureData.isPresent() ? pureData.get() : findNodeInSchemaContext(context, path);
+            return findTargetNode(context, xpathToQNamePath(context, module, strXPath));
         }
         return null;
     }
