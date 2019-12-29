@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
+package org.opendaylight.yangtools.yang.model.util.ut;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -15,9 +15,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.Test;
@@ -40,12 +38,10 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.util.PathExpressionImpl;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.stmt.TestUtils;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SchemaContextUtilTest {
@@ -83,10 +79,8 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findNodeInSchemaContextTest() throws URISyntaxException, IOException, YangSyntaxErrorException,
-            ReactorException {
-
-        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+    public void findNodeInSchemaContextTest() {
+        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
 
         final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
 
@@ -202,10 +196,9 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findNodeInSchemaContextTest2() throws URISyntaxException, IOException, YangSyntaxErrorException,
-            ReactorException {
+    public void findNodeInSchemaContextTest2() {
 
-        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
 
         final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
 
@@ -301,10 +294,9 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findNodeInSchemaContextTest3() throws URISyntaxException, IOException, YangSyntaxErrorException,
-            ReactorException {
+    public void findNodeInSchemaContextTest3() {
 
-        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
 
         final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
 
@@ -367,10 +359,9 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findParentModuleTest() throws URISyntaxException, IOException, YangSyntaxErrorException,
-            ReactorException {
+    public void findParentModuleTest() {
 
-        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
 
         final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
 
@@ -404,9 +395,8 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findDataSchemaNodeTest() throws URISyntaxException, IOException, YangSyntaxErrorException,
-            ReactorException {
-        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+    public void findDataSchemaNodeTest() {
+        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
         final Module module = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
         final Module importedModule = context.findModule(URI.create("uri:imported-module"),
             Revision.of("2014-10-07")).get();
@@ -425,12 +415,8 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findDataSchemaNodeTest2() throws URISyntaxException, IOException, YangSyntaxErrorException,
-            ReactorException {
-        // findDataSchemaNode(final SchemaContext context, final Module module,
-        // final RevisionAwareXPath nonCondXPath) {
-
-        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+    public void findDataSchemaNodeTest2() {
+        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
         final Module module = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
 
         final GroupingDefinition grouping = getGroupingByName(module, "my-grouping");
@@ -497,9 +483,8 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findNodeInSchemaContextGroupingsTest() throws URISyntaxException, IOException,
-            YangSyntaxErrorException, ReactorException {
-        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+    public void findNodeInSchemaContextGroupingsTest() {
+        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
         final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
 
         // find grouping in container
@@ -695,10 +680,9 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findNodeInSchemaContextGroupingsTest2() throws URISyntaxException, IOException,
-            YangSyntaxErrorException, ReactorException {
+    public void findNodeInSchemaContextGroupingsTest2() {
 
-        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
         final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
 
         // find grouping in container
@@ -833,10 +817,8 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findNodeInSchemaContextTheSameNameOfSiblingsTest() throws URISyntaxException, IOException,
-            YangSyntaxErrorException, ReactorException {
-
-        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+    public void findNodeInSchemaContextTheSameNameOfSiblingsTest() {
+        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/schema-context-util");
 
         final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
         final ChoiceSchemaNode choice = (ChoiceSchemaNode) getRpcByName(myModule, "my-name").getInput()
