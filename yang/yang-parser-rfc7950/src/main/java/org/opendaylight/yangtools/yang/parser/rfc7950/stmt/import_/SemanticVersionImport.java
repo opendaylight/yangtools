@@ -116,9 +116,8 @@ final class SemanticVersionImport {
         }
     }
 
-
     private SemanticVersionImport() {
-        throw new UnsupportedOperationException("Utility class");
+        // Hidden on purpose
     }
 
     static void onLinkageDeclared(

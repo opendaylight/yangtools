@@ -26,7 +26,7 @@ public final class QNameCodecUtil {
     private static final Splitter COLON_SPLITTER = Splitter.on(':').trimResults();
 
     private QNameCodecUtil() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     public static QName decodeQName(final String str, final Function<String, QNameModule> prefixToModule) {

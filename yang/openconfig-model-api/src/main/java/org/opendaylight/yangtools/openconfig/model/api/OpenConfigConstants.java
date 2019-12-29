@@ -78,7 +78,7 @@ public final class OpenConfigConstants {
     public static final String MODULE_PREFIX = "oc-ext";
 
     private OpenConfigConstants() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

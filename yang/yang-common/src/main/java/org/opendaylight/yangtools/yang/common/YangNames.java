@@ -22,7 +22,7 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 public final class YangNames {
     private YangNames() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

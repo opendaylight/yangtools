@@ -35,7 +35,7 @@ public final class EffectiveStmtUtils {
     private static final String UNBOUNDED_STR = "unbounded";
 
     private EffectiveStmtUtils() {
-        throw new UnsupportedOperationException("Utility class");
+        // Hidden on purpose
     }
 
     public static SourceException createNameCollisionSourceException(final StmtContext<?, ?, ?> ctx,

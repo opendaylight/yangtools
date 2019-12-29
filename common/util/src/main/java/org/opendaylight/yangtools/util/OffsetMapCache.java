@@ -51,7 +51,7 @@ final class OffsetMapCache {
             CacheBuilder.newBuilder().weakValues().build();
 
     private OffsetMapCache() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     @VisibleForTesting

@@ -24,7 +24,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @NonNullByDefault
 public final class WritableObjects {
     private WritableObjects() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

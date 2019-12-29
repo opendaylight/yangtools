@@ -22,9 +22,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 
 @Beta
 public final class NormalizedNodeTransformations {
-
     private NormalizedNodeTransformations() {
-        throw new UnsupportedOperationException("Utility class.");
+        // Hidden on purpose
     }
 
     public static NormalizedNode<?, ?> transformQNames(final NormalizedNode<?, ?> original,

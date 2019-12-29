@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class LeafRefUtils {
     private LeafRefUtils() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

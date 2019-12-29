@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
  */
 public final class BaseConstraints {
     private BaseConstraints() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

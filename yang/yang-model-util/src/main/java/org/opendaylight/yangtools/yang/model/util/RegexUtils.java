@@ -235,7 +235,7 @@ public final class RegexUtils {
     private static final int UNICODE_SCRIPT_FIX_COUNTER = 30;
 
     private RegexUtils() {
-        throw new UnsupportedOperationException("Utility class should not be instantiated.");
+        // Hidden on purpose
     }
 
     /**

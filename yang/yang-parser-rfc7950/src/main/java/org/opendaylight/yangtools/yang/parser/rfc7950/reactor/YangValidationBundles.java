@@ -21,10 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 public final class YangValidationBundles {
-    private YangValidationBundles() {
-        throw new UnsupportedOperationException("Utility class");
-    }
-
     public static final Set<StatementDefinition> SUPPORTED_REFINE_SUBSTATEMENTS = ImmutableSet.of(
         YangStmtMapping.DEFAULT, YangStmtMapping.DESCRIPTION, YangStmtMapping.REFERENCE, YangStmtMapping.CONFIG,
         YangStmtMapping.MANDATORY, YangStmtMapping.MUST, YangStmtMapping.PRESENCE, YangStmtMapping.MIN_ELEMENTS,
@@ -42,6 +38,10 @@ public final class YangValidationBundles {
         .put(YangStmtMapping.MIN_ELEMENTS, ImmutableSet.of(YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST))
         .put(YangStmtMapping.MAX_ELEMENTS, ImmutableSet.of(YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST))
         .build();
+
+    private YangValidationBundles() {
+        // Hidden on purpose
+    }
 
     /**
      * Supported deviation target statements for specific deviate substatements in specific yang-version.

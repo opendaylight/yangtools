@@ -52,7 +52,7 @@ public final class RecursiveObjectLeaker {
     private static final ThreadLocal<Deque<Entry<?, Object>>> STACK = new ThreadLocal<>();
 
     private RecursiveObjectLeaker() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     // Key is checked for identity

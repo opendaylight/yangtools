@@ -66,9 +66,8 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 public final class Builders {
-
     private Builders() {
-        throw new UnsupportedOperationException("Utilities class should not be instantiated");
+        // Hidden on purpose
     }
 
     public static <T> NormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> leafBuilder() {

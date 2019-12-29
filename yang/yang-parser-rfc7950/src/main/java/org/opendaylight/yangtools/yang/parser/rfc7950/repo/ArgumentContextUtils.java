@@ -27,7 +27,7 @@ final class ArgumentContextUtils {
     private static final Pattern ESCAPED_TAB = Pattern.compile("\\t", Pattern.LITERAL);
 
     private ArgumentContextUtils() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     static String stringFromStringContext(final ArgumentContext context, final YangVersion yangVersion,

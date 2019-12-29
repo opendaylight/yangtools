@@ -56,7 +56,7 @@ public final class NACMConstants {
     public static final String MODULE_PREFIX = "nacm";
 
     private NACMConstants() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

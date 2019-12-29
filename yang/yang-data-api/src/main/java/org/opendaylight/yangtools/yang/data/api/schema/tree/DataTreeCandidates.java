@@ -26,7 +26,7 @@ public final class DataTreeCandidates {
     private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidates.class);
 
     private DataTreeCandidates() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     public static @NonNull DataTreeCandidate newDataTreeCandidate(final YangInstanceIdentifier rootPath,

@@ -27,9 +27,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 @Beta
 @NonNullByDefault
 public final class IdentityCodecUtil {
-
     private IdentityCodecUtil() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**
