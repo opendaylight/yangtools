@@ -49,7 +49,9 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.DerefSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
+import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -164,6 +166,8 @@ public final class SchemaContextUtil {
      *         Non-conditional Revision Aware XPath, or <code>null</code> if the
      *         DataSchemaNode is not present in Schema Context.
      * @throws NullPointerException if any of the arguments is null
+     * @deprecated Use {@link #findDataTreeSchemaNode(SchemaContext, QNameModule, YangLocationPath)} or
+     *             {@link #findDataTreeSchemaNode(SchemaContext, QNameModule, PathExpression)} instead.
      */
     // FIXME: This entire method is ill-defined, as the resolution process depends on  where the XPath is defined --
     //        notably RPCs, actions and notifications modify the data tree temporarily. See sections 6.4.1 and 9.9.2
@@ -177,6 +181,7 @@ public final class SchemaContextUtil {
     //
     //        which would then be passed in to a method similar to this one. In static contexts, like MD-SAL codegen,
     //        that feels like an overkill.
+    @Deprecated
     public static SchemaNode findDataSchemaNode(final SchemaContext context, final Module module,
             final PathExpression nonCondXPath) {
         requireNonNull(context, "context");
@@ -188,6 +193,28 @@ public final class SchemaContextUtil {
             return findTargetNode(context, xpathToQNamePath(context, module, strXPath));
         }
         return null;
+    }
+
+    @Beta
+    public static SchemaNode findDataTreeSchemaNode(final SchemaContext ctx, final QNameModule localModule,
+            final YangLocationPath absPath) {
+        checkArgument(absPath.isAbsolute(), "Unsupported relative path %s", absPath);
+        return findTargetNode(ctx, localModule, absPath);
+    }
+
+    @Beta
+    public static SchemaNode findDataTreeSchemaNode(final SchemaContext ctx, final QNameModule localModule,
+            final PathExpression absPath) {
+        final Steps pathSteps = absPath.getSteps();
+        if (pathSteps instanceof LocationPathSteps) {
+            return findDataTreeSchemaNode(ctx, localModule, ((LocationPathSteps) pathSteps).getLocationPath());
+        }
+
+        // We would need a reference schema node and no, we do not want to use SchemaContext in its SchemaNode capacity
+        checkArgument(!(pathSteps instanceof DerefSteps), "No reference node for steps %s", pathSteps);
+
+        // We are missing proper API alignment, if this ever triggers
+        throw new IllegalStateException("Unsupported path " + pathSteps);
     }
 
     /**
