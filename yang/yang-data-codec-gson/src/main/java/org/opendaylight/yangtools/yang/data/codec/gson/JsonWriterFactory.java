@@ -18,7 +18,7 @@ import java.io.Writer;
 @Beta
 public final class JsonWriterFactory {
     private JsonWriterFactory() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

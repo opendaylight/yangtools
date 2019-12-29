@@ -56,7 +56,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 @Beta
 public final class BaseTypes {
     private BaseTypes() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     public static @NonNull BinaryTypeDefinition binaryType() {

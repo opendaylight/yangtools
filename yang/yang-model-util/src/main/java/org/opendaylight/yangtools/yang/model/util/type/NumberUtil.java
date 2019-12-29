@@ -102,7 +102,7 @@ final class NumberUtil {
     }
 
     private NumberUtil() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     @SuppressWarnings("unchecked")

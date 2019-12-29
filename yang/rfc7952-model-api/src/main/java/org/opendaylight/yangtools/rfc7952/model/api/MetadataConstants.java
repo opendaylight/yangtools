@@ -44,7 +44,7 @@ public final class MetadataConstants {
     public static final String MODULE_PREFIX = "md";
 
     private MetadataConstants() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

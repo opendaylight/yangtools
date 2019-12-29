@@ -19,9 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class LeafRefContextUtils {
-
     private LeafRefContextUtils() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     public static LeafRefContext getLeafRefReferencingContext(final SchemaNode node, final LeafRefContext root) {

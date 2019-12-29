@@ -36,7 +36,7 @@ public final class DefaultReactors {
     private static final @NonNull CrossSourceStatementReactor DEFAULT_REACTOR = defaultReactorBuilder().build();
 
     private DefaultReactors() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

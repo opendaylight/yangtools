@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
 final class JavaLengthConstraints {
     private JavaLengthConstraints() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     private static final RangeSet<Integer> INTEGER_ALLOWED_RANGES =

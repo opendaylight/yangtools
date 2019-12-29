@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 @Deprecated
 public final class PrefixConverters {
     private PrefixConverters() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 final class TypeDefinitions {
     private TypeDefinitions() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     static int basicHashCode(final @NonNull TypeDefinition<?> type) {

@@ -80,6 +80,7 @@ public final class SchemaContextUtil {
     private static final CharMatcher SPACE = CharMatcher.is(' ');
 
     private SchemaContextUtil() {
+        // Hidden on purpose
     }
 
     /**

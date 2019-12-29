@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer;
  */
 public final class TreeNodeFactory {
     private TreeNodeFactory() {
-        throw new UnsupportedOperationException("Utility class should not be instantiated");
+        // Hidden on purpose
     }
 
     /**

@@ -46,7 +46,7 @@ public final class NetconfConstants {
     public static final String MODULE_PREFIX = "nc";
 
     private NetconfConstants() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

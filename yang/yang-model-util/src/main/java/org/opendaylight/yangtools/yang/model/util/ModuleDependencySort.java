@@ -40,11 +40,8 @@ import org.slf4j.LoggerFactory;
 public final class ModuleDependencySort {
     private static final Logger LOG = LoggerFactory.getLogger(ModuleDependencySort.class);
 
-    /**
-     * It is not desirable to instance this class.
-     */
     private ModuleDependencySort() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

@@ -47,7 +47,7 @@ public final class ArgumentUtils {
     private static final BigDecimal YANG_MAX_NUM = BigDecimal.valueOf(Double.MAX_VALUE);
 
     private ArgumentUtils() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     public static int compareNumbers(final Number n1, final Number n2) {

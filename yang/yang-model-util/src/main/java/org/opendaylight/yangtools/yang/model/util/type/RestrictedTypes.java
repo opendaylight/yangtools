@@ -71,7 +71,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 @Beta
 public final class RestrictedTypes {
     private RestrictedTypes() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     public static @NonNull LengthRestrictedTypeBuilder<BinaryTypeDefinition> newBinaryBuilder(

@@ -33,7 +33,7 @@ public final class ClassLoaderUtils {
     private static final Splitter DOT_SPLITTER = Splitter.on('.');
 
     private ClassLoaderUtils() {
-        throw new UnsupportedOperationException("Utility class");
+        // Hidden on purpose
     }
 
     /**

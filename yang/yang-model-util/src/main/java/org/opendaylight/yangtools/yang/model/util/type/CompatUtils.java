@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 @Deprecated
 public final class CompatUtils {
     private CompatUtils() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

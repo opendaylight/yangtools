@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class SchemaUtils {
     private SchemaUtils() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

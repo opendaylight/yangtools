@@ -41,7 +41,7 @@ public final class ImmutableNodes {
     private static final NodeIdentifier SCHEMACONTEXT_NAME = NodeIdentifier.create(SchemaContext.NAME);
 
     private ImmutableNodes() {
-        throw new UnsupportedOperationException("Utilities class should not be instantiated");
+        // Hidden on purpose
     }
 
     public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder() {

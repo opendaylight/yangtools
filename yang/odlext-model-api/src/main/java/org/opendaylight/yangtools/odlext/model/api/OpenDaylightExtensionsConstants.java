@@ -37,7 +37,7 @@ public final class OpenDaylightExtensionsConstants {
         ORIGINAL_REVISION);
 
     private OpenDaylightExtensionsConstants() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**

@@ -88,7 +88,7 @@ public final class UntrustedXML {
     }
 
     private UntrustedXML() {
-        throw new UnsupportedOperationException();
+        // Hidden on purpose
     }
 
     /**
