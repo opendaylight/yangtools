@@ -654,8 +654,6 @@ public final class SchemaContextUtil {
      */
     private static @Nullable SchemaNode resolveRelativeXPath(final SchemaContext context, final Module module,
             final PathExpression relativeXPath, final SchemaNode actualSchemaNode) {
-        checkState(!relativeXPath.isAbsolute(), "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
-                + "for non relative Revision Aware XPath use findDataSchemaNode method");
         checkState(actualSchemaNode.getPath() != null, "Schema Path reference for Leafref cannot be NULL");
 
         final String orig = relativeXPath.getOriginalString();
