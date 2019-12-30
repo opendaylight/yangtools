@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.codec.xml;
+package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import com.google.common.collect.ImmutableSet;
 import org.junit.AfterClass;
@@ -22,16 +22,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
-import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefDataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidation;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Yangtools821Test {
+public class YT821Test {
     private static final QName ROOT = QName.create("urn:opendaylight:params:xml:ns:yang:foo", "2018-07-18", "root");
     private static final QName FOO = QName.create(ROOT, "foo");
     private static final QName BAR = QName.create(ROOT, "bar");
