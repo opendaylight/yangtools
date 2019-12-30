@@ -18,6 +18,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
@@ -84,20 +86,17 @@ public final class SchemaContextUtil {
     }
 
     /**
-     * Method attempts to find DataSchemaNode in Schema Context via specified
-     * Schema Path. The returned DataSchemaNode from method will be the node at
-     * the end of the SchemaPath. If the DataSchemaNode is not present in the
-     * Schema Context the method will return <code>null</code>. <br>
-     * In case that Schema Context or Schema Path are not specified correctly
-     * (i.e. contains <code>null</code> values) the method will throw
-     * IllegalArgumentException.
+     * Method attempts to find DataSchemaNode in Schema Context via specified Schema Path. The returned DataSchemaNode
+     * from method will be the node at the end of the SchemaPath. If the DataSchemaNode is not present in the Schema
+     * Context the method will return {@code null}.
      *
-     * @param context
-     *            Schema Context
-     * @param schemaPath
-     *            Schema Path to search for
-     * @return SchemaNode from the end of the Schema Path or <code>null</code>
-     *         if the Node is not present.
+     * <p>
+     * In case that Schema Context or Schema Path are not specified correctly (i.e. contains {@code null} values) the
+     * method will throw IllegalArgumentException.
+     *
+     * @param context Schema Context
+     * @param schemaPath Schema Path to search for
+     * @return SchemaNode from the end of the Schema Path or {@code null} if the Node is not present.
      * @throws NullPointerException if context or schemaPath is null
      */
     public static SchemaNode findDataSchemaNode(final SchemaContext context, final SchemaPath schemaPath) {
@@ -109,6 +108,35 @@ public final class SchemaContextUtil {
 
         LOG.trace("Looking for path {} in context {}", schemaPath, context);
         return findNodeInSchemaContext(context, prefixedPath);
+    }
+
+    /**
+     * Attempt to find a DataSchemaNode based on its path from root, similar to
+     * {@link #findDataSchemaNode(SchemaContext, Module, PathExpression)} without requiring an expression.
+     *
+     * @param context Schema Context
+     * @param path Path to search for
+     * @return SchemaNode from the end of the Schema Path or {@code null} if the Node is not present.
+     * @throws NullPointerException if a any argument is null or if the path contains a null element
+     */
+    @Beta
+    public static SchemaNode findDataSchemaNode(final SchemaContext context, final List<QName> path) {
+        return findTargetNode(context, null, YangLocationPath.absolute(
+            path.stream().map(YangXPathAxis.CHILD::asStep).collect(Collectors.toList())));
+    }
+
+    /**
+     * Attempt to find a DataSchemaNode based on its path from root, similar to
+     * {@link #findDataSchemaNode(SchemaContext, Module, PathExpression)} without requiring an expression.
+     *
+     * @param context Schema Context
+     * @param path Path to search for
+     * @return SchemaNode from the end of the Schema Path or {@code null} if the Node is not present.
+     * @throws NullPointerException if a any argument is null or if the path contains a null element
+     */
+    @Beta
+    public static SchemaNode findDataSchemaNode(final SchemaContext context, final QName... path) {
+        return findDataSchemaNode(context, Arrays.asList(path));
     }
 
     /**
@@ -209,7 +237,7 @@ public final class SchemaContextUtil {
     //
     //        which would then be passed in to a method similar to this one. In static contexts, like MD-SAL codegen,
     //        that feels like an overkill.
-    // FIXME: YANGTOOLS-1052: this is a static analysis util, move it to yang-model-sa
+    // FIXME: YANGTOOLS-1052: this is a static analysis util, move it to a dedicated class
     public static SchemaNode findDataSchemaNodeForRelativeXPath(final SchemaContext context, final Module module,
             final SchemaNode actualSchemaNode, final PathExpression relativeXPath) {
         checkState(!relativeXPath.isAbsolute(), "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
@@ -655,7 +683,7 @@ public final class SchemaContextUtil {
         LOG.debug("Derefencing path {}", targetPath);
 
         final SchemaNode deref = targetPath.isAbsolute()
-                ? findTargetNode(context, actualSchemaNode,
+                ? findTargetNode(context, actualSchemaNode.getQName().getModule(),
                     ((LocationPathSteps) targetPath.getSteps()).getLocationPath())
                         : findDataSchemaNodeForRelativeXPath(context, module, actualSchemaNode, targetPath);
         if (deref == null) {
@@ -669,9 +697,8 @@ public final class SchemaContextUtil {
         return findTargetNode(context, resolveRelativePath(context, module, deref, qnames));
     }
 
-    private static @Nullable SchemaNode findTargetNode(final SchemaContext context, final SchemaNode actualSchemaNode,
+    private static @Nullable SchemaNode findTargetNode(final SchemaContext context, final QNameModule defaultModule,
             final YangLocationPath path) {
-        final QNameModule defaultModule = actualSchemaNode.getQName().getModule();
         final Deque<QName> ret = new ArrayDeque<>();
         for (Step step : path.getSteps()) {
             if (step instanceof AxisStep) {
