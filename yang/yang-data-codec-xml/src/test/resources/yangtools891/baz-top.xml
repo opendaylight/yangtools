@@ -1,5 +1,0 @@
-<top-container xmlns="urn:opendaylight:params:xml:ns:yang:baz">
-    <list-in-container>
-        <name>name1</name>
-    </list-in-container>
-</top-container>
