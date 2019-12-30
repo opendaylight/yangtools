@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.LocationPathSteps;
 import org.opendaylight.yangtools.yang.model.api.PathExpression.Steps;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -60,12 +61,8 @@ public class YT1060Test {
     @Test
     public void testFindDataSchemaNode() {
         final SchemaNode found = SchemaContextUtil.findDataTreeSchemaNode(context, CONT.getModule(), path);
-
-
-
-
-//        final SchemaNode found =  SchemaContextUtil.findDataSchemaNodeForRelativeXPath(context, module, secondaryType,
-//            ((LeafrefTypeDefinition) typeNodeType).getPathStatement());
-//        assertSame(primaryType, found);
+        assertThat(found, isA(LeafSchemaNode.class));
+        assertEquals(SchemaPath.create(true, QName.create("imported", "root"), QName.create("imported", "leaf1")),
+            found.getPath());
     }
 }
