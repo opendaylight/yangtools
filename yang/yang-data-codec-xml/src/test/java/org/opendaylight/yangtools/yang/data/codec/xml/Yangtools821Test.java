@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import java.io.InputStream;
 import javax.xml.stream.XMLStreamReader;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -32,19 +34,28 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Yangtools821Test {
-    private static final String NS = "urn:opendaylight:params:xml:ns:yang:foo";
-    private static final String REV = "2018-07-18";
-    private static final QName ROOT = QName.create(NS, REV, "root");
+    private static final QName ROOT = QName.create("urn:opendaylight:params:xml:ns:yang:foo", "2018-07-18", "root");
     private static final YangInstanceIdentifier ROOT_ID = YangInstanceIdentifier.of(ROOT);
 
-    private SchemaContext schemaContext;
-    private LeafRefContext leafRefContext;
+    private static SchemaContext schemaContext;
+    private static LeafRefContext leafRefContext;
+
     private DataTree dataTree;
 
-    @Before
-    public void setup() {
+    @BeforeClass
+    public static void beforeClass() {
         schemaContext = YangParserTestUtils.parseYangResource("/yangtools821/foo.yang");
         leafRefContext = LeafRefContext.create(schemaContext);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        schemaContext = null;
+        leafRefContext = null;
+    }
+
+    @Before
+    public void before() {
         dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
     }
 
