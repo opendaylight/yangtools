@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.codec.xml;
+package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -20,16 +20,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
-import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefDataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidation;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Yangtools891Test {
+public class YT891Test {
     private static final QName FOO_TOP = QName.create("urn:opendaylight:params:xml:ns:yang:foo", "2018-07-27",
         "foo-top");
     private static final QName CONTAINER_IN_LIST = QName.create(FOO_TOP, "container-in-list");
@@ -55,7 +52,7 @@ public class Yangtools891Test {
 
     @BeforeClass
     public static void beforeClass() {
-        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/yangtools891");
+        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/yt891");
         leafRefContext = LeafRefContext.create(schemaContext);
     }
 
