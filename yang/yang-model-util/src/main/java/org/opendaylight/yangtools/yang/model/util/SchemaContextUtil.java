@@ -40,7 +40,6 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -925,36 +924,6 @@ public final class SchemaContextUtil {
     }
 
     /**
-     * Extracts the base type of leaf schema node until it reach concrete type of TypeDefinition.
-     *
-     * @param node
-     *            a node representing LeafSchemaNode
-     * @return concrete type definition of node value
-     */
-    private static TypeDefinition<?> typeDefinition(final LeafSchemaNode node) {
-        TypeDefinition<?> baseType = node.getType();
-        while (baseType.getBaseType() != null) {
-            baseType = baseType.getBaseType();
-        }
-        return baseType;
-    }
-
-    /**
-     * Extracts the base type of leaf schema node until it reach concrete type of TypeDefinition.
-     *
-     * @param node
-     *            a node representing LeafListSchemaNode
-     * @return concrete type definition of node value
-     */
-    private static TypeDefinition<?> typeDefinition(final LeafListSchemaNode node) {
-        TypeDefinition<?> baseType = node.getType();
-        while (baseType.getBaseType() != null) {
-            baseType = baseType.getBaseType();
-        }
-        return baseType;
-    }
-
-    /**
      * Gets the base type of DataSchemaNode value.
      *
      * @param node
@@ -962,12 +931,15 @@ public final class SchemaContextUtil {
      * @return concrete type definition of node value
      */
     private static TypeDefinition<?> typeDefinition(final DataSchemaNode node) {
-        if (node instanceof LeafListSchemaNode) {
-            return typeDefinition((LeafListSchemaNode) node);
-        } else if (node instanceof LeafSchemaNode) {
-            return typeDefinition((LeafSchemaNode) node);
-        } else {
-            throw new IllegalArgumentException("Unhandled parameter type: " + node);
+        checkArgument(node instanceof TypedDataSchemaNode, "Unhandled parameter type %s", node);
+
+        TypeDefinition<?> current = ((TypedDataSchemaNode) node).getType();
+        // TODO: don't we have a utility for this?
+        TypeDefinition<?> base = current.getBaseType();
+        while (base != null) {
+            current = base;
+            base = current.getBaseType();
         }
+        return current;
     }
 }
