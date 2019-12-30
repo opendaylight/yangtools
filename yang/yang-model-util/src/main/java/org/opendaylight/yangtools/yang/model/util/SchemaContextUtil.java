@@ -841,12 +841,11 @@ public final class SchemaContextUtil {
             }
 
             Module parentModule = findParentModuleOfReferencingType(schemaContext, baseSchema);
-            dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext, parentModule,
-                    pathStatement);
+            dataSchemaNode = (DataSchemaNode) findDataSchemaNode(schemaContext, parentModule, pathStatement);
         } else {
             Module parentModule = findParentModule(schemaContext, schema);
-            dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNodeForRelativeXPath(schemaContext,
-                    parentModule, schema, pathStatement);
+            dataSchemaNode = (DataSchemaNode) findDataSchemaNodeForRelativeXPath(schemaContext, parentModule, schema,
+                pathStatement);
         }
 
         // FIXME this is just to preserve backwards compatibility since yangtools do not mind wrong leafref xpaths
@@ -885,8 +884,8 @@ public final class SchemaContextUtil {
         final Optional<Module> parentModule = schemaContext.findModule(qname.getModule());
         checkArgument(parentModule.isPresent(), "Failed to find parent module for %s", qname);
 
-        final DataSchemaNode dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext,
-            parentModule.get(), strippedPathStatement);
+        final DataSchemaNode dataSchemaNode = (DataSchemaNode) findDataSchemaNode(schemaContext, parentModule.get(),
+            strippedPathStatement);
         final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
         if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
             return getBaseTypeForLeafRef((LeafrefTypeDefinition) targetTypeDefinition, schemaContext, dataSchemaNode);
@@ -909,7 +908,7 @@ public final class SchemaContextUtil {
             return schemaContext.findModule(nodeType.getQName().getModule()).orElse(null);
         }
 
-        return SchemaContextUtil.findParentModule(schemaContext, schemaNode);
+        return findParentModule(schemaContext, schemaNode);
     }
 
     private static final Pattern STRIP_PATTERN = Pattern.compile("\\[[^\\[\\]]*\\]");
