@@ -65,23 +65,9 @@ public class YT891Test {
     @Test
     public void testValid() throws Exception {
         final DataTreeModification writeModification = dataTree.takeSnapshot().newModification();
-        writeModification.write(FOO_TOP_ID, Builders.containerBuilder()
-            .withNodeIdentifier(new NodeIdentifier(FOO_TOP))
-            .withChild(Builders.mapBuilder()
-                .withNodeIdentifier(new NodeIdentifier(LIST_IN_GROUPING))
-                .withChild(Builders.mapEntryBuilder()
-                    .withNodeIdentifier(NodeIdentifierWithPredicates.of(LIST_IN_GROUPING, NAME, "name1"))
-                    .withChild(ImmutableNodes.leafNode(NAME, "name1"))
-                    .withChild(Builders.containerBuilder()
-                        .withNodeIdentifier(new NodeIdentifier(CONTAINER_IN_LIST))
-                        .withChild(ImmutableNodes.leafNode(NAME, "name1"))
-                        .build())
-                    .build())
-                .build())
-            .build());
+        writeModification.write(FOO_TOP_ID, fooTopWithList("name1"));
         writeModification.ready();
         final DataTreeCandidate writeContributorsCandidate = dataTree.prepare(writeModification);
-
         LeafRefValidation.validate(writeContributorsCandidate, leafRefContext);
         dataTree.commit(writeContributorsCandidate);
     }
@@ -89,52 +75,51 @@ public class YT891Test {
     @Test(expected = LeafRefDataValidationFailedException.class)
     public void testInvalid() throws Exception {
         final DataTreeModification writeModification = dataTree.takeSnapshot().newModification();
-        writeModification.write(FOO_TOP_ID, Builders.containerBuilder()
-            .withNodeIdentifier(new NodeIdentifier(FOO_TOP))
-            .withChild(Builders.mapBuilder()
-                .withNodeIdentifier(new NodeIdentifier(LIST_IN_GROUPING))
-                .withChild(Builders.mapEntryBuilder()
-                    .withNodeIdentifier(NodeIdentifierWithPredicates.of(LIST_IN_GROUPING, NAME, "name1"))
-                    .withChild(ImmutableNodes.leafNode(NAME, "name1"))
-                    .withChild(Builders.containerBuilder()
-                        .withNodeIdentifier(new NodeIdentifier(CONTAINER_IN_LIST))
-                        .withChild(ImmutableNodes.leafNode(NAME, "name2"))
-                        .build())
-                    .build())
-                .build())
-            .build());
+        writeModification.write(FOO_TOP_ID, fooTopWithList("name2"));
         writeModification.ready();
-        final DataTreeCandidate writeContributorsCandidate = dataTree.prepare(writeModification);
-
-        LeafRefValidation.validate(writeContributorsCandidate, leafRefContext);
+        LeafRefValidation.validate(dataTree.prepare(writeModification), leafRefContext);
     }
 
     @Test
     public void testGroupingWithLeafrefValid() throws Exception {
         final DataTreeModification writeModification = dataTree.takeSnapshot().newModification();
         writeModification.write(BAZ_TOP_ID, bazTop());
-        writeModification.write(FOO_TOP_ID, Builders.containerBuilder()
-            .withNodeIdentifier(new NodeIdentifier(FOO_TOP))
-            .withChild(ImmutableNodes.leafNode(REF, "name1"))
-            .build());
+        writeModification.write(FOO_TOP_ID, fooTopWithRef("name1"));
         writeModification.ready();
-        final DataTreeCandidate writeContributorsCandidate = dataTree.prepare(writeModification);
-
-        LeafRefValidation.validate(writeContributorsCandidate, leafRefContext);
+        LeafRefValidation.validate(dataTree.prepare(writeModification), leafRefContext);
     }
 
     @Test(expected = LeafRefDataValidationFailedException.class)
     public void testGroupingWithLeafrefInvalid() throws Exception {
         final DataTreeModification writeModification = dataTree.takeSnapshot().newModification();
         writeModification.write(BAZ_TOP_ID, bazTop());
-        writeModification.write(FOO_TOP_ID, Builders.containerBuilder()
-            .withNodeIdentifier(new NodeIdentifier(FOO_TOP))
-            .withChild(ImmutableNodes.leafNode(REF, "name3"))
-            .build());
+        writeModification.write(FOO_TOP_ID, fooTopWithRef("name3"));
         writeModification.ready();
-        final DataTreeCandidate writeContributorsCandidate = dataTree.prepare(writeModification);
+        LeafRefValidation.validate(dataTree.prepare(writeModification), leafRefContext);
+    }
 
-        LeafRefValidation.validate(writeContributorsCandidate, leafRefContext);
+    private static ContainerNode fooTopWithList(final String refValue) {
+        return Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(FOO_TOP))
+                .withChild(Builders.mapBuilder()
+                    .withNodeIdentifier(new NodeIdentifier(LIST_IN_GROUPING))
+                    .withChild(Builders.mapEntryBuilder()
+                        .withNodeIdentifier(NodeIdentifierWithPredicates.of(LIST_IN_GROUPING, NAME, "name1"))
+                        .withChild(ImmutableNodes.leafNode(NAME, "name1"))
+                        .withChild(Builders.containerBuilder()
+                            .withNodeIdentifier(new NodeIdentifier(CONTAINER_IN_LIST))
+                            .withChild(ImmutableNodes.leafNode(NAME, refValue))
+                            .build())
+                        .build())
+                    .build())
+                .build();
+    }
+
+    private static ContainerNode fooTopWithRef(final String refValue) {
+        return Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(FOO_TOP))
+                .withChild(ImmutableNodes.leafNode(REF, refValue))
+                .build();
     }
 
     private static ContainerNode bazTop() {
