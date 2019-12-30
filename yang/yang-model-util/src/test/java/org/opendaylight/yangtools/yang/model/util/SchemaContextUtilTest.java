@@ -28,6 +28,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -39,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 public class SchemaContextUtilTest {
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ');
     private static final URI NAMESPACE = URI.create("abc");
+    private static final QNameModule MODULE = QNameModule.create(NAMESPACE);
 
     @Mock
     private SchemaContext mockSchemaContext;
@@ -52,10 +54,7 @@ public class SchemaContextUtilTest {
         doReturn(Optional.empty()).when(mockSchemaContext).findModule(any(QNameModule.class));
         doReturn(Optional.empty()).when(mockSchemaContext).findDataTreeChild(any(Iterable.class));
 
-        doReturn("test").when(mockModule).getName();
-        doReturn("test").when(mockModule).getPrefix();
         doReturn(NAMESPACE).when(mockModule).getNamespace();
-        doReturn(QNameModule.create(NAMESPACE)).when(mockModule).getQNameModule();
         doReturn(Optional.empty()).when(mockModule).getRevision();
     }
 
@@ -67,14 +66,13 @@ public class SchemaContextUtilTest {
         assertNull("Should be null. Module TestQName not found",
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, schemaPath));
 
-        PathExpression xpath = new PathExpressionImpl("/test:bookstore/test:book/test:title", true);
         assertNull("Should be null. Module bookstore not found",
-                SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xpath));
+                SchemaContextUtil.findDataSchemaNode(mockSchemaContext,
+                    QName.create(MODULE, "bookstore"), QName.create(MODULE, "book"), QName.create(MODULE, "title")));
 
-
-        final PathExpression xPath = new PathExpressionImpl("/bookstore/book/title", true);
         assertEquals("Should be null. Module bookstore not found", null,
-                SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xPath));
+            SchemaContextUtil.findDataSchemaNode( mockSchemaContext, MODULE,
+                UnqualifiedQName.of("bookstore"), UnqualifiedQName.of("book"), UnqualifiedQName.of("title")));
 
         SchemaNode int32node = BaseTypes.int32Type();
         PathExpression xpathRelative = new PathExpressionImpl("../prefix", false);
@@ -131,7 +129,7 @@ public class SchemaContextUtilTest {
 
     @Test(expected = NullPointerException.class)
     public void findDataSchemaNodeIllegalArgumentTest() {
-        SchemaContextUtil.findDataSchemaNode(mock(SchemaContext.class), null);
+        SchemaContextUtil.findDataSchemaNode(mock(SchemaContext.class), (SchemaPath) null);
     }
 
     @Test(expected = NullPointerException.class)
