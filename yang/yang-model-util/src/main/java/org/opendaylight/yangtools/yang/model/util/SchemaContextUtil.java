@@ -266,7 +266,7 @@ public final class SchemaContextUtil {
             final SchemaNode actualSchemaNode, final PathExpression relativeXPath) {
         checkState(!relativeXPath.isAbsolute(), "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
                 + "for non relative Revision Aware XPath use findDataSchemaNode method");
-        return resolveRelativeXPath(context, module, relativeXPath, actualSchemaNode);
+        return resolveRelativeXPath(context, module, relativeXPath.getOriginalString(), actualSchemaNode);
     }
 
     /**
@@ -653,12 +653,12 @@ public final class SchemaContextUtil {
      * @throws IllegalArgumentException if any arguments are null
      */
     private static @Nullable SchemaNode resolveRelativeXPath(final SchemaContext context, final Module module,
-            final PathExpression relativeXPath, final SchemaNode actualSchemaNode) {
+            final String pathStr, final SchemaNode actualSchemaNode) {
         checkState(actualSchemaNode.getPath() != null, "Schema Path reference for Leafref cannot be NULL");
 
-        final String orig = relativeXPath.getOriginalString();
-        return  orig.startsWith("deref(") ? resolveDerefPath(context, module, actualSchemaNode, orig)
-                : findTargetNode(context, resolveRelativePath(context, module, actualSchemaNode, doSplitXPath(orig)));
+        return pathStr.startsWith("deref(") ? resolveDerefPath(context, module, actualSchemaNode, pathStr)
+                : findTargetNode(context, resolveRelativePath(context, module, actualSchemaNode,
+                    doSplitXPath(pathStr)));
     }
 
     private static Iterable<QName> resolveRelativePath(final SchemaContext context, final Module module,
@@ -819,9 +819,8 @@ public final class SchemaContextUtil {
      */
     public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition,
             final SchemaContext schemaContext, final SchemaNode schema) {
-        PathExpression pathStatement = typeDefinition.getPathStatement();
-        pathStatement = new PathExpressionImpl(stripConditionsFromXPathString(pathStatement),
-            pathStatement.isAbsolute());
+        final PathExpression pathStatement = typeDefinition.getPathStatement();
+        final String pathStr = stripConditionsFromXPathString(pathStatement);
 
         final DataSchemaNode dataSchemaNode;
         if (pathStatement.isAbsolute()) {
@@ -835,12 +834,12 @@ public final class SchemaContextUtil {
                 }
             }
 
-            Module parentModule = findParentModuleOfReferencingType(schemaContext, baseSchema);
-            dataSchemaNode = (DataSchemaNode) findDataSchemaNode(schemaContext, parentModule, pathStatement);
+            final Module parentModule = findParentModuleOfReferencingType(schemaContext, baseSchema);
+            dataSchemaNode = (DataSchemaNode) findTargetNode(schemaContext,
+                xpathToQNamePath(schemaContext, parentModule, pathStr));
         } else {
             Module parentModule = findParentModule(schemaContext, schema);
-            dataSchemaNode = (DataSchemaNode) findDataSchemaNodeForRelativeXPath(schemaContext, parentModule, schema,
-                pathStatement);
+            dataSchemaNode = (DataSchemaNode) resolveRelativeXPath(schemaContext, parentModule, pathStr, schema);
         }
 
         // FIXME this is just to preserve backwards compatibility since yangtools do not mind wrong leafref xpaths
@@ -874,14 +873,11 @@ public final class SchemaContextUtil {
             return null;
         }
 
-        final PathExpression strippedPathStatement = new PathExpressionImpl(
-            stripConditionsFromXPathString(pathStatement), true);
-
         final Optional<Module> parentModule = schemaContext.findModule(qname.getModule());
         checkArgument(parentModule.isPresent(), "Failed to find parent module for %s", qname);
 
-        final DataSchemaNode dataSchemaNode = (DataSchemaNode) findDataSchemaNode(schemaContext, parentModule.get(),
-            strippedPathStatement);
+        final DataSchemaNode dataSchemaNode = (DataSchemaNode) findTargetNode(schemaContext,
+            xpathToQNamePath(schemaContext, parentModule.get(), stripConditionsFromXPathString(pathStatement)));
         final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
         if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
             return getBaseTypeForLeafRef((LeafrefTypeDefinition) targetTypeDefinition, schemaContext, dataSchemaNode);
