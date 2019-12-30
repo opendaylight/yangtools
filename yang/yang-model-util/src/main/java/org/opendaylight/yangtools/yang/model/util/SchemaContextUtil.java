@@ -14,14 +14,17 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -188,6 +191,32 @@ public final class SchemaContextUtil {
             return findTargetNode(context, xpathToQNamePath(context, module, strXPath));
         }
         return null;
+    }
+
+    @Beta
+    public static SchemaNode findDataTreeSchemaNode(final SchemaContext ctx, final TypedDataSchemaNode currentNode,
+            final YangLocationPath path) {
+        final QNameModule localModule = currentNode.getQName().getModule();
+        return path.isAbsolute() ? findTargetNode(ctx, localModule, path)
+                : resolveRelativePath(ctx, localModule, currentNode, path.getSteps());
+    }
+
+    private static SchemaNode resolveRelativePath(final SchemaContext ctx, final QNameModule localNamespace,
+            final SchemaNode baseNode, final ImmutableList<Step> steps) {
+        final Collection<QName> childSteps;
+        try {
+            childSteps = resolveChildQNames(localNamespace, steps);
+        } catch (NoSuchElementException e) {
+            // We need to bail and retry while having a stack of candidate nodes
+            throw new UnsupportedOperationException("Breaking out of base node not implemented yet for " + steps, e);
+        }
+        if (childSteps.isEmpty()) {
+            return baseNode;
+        }
+        if (!(baseNode instanceof DataNodeContainer)) {
+            return null;
+        }
+        return ((DataNodeContainer) baseNode).findDataTreeChild(childSteps).orElse(null);
     }
 
     @Beta
@@ -717,10 +746,10 @@ public final class SchemaContextUtil {
         return findTargetNode(context, resolveRelativePath(context, module, deref, qnames));
     }
 
-    private static @Nullable SchemaNode findTargetNode(final SchemaContext context, final QNameModule localNamespace,
-            final YangLocationPath path) {
-        final Deque<QName> ret = new ArrayDeque<>();
-        for (Step step : path.getSteps()) {
+    private static Collection<QName> resolveChildQNames(final QNameModule localNamespace,
+            final ImmutableList<Step> steps) {
+        final Deque<QName> ret = new ArrayDeque<>(steps.size());
+        for (Step step : steps) {
             if (step instanceof AxisStep) {
                 // We only support parent axis steps
                 final YangXPathAxis axis = ((AxisStep) step).getAxis();
@@ -730,11 +759,18 @@ public final class SchemaContextUtil {
             }
 
             // This has to be a QNameStep
-            checkState(step instanceof QNameStep, "Unhandled step %s in %s", step, path);
+            checkState(step instanceof QNameStep, "Unhandled step %s in %s", step, steps);
+
+            final YangXPathAxis axis = step.getAxis();
+            checkState(axis == YangXPathAxis.PARENT, "Unexpected axis %s", axis);
             ret.addLast(resolve(((QNameStep) step).getQName(), localNamespace));
         }
+        return ret;
+    }
 
-        return findTargetNode(context, ret);
+    private static @Nullable SchemaNode findTargetNode(final SchemaContext context, final QNameModule localNamespace,
+            final YangLocationPath path) {
+        return findTargetNode(context, resolveChildQNames(localNamespace, path.getSteps()));
     }
 
     private static QName resolve(final AbstractQName toResolve, final QNameModule localNamespace) {
