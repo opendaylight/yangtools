@@ -1,4 +1,4 @@
-module foo {
+module yt821 {
     namespace "urn:opendaylight:params:xml:ns:yang:foo";
     prefix foo;
 
