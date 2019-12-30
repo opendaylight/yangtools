@@ -63,9 +63,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.AxisStep;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.QNameStep;
-import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.ResolvedQNameStep;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Step;
-import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.UnresolvedQNameStep;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -719,7 +717,7 @@ public final class SchemaContextUtil {
         return findTargetNode(context, resolveRelativePath(context, module, deref, qnames));
     }
 
-    private static @Nullable SchemaNode findTargetNode(final SchemaContext context, final QNameModule defaultModule,
+    private static @Nullable SchemaNode findTargetNode(final SchemaContext context, final QNameModule localNamespace,
             final YangLocationPath path) {
         final Deque<QName> ret = new ArrayDeque<>();
         for (Step step : path.getSteps()) {
@@ -733,22 +731,20 @@ public final class SchemaContextUtil {
 
             // This has to be a QNameStep
             checkState(step instanceof QNameStep, "Unhandled step %s in %s", step, path);
-            final QName qname;
-            if (step instanceof ResolvedQNameStep) {
-                qname = ((ResolvedQNameStep) step).getQName();
-            } else if (step instanceof UnresolvedQNameStep) {
-                final AbstractQName toResolve = ((UnresolvedQNameStep) step).getQName();
-                // TODO: should handle qualified QNames, too? parser should have resolved them when we get here...
-                checkState(toResolve instanceof UnqualifiedQName, "Unhandled qname %s in %s", toResolve, path);
-                qname = QName.create(defaultModule, toResolve.getLocalName());
-            } else {
-                throw new IllegalStateException("Unhandled step " + step);
-            }
-
-            ret.addLast(qname);
+            ret.addLast(resolve(((QNameStep) step).getQName(), localNamespace));
         }
 
         return findTargetNode(context, ret);
+    }
+
+    private static QName resolve(final AbstractQName toResolve, final QNameModule localNamespace) {
+        if (toResolve instanceof QName) {
+            return (QName) toResolve;
+        } else if (toResolve instanceof UnqualifiedQName) {
+            return ((UnqualifiedQName) toResolve).bindTo(localNamespace);
+        } else {
+            throw new IllegalStateException("Unhandled step " + toResolve);
+        }
     }
 
     private static @Nullable SchemaNode findTargetNode(final SchemaContext context, final Iterable<QName> qnamePath) {
