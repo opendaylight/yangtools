@@ -15,6 +15,8 @@ import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
@@ -23,6 +25,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidation;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.InMemoryDataTreeFactory;
@@ -33,16 +37,18 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Yangtools892Test {
     private static final String TEST_BGP_NAME = "test-bgp";
-    private static final String TEST_BGP_NS = "urn:opendaylight:params:xml:ns:yang:test:bgp";
     private static final String TEST_BGP_REV = "2018-08-14";
-    private static final QName BGP = QName.create(TEST_BGP_NS, TEST_BGP_REV, "bgp");
+    private static final QName BGP = QName.create("urn:opendaylight:params:xml:ns:yang:test:bgp", TEST_BGP_REV, "bgp");
+    private static final QName PEER_GROUPS = QName.create(BGP, "peer-groups");
+    private static final QName PEER_GROUP = QName.create(BGP, "peer-group");
+    private static final QName PEER_GROUP_NAME = QName.create(BGP, "peer-group-name");
     private static final YangInstanceIdentifier BGP_ID = YangInstanceIdentifier.of(BGP);
 
     private static final String NETWORK_INSTANCE_NAME = "test-network-instance";
-    private static final String NETWORK_INSTANCE_NS = "urn:opendaylight:params:xml:ns:yang:test:network:instance";
     private static final String NETWORK_INSTANCE_REV = "2018-08-14";
     private static final QName NETWORK_INSTANCES =
-        QName.create(NETWORK_INSTANCE_NS, NETWORK_INSTANCE_REV, "network-instances");
+            QName.create("urn:opendaylight:params:xml:ns:yang:test:network:instance", NETWORK_INSTANCE_REV,
+                "network-instances");
     private static final YangInstanceIdentifier NETWORK_INSTANCES_ID = YangInstanceIdentifier.of(NETWORK_INSTANCES);
 
     private SchemaContext schemaContext;
@@ -66,9 +72,22 @@ public class Yangtools892Test {
     @Test
     public void testWriteBgpNeighbour() throws Exception {
         final DataTreeModification writeModification = dataTree.takeSnapshot().newModification();
-        final NormalizedNode<?, ?> bgp = readNode("/yangtools892/peer-groups.xml", bgpNode);
-        writeModification.write(BGP_ID, bgp);
+        writeModification.write(BGP_ID, Builders.containerBuilder()
+            .withNodeIdentifier(new NodeIdentifier(BGP))
+            .withChild(Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(PEER_GROUPS))
+                .withChild(Builders.mapBuilder()
+                    .withNodeIdentifier(new NodeIdentifier(PEER_GROUP))
+                    .withChild(Builders.mapEntryBuilder()
+                        .withNodeIdentifier(NodeIdentifierWithPredicates.of(PEER_GROUP,
+                            PEER_GROUP_NAME, "application-peers"))
+                        .withChild(ImmutableNodes.leafNode(PEER_GROUP_NAME, "application-peers"))
+                        .build())
+                    .build())
+                .build())
+            .build());
         final NormalizedNode<?, ?> networkInstances = readNode("/yangtools892/neighbour.xml", networkInstancesNode);
+//        assertEquals(networkInstances, ni);
         writeModification.write(NETWORK_INSTANCES_ID, networkInstances);
 
         writeModification.ready();
