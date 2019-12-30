@@ -873,11 +873,12 @@ public final class SchemaContextUtil {
     public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition,
             final SchemaContext schemaContext, final QName qname) {
         final PathExpression pathStatement = typeDefinition.getPathStatement();
-        final PathExpression strippedPathStatement = new PathExpressionImpl(
-            stripConditionsFromXPathString(pathStatement), pathStatement.isAbsolute());
-        if (!strippedPathStatement.isAbsolute()) {
+        if (!pathStatement.isAbsolute()) {
             return null;
         }
+
+        final PathExpression strippedPathStatement = new PathExpressionImpl(
+            stripConditionsFromXPathString(pathStatement), true);
 
         final Optional<Module> parentModule = schemaContext.findModule(qname.getModule());
         checkArgument(parentModule.isPresent(), "Failed to find parent module for %s", qname);
