@@ -131,7 +131,7 @@ public class SchemaContextUtilTest {
 
     @Test(expected = NullPointerException.class)
     public void findDataSchemaNodeIllegalArgumentTest() {
-        SchemaContextUtil.findDataSchemaNode(mock(SchemaContext.class), null);
+        SchemaContextUtil.findDataSchemaNode(mock(SchemaContext.class), (SchemaPath) null);
     }
 
     @Test(expected = NullPointerException.class)
