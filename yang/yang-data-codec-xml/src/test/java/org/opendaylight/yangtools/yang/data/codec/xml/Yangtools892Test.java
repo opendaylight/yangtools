@@ -78,7 +78,7 @@ public class Yangtools892Test {
     }
 
     private NormalizedNode<?, ?> readNode(final String filename, final ContainerSchemaNode node) throws Exception {
-        final InputStream resourceAsStream = Yangtools891Test.class.getResourceAsStream(filename);
+        final InputStream resourceAsStream = Yangtools892Test.class.getResourceAsStream(filename);
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
