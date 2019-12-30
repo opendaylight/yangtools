@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import java.io.InputStream;
 import javax.xml.stream.XMLStreamReader;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -44,21 +46,34 @@ public class Yangtools891Test {
     private static final QName BAZ_TOP = QName.create(BAZ_NS, BAZ_REV, "baz-top");
     private static final YangInstanceIdentifier BAZ_TOP_ID = YangInstanceIdentifier.of(BAZ_TOP);
 
-    private SchemaContext schemaContext;
-    private LeafRefContext leafRefContext;
+    private static SchemaContext schemaContext;
+    private static LeafRefContext leafRefContext;
+    private static ContainerSchemaNode fooTopNode;
+    private static ContainerSchemaNode bazTopNode;
+
     private DataTree dataTree;
-    private ContainerSchemaNode fooTopNode;
-    private ContainerSchemaNode bazTopNode;
 
     @Before
-    public void setup() {
+    public void before() {
+        dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+    }
+
+    @BeforeClass
+    public static void beforeClass() {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/yangtools891");
         leafRefContext = LeafRefContext.create(schemaContext);
-        dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
         final Module fooModule = schemaContext.findModule(FOO, Revision.of(FOO_REV)).get();
         fooTopNode = (ContainerSchemaNode) fooModule.findDataChildByName(FOO_TOP).get();
         final Module bazModule = schemaContext.findModule(BAZ, Revision.of(BAZ_REV)).get();
         bazTopNode = (ContainerSchemaNode) bazModule.findDataChildByName(BAZ_TOP).get();
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        schemaContext = null;
+        leafRefContext = null;
+        fooTopNode = null;
+        bazTopNode = null;
     }
 
     @Test
@@ -110,7 +125,8 @@ public class Yangtools891Test {
         LeafRefValidation.validate(writeContributorsCandidate, leafRefContext);
     }
 
-    private NormalizedNode<?, ?> readNode(final String filename, final ContainerSchemaNode node) throws Exception {
+    private static NormalizedNode<?, ?> readNode(final String filename, final ContainerSchemaNode node)
+            throws Exception {
         final InputStream resourceAsStream = Yangtools891Test.class.getResourceAsStream(filename);
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final NormalizedNodeResult result = new NormalizedNodeResult();
