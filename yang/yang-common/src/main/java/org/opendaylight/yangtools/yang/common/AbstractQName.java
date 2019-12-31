@@ -61,6 +61,17 @@ public abstract class AbstractQName implements Identifier, WritableObject {
     @Override
     public abstract String toString();
 
+    /**
+     * Returns a QName with the specified namespace and the same local name as this one.
+     *
+     * @param namespace New namespace to use
+     * @return a QName with specified QNameModule and same local name as this one
+     * @throws NullPointerException if namespace is null
+     */
+    public QName bindTo(final QNameModule namespace) {
+        return new QName(namespace, getLocalName());
+    }
+
     abstract Object writeReplace();
 
     static final String checkLocalName(final @Nullable String localName) {

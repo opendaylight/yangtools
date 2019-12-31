@@ -71,7 +71,7 @@ public final class KeyStatementSupport
         for (final SchemaNodeIdentifier arg : ctx.coerceStatementArgument()) {
             final QName qname = arg.getLastComponent();
             if (!targetModule.equals(qname.getModule())) {
-                final QName newQname = qname.withModule(targetModule).intern();
+                final QName newQname = qname.bindTo(targetModule).intern();
                 builder.add(SchemaNodeIdentifier.SAME.createChild(newQname));
                 replaced = true;
             } else {

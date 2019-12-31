@@ -99,7 +99,7 @@ public final class MountPointStatementSupport
     @Override
     public QName adaptArgumentValue(final StmtContext<QName, MountPointStatement, MountPointEffectiveStatement> ctx,
             final QNameModule targetModule) {
-        return ctx.coerceStatementArgument().withModule(targetModule).intern();
+        return ctx.coerceStatementArgument().bindTo(targetModule).intern();
     }
 
     @Override

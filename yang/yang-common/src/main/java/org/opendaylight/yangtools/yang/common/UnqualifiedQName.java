@@ -48,10 +48,6 @@ public final class UnqualifiedQName extends AbstractQName implements Comparable<
         return of(in.readUTF());
     }
 
-    public QName bindTo(final QNameModule namespace) {
-        return new QName(namespace, getLocalName());
-    }
-
     @Override
     @SuppressFBWarnings(value = "ES_COMPARING_STRINGS_WITH_EQ", justification = "Interning identity check")
     public UnqualifiedQName intern() {

@@ -311,7 +311,7 @@ abstract class AbstractTypeStatementSupport
         final QName parentQName = parent.getLastComponent();
         checkArgument(parentQName != null, "Path %s has an empty parent", path);
 
-        final QName qname = path.getLastComponent().withModule(parentQName.getModule()).intern();
+        final QName qname = path.getLastComponent().bindTo(parentQName.getModule()).intern();
         return parent.createChild(qname);
     }
 }

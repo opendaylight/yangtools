@@ -87,9 +87,10 @@ public final class YangConstants {
      */
     public static final String YANG_XPATH_FUNCTIONS_PREFIX = "yang";
 
-    // Dummy template QNames. These are never leaked, but are used for efficient instantiation via QName#withModule()
-    private static final QName DUMMY_OPERATION_INPUT = QName.create("DUMMY", "input");
-    private static final QName DUMMY_OPERATION_OUTPUT = QName.create("DUMMY", "output");
+    // Dummy template UnqualifiedQName. These are never leaked, but are used for efficient instantiation via
+    // UnqualifiedQName#bindTo()
+    private static final UnqualifiedQName DUMMY_OPERATION_INPUT = UnqualifiedQName.of("input");
+    private static final UnqualifiedQName DUMMY_OPERATION_OUTPUT = UnqualifiedQName.of("output");
 
     private YangConstants() {
         // Hidden on purpose
@@ -104,7 +105,7 @@ public final class YangConstants {
      * @throws NullPointerException if {@code module} is null
      */
     public static QName operationInputQName(final QNameModule module) {
-        return DUMMY_OPERATION_INPUT.withModule(module);
+        return DUMMY_OPERATION_INPUT.bindTo(module);
     }
 
     /**
@@ -116,6 +117,6 @@ public final class YangConstants {
      * @throws NullPointerException if {@code module} is null
      */
     public static QName operationOutputQName(final QNameModule module) {
-        return DUMMY_OPERATION_OUTPUT.withModule(module);
+        return DUMMY_OPERATION_OUTPUT.bindTo(module);
     }
 }
