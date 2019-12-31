@@ -59,10 +59,6 @@ public final class QualifiedQName extends AbstractQName implements Comparable<Qu
         return namespaceContext.findNamespaceForPrefix(prefix).map(this::bindTo);
     }
 
-    private QName bindTo(final QNameModule namespace) {
-        return new QName(namespace, getLocalName());
-    }
-
     @Override
     @SuppressFBWarnings(value = "ES_COMPARING_STRINGS_WITH_EQ", justification = "Interning identity check")
     public QualifiedQName intern() {

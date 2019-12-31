@@ -298,12 +298,19 @@ public final class QName extends AbstractQName implements Comparable<QName> {
         return sb.append(getLocalName()).toString();
     }
 
+    @Override
+    public @NonNull QName bindTo(final QNameModule namespace) {
+        return module.equals(namespace) ? this : super.bindTo(namespace);
+    }
+
     /**
      * Returns a QName with the specified QNameModule and the same localname as this one.
      *
      * @param newModule New QNameModule to use
      * @return a QName with specified QNameModule and same local name as this one
+     * @deprecated Use {@link #bindTo(QNameModule)} instead.
      */
+    @Deprecated(forRemoval = true)
     public @NonNull QName withModule(final QNameModule newModule) {
         return new QName(newModule, getLocalName());
     }
