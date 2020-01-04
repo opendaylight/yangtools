@@ -359,10 +359,10 @@ public final class ByteBufUtils {
     }
 
     /**
-     * Write a {@link Byte} value to specified buffer if it is not null, otherwise write two zero bytes.
+     * Write a {@link Short} value to specified buffer if it is not null, otherwise write two zero bytes.
      *
      * @param buf buffer
-     * @param value A {@link Byte}
+     * @param value A {@link Short}
      * @throws NullPointerException if {@code buf} is null
      */
     public static void writeOrZero(final ByteBuf buf, final @Nullable Short value) {
@@ -370,10 +370,10 @@ public final class ByteBufUtils {
     }
 
     /**
-     * Write a {@link Byte} value to specified buffer if it is not null, otherwise write four zero bytes.
+     * Write a {@link Integer} value to specified buffer if it is not null, otherwise write four zero bytes.
      *
      * @param buf buffer
-     * @param value A {@link Byte}
+     * @param value A {@link Integer}
      * @throws NullPointerException if {@code buf} is null
      */
     public static void writeOrZero(final ByteBuf buf, final @Nullable Integer value) {
@@ -392,10 +392,10 @@ public final class ByteBufUtils {
     }
 
     /**
-     * Write a {@link Byte} value to specified buffer if it is not null, otherwise write one zero byte.
+     * Write a {@link Uint8} value to specified buffer if it is not null, otherwise write one zero byte.
      *
      * @param buf buffer
-     * @param value A {@link Byte}
+     * @param value A {@link Uint8}
      * @throws NullPointerException if {@code buf} is null
      */
     public static void writeOrZero(final ByteBuf buf, final @Nullable Uint8 value) {
@@ -403,10 +403,10 @@ public final class ByteBufUtils {
     }
 
     /**
-     * Write a {@link Byte} value to specified buffer if it is not null, otherwise write two zero bytes.
+     * Write a {@link Uint16} value to specified buffer if it is not null, otherwise write two zero bytes.
      *
      * @param buf buffer
-     * @param value A {@link Byte}
+     * @param value A {@link Uint16}
      * @throws NullPointerException if {@code buf} is null
      */
     public static void writeOrZero(final ByteBuf buf, final @Nullable Uint16 value) {
@@ -414,10 +414,10 @@ public final class ByteBufUtils {
     }
 
     /**
-     * Write a {@link Byte} value to specified buffer if it is not null, otherwise write four zero bytes.
+     * Write a {@link Uint32} value to specified buffer if it is not null, otherwise write four zero bytes.
      *
      * @param buf buffer
-     * @param value A {@link Byte}
+     * @param value A {@link Uint32}
      * @throws NullPointerException if {@code buf} is null
      */
     public static void writeOrZero(final ByteBuf buf, final @Nullable Uint32 value) {
@@ -425,10 +425,10 @@ public final class ByteBufUtils {
     }
 
     /**
-     * Write a {@link Byte} value to specified buffer if it is not null, otherwise write eight zero bytes.
+     * Write a {@link Uint64} value to specified buffer if it is not null, otherwise write eight zero bytes.
      *
      * @param buf buffer
-     * @param value A {@link Byte}
+     * @param value A {@link Uint64}
      * @throws NullPointerException if {@code buf} is null
      */
     public static void writeOrZero(final ByteBuf buf, final @Nullable Uint64 value) {
