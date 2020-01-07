@@ -48,16 +48,7 @@ final class ArgumentContextUtils {
                  * in the inner string and trim the result.
                  */
                 checkDoubleQuotedString(innerStr, yangVersion, ref);
-
-                sb.append(ESCAPED_TAB.matcher(
-                    ESCAPED_LF.matcher(
-                        ESCAPED_BACKSLASH.matcher(
-                            ESCAPED_DQUOT.matcher(
-                                trimWhitespace(innerStr, stringNode.getSymbol().getCharPositionInLine()))
-                            .replaceAll("\\\""))
-                        .replaceAll("\\\\"))
-                    .replaceAll("\\\n"))
-                    .replaceAll("\\\t"));
+                sb.append(unescape(trimWhitespace(innerStr, stringNode.getSymbol().getCharPositionInLine())));
             } else if (firstChar == '\'' && lastChar == '\'') {
                 /*
                  * According to RFC6020 a single quote character cannot occur in
@@ -70,6 +61,22 @@ final class ArgumentContextUtils {
             }
         }
         return sb.toString();
+    }
+
+    private static String unescape(final String str) {
+        final int backslash = str.indexOf('\\');
+        if (backslash == -1) {
+            return str;
+        }
+
+        // FIXME: given we the leading backslash, it would be more efficient to walk the string and unescape in one go
+        return ESCAPED_TAB.matcher(
+                    ESCAPED_LF.matcher(
+                        ESCAPED_BACKSLASH.matcher(
+                            ESCAPED_DQUOT.matcher(str).replaceAll("\\\""))
+                        .replaceAll("\\\\"))
+                    .replaceAll("\\\n"))
+               .replaceAll("\\\t");
     }
 
     private static void checkUnquotedString(final String str, final YangVersion yangVersion,
