@@ -267,10 +267,22 @@ class YangToSourcesProcessor {
 
             final YangParser parser = parserFactory.createParser(parserMode);
             final List<YangTextSchemaSource> sourcesInProject = new ArrayList<>(yangFilesInProject.size());
-            for (final File f : yangFilesInProject) {
-                final YangTextSchemaSource textSource = YangTextSchemaSource.forFile(f);
-                final ASTSchemaSource astSource = TextToASTTransformer.transformText(textSource);
 
+            final List<Entry<YangTextSchemaSource, ASTSchemaSource>> parsed = yangFilesInProject.parallelStream()
+                    .map(file -> {
+                        final YangTextSchemaSource textSource = YangTextSchemaSource.forFile(file);
+                        try {
+                            return new SimpleImmutableEntry<>(textSource,
+                                    TextToASTTransformer.transformText(textSource));
+                        } catch (YangSyntaxErrorException | SchemaSourceException | IOException e) {
+                            throw new IllegalArgumentException("Failed to parse " + file, e);
+                        }
+                    })
+                    .collect(Collectors.toList());
+
+            for (final Entry<YangTextSchemaSource, ASTSchemaSource> entry : parsed) {
+                final YangTextSchemaSource textSource = entry.getKey();
+                final ASTSchemaSource astSource = entry.getValue();
                 parser.addSource(astSource);
 
                 if (!astSource.getIdentifier().equals(textSource.getIdentifier())) {
@@ -288,7 +300,7 @@ class YangToSourcesProcessor {
             final ProcessorModuleReactor reactor = new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
             LOG.debug("Initialized reactor {} with {}", reactor, yangFilesInProject);
             return Optional.of(reactor);
-        } catch (IOException | SchemaSourceException | YangSyntaxErrorException | RuntimeException e) {
+        } catch (IOException | YangSyntaxErrorException | RuntimeException e) {
             // MojoExecutionException is thrown since execution cannot continue
             LOG.error("{} Unable to parse YANG files from {}", LOG_PREFIX, yangFilesRootDir, e);
             Throwable rootCause = Throwables.getRootCause(e);
