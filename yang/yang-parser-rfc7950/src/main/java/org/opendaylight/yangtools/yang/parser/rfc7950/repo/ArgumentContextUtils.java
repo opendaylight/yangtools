@@ -49,15 +49,18 @@ final class ArgumentContextUtils {
                  */
                 checkDoubleQuotedString(innerStr, yangVersion, ref);
 
-                sb.append(ESCAPED_TAB.matcher(
-                    ESCAPED_LF.matcher(
-                        ESCAPED_BACKSLASH.matcher(
-                            ESCAPED_DQUOT.matcher(
-                                trimWhitespace(innerStr, stringNode.getSymbol().getCharPositionInLine()))
-                            .replaceAll("\\\""))
-                        .replaceAll("\\\\"))
-                    .replaceAll("\\\n"))
-                    .replaceAll("\\\t"));
+                String trimmed = trimWhitespace(innerStr, stringNode.getSymbol().getCharPositionInLine());
+                int backslash = trimmed.indexOf('\\');
+                if (backslash != -1) {
+                    trimmed = ESCAPED_TAB.matcher(
+                        ESCAPED_LF.matcher(
+                            ESCAPED_BACKSLASH.matcher(
+                                ESCAPED_DQUOT.matcher(trimmed).replaceAll("\\\""))
+                            .replaceAll("\\\\"))
+                        .replaceAll("\\\n"))
+                        .replaceAll("\\\t");
+                }
+                sb.append(trimmed);
             } else if (firstChar == '\'' && lastChar == '\'') {
                 /*
                  * According to RFC6020 a single quote character cannot occur in
