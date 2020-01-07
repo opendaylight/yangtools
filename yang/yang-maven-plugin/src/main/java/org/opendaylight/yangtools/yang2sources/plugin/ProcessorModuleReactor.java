@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
@@ -44,7 +45,8 @@ final class ProcessorModuleReactor {
 
     private final Map<SourceIdentifier, YangTextSchemaSource> modelsInProject;
     private final Collection<ScannedDependency> dependencies;
-    private final YangParser parser;
+
+    private YangParser parser;
 
     ProcessorModuleReactor(final YangParser parser, final Collection<YangTextSchemaSource> modelsInProject,
         final Collection<ScannedDependency> dependencies) {
@@ -54,6 +56,8 @@ final class ProcessorModuleReactor {
     }
 
     ContextHolder toContext() throws IOException, YangParserException {
+        checkState(parser != null, "Context has already been assembled");
+
         for (YangTextSchemaSource source : toUniqueSources(dependencies)) {
             // This source is coming from a dependency:
             // - its identifier should be accurate, as it should have been processed into a file with accurate name
@@ -62,6 +66,7 @@ final class ProcessorModuleReactor {
         }
 
         final SchemaContext schemaContext = Verify.verifyNotNull(parser.buildSchemaContext());
+        parser = null;
 
         final Set<Module> modules = new HashSet<>();
         for (Module module : schemaContext.getModules()) {
@@ -106,7 +111,6 @@ final class ProcessorModuleReactor {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("sources", modelsInProject.keySet()).add("parser", parser)
-                .toString();
+        return MoreObjects.toStringHelper(this).add("sources", modelsInProject.keySet()).toString();
     }
 }
