@@ -7,15 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_app_tag;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class ErrorAppTagStatementSupport extends
-        AbstractStatementSupport<String, ErrorAppTagStatement, EffectiveStatement<String, ErrorAppTagStatement>> {
+public final class ErrorAppTagStatementSupport
+        extends BaseStringStatementSupport<ErrorAppTagStatement, ErrorAppTagEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.ERROR_APP_TAG).build();
     private static final ErrorAppTagStatementSupport INSTANCE = new ErrorAppTagStatementSupport();
@@ -34,19 +36,27 @@ public final class ErrorAppTagStatementSupport extends
     }
 
     @Override
-    public ErrorAppTagStatement createDeclared(
-            final StmtContext<String, ErrorAppTagStatement, ?> ctx) {
+    public ErrorAppTagStatement createDeclared(final StmtContext<String, ErrorAppTagStatement, ?> ctx) {
         return new ErrorAppTagStatementImpl(ctx);
-    }
-
-    @Override
-    public EffectiveStatement<String, ErrorAppTagStatement> createEffective(
-            final StmtContext<String, ErrorAppTagStatement, EffectiveStatement<String, ErrorAppTagStatement>> ctx) {
-        return new ErrorAppTagEffectiveStatementImpl(ctx);
     }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected ErrorAppTagEffectiveStatement createEffective(
+            final StmtContext<String, ErrorAppTagStatement, ErrorAppTagEffectiveStatement> ctx,
+            final ErrorAppTagStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularErrorAppTagEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected ErrorAppTagEffectiveStatement createEmptyEffective(
+            final StmtContext<String, ErrorAppTagStatement, ErrorAppTagEffectiveStatement> ctx,
+            final ErrorAppTagStatement declared) {
+        return new EmptyErrorAppTagEffectiveStatement(declared);
     }
 }
