@@ -7,19 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementMixins.EffectiveStatementWithFlags.FlagsBuilder;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class LeafStatementSupport
-        extends AbstractQNameStatementSupport<LeafStatement, EffectiveStatement<QName, LeafStatement>> {
+public final class LeafStatementSupport extends BaseQNameStatementSupport<LeafStatement, LeafEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .LEAF)
         .addOptional(YangStmtMapping.CONFIG)
@@ -50,13 +61,12 @@ public final class LeafStatementSupport
     }
 
     @Override
-    public void onStatementAdded(final Mutable<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> stmt) {
+    public void onStatementAdded(final Mutable<QName, LeafStatement, LeafEffectiveStatement> stmt) {
         stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
     @Override
-    public void onFullDefinitionDeclared(
-            final Mutable<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
+    public void onFullDefinitionDeclared(final Mutable<QName, LeafStatement, LeafEffectiveStatement> ctx) {
         super.onFullDefinitionDeclared(ctx);
         StmtContextUtils.validateIfFeatureAndWhenOnListKeys(ctx);
     }
@@ -67,13 +77,40 @@ public final class LeafStatementSupport
     }
 
     @Override
-    public EffectiveStatement<QName, LeafStatement> createEffective(
-            final StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
-        return new LeafEffectiveStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    protected LeafEffectiveStatement createEffective(
+            final StmtContext<QName, LeafStatement, LeafEffectiveStatement> ctx, final LeafStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
+            findFirstStatement(substatements, TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
+                "Leaf is missing a 'type' statement");
+        final String dflt = findFirstArgument(substatements, DefaultEffectiveStatement.class, null);
+        SourceException.throwIf(
+            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, dflt),
+            ctx.getStatementSourceReference(),
+            "Leaf '%s' has default value '%s' marked with an if-feature statement.", ctx.getStatementArgument(), dflt);
+
+        final SchemaPath path = ctx.getSchemaPath().get();
+        final LeafSchemaNode original = (LeafSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective)
+                .orElse(null);
+        final int flags = new FlagsBuilder()
+                .setHistory(ctx.getCopyHistory())
+                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+                .setConfiguration(ctx.isConfiguration())
+                .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
+                .toFlags();
+
+        return original == null ? new EmptyLeafEffectiveStatement(declared, path, flags, substatements)
+                : new RegularLeafEffectiveStatement(declared, path, flags, substatements, original);
+    }
+
+    @Override
+    protected LeafEffectiveStatement createEmptyEffective(
+            final StmtContext<QName, LeafStatement, LeafEffectiveStatement> ctx, final LeafStatement declared) {
+        throw new UnsupportedOperationException("Leaf statements must have at least one substatement");
     }
 }
