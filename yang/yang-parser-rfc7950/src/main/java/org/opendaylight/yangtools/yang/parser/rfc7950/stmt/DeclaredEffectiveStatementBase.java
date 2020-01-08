@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import com.google.common.base.Verify;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -29,19 +28,9 @@ public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatem
      */
     protected DeclaredEffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
         super(ctx);
-
-        this.argument = ctx.getStatementArgument();
-        this.statementSource = ctx.getStatementSource();
-
-        /*
-         * Share original instance of declared statement between all effective
-         * statements which have been copied or derived from this original
-         * declared statement.
-         */
-        @SuppressWarnings("unchecked")
-        final StmtContext<?, D, ?> lookupCtx = (StmtContext<?, D, ?>) ctx.getOriginalCtx().orElse(ctx);
-        declaredInstance = Verify.verifyNotNull(lookupCtx.buildDeclared(),
-            "Statement %s failed to build declared statement", lookupCtx);
+        argument = ctx.getStatementArgument();
+        statementSource = ctx.getStatementSource();
+        declaredInstance = BaseStatementSupport.buildDeclared(ctx);
     }
 
     @Override

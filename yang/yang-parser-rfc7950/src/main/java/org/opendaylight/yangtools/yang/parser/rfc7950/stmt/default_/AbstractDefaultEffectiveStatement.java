@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.default_;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement;
 
-final class DefaultEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, DefaultStatement>
+abstract class AbstractDefaultEffectiveStatement
+        extends AbstractDeclaredEffectiveStatement.DefaultArgument<String, DefaultStatement>
         implements DefaultEffectiveStatement {
-    DefaultEffectiveStatementImpl(final StmtContext<String, DefaultStatement, ?> ctx) {
-        super(ctx);
+    AbstractDefaultEffectiveStatement(final DefaultStatement declared) {
+        super(declared);
     }
 }
