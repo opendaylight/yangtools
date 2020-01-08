@@ -7,15 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.default_;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class DefaultStatementSupport
-        extends AbstractStatementSupport<String, DefaultStatement, EffectiveStatement<String, DefaultStatement>> {
+        extends BaseStringStatementSupport<DefaultStatement, DefaultEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.DEFAULT).build();
     private static final DefaultStatementSupport INSTANCE = new DefaultStatementSupport();
@@ -39,13 +41,21 @@ public final class DefaultStatementSupport
     }
 
     @Override
-    public EffectiveStatement<String, DefaultStatement> createEffective(
-            final StmtContext<String, DefaultStatement, EffectiveStatement<String, DefaultStatement>> ctx) {
-        return new DefaultEffectiveStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    protected DefaultEffectiveStatement createEffective(
+            final StmtContext<String, DefaultStatement, DefaultEffectiveStatement> ctx,
+            final DefaultStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularDefaultEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected DefaultEffectiveStatement createEmptyEffective(
+            final StmtContext<String, DefaultStatement, DefaultEffectiveStatement> ctx,
+            final DefaultStatement declared) {
+        return new EmptyDefaultEffectiveStatement(declared);
     }
 }
