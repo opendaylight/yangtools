@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2020 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,24 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.description;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 
-final class DescriptionEffectiveStatementImpl extends AbstractDescriptionEffectiveStatement {
-    private final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
-
-    DescriptionEffectiveStatementImpl(final DescriptionStatement declared,
-            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+final class EmptyDescriptionEffectiveStatement extends AbstractDescriptionEffectiveStatement {
+    EmptyDescriptionEffectiveStatement(final DescriptionStatement declared) {
         super(declared);
-        this.substatements = requireNonNull(substatements);
     }
 
     @Override
     public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return substatements;
+        return ImmutableList.of();
     }
 }
