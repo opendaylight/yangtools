@@ -7,26 +7,41 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.MustDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementFlags;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractLeafListStatementSupport
-        extends AbstractQNameStatementSupport<LeafListStatement, EffectiveStatement<QName, LeafListStatement>> {
-
+        extends BaseQNameStatementSupport<LeafListStatement, LeafListEffectiveStatement> {
     AbstractLeafListStatementSupport() {
         super(YangStmtMapping.LEAF_LIST);
     }
 
     @Override
-    public final void onStatementAdded(
-            final Mutable<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> stmt) {
+    public final void onStatementAdded(final Mutable<QName, LeafListStatement, LeafListEffectiveStatement> stmt) {
         stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
@@ -41,8 +56,59 @@ abstract class AbstractLeafListStatementSupport
     }
 
     @Override
-    public final EffectiveStatement<QName, LeafListStatement> createEffective(
-            final StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
-        return new LeafListEffectiveStatementImpl(ctx);
+    protected final LeafListEffectiveStatement createEffective(
+            final StmtContext<QName, LeafListStatement, LeafListEffectiveStatement> ctx,
+            final LeafListStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
+            findFirstStatement(substatements, TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
+                "Leaf-list is missing a 'type' statement");
+
+        final SchemaPath path = ctx.getSchemaPath().get();
+        final LeafListSchemaNode original = (LeafListSchemaNode) ctx.getOriginalCtx()
+                .map(StmtContext::buildEffective).orElse(null);
+
+
+        final int flags = new EffectiveStatementFlags.Builder()
+                .setHistory(ctx.getCopyHistory())
+                .setStatus(findFirstArgument(substatements, StatusEffectiveStatement.class, Status.CURRENT))
+                .setConfiguration(ctx.isConfiguration())
+                .setMandatory(findFirstArgument(substatements, MandatoryEffectiveStatement.class, Boolean.FALSE))
+                .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, "system")
+                    .equals("user"))
+                .toFlags();
+        final ImmutableList<MustDefinition> mustConstraints = substatements.stream()
+                .filter(MustDefinition.class::isInstance)
+                .map(MustDefinition.class::cast)
+                .collect(ImmutableList.toImmutableList());
+
+        final ImmutableSet<String> defaultValues = substatements.stream()
+                .filter(DefaultEffectiveStatement.class::isInstance)
+                .map(DefaultEffectiveStatement.class::cast)
+                .map(DefaultEffectiveStatement::argument)
+                .collect(ImmutableSet.toImmutableSet());
+
+        // FIXME: We need to interpret the default value in terms of supplied element type
+        SourceException.throwIf(
+            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, defaultValues),
+            ctx.getStatementSourceReference(),
+            "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
+            ctx.getStatementArgument(), defaultValues);
+
+        // FIXME: RFC7950 section 7.7.4: we need to check for min-elements and defaultValues conflict
+
+        final Optional<ElementCountConstraint> elementCountConstraint =
+                EffectiveStmtUtils.createElementCountConstraint(substatements);
+        return original == null && mustConstraints.isEmpty() && !elementCountConstraint.isPresent()
+                && defaultValues.isEmpty() ? new EmptyLeafListEffectiveStatement(declared, path, flags, substatements)
+                        :  new RegularLeafListEffectiveStatement(declared, path, flags, substatements, mustConstraints,
+                            original, defaultValues, elementCountConstraint.orElse(null));
+    }
+
+    @Override
+    protected final LeafListEffectiveStatement createEmptyEffective(
+            final StmtContext<QName, LeafListStatement, LeafListEffectiveStatement> ctx,
+            final LeafListStatement declared) {
+        throw new UnsupportedOperationException("Leaf statements must have at least one substatement");
     }
 }
