@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.units;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -43,7 +46,11 @@ public final class UnitsStatementSupport
     @Override
     public EffectiveStatement<String, UnitsStatement> createEffective(
             final StmtContext<String, UnitsStatement, EffectiveStatement<String, UnitsStatement>> ctx) {
-        return new UnitsEffectiveStatementImpl(ctx);
+        final UnitsStatement declared = AbstractDeclaredEffectiveStatement.buildDeclared(ctx);
+        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
+                AbstractEffectiveStatement.buildEffectiveSubstatements(ctx);
+        return substatements.isEmpty() ? new EmptyUnitsEffectiveStatement(declared)
+                : new RegularUnitsEffectiveStatement(declared, substatements);
     }
 
     @Override

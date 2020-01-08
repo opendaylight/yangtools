@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.belongs_to;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -16,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -50,15 +52,18 @@ public final class BelongsToStatementSupport extends
     }
 
     @Override
-    public BelongsToStatement createDeclared(
-            final StmtContext<String, BelongsToStatement, ?> ctx) {
+    public BelongsToStatement createDeclared(final StmtContext<String, BelongsToStatement, ?> ctx) {
         return new BelongsToStatementImpl(ctx);
     }
 
     @Override
     public EffectiveStatement<String, BelongsToStatement> createEffective(
             final StmtContext<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> ctx) {
-        return new BelongsToEffectiveStatementImpl(ctx);
+        final BelongsToStatement declared = AbstractBelongsToEffectiveStatement.buildDeclared(ctx);
+        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
+                AbstractEffectiveStatement.buildEffectiveSubstatements(ctx);
+        return substatements.isEmpty() ? new EmptyBelongsToEffectiveStatement(declared)
+                    : new RegularBelongsToEffectiveStatement(declared, substatements);
     }
 
     @Override
