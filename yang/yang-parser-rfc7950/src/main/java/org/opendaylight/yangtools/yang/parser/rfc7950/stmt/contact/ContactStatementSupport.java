@@ -7,15 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.contact;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ContactStatementSupport
-        extends AbstractStatementSupport<String, ContactStatement,EffectiveStatement<String, ContactStatement>> {
+        extends BaseStringStatementSupport<ContactStatement, ContactEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.CONTACT).build();
     private static final ContactStatementSupport INSTANCE = new ContactStatementSupport();
@@ -39,13 +41,21 @@ public final class ContactStatementSupport
     }
 
     @Override
-    public EffectiveStatement<String, ContactStatement> createEffective(
-            final StmtContext<String, ContactStatement, EffectiveStatement<String, ContactStatement>> ctx) {
-        return new ContactEffectiveStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    protected ContactEffectiveStatement createEffective(
+            final StmtContext<String, ContactStatement, ContactEffectiveStatement> ctx,
+            final ContactStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularContactEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected ContactEffectiveStatement createEmptyEffective(
+            final StmtContext<String, ContactStatement, ContactEffectiveStatement> ctx,
+            final ContactStatement declared) {
+        return new EmptyContactEffectiveStatement(declared);
     }
 }

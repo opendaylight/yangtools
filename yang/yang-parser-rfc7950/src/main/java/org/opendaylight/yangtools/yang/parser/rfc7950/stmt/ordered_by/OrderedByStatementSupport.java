@@ -7,18 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ordered_by;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class OrderedByStatementSupport
-        extends AbstractStatementSupport<String, OrderedByStatement, EffectiveStatement<String, OrderedByStatement>> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        YangStmtMapping.ORDERED_BY)
-        .build();
+        extends BaseStringStatementSupport<OrderedByStatement, OrderedByEffectiveStatement> {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+            SubstatementValidator.builder(YangStmtMapping.ORDERED_BY).build();
     private static final OrderedByStatementSupport INSTANCE = new OrderedByStatementSupport();
 
     private OrderedByStatementSupport() {
@@ -40,14 +41,23 @@ public final class OrderedByStatementSupport
     }
 
     @Override
-    public EffectiveStatement<String, OrderedByStatement> createEffective(
-            final StmtContext<String, OrderedByStatement, EffectiveStatement<String, OrderedByStatement>> ctx) {
-        return new OrderedByEffectiveStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    protected OrderedByEffectiveStatement createEffective(
+            final StmtContext<String, OrderedByStatement, OrderedByEffectiveStatement> ctx,
+            final OrderedByStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularOrderedByEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected OrderedByEffectiveStatement createEmptyEffective(
+            final StmtContext<String, OrderedByStatement, OrderedByEffectiveStatement> ctx,
+            final OrderedByStatement declared) {
+        return new EmptyOrderedByEffectiveStatement(declared);
     }
 
     @Override
