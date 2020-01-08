@@ -7,15 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.reference;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class ReferenceStatementSupport extends AbstractStatementSupport<String, ReferenceStatement,
-        EffectiveStatement<String, ReferenceStatement>> {
+public final class ReferenceStatementSupport
+        extends BaseStringStatementSupport<ReferenceStatement, ReferenceEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.REFERENCE)
         .build();
@@ -40,13 +42,22 @@ public final class ReferenceStatementSupport extends AbstractStatementSupport<St
     }
 
     @Override
-    public EffectiveStatement<String, ReferenceStatement> createEffective(
-            final StmtContext<String, ReferenceStatement, EffectiveStatement<String, ReferenceStatement>> ctx) {
-        return new ReferenceEffectiveStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    protected ReferenceEffectiveStatement createEffective(
+            final StmtContext<String, ReferenceStatement, ReferenceEffectiveStatement> ctx,
+            final ReferenceStatement declared,
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularReferenceEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected ReferenceEffectiveStatement createEmptyEffective(
+            final StmtContext<String, ReferenceStatement, ReferenceEffectiveStatement> ctx,
+            final ReferenceStatement declared) {
+        return new EmptyReferenceEffectiveStatement(declared);
     }
 }
