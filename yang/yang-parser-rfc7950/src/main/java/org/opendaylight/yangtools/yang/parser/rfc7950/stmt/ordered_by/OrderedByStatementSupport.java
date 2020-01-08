@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ordered_by;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -42,7 +45,11 @@ public final class OrderedByStatementSupport
     @Override
     public EffectiveStatement<String, OrderedByStatement> createEffective(
             final StmtContext<String, OrderedByStatement, EffectiveStatement<String, OrderedByStatement>> ctx) {
-        return new OrderedByEffectiveStatementImpl(ctx);
+        final OrderedByStatement declared = AbstractDeclaredEffectiveStatement.buildDeclared(ctx);
+        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
+                AbstractEffectiveStatement.buildEffectiveSubstatements(ctx);
+        return substatements.isEmpty() ? new EmptyOrderedByEffectiveStatement(declared)
+                    : new RegularOrderedByEffectiveStatement(declared, substatements);
     }
 
     @Override
