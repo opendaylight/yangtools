@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -49,6 +50,22 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
             @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements);
 
     protected abstract @NonNull E createEmptyEffective(@NonNull StmtContext<A, D, E> ctx, @NonNull D declared);
+
+    protected static final <E extends EffectiveStatement<?, ?>> @Nullable E findFirstStatement(
+            final ImmutableList<? extends EffectiveStatement<?, ?>> statements, final Class<E> type) {
+        for (EffectiveStatement<?, ?> stmt : statements) {
+            if (type.isInstance(stmt)) {
+                return type.cast(stmt);
+            }
+        }
+        return null;
+    }
+
+    protected static final <A, E extends EffectiveStatement<A, ?>> A findFirstArgument(
+            final ImmutableList<? extends EffectiveStatement<?, ?>> statements, final Class<E> type, final A defValue) {
+        final @Nullable E stmt = findFirstStatement(statements, type);
+        return stmt != null ? stmt.argument() : defValue;
+    }
 
     static final <A, D extends DeclaredStatement<A>> @NonNull D buildDeclared(final StmtContext<A, D, ?> ctx) {
         /*
