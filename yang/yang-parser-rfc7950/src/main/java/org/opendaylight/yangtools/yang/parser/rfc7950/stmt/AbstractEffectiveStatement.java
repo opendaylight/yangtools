@@ -14,9 +14,12 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.WhenConditionAware;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 
 @Beta
 public abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
@@ -42,5 +45,13 @@ public abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<
     protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
             final @NonNull Class<N> namespace) {
         return Optional.empty();
+    }
+
+    public interface WhenConditionMixin<A, D extends DeclaredStatement<A>> extends EffectiveStatement<A, D>,
+            WhenConditionAware {
+        @Override
+        default Optional<RevisionAwareXPath> getWhenCondition() {
+            return findFirstEffectiveSubstatementArgument(WhenEffectiveStatement.class);
+        }
     }
 }
