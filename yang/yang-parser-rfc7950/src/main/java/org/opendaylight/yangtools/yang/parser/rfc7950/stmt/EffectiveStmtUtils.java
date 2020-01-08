@@ -10,10 +10,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
@@ -48,19 +50,29 @@ public final class EffectiveStmtUtils {
     }
 
     public static Optional<ElementCountConstraint> createElementCountConstraint(final EffectiveStatement<?, ?> stmt) {
+        return createElementCountConstraint(
+            stmt.findFirstEffectiveSubstatementArgument(MinElementsEffectiveStatement.class).orElse(null),
+            stmt.findFirstEffectiveSubstatementArgument(MaxElementsEffectiveStatement.class).orElse(null));
+    }
+
+    public static Optional<ElementCountConstraint> createElementCountConstraint(
+            final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return createElementCountConstraint(
+            BaseQNameStatementSupport.findFirstArgument(substatements, MinElementsEffectiveStatement.class, null),
+            BaseQNameStatementSupport.findFirstArgument(substatements, MaxElementsEffectiveStatement.class, null));
+    }
+
+    private static Optional<ElementCountConstraint> createElementCountConstraint(
+            final @Nullable Integer min, final @Nullable String max) {
         final Integer minElements;
-        final Optional<Integer> min = stmt.findFirstEffectiveSubstatementArgument(MinElementsEffectiveStatement.class);
-        if (min.isPresent()) {
-            final Integer m = min.get();
-            minElements = m > 0 ? m : null;
+        if (min != null) {
+            minElements = min > 0 ? min : null;
         } else {
             minElements = null;
         }
 
         final Integer maxElements;
-        final String max = stmt.findFirstEffectiveSubstatementArgument(MaxElementsEffectiveStatement.class)
-                .orElse(UNBOUNDED_STR);
-        if (!UNBOUNDED_STR.equals(max)) {
+        if (max != null && !UNBOUNDED_STR.equals(max)) {
             final Integer m = Integer.valueOf(max);
             maxElements = m < Integer.MAX_VALUE ? m : null;
         } else {
@@ -69,7 +81,6 @@ public final class EffectiveStmtUtils {
 
         return ElementCountConstraint.forNullable(minElements, maxElements);
     }
-
 
     /**
      * Checks whether supplied type has any of specified default values marked
