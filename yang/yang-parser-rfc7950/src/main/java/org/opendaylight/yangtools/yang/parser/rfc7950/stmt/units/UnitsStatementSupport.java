@@ -7,15 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.units;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStringStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class UnitsStatementSupport
-        extends AbstractStatementSupport<String, UnitsStatement, EffectiveStatement<String, UnitsStatement>> {
+        extends BaseStringStatementSupport<UnitsStatement, UnitsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.UNITS)
         .build();
@@ -35,19 +37,26 @@ public final class UnitsStatementSupport
     }
 
     @Override
-    public UnitsStatement createDeclared(
-            final StmtContext<String, UnitsStatement, ?> ctx) {
+    public UnitsStatement createDeclared(final StmtContext<String, UnitsStatement, ?> ctx) {
         return new UnitsStatementImpl(ctx);
-    }
-
-    @Override
-    public EffectiveStatement<String, UnitsStatement> createEffective(
-            final StmtContext<String, UnitsStatement, EffectiveStatement<String, UnitsStatement>> ctx) {
-        return new UnitsEffectiveStatementImpl(ctx);
     }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected UnitsEffectiveStatement createEffective(
+            final StmtContext<String, UnitsStatement, UnitsEffectiveStatement> ctx,
+            final UnitsStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularUnitsEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected UnitsEffectiveStatement createEmptyEffective(
+            final StmtContext<String, UnitsStatement, UnitsEffectiveStatement> ctx,
+            final UnitsStatement declared) {
+        return new EmptyUnitsEffectiveStatement(declared);
     }
 }
