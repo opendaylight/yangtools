@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.length;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public final class LengthStatementSupport extends AbstractStatementSupport<List<
             ranges.add(ValueRange.of(min, max));
         }
 
-        return ranges;
+        return ImmutableList.copyOf(ranges);
     }
 
     @Override
