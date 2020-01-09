@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Collection;
@@ -15,9 +16,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -25,8 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class KeyStatementSupport
-        extends AbstractStatementSupport<Collection<SchemaNodeIdentifier>, KeyStatement,
-                EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> {
+        extends BaseStatementSupport<Collection<SchemaNodeIdentifier>, KeyStatement, KeyEffectiveStatement> {
     private static final Splitter LIST_KEY_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.KEY)
@@ -59,8 +60,7 @@ public final class KeyStatementSupport
 
     @Override
     public Collection<SchemaNodeIdentifier> adaptArgumentValue(
-            final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement,
-                EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> ctx,
+            final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, KeyEffectiveStatement> ctx,
             final QNameModule targetModule) {
         final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
         boolean replaced = false;
@@ -86,14 +86,25 @@ public final class KeyStatementSupport
     }
 
     @Override
-    public EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement> createEffective(
-            final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement,
-                    EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> ctx) {
-        return new KeyEffectiveStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    protected KeyEffectiveStatement createEffective(
+            final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, KeyEffectiveStatement> ctx,
+            final KeyStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        final Collection<SchemaNodeIdentifier> arg = ctx.coerceStatementArgument();
+        return arg.equals(declared.argument()) ? new RegularLocalKeyEffectiveStatement(declared, substatements)
+                : new RegularForeignKeyEffectiveStatement(declared, arg, substatements);
+    }
+
+    @Override
+    protected KeyEffectiveStatement createEmptyEffective(
+            final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, KeyEffectiveStatement> ctx,
+            final KeyStatement declared) {
+        final Collection<SchemaNodeIdentifier> arg = ctx.coerceStatementArgument();
+        return arg.equals(declared.argument()) ? new EmptyLocalKeyEffectiveStatement(declared)
+                : new EmptyForeignKeyEffectiveStatement(declared, arg);
     }
 }
