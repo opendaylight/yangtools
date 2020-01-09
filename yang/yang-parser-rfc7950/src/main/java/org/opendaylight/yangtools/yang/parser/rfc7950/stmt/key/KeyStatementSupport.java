@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Collection;
@@ -17,6 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractDeclaredEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -89,7 +92,11 @@ public final class KeyStatementSupport
     public EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement> createEffective(
             final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement,
                     EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> ctx) {
-        return new KeyEffectiveStatementImpl(ctx);
+        final KeyStatement declared = AbstractDeclaredEffectiveStatement.buildDeclared(ctx);
+        final ImmutableList<? extends EffectiveStatement<?, ?>> substatements =
+                AbstractEffectiveStatement.buildEffectiveSubstatements(ctx);
+        return substatements.isEmpty() ? new EmptyKeyEffectiveStatement(declared, ctx.getStatementArgument())
+                    : new RegularKeyEffectiveStatement(declared, ctx.getStatementArgument(), substatements);
     }
 
     @Override
