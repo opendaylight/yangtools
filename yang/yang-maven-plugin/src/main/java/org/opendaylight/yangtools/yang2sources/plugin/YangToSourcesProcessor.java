@@ -16,6 +16,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.util.concurrent.Uninterruptibles;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,6 +33,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -142,6 +144,10 @@ class YangToSourcesProcessor {
             return;
         }
 
+        LOG.warn("Suspeding for 60 seconds before schema assembly");
+        Uninterruptibles.sleepUninterruptibly(1, TimeUnit.MINUTES);
+
+
         final ProcessorModuleReactor reactor = optReactor.get();
         if (!skip) {
             final Stopwatch watch = Stopwatch.createStarted();
@@ -156,6 +162,10 @@ class YangToSourcesProcessor {
             }
 
             LOG.info("{} {} YANG models processed in {}", LOG_PREFIX, holder.getContext().getModules().size(), watch);
+
+            LOG.warn("Suspeding for 60 seconds after schema assembly");
+            Uninterruptibles.sleepUninterruptibly(1, TimeUnit.MINUTES);
+
             generateSources(holder, codeGenerators);
         } else {
             LOG.info("{} Skipping YANG code generation because property yang.skip is true", LOG_PREFIX);
