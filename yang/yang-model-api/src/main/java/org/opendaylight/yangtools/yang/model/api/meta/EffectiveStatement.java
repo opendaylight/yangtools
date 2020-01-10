@@ -88,8 +88,7 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      * @return First effective substatement, or empty if no match is found.
      */
     @Beta
-    default <T extends EffectiveStatement<?, ?>> Optional<T> findFirstEffectiveSubstatement(
-            final @NonNull Class<T> type) {
+    default <T> Optional<T> findFirstEffectiveSubstatement(final @NonNull Class<T> type) {
         return effectiveSubstatements().stream().filter(type::isInstance).findFirst().map(type::cast);
     }
 
