@@ -5,12 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
@@ -19,12 +19,15 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
@@ -164,5 +167,36 @@ public final class EffectiveStmtUtils {
             }
         }
         return false;
+    }
+
+    public static void checkUniqueGroupings(final StmtContext<?, ?, ?> ctx,
+            final Collection<? extends EffectiveStatement<?, ?>> statements) {
+        checkUniqueNodes(ctx, statements, GroupingDefinition.class);
+    }
+
+    public static void checkUniqueTypedefs(final StmtContext<?, ?, ?> ctx,
+            final Collection<? extends EffectiveStatement<?, ?>> statements) {
+        final Set<Object> typedefs = new HashSet<>();
+        for (EffectiveStatement<?, ?> stmt : statements) {
+            if (stmt instanceof TypedefEffectiveStatement
+                    && !typedefs.add(((TypedefEffectiveStatement) stmt).getTypeDefinition())) {
+                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
+            }
+        }
+    }
+
+    public static void checkUniqueUses(final StmtContext<?, ?, ?> ctx,
+            final Collection<? extends EffectiveStatement<?, ?>> statements) {
+        checkUniqueNodes(ctx, statements, UsesNode.class);
+    }
+
+    private static void checkUniqueNodes(final StmtContext<?, ?, ?> ctx,
+            final Collection<? extends EffectiveStatement<?, ?>> statements, final Class<?> type) {
+        final Set<Object> nodes = new HashSet<>();
+        for (EffectiveStatement<?, ?> stmt : statements) {
+            if (type.isInstance(stmt) && !nodes.add(stmt)) {
+                throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
+            }
+        }
     }
 }

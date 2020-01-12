@@ -12,13 +12,16 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
@@ -50,36 +53,15 @@ public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends Declare
         // EffectiveStatements and SchemaNode interfaces -- which do not overlap completely where child lookups are
         // concerned. This ensures that we have SchemaTree index available for use with child lookups.
         if (this instanceof SchemaTreeAwareEffectiveStatement || this instanceof DataNodeContainer) {
-            final StatementSourceReference ref = ctx.getStatementSourceReference();
-            final Map<QName, SchemaTreeEffectiveStatement<?>> schemaChildren = new LinkedHashMap<>();
-            streamEffectiveSubstatements(SchemaTreeEffectiveStatement.class).forEach(child -> {
-                putChild(schemaChildren, child, ref, "schema");
-            });
-            schemaTreeNamespace = ImmutableMap.copyOf(schemaChildren);
-
-            if (this instanceof DataTreeAwareEffectiveStatement && !schemaTreeNamespace.isEmpty()) {
-                final Map<QName, DataTreeEffectiveStatement<?>> dataChildren = new LinkedHashMap<>();
-                boolean sameAsSchema = true;
-
-                for (SchemaTreeEffectiveStatement<?> child : schemaTreeNamespace.values()) {
-                    if (child instanceof DataTreeEffectiveStatement) {
-                        putChild(dataChildren, (DataTreeEffectiveStatement<?>) child, ref, "data");
-                    } else {
-                        sameAsSchema = false;
-                        putChoiceDataChildren(dataChildren, ref, child);
-                    }
-                }
-
-                // This is a mighty hack to lower memory usage: if we consumed all schema tree children as data nodes,
-                // the two maps are equal and hence we can share the instance.
-                dataTreeNamespace = sameAsSchema ? (ImmutableMap) schemaTreeNamespace
-                        : ImmutableMap.copyOf(dataChildren);
-            } else {
-                dataTreeNamespace = ImmutableMap.of();
-            }
+            schemaTreeNamespace = createSchemaTreeNamespace(ctx.getStatementSourceReference(),
+                effectiveSubstatements());
+        } else {
+            schemaTreeNamespace = ImmutableMap.of();
+        }
+        if (this instanceof DataTreeAwareEffectiveStatement && !schemaTreeNamespace.isEmpty()) {
+            dataTreeNamespace = createDataTreeNamespace(ctx.getStatementSourceReference(), schemaTreeNamespace);
         } else {
             dataTreeNamespace = ImmutableMap.of();
-            schemaTreeNamespace = ImmutableMap.of();
         }
     }
 
@@ -106,6 +88,34 @@ public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends Declare
         verify(this instanceof DataNodeContainer);
         final SchemaTreeEffectiveStatement<?> child = schemaTreeNamespace.get(requireNonNull(name));
         return child instanceof DataSchemaNode ? Optional.of((DataSchemaNode) child) : Optional.empty();
+    }
+
+    static @NonNull ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> createSchemaTreeNamespace(
+            final StatementSourceReference ref, final Collection<? extends EffectiveStatement<?, ?>> substatements) {
+        final Map<QName, SchemaTreeEffectiveStatement<?>> schemaChildren = new LinkedHashMap<>();
+        substatements.stream().filter(SchemaTreeEffectiveStatement.class::isInstance)
+            .forEach(child -> putChild(schemaChildren, (SchemaTreeEffectiveStatement) child, ref, "schema"));
+        return ImmutableMap.copyOf(schemaChildren);
+    }
+
+    static @NonNull ImmutableMap<QName, DataTreeEffectiveStatement<?>> createDataTreeNamespace(
+            final StatementSourceReference ref,
+            final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace) {
+        final Map<QName, DataTreeEffectiveStatement<?>> dataChildren = new LinkedHashMap<>();
+        boolean sameAsSchema = true;
+
+        for (SchemaTreeEffectiveStatement<?> child : schemaTreeNamespace.values()) {
+            if (child instanceof DataTreeEffectiveStatement) {
+                putChild(dataChildren, (DataTreeEffectiveStatement<?>) child, ref, "data");
+            } else {
+                sameAsSchema = false;
+                putChoiceDataChildren(dataChildren, ref, child);
+            }
+        }
+
+        // This is a mighty hack to lower memory usage: if we consumed all schema tree children as data nodes,
+        // the two maps are equal and hence we can share the instance.
+        return sameAsSchema ? (ImmutableMap) schemaTreeNamespace : ImmutableMap.copyOf(dataChildren);
     }
 
     private static <T extends SchemaTreeEffectiveStatement<?>> void putChild(final Map<QName, T> map,
