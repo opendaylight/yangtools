@@ -9,24 +9,36 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
+import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.MandatoryAware;
 import org.opendaylight.yangtools.yang.model.api.MustConstraintAware;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.WhenConditionAware;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -51,6 +63,20 @@ public final class EffectiveStatementMixins {
     }
 
     /**
+     * Bridge between {@link EffectiveStatement} and {@link AugmentationTarget}.
+     *
+     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <D> Class representing declared version of this statement.
+     */
+    public interface AugmentationTargetMixin<A, D extends DeclaredStatement<A>>
+            extends Mixin<A, D>, AugmentationTarget {
+        @Override
+        default Set<AugmentationSchemaNode> getAvailableAugmentations() {
+            return filterEffectiveStatements(AugmentationSchemaNode.class).collect(ImmutableSet.toImmutableSet());
+        }
+    }
+
+    /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link AddedByUsesAware}.
      *
      * @param <A> Argument type ({@link Void} if statement does not have argument.)
@@ -61,6 +87,34 @@ public final class EffectiveStatementMixins {
         @Override
         default boolean isAddedByUses() {
             return (flags() & EffectiveStatementWithFlags.FlagsBuilder.ADDED_BY_USES) != 0;
+        }
+    }
+
+    /**
+     * Bridge between {@link EffectiveStatementWithFlags} and {@link ActionNodeContainer}.
+     *
+     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <D> Class representing declared version of this statement.
+     */
+    public interface ActionNodeContainerMixin<A, D extends DeclaredStatement<A>>
+            extends Mixin<A, D>, ActionNodeContainer {
+        @Override
+        default Set<ActionDefinition> getActions() {
+            return filterEffectiveStatements(ActionDefinition.class).collect(ImmutableSet.toImmutableSet());
+        }
+    }
+
+    /**
+     * Bridge between {@link EffectiveStatementWithFlags} and {@link NotificationNodeContainer}.
+     *
+     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <D> Class representing declared version of this statement.
+     */
+    public interface NotificationNodeContainerMixin<A, D extends DeclaredStatement<A>>
+            extends Mixin<A, D>, NotificationNodeContainer {
+        @Override
+        default Set<NotificationDefinition> getNotifications() {
+            return filterEffectiveStatements(NotificationDefinition.class).collect(ImmutableSet.toImmutableSet());
         }
     }
 
@@ -87,6 +141,35 @@ public final class EffectiveStatementMixins {
         @Override
         default boolean isAugmenting() {
             return (flags() & EffectiveStatementWithFlags.FlagsBuilder.AUGMENTING) != 0;
+        }
+    }
+
+    /**
+     * Bridge between {@link EffectiveStatementWithFlags} and {@link DataNodeContainer}.
+     *
+     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <D> Class representing declared version of this statement.
+     */
+    public interface DataNodeContainerMixin<A, D extends DeclaredStatement<A>> extends DataNodeContainer, Mixin<A, D> {
+        @Override
+        default Set<TypeDefinition<?>> getTypeDefinitions() {
+            // TODO: the cast here is needed to work around Java 11 javac type inference issue
+            return (Set) filterEffectiveStatements(TypeDefinition.class).collect(ImmutableSet.toImmutableSet());
+        }
+
+        @Override
+        default Collection<DataSchemaNode> getChildNodes() {
+            return filterEffectiveStatements(DataSchemaNode.class).collect(ImmutableList.toImmutableList());
+        }
+
+        @Override
+        default Set<GroupingDefinition> getGroupings() {
+            return filterEffectiveStatements(GroupingDefinition.class).collect(ImmutableSet.toImmutableSet());
+        }
+
+        @Override
+        default Set<UsesNode> getUses() {
+            return filterEffectiveStatements(UsesNode.class).collect(ImmutableSet.toImmutableSet());
         }
     }
 
