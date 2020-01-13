@@ -8,15 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.require_instance;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class RequireInstanceStatementSupport extends AbstractStatementSupport<Boolean, RequireInstanceStatement,
-        EffectiveStatement<Boolean, RequireInstanceStatement>> {
+public final class RequireInstanceStatementSupport
+        extends AbstractStatementSupport<Boolean, RequireInstanceStatement, RequireInstanceEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.REQUIRE_INSTANCE).build();
     private static final RequireInstanceStatementSupport INSTANCE = new RequireInstanceStatementSupport();
@@ -40,9 +40,8 @@ public final class RequireInstanceStatementSupport extends AbstractStatementSupp
     }
 
     @Override
-    public EffectiveStatement<Boolean, RequireInstanceStatement> createEffective(
-            final StmtContext<Boolean, RequireInstanceStatement,
-            EffectiveStatement<Boolean, RequireInstanceStatement>> ctx) {
+    public RequireInstanceEffectiveStatement createEffective(
+            final StmtContext<Boolean, RequireInstanceStatement, RequireInstanceEffectiveStatement> ctx) {
         return new RequireInstanceEffectiveStatementImpl(ctx);
     }
 

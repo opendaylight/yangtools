@@ -12,7 +12,6 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSimpleDataNodeContainer;
@@ -24,7 +23,7 @@ final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeCo
     private final CaseSchemaNode original;
     private final boolean configuration;
 
-    CaseEffectiveStatementImpl(final StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
+    CaseEffectiveStatementImpl(final StmtContext<QName, CaseStatement, CaseEffectiveStatement> ctx) {
         super(ctx);
         this.original = (CaseSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 

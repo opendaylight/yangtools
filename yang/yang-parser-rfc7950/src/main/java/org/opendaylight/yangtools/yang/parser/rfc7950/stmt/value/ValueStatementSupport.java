@@ -8,15 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.value;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class ValueStatementSupport extends
-        AbstractStatementSupport<Integer, ValueStatement, EffectiveStatement<Integer, ValueStatement>> {
+public final class ValueStatementSupport
+        extends AbstractStatementSupport<Integer, ValueStatement, ValueEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.VALUE).build();
     private static final ValueStatementSupport INSTANCE = new ValueStatementSupport();
@@ -45,8 +45,8 @@ public final class ValueStatementSupport extends
     }
 
     @Override
-    public EffectiveStatement<Integer, ValueStatement> createEffective(
-            final StmtContext<Integer, ValueStatement, EffectiveStatement<Integer, ValueStatement>> ctx) {
+    public ValueEffectiveStatement createEffective(
+            final StmtContext<Integer, ValueStatement, ValueEffectiveStatement> ctx) {
         return new ValueEffectiveStatementImpl(ctx);
     }
 

@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.min_elements;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class MinElementsStatementSupport extends
-        AbstractStatementSupport<Integer, MinElementsStatement, EffectiveStatement<Integer, MinElementsStatement>> {
+public final class MinElementsStatementSupport
+        extends AbstractStatementSupport<Integer, MinElementsStatement, MinElementsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.MIN_ELEMENTS)
         .build();
@@ -35,15 +35,13 @@ public final class MinElementsStatementSupport extends
     }
 
     @Override
-    public MinElementsStatement createDeclared(
-            final StmtContext<Integer, MinElementsStatement, ?> ctx) {
+    public MinElementsStatement createDeclared(final StmtContext<Integer, MinElementsStatement, ?> ctx) {
         return new MinElementsStatementImpl(ctx);
     }
 
     @Override
-    public EffectiveStatement<Integer, MinElementsStatement> createEffective(
-            final StmtContext<Integer, MinElementsStatement,
-            EffectiveStatement<Integer, MinElementsStatement>> ctx) {
+    public MinElementsEffectiveStatement createEffective(
+            final StmtContext<Integer, MinElementsStatement, MinElementsEffectiveStatement> ctx) {
         return new MinElementsEffectiveStatementImpl(ctx);
     }
 

@@ -9,14 +9,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.namespace;
 
 import java.net.URI;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class NamespaceStatementSupport extends AbstractStatementSupport<URI, NamespaceStatement,
-        EffectiveStatement<URI, NamespaceStatement>> {
+public final class NamespaceStatementSupport
+        extends AbstractStatementSupport<URI, NamespaceStatement, NamespaceEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .NAMESPACE)
         .build();
@@ -41,8 +41,8 @@ public final class NamespaceStatementSupport extends AbstractStatementSupport<UR
     }
 
     @Override
-    public EffectiveStatement<URI,NamespaceStatement> createEffective(
-            final StmtContext<URI, NamespaceStatement, EffectiveStatement<URI, NamespaceStatement>> ctx) {
+    public NamespaceEffectiveStatement createEffective(
+            final StmtContext<URI, NamespaceStatement, NamespaceEffectiveStatement> ctx) {
         return new NamespaceEffectiveStatementImpl(ctx);
     }
 

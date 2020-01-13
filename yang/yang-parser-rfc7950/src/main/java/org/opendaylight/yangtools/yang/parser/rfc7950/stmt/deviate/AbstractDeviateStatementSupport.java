@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
@@ -45,8 +46,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<DeviateKind, DeviateStatement,
-        EffectiveStatement<DeviateKind, DeviateStatement>> {
+abstract class AbstractDeviateStatementSupport
+        extends AbstractStatementSupport<DeviateKind, DeviateStatement, DeviateEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractDeviateStatementSupport.class);
 
     private static final SubstatementValidator DEVIATE_NOT_SUPPORTED_SUBSTATEMENT_VALIDATOR =
@@ -109,15 +110,14 @@ abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<
     }
 
     @Override
-    public final EffectiveStatement<DeviateKind, DeviateStatement> createEffective(
-            final StmtContext<DeviateKind, DeviateStatement, EffectiveStatement<DeviateKind,
-                    DeviateStatement>> ctx) {
+    public final DeviateEffectiveStatement createEffective(
+            final StmtContext<DeviateKind, DeviateStatement, DeviateEffectiveStatement> ctx) {
         return new DeviateEffectiveStatementImpl(ctx);
     }
 
     @Override
-    public final void onFullDefinitionDeclared(final Mutable<DeviateKind, DeviateStatement,
-            EffectiveStatement<DeviateKind, DeviateStatement>> deviateStmtCtx) {
+    public final void onFullDefinitionDeclared(
+            final Mutable<DeviateKind, DeviateStatement, DeviateEffectiveStatement> deviateStmtCtx) {
         final DeviateKind deviateKind = deviateStmtCtx.getStatementArgument();
         getSubstatementValidatorForDeviate(deviateKind).validate(deviateStmtCtx);
 
@@ -131,8 +131,8 @@ abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<
         final ModelActionBuilder deviateAction = deviateStmtCtx.newInferenceAction(
                 ModelProcessingPhase.EFFECTIVE_MODEL);
 
-        final Prerequisite<StmtContext<DeviateKind, DeviateStatement, EffectiveStatement<DeviateKind,
-                DeviateStatement>>> sourceCtxPrerequisite =
+        final Prerequisite<StmtContext<DeviateKind, DeviateStatement,
+            DeviateEffectiveStatement>> sourceCtxPrerequisite =
                 deviateAction.requiresCtx(deviateStmtCtx, ModelProcessingPhase.EFFECTIVE_MODEL);
 
         final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> targetCtxPrerequisite =
@@ -210,8 +210,8 @@ abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<
         }
     }
 
-    private static boolean isDeviationSupported(final Mutable<DeviateKind, DeviateStatement,
-            EffectiveStatement<DeviateKind, DeviateStatement>> deviateStmtCtx,
+    private static boolean isDeviationSupported(
+            final Mutable<DeviateKind, DeviateStatement, DeviateEffectiveStatement> deviateStmtCtx,
             final SchemaNodeIdentifier deviationTarget) {
         final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules = deviateStmtCtx.getFromNamespace(
                 ModulesDeviatedByModules.class, SupportedModules.SUPPORTED_MODULES);

@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 abstract class AbstractInputStatementSupport
-        extends AbstractQNameStatementSupport<InputStatement, EffectiveStatement<QName, InputStatement>> {
+        extends AbstractQNameStatementSupport<InputStatement, InputEffectiveStatement> {
     AbstractInputStatementSupport() {
         super(YangStmtMapping.INPUT);
     }
@@ -30,8 +30,7 @@ abstract class AbstractInputStatementSupport
     }
 
     @Override
-    public final void onStatementAdded(final Mutable<QName, InputStatement,
-            EffectiveStatement<QName, InputStatement>> stmt) {
+    public final void onStatementAdded(final Mutable<QName, InputStatement, InputEffectiveStatement> stmt) {
         stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
@@ -41,8 +40,8 @@ abstract class AbstractInputStatementSupport
     }
 
     @Override
-    public final EffectiveStatement<QName, InputStatement> createEffective(
-            final StmtContext<QName, InputStatement, EffectiveStatement<QName, InputStatement>> ctx) {
+    public final InputEffectiveStatement createEffective(
+            final StmtContext<QName, InputStatement, InputEffectiveStatement> ctx) {
         return new InputEffectiveStatementImpl(ctx);
     }
 }

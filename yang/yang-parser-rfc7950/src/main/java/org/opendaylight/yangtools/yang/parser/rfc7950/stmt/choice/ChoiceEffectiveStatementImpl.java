@@ -39,8 +39,7 @@ final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode
     private final ChoiceSchemaNode original;
     private final boolean mandatory;
 
-    ChoiceEffectiveStatementImpl(
-            final StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
+    ChoiceEffectiveStatementImpl(final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx) {
         super(ctx);
         this.original = (ChoiceSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 

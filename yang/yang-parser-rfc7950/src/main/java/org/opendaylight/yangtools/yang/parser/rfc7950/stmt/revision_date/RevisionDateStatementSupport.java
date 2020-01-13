@@ -10,15 +10,15 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision_date;
 import java.time.format.DateTimeParseException;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class RevisionDateStatementSupport extends AbstractStatementSupport<Revision, RevisionDateStatement,
-        EffectiveStatement<Revision, RevisionDateStatement>> {
+public final class RevisionDateStatementSupport
+        extends AbstractStatementSupport<Revision, RevisionDateStatement, RevisionDateEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.REVISION_DATE).build();
     private static final RevisionDateStatementSupport INSTANCE = new RevisionDateStatementSupport();
@@ -47,8 +47,8 @@ public final class RevisionDateStatementSupport extends AbstractStatementSupport
     }
 
     @Override
-    public EffectiveStatement<Revision, RevisionDateStatement> createEffective(final StmtContext<Revision,
-            RevisionDateStatement, EffectiveStatement<Revision, RevisionDateStatement>> ctx) {
+    public RevisionDateEffectiveStatement createEffective(
+            final StmtContext<Revision, RevisionDateStatement, RevisionDateEffectiveStatement> ctx) {
         return new RevisionDateEffectiveStatementImpl(ctx);
     }
 

@@ -49,8 +49,8 @@ final class AugmentEffectiveStatementImpl
     private final RevisionAwareXPath whenCondition;
     private final AugmentationSchemaNode copyOf;
 
-    AugmentEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, AugmentStatement,
-            EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
+    AugmentEffectiveStatementImpl(
+            final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> ctx) {
         super(ctx);
         targetPath = ctx.coerceStatementArgument().asSchemaPath();
         rootModuleQName = StmtContextUtils.getRootModuleQName(ctx);

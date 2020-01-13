@@ -9,14 +9,13 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
-abstract class AbstractBitStatementSupport extends
-        AbstractQNameStatementSupport<BitStatement, EffectiveStatement<QName, BitStatement>> {
+abstract class AbstractBitStatementSupport extends AbstractQNameStatementSupport<BitStatement, BitEffectiveStatement> {
     AbstractBitStatementSupport() {
         super(YangStmtMapping.BIT);
     }
@@ -32,8 +31,8 @@ abstract class AbstractBitStatementSupport extends
     }
 
     @Override
-    public final EffectiveStatement<QName, BitStatement> createEffective(
-            final StmtContext<QName, BitStatement, EffectiveStatement<QName, BitStatement>> ctx) {
+    public final BitEffectiveStatement createEffective(
+            final StmtContext<QName, BitStatement, BitEffectiveStatement> ctx) {
         return new BitEffectiveStatementImpl(ctx);
     }
 }

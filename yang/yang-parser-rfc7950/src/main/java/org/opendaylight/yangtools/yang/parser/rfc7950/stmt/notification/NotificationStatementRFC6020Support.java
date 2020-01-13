@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -42,8 +42,8 @@ public final class NotificationStatementRFC6020Support extends AbstractNotificat
     }
 
     @Override
-    public EffectiveStatement<QName, NotificationStatement> createEffective(
-            final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
+    public NotificationEffectiveStatement createEffective(
+            final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx) {
         return new NotificationEffectiveStatementImpl(ctx);
     }
 

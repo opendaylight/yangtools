@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
@@ -29,8 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class BaseStatementSupport
-        extends AbstractQNameStatementSupport<BaseStatement, EffectiveStatement<QName, BaseStatement>> {
+public final class BaseStatementSupport extends AbstractQNameStatementSupport<BaseStatement, BaseEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.BASE).build();
     private static final BaseStatementSupport INSTANCE = new BaseStatementSupport();
@@ -54,14 +53,12 @@ public final class BaseStatementSupport
     }
 
     @Override
-    public EffectiveStatement<QName, BaseStatement> createEffective(
-            final StmtContext<QName, BaseStatement, EffectiveStatement<QName, BaseStatement>> ctx) {
+    public BaseEffectiveStatement createEffective(final StmtContext<QName, BaseStatement, BaseEffectiveStatement> ctx) {
         return new BaseEffectiveStatementImpl(ctx);
     }
 
     @Override
-    public void onStatementDefinitionDeclared(
-            final Mutable<QName, BaseStatement, EffectiveStatement<QName, BaseStatement>> baseStmtCtx) {
+    public void onStatementDefinitionDeclared(final Mutable<QName, BaseStatement, BaseEffectiveStatement> baseStmtCtx) {
         final Mutable<?, ?, ?> baseParentCtx = baseStmtCtx.getParentContext();
         if (StmtContextUtils.producesDeclared(baseParentCtx, IdentityStatement.class)) {
 

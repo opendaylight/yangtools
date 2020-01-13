@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
@@ -18,8 +18,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class AnydataStatementSupport extends
-        AbstractQNameStatementSupport<AnydataStatement, EffectiveStatement<QName, AnydataStatement>> {
+public final class AnydataStatementSupport
+        extends AbstractQNameStatementSupport<AnydataStatement, AnydataEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.ANYDATA)
         .addOptional(YangStmtMapping.CONFIG)
@@ -47,8 +47,7 @@ public final class AnydataStatementSupport extends
     }
 
     @Override
-    public void onStatementAdded(final Mutable<QName, AnydataStatement,
-            EffectiveStatement<QName, AnydataStatement>> stmt) {
+    public void onStatementAdded(final Mutable<QName, AnydataStatement, AnydataEffectiveStatement> stmt) {
         stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
@@ -58,8 +57,8 @@ public final class AnydataStatementSupport extends
     }
 
     @Override
-    public EffectiveStatement<QName, AnydataStatement> createEffective(
-            final StmtContext<QName, AnydataStatement, EffectiveStatement<QName, AnydataStatement>> ctx) {
+    public AnydataEffectiveStatement createEffective(
+            final StmtContext<QName, AnydataStatement, AnydataEffectiveStatement> ctx) {
         return new AnydataEffectiveStatementImpl(ctx);
     }
 

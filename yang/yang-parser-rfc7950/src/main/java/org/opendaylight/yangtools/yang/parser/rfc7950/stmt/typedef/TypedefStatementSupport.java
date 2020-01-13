@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class TypedefStatementSupport extends
-        AbstractQNameStatementSupport<TypedefStatement, EffectiveStatement<QName, TypedefStatement>> {
+        AbstractQNameStatementSupport<TypedefStatement, TypedefEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.TYPEDEF)
         .addOptional(YangStmtMapping.DEFAULT)
@@ -61,14 +61,13 @@ public final class TypedefStatementSupport extends
     }
 
     @Override
-    public EffectiveStatement<QName, TypedefStatement> createEffective(
-            final StmtContext<QName, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> ctx) {
+    public TypedefEffectiveStatement createEffective(
+            final StmtContext<QName, TypedefStatement, TypedefEffectiveStatement> ctx) {
         return new TypedefEffectiveStatementImpl(ctx);
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<QName, TypedefStatement,
-            EffectiveStatement<QName, TypedefStatement>> stmt) {
+    public void onFullDefinitionDeclared(final Mutable<QName, TypedefStatement, TypedefEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
         if (stmt != null) {

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RangeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
@@ -26,8 +26,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class RangeStatementSupport extends AbstractStatementSupport<List<ValueRange>, RangeStatement,
-        EffectiveStatement<List<ValueRange>, RangeStatement>> {
+public final class RangeStatementSupport
+        extends AbstractStatementSupport<List<ValueRange>, RangeStatement, RangeEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .RANGE)
         .addOptional(YangStmtMapping.DESCRIPTION)
@@ -82,9 +82,8 @@ public final class RangeStatementSupport extends AbstractStatementSupport<List<V
     }
 
     @Override
-    public EffectiveStatement<List<ValueRange>, RangeStatement> createEffective(
-            final StmtContext<List<ValueRange>, RangeStatement, EffectiveStatement<List<ValueRange>,
-                    RangeStatement>> ctx) {
+    public RangeEffectiveStatement createEffective(
+            final StmtContext<List<ValueRange>, RangeStatement, RangeEffectiveStatement> ctx) {
         return new RangeEffectiveStatementImpl(ctx);
     }
 
