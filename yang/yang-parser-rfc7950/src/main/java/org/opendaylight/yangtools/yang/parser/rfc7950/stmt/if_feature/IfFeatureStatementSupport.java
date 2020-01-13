@@ -17,7 +17,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
@@ -35,8 +35,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class IfFeatureStatementSupport extends AbstractStatementSupport<IfFeatureExpr, IfFeatureStatement,
-        EffectiveStatement<IfFeatureExpr, IfFeatureStatement>> {
+public final class IfFeatureStatementSupport
+        extends AbstractStatementSupport<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(IfFeatureStatementSupport.class);
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.IF_FEATURE)
@@ -60,8 +60,8 @@ public final class IfFeatureStatementSupport extends AbstractStatementSupport<If
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<IfFeatureExpr, IfFeatureStatement,
-            EffectiveStatement<IfFeatureExpr, IfFeatureStatement>> stmt) {
+    public void onFullDefinitionDeclared(
+            final Mutable<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
         final ModelActionBuilder verifyFeatures = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
@@ -97,9 +97,8 @@ public final class IfFeatureStatementSupport extends AbstractStatementSupport<If
     }
 
     @Override
-    public EffectiveStatement<IfFeatureExpr, IfFeatureStatement> createEffective(
-            final StmtContext<IfFeatureExpr, IfFeatureStatement,
-            EffectiveStatement<IfFeatureExpr, IfFeatureStatement>> ctx) {
+    public IfFeatureEffectiveStatement createEffective(
+            final StmtContext<IfFeatureExpr, IfFeatureStatement, IfFeatureEffectiveStatement> ctx) {
         return new IfFeatureEffectiveStatementImpl(ctx);
     }
 

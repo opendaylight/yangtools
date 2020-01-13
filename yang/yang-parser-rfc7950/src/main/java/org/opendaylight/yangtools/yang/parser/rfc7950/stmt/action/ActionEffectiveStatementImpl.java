@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveOperationDefinition;
@@ -22,8 +21,7 @@ final class ActionEffectiveStatementImpl extends AbstractEffectiveOperationDefin
     private final boolean augmenting;
     private final boolean addedByUses;
 
-    ActionEffectiveStatementImpl(
-            final StmtContext<QName, ActionStatement, EffectiveStatement<QName, ActionStatement>> ctx) {
+    ActionEffectiveStatementImpl(final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx) {
         super(ctx);
 
         // initCopyType

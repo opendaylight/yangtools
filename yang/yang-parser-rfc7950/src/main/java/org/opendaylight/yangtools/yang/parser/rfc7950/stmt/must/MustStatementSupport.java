@@ -9,15 +9,15 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;
 
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class MustStatementSupport extends AbstractStatementSupport<RevisionAwareXPath, MustStatement,
-        EffectiveStatement<RevisionAwareXPath, MustStatement>> {
+public final class MustStatementSupport
+        extends AbstractStatementSupport<RevisionAwareXPath, MustStatement, MustEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .MUST)
         .addOptional(YangStmtMapping.DESCRIPTION)
@@ -46,9 +46,8 @@ public final class MustStatementSupport extends AbstractStatementSupport<Revisio
     }
 
     @Override
-    public EffectiveStatement<RevisionAwareXPath, MustStatement> createEffective(
-            final StmtContext<RevisionAwareXPath, MustStatement,
-            EffectiveStatement<RevisionAwareXPath, MustStatement>> ctx) {
+    public MustEffectiveStatement createEffective(
+            final StmtContext<RevisionAwareXPath, MustStatement, MustEffectiveStatement> ctx) {
         return new MustEffectiveStatementImpl(ctx);
     }
 

@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.argument;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ArgumentStatementSupport
-        extends AbstractQNameStatementSupport<ArgumentStatement, EffectiveStatement<QName, ArgumentStatement>> {
+        extends AbstractQNameStatementSupport<ArgumentStatement, ArgumentEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .ARGUMENT)
         .addOptional(YangStmtMapping.YIN_ELEMENT)
@@ -38,14 +38,13 @@ public final class ArgumentStatementSupport
     }
 
     @Override
-    public ArgumentStatement createDeclared(
-            final StmtContext<QName, ArgumentStatement, ?> ctx) {
+    public ArgumentStatement createDeclared(final StmtContext<QName, ArgumentStatement, ?> ctx) {
         return new ArgumentStatementImpl(ctx);
     }
 
     @Override
-    public EffectiveStatement<QName, ArgumentStatement> createEffective(
-            final StmtContext<QName, ArgumentStatement, EffectiveStatement<QName, ArgumentStatement>> ctx) {
+    public ArgumentEffectiveStatement createEffective(
+            final StmtContext<QName, ArgumentStatement, ArgumentEffectiveStatement> ctx) {
         return new ArgumentEffectiveStatementImpl(ctx);
     }
 

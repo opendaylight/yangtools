@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 abstract class AbstractNotificationStatementSupport
-        extends AbstractQNameStatementSupport<NotificationStatement, EffectiveStatement<QName, NotificationStatement>> {
+        extends AbstractQNameStatementSupport<NotificationStatement, NotificationEffectiveStatement> {
     AbstractNotificationStatementSupport() {
         super(YangStmtMapping.NOTIFICATION);
     }
@@ -30,7 +30,7 @@ abstract class AbstractNotificationStatementSupport
 
     @Override
     public final void onStatementAdded(
-            final Mutable<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> stmt) {
+            final Mutable<QName, NotificationStatement, NotificationEffectiveStatement> stmt) {
         stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 

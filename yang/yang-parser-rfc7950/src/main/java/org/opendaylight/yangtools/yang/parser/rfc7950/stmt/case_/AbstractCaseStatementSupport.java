@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
@@ -18,8 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 abstract class AbstractCaseStatementSupport
-        extends AbstractQNameStatementSupport<CaseStatement, EffectiveStatement<QName, CaseStatement>> {
-
+        extends AbstractQNameStatementSupport<CaseStatement, CaseEffectiveStatement> {
     AbstractCaseStatementSupport() {
         super(YangStmtMapping.CASE);
     }
@@ -30,8 +29,7 @@ abstract class AbstractCaseStatementSupport
     }
 
     @Override
-    public final void onStatementAdded(
-            final Mutable<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> stmt) {
+    public final void onStatementAdded(final Mutable<QName, CaseStatement, CaseEffectiveStatement> stmt) {
         stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
@@ -41,8 +39,8 @@ abstract class AbstractCaseStatementSupport
     }
 
     @Override
-    public final EffectiveStatement<QName, CaseStatement> createEffective(
-            final StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
+    public final CaseEffectiveStatement createEffective(
+            final StmtContext<QName, CaseStatement, CaseEffectiveStatement> ctx) {
         return new CaseEffectiveStatementImpl(ctx);
     }
 }

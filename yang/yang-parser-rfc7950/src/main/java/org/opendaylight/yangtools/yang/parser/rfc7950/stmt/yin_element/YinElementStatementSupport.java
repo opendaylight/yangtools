@@ -8,15 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class YinElementStatementSupport extends
-        AbstractStatementSupport<Boolean, YinElementStatement, EffectiveStatement<Boolean, YinElementStatement>> {
+public final class YinElementStatementSupport
+        extends AbstractStatementSupport<Boolean, YinElementStatement, YinElementEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.YIN_ELEMENT).build();
     private static final YinElementStatementSupport INSTANCE = new YinElementStatementSupport();
@@ -40,8 +40,8 @@ public final class YinElementStatementSupport extends
     }
 
     @Override
-    public EffectiveStatement<Boolean, YinElementStatement> createEffective(
-            final StmtContext<Boolean, YinElementStatement, EffectiveStatement<Boolean, YinElementStatement>> ctx) {
+    public YinElementEffectiveStatement createEffective(
+            final StmtContext<Boolean, YinElementStatement, YinElementEffectiveStatement> ctx) {
         return new YinElementEffectiveStatementImpl(ctx);
     }
 

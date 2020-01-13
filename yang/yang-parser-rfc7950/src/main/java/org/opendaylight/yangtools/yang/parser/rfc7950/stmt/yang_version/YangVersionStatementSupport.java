@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yang_version;
 
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class YangVersionStatementSupport extends AbstractStatementSupport<YangVersion, YangVersionStatement,
-        EffectiveStatement<YangVersion, YangVersionStatement>> {
+public final class YangVersionStatementSupport
+        extends AbstractStatementSupport<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .YANG_VERSION)
         .build();
@@ -44,14 +44,14 @@ public final class YangVersionStatementSupport extends AbstractStatementSupport<
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<YangVersion, YangVersionStatement,
-            EffectiveStatement<YangVersion, YangVersionStatement>> stmt) {
+    public void onPreLinkageDeclared(
+            final Mutable<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> stmt) {
         stmt.setRootVersion(stmt.getStatementArgument());
     }
 
     @Override
-    public EffectiveStatement<YangVersion, YangVersionStatement> createEffective(final StmtContext<YangVersion,
-            YangVersionStatement, EffectiveStatement<YangVersion, YangVersionStatement>> ctx) {
+    public YangVersionEffectiveStatement createEffective(
+            final StmtContext<YangVersion, YangVersionStatement, YangVersionEffectiveStatement> ctx) {
         return new YangVersionEffectiveStatementImpl(ctx);
     }
 

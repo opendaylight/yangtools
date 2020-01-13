@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.util.RegexUtils;
@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractPatternStatementSupport extends AbstractStatementSupport<PatternConstraint, PatternStatement,
-        EffectiveStatement<PatternConstraint, PatternStatement>> {
+abstract class AbstractPatternStatementSupport
+        extends AbstractStatementSupport<PatternConstraint, PatternStatement, PatternEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPatternStatementSupport.class);
 
     AbstractPatternStatementSupport() {
@@ -48,9 +48,8 @@ abstract class AbstractPatternStatementSupport extends AbstractStatementSupport<
     }
 
     @Override
-    public final EffectiveStatement<PatternConstraint, PatternStatement> createEffective(
-            final StmtContext<PatternConstraint, PatternStatement,
-            EffectiveStatement<PatternConstraint, PatternStatement>> ctx) {
+    public final PatternEffectiveStatement createEffective(
+            final StmtContext<PatternConstraint, PatternStatement, PatternEffectiveStatement> ctx) {
         return new PatternEffectiveStatementImpl(ctx);
     }
 }

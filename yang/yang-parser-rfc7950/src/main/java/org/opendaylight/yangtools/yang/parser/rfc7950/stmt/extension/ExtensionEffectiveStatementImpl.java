@@ -69,7 +69,7 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
     private final boolean yin;
 
     private ExtensionEffectiveStatementImpl(
-            final StmtContext<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> ctx) {
+            final StmtContext<QName, ExtensionStatement, ExtensionEffectiveStatement> ctx) {
         super(ctx);
         this.qname = ctx.coerceStatementArgument();
         this.schemaPath = ctx.getSchemaPath().get();
@@ -94,8 +94,8 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
      * @param ctx Statement context
      * @return A potentially under-initialized instance
      */
-    static EffectiveStatement<QName, ExtensionStatement> create(
-            final StmtContext<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> ctx) {
+    static ExtensionEffectiveStatement create(
+            final StmtContext<QName, ExtensionStatement, ExtensionEffectiveStatement> ctx) {
         // Look at the thread-local leak in case we are invoked recursively
         final ExtensionEffectiveStatementImpl existing = RecursiveObjectLeaker.lookup(ctx,
             ExtensionEffectiveStatementImpl.class);

@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
@@ -31,8 +31,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 
-abstract class AbstractIncludeStatementSupport extends
-        AbstractStatementSupport<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> {
+abstract class AbstractIncludeStatementSupport
+        extends AbstractStatementSupport<String, IncludeStatement, IncludeEffectiveStatement> {
 
     AbstractIncludeStatementSupport() {
         super(YangStmtMapping.INCLUDE);
@@ -49,14 +49,13 @@ abstract class AbstractIncludeStatementSupport extends
     }
 
     @Override
-    public final EffectiveStatement<String, IncludeStatement> createEffective(
-            final StmtContext<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> ctx) {
+    public final IncludeEffectiveStatement createEffective(
+            final StmtContext<String, IncludeStatement, IncludeEffectiveStatement> ctx) {
         return new IncludeEffectiveStatementImpl(ctx);
     }
 
     @Override
-    public final void onPreLinkageDeclared(
-            final Mutable<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> stmt) {
+    public final void onPreLinkageDeclared(final Mutable<String, IncludeStatement, IncludeEffectiveStatement> stmt) {
         final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt,
             RevisionDateStatement.class);
         stmt.addRequiredSource(revision == null ? RevisionSourceIdentifier.create(stmt.getStatementArgument())
@@ -64,8 +63,7 @@ abstract class AbstractIncludeStatementSupport extends
     }
 
     @Override
-    public final void onLinkageDeclared(
-            final Mutable<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> stmt) {
+    public final void onLinkageDeclared(final Mutable<String, IncludeStatement, IncludeEffectiveStatement> stmt) {
         final String submoduleName = stmt.coerceStatementArgument();
         final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt,
             RevisionDateStatement.class);

@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
@@ -26,8 +26,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
-public final class UsesStatementSupport extends
-        AbstractQNameStatementSupport<UsesStatement, EffectiveStatement<QName, UsesStatement>> {
+public final class UsesStatementSupport
+        extends AbstractQNameStatementSupport<UsesStatement, UsesEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .USES)
         .addAny(YangStmtMapping.AUGMENT)
@@ -54,8 +54,7 @@ public final class UsesStatementSupport extends
     }
 
     @Override
-    public void onFullDefinitionDeclared(
-            final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
+    public void onFullDefinitionDeclared(final Mutable<QName, UsesStatement, UsesEffectiveStatement> usesNode) {
         if (!usesNode.isSupportedByFeatures()) {
             return;
         }
@@ -98,8 +97,7 @@ public final class UsesStatementSupport extends
     }
 
     @Override
-    public EffectiveStatement<QName, UsesStatement> createEffective(
-            final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+    public UsesEffectiveStatement createEffective(final StmtContext<QName, UsesStatement, UsesEffectiveStatement> ctx) {
         return new UsesEffectiveStatementImpl(ctx);
     }
 
