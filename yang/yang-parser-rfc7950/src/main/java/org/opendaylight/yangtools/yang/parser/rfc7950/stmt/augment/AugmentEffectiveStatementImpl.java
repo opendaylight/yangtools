@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Collection;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -45,8 +43,7 @@ final class AugmentEffectiveStatementImpl
             ActionNodeContainerCompat<SchemaNodeIdentifier, AugmentStatement>,
             NotificationNodeContainerCompat<SchemaNodeIdentifier, AugmentStatement> {
     private final SchemaPath targetPath;
-    private final URI namespace;
-    private final Revision revision;
+    private final QNameModule rootModuleQName;
     private final @NonNull ImmutableSet<ActionDefinition> actions;
     private final @NonNull ImmutableSet<NotificationDefinition> notifications;
     private final RevisionAwareXPath whenCondition;
@@ -55,20 +52,14 @@ final class AugmentEffectiveStatementImpl
     AugmentEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, AugmentStatement,
             EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
         super(ctx);
-
-        this.targetPath = ctx.coerceStatementArgument().asSchemaPath();
-
-        final QNameModule rootModuleQName = StmtContextUtils.getRootModuleQName(ctx);
-        this.namespace = rootModuleQName.getNamespace();
-        this.revision = rootModuleQName.getRevision().orElse(null);
-
-        this.copyOf = (AugmentationSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+        targetPath = ctx.coerceStatementArgument().asSchemaPath();
+        rootModuleQName = StmtContextUtils.getRootModuleQName(ctx);
+        copyOf = (AugmentationSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
         whenCondition = findFirstEffectiveSubstatementArgument(WhenEffectiveStatement.class).orElse(null);
 
         // initSubstatementCollections
         final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
         final ImmutableSet.Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
-        final ImmutableList.Builder<UnknownSchemaNode> listBuilder = new ImmutableList.Builder<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof ActionDefinition) {
                 actionsBuilder.add((ActionDefinition) effectiveStatement);
@@ -77,8 +68,8 @@ final class AugmentEffectiveStatementImpl
             }
         }
 
-        this.actions = actionsBuilder.build();
-        this.notifications = notificationsBuilder.build();
+        actions = actionsBuilder.build();
+        notifications = notificationsBuilder.build();
     }
 
     @Override
@@ -113,7 +104,12 @@ final class AugmentEffectiveStatementImpl
 
     @Override
     public URI getNamespace() {
-        return namespace;
+        return rootModuleQName.getNamespace();
+    }
+
+    @Override
+    public Optional<Revision> getRevision() {
+        return rootModuleQName.getRevision();
     }
 
     @Override
@@ -124,11 +120,6 @@ final class AugmentEffectiveStatementImpl
     @Override
     public Set<NotificationDefinition> getNotifications() {
         return notifications;
-    }
-
-    @Override
-    public Optional<Revision> getRevision() {
-        return Optional.ofNullable(revision);
     }
 
     @Override
