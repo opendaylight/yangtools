@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.compat.ActionNodeContainer
 import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeContainerCompat;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
+@Deprecated(forRemoval = true)
 public abstract class AbstractEffectiveContainerSchemaNode<D extends DeclaredStatement<QName>>
         extends AbstractEffectiveMustConstraintAwareSimpleDataNodeContainer<D>
         implements ContainerSchemaNode, ActionNodeContainerCompat<QName, D>, NotificationNodeContainerCompat<QName, D> {
