@@ -263,6 +263,18 @@ public final class EffectiveStatementMixins {
     }
 
     /**
+     * Bridge between {@link EffectiveStatementWithFlags} and {@code presence} statement.
+     *
+     * @param <A> Argument type ({@link Void} if statement does not have argument.)
+     * @param <D> Class representing declared version of this statement.
+     */
+    public interface PresenceMixin<A, D extends DeclaredStatement<A>> extends EffectiveStatementWithFlags<A, D> {
+        default boolean presence() {
+            return (flags() & EffectiveStatementWithFlags.FlagsBuilder.PRESENCE) != 0;
+        }
+    }
+
+    /**
      * Bridge between {@link EffectiveStatementWithFlags} and {@link SchemaNode}.
      *
      * @param <A> Argument type ({@link Void} if statement does not have argument.)
@@ -333,6 +345,7 @@ public final class EffectiveStatementMixins {
             private static final int MASK_HISTORY = 0x0030;
 
             static final int USER_ORDERED         = 0x0040;
+            static final int PRESENCE             = 0x0080;
 
             private int flags;
 
@@ -368,6 +381,15 @@ public final class EffectiveStatementMixins {
                     flags |= MANDATORY;
                 } else {
                     flags &= ~MANDATORY;
+                }
+                return this;
+            }
+
+            public FlagsBuilder setPresence(final boolean presence) {
+                if (presence) {
+                    flags |= PRESENCE;
+                } else {
+                    flags &= ~PRESENCE;
                 }
                 return this;
             }
