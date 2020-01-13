@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
+@Deprecated(forRemoval = true)
 public abstract class AbstractEffectiveMustConstraintAwareSimpleDataNodeContainer<D extends DeclaredStatement<QName>>
         extends AbstractEffectiveSimpleDataNodeContainer<D> implements MustConstraintAware {
     private static final VarHandle MUST_CONSTRAINTS;
