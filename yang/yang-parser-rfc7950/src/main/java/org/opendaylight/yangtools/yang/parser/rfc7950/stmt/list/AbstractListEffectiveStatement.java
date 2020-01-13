@@ -51,7 +51,7 @@ abstract class AbstractListEffectiveStatement
     private final @NonNull SchemaPath path;
     private final @NonNull ImmutableList<QName> keyDefinition;
 
-    AbstractListEffectiveStatement(final ListStatement declared,  final SchemaPath path, final int flags,
+    AbstractListEffectiveStatement(final ListStatement declared, final SchemaPath path, final int flags,
             final StatementSourceReference ref, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements,
             final ImmutableList<QName> keyDefinition) {
         super(declared, ref, substatements);
