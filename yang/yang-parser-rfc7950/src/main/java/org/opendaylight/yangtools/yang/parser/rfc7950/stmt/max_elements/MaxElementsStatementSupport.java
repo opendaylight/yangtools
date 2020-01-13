@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.max_elements;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class MaxElementsStatementSupport extends
-        AbstractStatementSupport<String, MaxElementsStatement, EffectiveStatement<String, MaxElementsStatement>> {
+public final class MaxElementsStatementSupport
+        extends AbstractStatementSupport<String, MaxElementsStatement, MaxElementsEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.MAX_ELEMENTS)
         .build();
@@ -41,8 +41,8 @@ public final class MaxElementsStatementSupport extends
     }
 
     @Override
-    public EffectiveStatement<String, MaxElementsStatement> createEffective(
-            final StmtContext<String, MaxElementsStatement, EffectiveStatement<String, MaxElementsStatement>> ctx) {
+    public MaxElementsEffectiveStatement createEffective(
+            final StmtContext<String, MaxElementsStatement, MaxElementsEffectiveStatement> ctx) {
         return new MaxElementsEffectiveStatementImpl(ctx);
     }
 

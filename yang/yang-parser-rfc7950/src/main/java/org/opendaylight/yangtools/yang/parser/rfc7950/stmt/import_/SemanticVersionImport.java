@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
@@ -120,8 +120,7 @@ final class SemanticVersionImport {
         // Hidden on purpose
     }
 
-    static void onLinkageDeclared(
-            final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
+    static void onLinkageDeclared(final Mutable<String, ImportStatement, ImportEffectiveStatement> stmt) {
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
         final String moduleName = stmt.coerceStatementArgument();
         final SemVer semanticVersion = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);

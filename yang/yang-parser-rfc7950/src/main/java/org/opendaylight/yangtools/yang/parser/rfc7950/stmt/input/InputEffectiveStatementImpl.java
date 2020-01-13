@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveOperationContainerSchemaNode;
@@ -16,8 +15,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class InputEffectiveStatementImpl extends AbstractEffectiveOperationContainerSchemaNode<InputStatement>
         implements InputEffectiveStatement {
-    InputEffectiveStatementImpl(
-            final StmtContext<QName, InputStatement, EffectiveStatement<QName, InputStatement>> ctx) {
+    InputEffectiveStatementImpl(final StmtContext<QName, InputStatement, InputEffectiveStatement> ctx) {
         super(ctx);
     }
 }

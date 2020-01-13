@@ -11,8 +11,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -57,8 +57,8 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
     }
 
     @Override
-    public EffectiveStatement<QName, NotificationStatement> createEffective(
-            final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
+    public NotificationEffectiveStatement createEffective(
+            final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx) {
         SourceException.throwIf(StmtContextUtils.hasAncestorOfType(ctx, ILLEGAL_PARENTS),
             ctx.getStatementSourceReference(),
             "Notification %s is defined within an rpc, action, or another notification",

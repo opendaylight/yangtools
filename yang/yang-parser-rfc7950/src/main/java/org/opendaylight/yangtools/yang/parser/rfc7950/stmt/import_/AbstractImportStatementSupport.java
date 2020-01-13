@@ -14,7 +14,7 @@ import com.google.common.base.Verify;
 import java.net.URI;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
@@ -30,8 +30,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractImportStatementSupport extends
-        AbstractStatementSupport<String, ImportStatement, EffectiveStatement<String, ImportStatement>> {
+abstract class AbstractImportStatementSupport
+        extends AbstractStatementSupport<String, ImportStatement, ImportEffectiveStatement> {
     AbstractImportStatementSupport() {
         super(YangStmtMapping.IMPORT);
     }
@@ -47,14 +47,13 @@ abstract class AbstractImportStatementSupport extends
     }
 
     @Override
-    public final EffectiveStatement<String, ImportStatement> createEffective(
-            final StmtContext<String, ImportStatement, EffectiveStatement<String, ImportStatement>> ctx) {
+    public final ImportEffectiveStatement createEffective(
+            final StmtContext<String, ImportStatement, ImportEffectiveStatement> ctx) {
         return new ImportEffectiveStatementImpl(ctx);
     }
 
     @Override
-    public final void onPreLinkageDeclared(final Mutable<String, ImportStatement,
-            EffectiveStatement<String, ImportStatement>> stmt) {
+    public final void onPreLinkageDeclared(final Mutable<String, ImportStatement, ImportEffectiveStatement> stmt) {
         /*
          * Add ModuleIdentifier of a module which is required by this module.
          * Based on this information, required modules are searched from library
@@ -93,8 +92,7 @@ abstract class AbstractImportStatementSupport extends
     }
 
     @Override
-    public final void onLinkageDeclared(
-            final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
+    public final void onLinkageDeclared(final Mutable<String, ImportStatement, ImportEffectiveStatement> stmt) {
         if (stmt.isEnabledSemanticVersioning()) {
             SemanticVersionImport.onLinkageDeclared(stmt);
         } else {

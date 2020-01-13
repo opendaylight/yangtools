@@ -36,8 +36,7 @@ final class GroupingEffectiveStatementImpl
     private final @NonNull ImmutableSet<ActionDefinition> actions;
     private final @NonNull ImmutableSet<NotificationDefinition> notifications;
 
-    GroupingEffectiveStatementImpl(
-            final StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {
+    GroupingEffectiveStatementImpl(final StmtContext<QName, GroupingStatement, GroupingEffectiveStatement> ctx) {
         super(ctx);
 
         qname = ctx.coerceStatementArgument();

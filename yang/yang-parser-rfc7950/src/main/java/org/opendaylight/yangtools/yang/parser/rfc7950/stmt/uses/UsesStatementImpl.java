@@ -16,10 +16,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
@@ -58,7 +58,7 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
      */
     static void copyFromSourceToTarget(final Mutable<?, ?, ?> sourceGrpStmtCtx,
             final StatementContextBase<?, ?, ?> targetCtx,
-            final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
+            final Mutable<QName, UsesStatement, UsesEffectiveStatement> usesNode) {
         final Collection<? extends Mutable<?, ?, ?>> declared = sourceGrpStmtCtx.mutableDeclaredSubstatements();
         final Collection<? extends Mutable<?, ?, ?>> effective = sourceGrpStmtCtx.mutableEffectiveSubstatements();
         final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
@@ -120,8 +120,7 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
         return true;
     }
 
-    public static void resolveUsesNode(
-            final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
+    public static void resolveUsesNode(final Mutable<QName, UsesStatement, UsesEffectiveStatement> usesNode,
             final StmtContext<?, ?, ?> targetNodeStmtCtx) {
         for (final Mutable<?, ?, ?> subStmtCtx : usesNode.mutableDeclaredSubstatements()) {
             if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)

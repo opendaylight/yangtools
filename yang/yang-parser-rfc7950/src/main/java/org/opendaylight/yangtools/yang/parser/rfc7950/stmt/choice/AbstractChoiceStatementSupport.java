@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
-abstract class AbstractChoiceStatementSupport extends
-        AbstractQNameStatementSupport<ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>>
+abstract class AbstractChoiceStatementSupport
+        extends AbstractQNameStatementSupport<ChoiceStatement, ChoiceEffectiveStatement>
         implements ImplicitParentAwareStatementSupport {
     AbstractChoiceStatementSupport() {
         super(YangStmtMapping.CHOICE);
@@ -43,8 +43,7 @@ abstract class AbstractChoiceStatementSupport extends
     }
 
     @Override
-    public final void onStatementAdded(
-            final Mutable<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> stmt) {
+    public final void onStatementAdded(final Mutable<QName, ChoiceStatement, ChoiceEffectiveStatement> stmt) {
         stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
@@ -54,8 +53,8 @@ abstract class AbstractChoiceStatementSupport extends
     }
 
     @Override
-    public final EffectiveStatement<QName, ChoiceStatement> createEffective(
-            final StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
+    public final ChoiceEffectiveStatement createEffective(
+            final StmtContext<QName, ChoiceStatement, ChoiceEffectiveStatement> ctx) {
         return new ChoiceEffectiveStatementImpl(ctx);
     }
 

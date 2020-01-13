@@ -9,15 +9,15 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.fraction_digits;
 
 import com.google.common.collect.Range;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class FractionDigitsStatementSupport extends AbstractStatementSupport<Integer, FractionDigitsStatement,
-        EffectiveStatement<Integer, FractionDigitsStatement>> {
+public final class FractionDigitsStatementSupport
+        extends AbstractStatementSupport<Integer, FractionDigitsStatement, FractionDigitsEffectiveStatement> {
     private static final Range<Integer> FRAC_DIGITS_ALLOWED = Range.closed(1, 18);
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.FRACTION_DIGITS)
@@ -53,9 +53,8 @@ public final class FractionDigitsStatementSupport extends AbstractStatementSuppo
     }
 
     @Override
-    public EffectiveStatement<Integer, FractionDigitsStatement> createEffective(
-            final StmtContext<Integer, FractionDigitsStatement,
-            EffectiveStatement<Integer, FractionDigitsStatement>> ctx) {
+    public FractionDigitsEffectiveStatement createEffective(
+            final StmtContext<Integer, FractionDigitsStatement, FractionDigitsEffectiveStatement> ctx) {
         return new FractionDigitsEffectiveStatementImpl(ctx);
     }
 

@@ -9,15 +9,15 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.when;
 
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class WhenStatementSupport extends AbstractStatementSupport<RevisionAwareXPath, WhenStatement,
-        EffectiveStatement<RevisionAwareXPath, WhenStatement>> {
+public final class WhenStatementSupport
+        extends AbstractStatementSupport<RevisionAwareXPath, WhenStatement, WhenEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.WHEN)
         .addOptional(YangStmtMapping.DESCRIPTION)
@@ -44,9 +44,8 @@ public final class WhenStatementSupport extends AbstractStatementSupport<Revisio
     }
 
     @Override
-    public EffectiveStatement<RevisionAwareXPath, WhenStatement> createEffective(
-            final StmtContext<RevisionAwareXPath, WhenStatement,
-            EffectiveStatement<RevisionAwareXPath, WhenStatement>> ctx) {
+    public WhenEffectiveStatement createEffective(
+            final StmtContext<RevisionAwareXPath, WhenStatement, WhenEffectiveStatement> ctx) {
         return new WhenEffectiveStatementImpl(ctx);
     }
 

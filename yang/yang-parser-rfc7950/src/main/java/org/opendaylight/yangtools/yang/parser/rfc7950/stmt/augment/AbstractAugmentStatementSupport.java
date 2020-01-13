@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -44,8 +45,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement,
-        EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> {
+abstract class AbstractAugmentStatementSupport
+        extends AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractAugmentStatementSupport.class);
     private static final Pattern PATH_REL_PATTERN1 = Pattern.compile("\\.\\.?\\s*/(.+)");
     private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
@@ -70,15 +71,14 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
     }
 
     @Override
-    public final EffectiveStatement<SchemaNodeIdentifier, AugmentStatement> createEffective(
-            final StmtContext<SchemaNodeIdentifier, AugmentStatement,
-            EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
+    public final AugmentEffectiveStatement createEffective(
+            final StmtContext<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> ctx) {
         return new AugmentEffectiveStatementImpl(ctx);
     }
 
     @Override
-    public final void onFullDefinitionDeclared(final Mutable<SchemaNodeIdentifier, AugmentStatement,
-            EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode) {
+    public final void onFullDefinitionDeclared(
+            final Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode) {
         if (!augmentNode.isSupportedByFeatures()) {
             return;
         }
@@ -92,8 +92,8 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
         final ModelActionBuilder augmentAction = augmentNode.newInferenceAction(
             ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<StmtContext<SchemaNodeIdentifier, AugmentStatement,
-            EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>>> sourceCtxPrereq =
-                augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
+                AugmentEffectiveStatement>> sourceCtxPrereq =
+                    augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target =
                 augmentAction.mutatesEffectiveCtxPath(getSearchRoot(augmentNode),
                     ChildSchemaNodeNamespace.class, augmentNode.coerceStatementArgument().getPathFromRoot());

@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
 import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
@@ -20,13 +20,14 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementR
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public final class ActionStatementSupport
-        extends AbstractQNameStatementSupport<ActionStatement, EffectiveStatement<QName, ActionStatement>> {
+        extends AbstractQNameStatementSupport<ActionStatement, ActionEffectiveStatement> {
     private static final ImmutableSet<StatementDefinition> ILLEGAL_PARENTS = ImmutableSet.of(
             YangStmtMapping.NOTIFICATION, YangStmtMapping.RPC, YangStmtMapping.ACTION);
 
@@ -57,8 +58,7 @@ public final class ActionStatementSupport
     }
 
     @Override
-    public void onStatementAdded(
-            final StmtContext.Mutable<QName, ActionStatement, EffectiveStatement<QName, ActionStatement>> stmt) {
+    public void onStatementAdded(final Mutable<QName, ActionStatement, ActionEffectiveStatement> stmt) {
         stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
@@ -69,8 +69,8 @@ public final class ActionStatementSupport
     }
 
     @Override
-    public EffectiveStatement<QName, ActionStatement> createEffective(
-            final StmtContext<QName, ActionStatement, EffectiveStatement<QName, ActionStatement>> ctx) {
+    public ActionEffectiveStatement createEffective(
+            final StmtContext<QName, ActionStatement, ActionEffectiveStatement> ctx) {
         SourceException.throwIf(StmtContextUtils.hasAncestorOfType(ctx, ILLEGAL_PARENTS),
                 ctx.getStatementSourceReference(),
                 "Action %s is defined within a notification, rpc or another action", ctx.getStatementArgument());
@@ -87,8 +87,7 @@ public final class ActionStatementSupport
     }
 
     @Override
-    public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, ActionStatement,
-            EffectiveStatement<QName, ActionStatement>> stmt) {
+    public void onFullDefinitionDeclared(final Mutable<QName, ActionStatement, ActionEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {

@@ -8,15 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-abstract class AbstractRefineStatementSupport extends AbstractStatementSupport<SchemaNodeIdentifier, RefineStatement,
-        EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> {
+abstract class AbstractRefineStatementSupport
+        extends AbstractStatementSupport<SchemaNodeIdentifier, RefineStatement, RefineEffectiveStatement> {
 
     AbstractRefineStatementSupport() {
         super(YangStmtMapping.REFINE);
@@ -33,9 +33,8 @@ abstract class AbstractRefineStatementSupport extends AbstractStatementSupport<S
     }
 
     @Override
-    public final EffectiveStatement<SchemaNodeIdentifier, RefineStatement> createEffective(
-            final StmtContext<SchemaNodeIdentifier, RefineStatement,
-            EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> ctx) {
+    public final RefineEffectiveStatement createEffective(
+            final StmtContext<SchemaNodeIdentifier, RefineStatement, RefineEffectiveStatement> ctx) {
         return new RefineEffectiveStatementImpl(ctx);
     }
 }

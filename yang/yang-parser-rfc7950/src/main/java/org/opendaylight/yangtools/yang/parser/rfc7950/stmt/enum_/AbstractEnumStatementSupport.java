@@ -8,14 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.enum_;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-abstract class AbstractEnumStatementSupport extends
-        AbstractStatementSupport<String, EnumStatement, EffectiveStatement<String, EnumStatement>> {
-
+abstract class AbstractEnumStatementSupport
+        extends AbstractStatementSupport<String, EnumStatement, EnumEffectiveStatement> {
     AbstractEnumStatementSupport() {
         super(YangStmtMapping.ENUM);
     }
@@ -32,8 +31,8 @@ abstract class AbstractEnumStatementSupport extends
     }
 
     @Override
-    public final EffectiveStatement<String, EnumStatement> createEffective(
-            final StmtContext<String, EnumStatement, EffectiveStatement<String, EnumStatement>> ctx) {
+    public final EnumEffectiveStatement createEffective(
+            final StmtContext<String, EnumStatement, EnumEffectiveStatement> ctx) {
         return new EnumEffectiveStatementImpl(ctx);
     }
 }

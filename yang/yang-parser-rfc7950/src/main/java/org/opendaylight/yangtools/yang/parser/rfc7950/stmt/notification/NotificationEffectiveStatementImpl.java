@@ -51,7 +51,7 @@ final class NotificationEffectiveStatementImpl
     private volatile ImmutableSet<MustDefinition> mustConstraints;
 
     NotificationEffectiveStatementImpl(
-            final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
+            final StmtContext<QName, NotificationStatement, NotificationEffectiveStatement> ctx) {
         super(ctx);
         this.qname = ctx.coerceStatementArgument();
         this.path = ctx.getSchemaPath().get();

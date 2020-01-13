@@ -44,7 +44,7 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     private final @NonNull ImmutableSet<AugmentationSchemaNode> augmentations;
     private final @Nullable RevisionAwareXPath whenCondition;
 
-    UsesEffectiveStatementImpl(final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+    UsesEffectiveStatementImpl(final StmtContext<QName, UsesStatement, UsesEffectiveStatement> ctx) {
         super(ctx);
 
         // initGroupingPath

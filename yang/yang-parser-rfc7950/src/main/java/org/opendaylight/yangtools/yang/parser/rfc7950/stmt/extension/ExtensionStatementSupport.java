@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ExtensionStatementSupport
-        extends AbstractQNameStatementSupport<ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> {
+        extends AbstractQNameStatementSupport<ExtensionStatement, ExtensionEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .EXTENSION)
         .addOptional(YangStmtMapping.ARGUMENT)
@@ -52,14 +52,14 @@ public final class ExtensionStatementSupport
     }
 
     @Override
-    public EffectiveStatement<QName, ExtensionStatement> createEffective(
-            final StmtContext<QName, ExtensionStatement, EffectiveStatement<QName,ExtensionStatement>> ctx) {
+    public ExtensionEffectiveStatement createEffective(
+            final StmtContext<QName, ExtensionStatement, ExtensionEffectiveStatement> ctx) {
         return ExtensionEffectiveStatementImpl.create(ctx);
     }
 
     @Override
     public void onStatementDefinitionDeclared(
-            final Mutable<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> stmt) {
+            final Mutable<QName, ExtensionStatement, ExtensionEffectiveStatement> stmt) {
         super.onStatementDefinitionDeclared(stmt);
 
         QName stmtName = stmt.coerceStatementArgument();

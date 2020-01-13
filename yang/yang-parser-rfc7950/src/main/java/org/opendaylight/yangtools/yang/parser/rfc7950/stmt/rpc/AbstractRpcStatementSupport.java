@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.rpc;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 abstract class AbstractRpcStatementSupport
-        extends AbstractQNameStatementSupport<RpcStatement, EffectiveStatement<QName, RpcStatement>> {
+        extends AbstractQNameStatementSupport<RpcStatement, RpcEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.RPC)
         .addOptional(YangStmtMapping.DESCRIPTION)
@@ -46,8 +46,7 @@ abstract class AbstractRpcStatementSupport
     }
 
     @Override
-    public final void onStatementAdded(
-            final Mutable<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> stmt) {
+    public final void onStatementAdded(final Mutable<QName, RpcStatement, RpcEffectiveStatement> stmt) {
         stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
@@ -57,14 +56,13 @@ abstract class AbstractRpcStatementSupport
     }
 
     @Override
-    public final EffectiveStatement<QName, RpcStatement> createEffective(
-            final StmtContext<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> ctx) {
+    public final RpcEffectiveStatement createEffective(
+            final StmtContext<QName, RpcStatement, RpcEffectiveStatement> ctx) {
         return new RpcEffectiveStatementImpl(ctx);
     }
 
     @Override
-    public final void onFullDefinitionDeclared(
-            final Mutable<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> stmt) {
+    public final void onFullDefinitionDeclared(final Mutable<QName, RpcStatement, RpcEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
