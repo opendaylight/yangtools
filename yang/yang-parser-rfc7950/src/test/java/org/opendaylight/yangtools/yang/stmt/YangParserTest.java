@@ -99,7 +99,7 @@ public class YangParserTest {
         assertEquals(FOO.getNamespace(), foo.getNamespace());
         assertEquals("foo", foo.getPrefix());
 
-        final Set<ModuleImport> imports = foo.getImports();
+        final Collection<? extends ModuleImport> imports = foo.getImports();
         assertEquals(2, imports.size());
 
         final ModuleImport import2 = TestUtils.findImport(imports, "br");
@@ -143,7 +143,7 @@ public class YangParserTest {
         assertEquals(1, constraints.getMinElements().intValue());
         assertEquals(11, constraints.getMaxElements().intValue());
         // test AugmentationTarget args
-        final Set<AugmentationSchemaNode> availableAugmentations = ifEntry.getAvailableAugmentations();
+        final Collection<? extends AugmentationSchemaNode> availableAugmentations = ifEntry.getAvailableAugmentations();
         assertEquals(2, availableAugmentations.size());
         // test ListSchemaNode args
         final List<QName> expectedKey = new ArrayList<>();
@@ -543,7 +543,7 @@ public class YangParserTest {
 
     @Test
     public void testDeviation() {
-        final Set<Deviation> deviations = foo.getDeviations();
+        final Collection<? extends Deviation> deviations = foo.getDeviations();
         assertEquals(1, deviations.size());
         final Deviation dev = deviations.iterator().next();
         assertEquals(Optional.of("system/user ref"), dev.getReference());
@@ -560,24 +560,24 @@ public class YangParserTest {
     public void testUnknownNode() {
         final ContainerSchemaNode network = (ContainerSchemaNode) baz.getDataChildByName(
             QName.create(baz.getQNameModule(), "network"));
-        final List<UnknownSchemaNode> unknownNodes = network.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownNodes = network.getUnknownSchemaNodes();
         assertEquals(1, unknownNodes.size());
-        final UnknownSchemaNode unknownNode = unknownNodes.get(0);
+        final UnknownSchemaNode unknownNode = unknownNodes.iterator().next();
         assertNotNull(unknownNode.getNodeType());
         assertEquals("point", unknownNode.getNodeParameter());
     }
 
     @Test
     public void testFeature() {
-        final Set<FeatureDefinition> features = baz.getFeatures();
+        final Collection<? extends FeatureDefinition> features = baz.getFeatures();
         assertEquals(3, features.size());
     }
 
     @Test
     public void testExtension() {
-        final List<ExtensionDefinition> extensions = baz.getExtensionSchemaNodes();
+        final Collection<? extends ExtensionDefinition> extensions = baz.getExtensionSchemaNodes();
         assertEquals(1, extensions.size());
-        final ExtensionDefinition extension = extensions.get(0);
+        final ExtensionDefinition extension = extensions.iterator().next();
         assertEquals("name", extension.getArgument());
         assertEquals(
             Optional.of("Takes as argument a name string. Makes the code generator use the given name in the #define."),
@@ -587,7 +587,7 @@ public class YangParserTest {
 
     @Test
     public void testNotification() {
-        final Set<NotificationDefinition> notifications = baz.getNotifications();
+        final Collection<? extends NotificationDefinition> notifications = baz.getNotifications();
         assertEquals(1, notifications.size());
 
         final NotificationDefinition notification = notifications.iterator().next();
@@ -615,7 +615,7 @@ public class YangParserTest {
 
     @Test
     public void testRpc() {
-        final Set<RpcDefinition> rpcs = baz.getRpcs();
+        final Collection<? extends RpcDefinition> rpcs = baz.getRpcs();
         assertEquals(1, rpcs.size());
 
         final RpcDefinition rpc = rpcs.iterator().next();
@@ -625,7 +625,7 @@ public class YangParserTest {
 
     @Test
     public void testTypePath() throws ParseException {
-        final Set<TypeDefinition<?>> types = bar.getTypeDefinitions();
+        final Collection<? extends TypeDefinition<?>> types = bar.getTypeDefinitions();
 
         // int32-ext1
         final Int32TypeDefinition int32ext1 = (Int32TypeDefinition) TestUtils.findTypedef(types, "int32-ext1");
@@ -645,7 +645,7 @@ public class YangParserTest {
 
     @Test
     public void testTypePath2() throws ParseException {
-        final Set<TypeDefinition<?>> types = bar.getTypeDefinitions();
+        final Collection<? extends TypeDefinition<?>> types = bar.getTypeDefinitions();
 
         // my-decimal-type
         final DecimalTypeDefinition myDecType = (DecimalTypeDefinition) TestUtils.findTypedef(types, "my-decimal-type");

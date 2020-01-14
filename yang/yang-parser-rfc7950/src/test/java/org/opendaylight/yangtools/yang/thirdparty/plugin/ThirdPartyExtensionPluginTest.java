@@ -13,7 +13,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -41,10 +41,10 @@ public class ThirdPartyExtensionPluginTest {
 
         final ContainerSchemaNode root = (ContainerSchemaNode) dataChildByName;
 
-        final List<UnknownSchemaNode> unknownSchemaNodes = root.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = root.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.get(0);
+        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
         assertThat(unknownSchemaNode, isA(ThirdPartyExtensionEffectiveStatement.class));
         final ThirdPartyExtensionEffectiveStatement thirdPartyExtensionStmt =
                 (ThirdPartyExtensionEffectiveStatement) unknownSchemaNode;

@@ -54,7 +54,7 @@ public final class SchemaUtils {
      * @return schema node with newest revision or absent if no schema node with matching qname is found
      */
     public static Optional<DataSchemaNode> findFirstSchema(final QName qname,
-            final Iterable<DataSchemaNode> dataSchemaNode) {
+            final Iterable<? extends DataSchemaNode> dataSchemaNode) {
         DataSchemaNode schema = null;
         if (dataSchemaNode != null && qname != null) {
             for (final DataSchemaNode dsn : dataSchemaNode) {
@@ -110,7 +110,7 @@ public final class SchemaUtils {
     }
 
     public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname,
-            final Iterable<DataSchemaNode> childNodes) {
+            final Iterable<? extends DataSchemaNode> childNodes) {
         final Optional<DataSchemaNode> childSchema = findFirstSchema(qname, childNodes);
         checkState(childSchema.isPresent(), "Unknown child(ren) node(s) detected, identified by: %s, in: %s", qname,
             schema);
@@ -175,7 +175,7 @@ public final class SchemaUtils {
     }
 
     private static Map<QName, ChoiceSchemaNode> mapChildElementsFromChoices(final DataNodeContainer schema,
-            final Iterable<DataSchemaNode> childNodes) {
+            final Iterable<? extends DataSchemaNode> childNodes) {
         final Map<QName, ChoiceSchemaNode> mappedChoices = new LinkedHashMap<>();
 
         for (final DataSchemaNode childSchema : childNodes) {

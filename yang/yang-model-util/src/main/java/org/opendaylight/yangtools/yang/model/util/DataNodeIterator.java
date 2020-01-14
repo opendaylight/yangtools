@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -100,7 +99,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
             return;
         }
 
-        final Iterable<DataSchemaNode> childNodes = dataNode.getChildNodes();
+        final Iterable<? extends DataSchemaNode> childNodes = dataNode.getChildNodes();
         if (childNodes != null) {
             for (DataSchemaNode childNode : childNodes) {
                 if (childNode.isAugmenting()) {
@@ -139,13 +138,11 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
             return;
         }
 
-        final Set<NotificationDefinition> notifications = module.getNotifications();
-        for (NotificationDefinition notificationDefinition : notifications) {
+        for (NotificationDefinition notificationDefinition : module.getNotifications()) {
             traverse(notificationDefinition);
         }
 
-        final Set<RpcDefinition> rpcs = module.getRpcs();
-        for (RpcDefinition rpcDefinition : rpcs) {
+        for (RpcDefinition rpcDefinition : module.getRpcs()) {
             this.allTypedefs.addAll(rpcDefinition.getTypeDefinitions());
             ContainerSchemaNode input = rpcDefinition.getInput();
             if (input != null) {
@@ -159,7 +156,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
     }
 
     private void traverseGroupings(final DataNodeContainer dataNode) {
-        final Set<GroupingDefinition> groupings = dataNode.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings = dataNode.getGroupings();
         if (groupings != null) {
             for (GroupingDefinition grouping : groupings) {
                 allGroupings.add(grouping);
@@ -170,10 +167,13 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
 
     @Override
     public boolean hasNext() {
+        // FIXME: this method looks weird...
         if (container.getChildNodes() != null) {
-            final Collection<DataSchemaNode> childNodes = container.getChildNodes();
-
+            // ... second time we load child nodes ...
+            final Collection<? extends DataSchemaNode> childNodes = container.getChildNodes();
+            // ... recheck null?
             if (childNodes != null && !childNodes.isEmpty()) {
+                // ... which really means 'true' as we are not empty
                 return childNodes.iterator().hasNext();
             }
         }

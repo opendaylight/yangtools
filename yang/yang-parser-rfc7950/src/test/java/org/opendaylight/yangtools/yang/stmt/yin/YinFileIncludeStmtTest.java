@@ -39,7 +39,7 @@ public class YinFileIncludeStmtTest {
         assertNotNull(parentModule);
 
         assertEquals(1, parentModule.getSubmodules().size());
-        Iterator<Module> submodulesIterator = parentModule.getSubmodules().iterator();
+        Iterator<? extends Module> submodulesIterator = parentModule.getSubmodules().iterator();
 
         Module childModule = submodulesIterator.next() ;
         assertNotNull(childModule);

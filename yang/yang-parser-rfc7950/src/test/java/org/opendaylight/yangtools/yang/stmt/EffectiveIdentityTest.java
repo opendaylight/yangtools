@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -16,7 +15,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import com.google.common.collect.Iterables;
 import java.net.URISyntaxException;
-import java.util.Set;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -52,14 +51,11 @@ public class EffectiveIdentityTest {
     @Test
     public void identityTest() throws SourceException, ReactorException,
             URISyntaxException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSources(IDENTITY_TEST)
-                .buildEffective();
-
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild().addSources(IDENTITY_TEST).buildEffective();
         assertNotNull(result);
 
         Module module = result.findModule("identity-test").get();
-        Set<IdentitySchemaNode> identities = module.getIdentities();
+        Collection<? extends IdentitySchemaNode> identities = module.getIdentities();
 
         assertNotNull(identities);
         assertEquals(4, identities.size());
@@ -94,8 +90,7 @@ public class EffectiveIdentityTest {
 
         assertTrue(root.getBaseIdentities().isEmpty());
 
-        Set<IdentitySchemaNode> rootDerivedIdentities = root
-                .getDerivedIdentities();
+        Collection<? extends IdentitySchemaNode> rootDerivedIdentities = root.getDerivedIdentities();
         assertEquals(2, rootDerivedIdentities.size());
 
         assertTrue(rootDerivedIdentities.contains(child1));
@@ -108,8 +103,7 @@ public class EffectiveIdentityTest {
 
         assertTrue(child2.getDerivedIdentities().isEmpty());
 
-        Set<IdentitySchemaNode> child1DerivedIdentities = child1
-                .getDerivedIdentities();
+        Collection<? extends IdentitySchemaNode> child1DerivedIdentities = child1.getDerivedIdentities();
         assertEquals(1, child1DerivedIdentities.size());
         assertTrue(child1DerivedIdentities.contains(child12));
         assertFalse(child1DerivedIdentities.contains(child1));
