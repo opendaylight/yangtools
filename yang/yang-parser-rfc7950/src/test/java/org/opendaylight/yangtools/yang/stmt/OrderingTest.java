@@ -14,7 +14,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -45,7 +44,7 @@ public class OrderingTest {
 
     @Test
     public void testOrderingTypedef() throws Exception {
-        final Set<TypeDefinition<?>> typedefs = bar.getTypeDefinitions();
+        final Collection<? extends TypeDefinition<?>> typedefs = bar.getTypeDefinitions();
         final String[] expectedOrder = { "int32-ext1", "int32-ext2", "string-ext1", "string-ext2", "string-ext3",
             "string-ext4", "invalid-string-pattern", "multiple-pattern-string", "my-decimal-type", "my-union",
             "my-union-ext", "nested-union2"
@@ -85,7 +84,7 @@ public class OrderingTest {
 
     @Test
     public void testOrderingNestedChildNodes1() throws Exception {
-        final Collection<DataSchemaNode> childNodes = foo.getChildNodes();
+        final Collection<? extends DataSchemaNode> childNodes = foo.getChildNodes();
         final String[] expectedOrder = { "int32-leaf", "string-leaf", "invalid-pattern-string-leaf",
             "invalid-direct-string-pattern-def-leaf", "multiple-pattern-string-leaf",
             "multiple-pattern-direct-string-def-leaf", "length-leaf", "decimal-leaf", "decimal-leaf2", "ext",
@@ -104,11 +103,11 @@ public class OrderingTest {
 
     @Test
     public void testOrderingNestedChildNodes2() throws Exception {
-        final Set<GroupingDefinition> groupings = baz.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings = baz.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition target = groupings.iterator().next();
 
-        final Collection<DataSchemaNode> childNodes = target.getChildNodes();
+        final Collection<? extends DataSchemaNode> childNodes = target.getChildNodes();
         final String[] expectedOrder = { "data", "how", "address", "port", "addresses" };
         final String[] actualOrder = new String[childNodes.size()];
 
@@ -126,7 +125,7 @@ public class OrderingTest {
                 .getModules().iterator().next();
         final ContainerSchemaNode x = (ContainerSchemaNode) justFoo
                 .getDataChildByName(QName.create(justFoo.getQNameModule(), "x"));
-        final Collection<DataSchemaNode> childNodes = x.getChildNodes();
+        final Collection<? extends DataSchemaNode> childNodes = x.getChildNodes();
 
         final String[] expectedOrder = { "x15", "x10", "x5", "x1", "a5", "a1", "x2", "b5", "b1", "x3", "ax15", "ax5" };
         final String[] actualOrder = new String[childNodes.size()];

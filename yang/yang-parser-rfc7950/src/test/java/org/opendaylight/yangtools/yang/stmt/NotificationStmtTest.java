@@ -5,14 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.util.Set;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
@@ -35,7 +34,7 @@ public class NotificationStmtTest {
         final Module testModule = result.findModules("baz").iterator().next();
         assertNotNull(testModule);
 
-        final Set<NotificationDefinition> notifications = testModule.getNotifications();
+        final Collection<? extends NotificationDefinition> notifications = testModule.getNotifications();
         assertEquals(1, notifications.size());
 
         final NotificationDefinition notification = notifications.iterator().next();

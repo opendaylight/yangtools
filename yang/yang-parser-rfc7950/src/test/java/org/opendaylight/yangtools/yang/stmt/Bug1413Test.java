@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -31,10 +31,10 @@ public class Bug1413Test {
             TestUtils.loadModules(getClass().getResource("/bugs/bug1413").toURI()), "bug1413").get();
         assertNotNull(bug1413);
 
-        List<ExtensionDefinition> extensions = bug1413.getExtensionSchemaNodes();
+        Collection<? extends ExtensionDefinition> extensions = bug1413.getExtensionSchemaNodes();
         assertEquals(1, extensions.size());
 
-        ExtensionDefinition info = extensions.get(0);
+        ExtensionDefinition info = extensions.iterator().next();
         assertEquals("text", info.getArgument());
         assertTrue(info.isYinElement());
     }

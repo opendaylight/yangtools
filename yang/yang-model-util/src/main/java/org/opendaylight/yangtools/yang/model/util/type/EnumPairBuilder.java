@@ -57,7 +57,7 @@ public final class EnumPairBuilder implements Builder<EnumPair>, Mutable {
         return this;
     }
 
-    public EnumPairBuilder setUnknownSchemaNodes(final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+    public EnumPairBuilder setUnknownSchemaNodes(final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
         return this;
     }

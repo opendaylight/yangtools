@@ -28,7 +28,7 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends Abstract
 
     AbstractDerivedType(final T baseType, final SchemaPath path, final Object defaultValue, final String description,
             final String reference, final Status status, final String units,
-            final Collection<UnknownSchemaNode> unknownSchemNodes) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemNodes) {
         super(path, unknownSchemNodes);
         this.baseType = requireNonNull(baseType);
         this.status = requireNonNull(status);

@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -39,7 +39,7 @@ final class EnumPairImpl implements EnumPair, Immutable {
     }
 
     @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
+    public Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownSchemaNodes;
     }
 

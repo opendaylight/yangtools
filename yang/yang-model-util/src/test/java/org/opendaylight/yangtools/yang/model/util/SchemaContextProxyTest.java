@@ -16,6 +16,7 @@ import static org.mockito.Mockito.mock;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -407,7 +408,8 @@ public class SchemaContextProxyTest {
         final Set<DataSchemaNode> childNodes = Collections.singleton(mockedContainer);
         doReturn(childNodes).when(moduleConfig).getChildNodes();
 
-        final Set<DataSchemaNode> dataDefinitions = filteringSchemaContextProxy.getDataDefinitions();
+        final Collection<? extends DataSchemaNode> dataDefinitions =
+                filteringSchemaContextProxy.getDataDefinitions();
         assertTrue(dataDefinitions.contains(mockedContainer));
     }
 
@@ -422,7 +424,7 @@ public class SchemaContextProxyTest {
         final Set<NotificationDefinition> notifications = Collections.singleton(mockedNotification);
         doReturn(notifications).when(moduleConfig).getNotifications();
 
-        final Set<NotificationDefinition> schemaContextProxyNotifications =
+        final Collection<? extends NotificationDefinition> schemaContextProxyNotifications =
             filteringSchemaContextProxy.getNotifications();
         assertTrue(schemaContextProxyNotifications.contains(mockedNotification));
     }
@@ -438,7 +440,7 @@ public class SchemaContextProxyTest {
         final Set<RpcDefinition> rpcs = Collections.singleton(mockedRpc);
         doReturn(rpcs).when(moduleConfig).getRpcs();
 
-        final Set<RpcDefinition> operations = filteringSchemaContextProxy.getOperations();
+        final Collection<? extends RpcDefinition> operations = filteringSchemaContextProxy.getOperations();
         assertTrue(operations.contains(mockedRpc));
     }
 
@@ -453,7 +455,8 @@ public class SchemaContextProxyTest {
         final List<ExtensionDefinition> extensions = Collections.singletonList(mockedExtension);
         doReturn(extensions).when(moduleConfig).getExtensionSchemaNodes();
 
-        final Set<ExtensionDefinition> schemaContextProxyExtensions = filteringSchemaContextProxy.getExtensions();
+        final Collection<? extends ExtensionDefinition> schemaContextProxyExtensions =
+                filteringSchemaContextProxy.getExtensions();
         assertTrue(schemaContextProxyExtensions.contains(mockedExtension));
     }
 
@@ -468,7 +471,7 @@ public class SchemaContextProxyTest {
         final List<UnknownSchemaNode> unknownSchemaNodes = Collections.singletonList(mockedUnknownSchemaNode);
         doReturn(unknownSchemaNodes).when(moduleConfig).getUnknownSchemaNodes();
 
-        final List<UnknownSchemaNode> schemaContextProxyUnknownSchemaNodes =
+        final Collection<? extends UnknownSchemaNode> schemaContextProxyUnknownSchemaNodes =
                 filteringSchemaContextProxy.getUnknownSchemaNodes();
         assertTrue(schemaContextProxyUnknownSchemaNodes.contains(mockedUnknownSchemaNode));
     }
@@ -484,7 +487,7 @@ public class SchemaContextProxyTest {
         final Set<TypeDefinition<?>> typeDefinitions = Collections.singleton(mockedTypeDefinition);
         doReturn(typeDefinitions).when(moduleConfig).getTypeDefinitions();
 
-        final Set<TypeDefinition<?>> schemaContextProxyTypeDefinitions = filteringSchemaContextProxy
+        final Collection<? extends TypeDefinition<?>> schemaContextProxyTypeDefinitions = filteringSchemaContextProxy
             .getTypeDefinitions();
         assertTrue(schemaContextProxyTypeDefinitions.contains(mockedTypeDefinition));
     }
@@ -500,7 +503,8 @@ public class SchemaContextProxyTest {
         final Set<DataSchemaNode> childNodes = Collections.singleton(mockedContainer);
         doReturn(childNodes).when(moduleConfig).getChildNodes();
 
-        final Set<DataSchemaNode> schemaContextProxyChildNodes = filteringSchemaContextProxy.getChildNodes();
+        final Collection<? extends DataSchemaNode> schemaContextProxyChildNodes =
+                filteringSchemaContextProxy.getChildNodes();
         assertTrue(schemaContextProxyChildNodes.contains(mockedContainer));
     }
 
@@ -515,7 +519,8 @@ public class SchemaContextProxyTest {
         final Set<GroupingDefinition> groupings = Collections.singleton(mockedGrouping);
         doReturn(groupings).when(moduleConfig).getGroupings();
 
-        final Set<GroupingDefinition> schemaContextProxyGroupings = filteringSchemaContextProxy.getGroupings();
+        final Collection<? extends GroupingDefinition> schemaContextProxyGroupings =
+                filteringSchemaContextProxy.getGroupings();
         assertTrue(schemaContextProxyGroupings.contains(mockedGrouping));
     }
 
@@ -548,7 +553,7 @@ public class SchemaContextProxyTest {
                 assertEquals(module, filteringSchemaContextProxy.findModule(module.getName(), module.getRevision())
                     .get());
 
-                Set<Module> mod = filteringSchemaContextProxy.findModules(module.getNamespace());
+                Collection<? extends Module> mod = filteringSchemaContextProxy.findModules(module.getNamespace());
                 assertTrue(mod.contains(module));
                 assertEquals(module, filteringSchemaContextProxy.findModule(module.getNamespace(),
                     module.getRevision().orElse(null)).get());

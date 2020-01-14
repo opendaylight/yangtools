@@ -18,13 +18,13 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 final class DerivedIdentityrefType extends AbstractDerivedType<IdentityrefTypeDefinition>
         implements IdentityrefTypeDefinition {
     DerivedIdentityrefType(final IdentityrefTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
-        final String description, final String reference, final Status status, final String units,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+            final String description, final String reference, final Status status, final String units,
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
     @Override
-    public Set<IdentitySchemaNode> getIdentities() {
+    public Set<? extends IdentitySchemaNode> getIdentities() {
         return baseType().getIdentities();
     }
 

@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Set;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -29,7 +29,7 @@ public class Bug6240Test {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6240/correct");
         assertNotNull(context);
 
-        final Set<Module> modules = context.getModules();
+        final Collection<? extends Module> modules = context.getModules();
         assertEquals(2, modules.size());
 
         Module bar = null;

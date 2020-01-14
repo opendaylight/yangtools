@@ -18,7 +18,7 @@ final class DerivedLeafrefType extends AbstractDerivedType<LeafrefTypeDefinition
 
     DerivedLeafrefType(final LeafrefTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
         final String description, final String reference, final Status status, final String units,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 

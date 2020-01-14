@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -92,7 +93,7 @@ public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends Declare
     }
 
     @Override
-    public Set<AugmentationSchemaNode> getAvailableAugmentations() {
+    public Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
         return augmentations;
     }
 

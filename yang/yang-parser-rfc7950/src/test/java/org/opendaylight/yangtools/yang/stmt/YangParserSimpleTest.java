@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -74,7 +73,7 @@ public class YangParserSimpleTest {
 
         assertTrue(data.isMandatory());
         assertEquals("class != 'wheel'", data.getWhenCondition().get().getOriginalString());
-        final Collection<MustDefinition> mustConstraints = data.getMustConstraints();
+        final Collection<? extends MustDefinition> mustConstraints = data.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
         final String must1 = "ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)";
@@ -121,7 +120,7 @@ public class YangParserSimpleTest {
         assertTrue(anydata.isMandatory());
         assertTrue(anydata.getWhenCondition().isPresent());
         assertEquals("class != 'wheel'", anydata.getWhenCondition().get().getOriginalString());
-        final Collection<MustDefinition> mustConstraints = anydata.getMustConstraints();
+        final Collection<? extends MustDefinition> mustConstraints = anydata.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
         final String must1 = "ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)";
@@ -162,7 +161,7 @@ public class YangParserSimpleTest {
 
         // constraints
         assertEquals("class != 'wheel'", nodes.getWhenCondition().get().getOriginalString());
-        final Collection<MustDefinition> mustConstraints = nodes.getMustConstraints();
+        final Collection<? extends MustDefinition> mustConstraints = nodes.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
         final String must1 = "ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)";
@@ -189,7 +188,7 @@ public class YangParserSimpleTest {
         assertTrue(nodes.isPresenceContainer());
 
         // typedef
-        final Set<TypeDefinition<?>> typedefs = nodes.getTypeDefinitions();
+        final Collection<? extends TypeDefinition<?>> typedefs = nodes.getTypeDefinitions();
         assertEquals(1, typedefs.size());
         final TypeDefinition<?> nodesType = typedefs.iterator().next();
         final QName typedefQName = QName.create(SN, "nodes-type");
@@ -212,7 +211,7 @@ public class YangParserSimpleTest {
             testModule.getQNameModule(), "links"));
         assertFalse(links.isUserOrdered());
 
-        final Set<GroupingDefinition> groupings = nodes.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings = nodes.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition nodeGroup = groupings.iterator().next();
         final QName groupQName = QName.create(SN, "node-group");
@@ -220,7 +219,7 @@ public class YangParserSimpleTest {
         final SchemaPath nodeGroupPath = SN_NODES_PATH.createChild(groupQName);
         assertEquals(nodeGroupPath, nodeGroup.getPath());
 
-        final Set<UsesNode> uses = nodes.getUses();
+        final Collection<? extends UsesNode> uses = nodes.getUses();
         assertEquals(1, uses.size());
         final UsesNode use = uses.iterator().next();
         assertEquals(nodeGroupPath, use.getGroupingPath());
