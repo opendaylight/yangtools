@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * Interface describing YANG 'deviate' statement.
@@ -69,7 +68,7 @@ public interface DeviateDefinition {
      *
      * @return set of the deviated must statements
      */
-    Set<MustDefinition> getDeviatedMusts();
+    Collection<? extends MustDefinition> getDeviatedMusts();
 
     /**
      * Returns deviated type statement.
@@ -83,7 +82,7 @@ public interface DeviateDefinition {
      *
      * @return collection of the deviated unique statements
      */
-    Collection<UniqueConstraint> getDeviatedUniques();
+    Collection<? extends UniqueConstraint> getDeviatedUniques();
 
     /**
      * Returns deviated units statement.

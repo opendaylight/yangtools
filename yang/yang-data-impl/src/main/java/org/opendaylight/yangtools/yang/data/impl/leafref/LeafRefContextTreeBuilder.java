@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.leafref;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -36,7 +35,7 @@ final class LeafRefContextTreeBuilder {
         final LeafRefContextBuilder rootBuilder = new LeafRefContextBuilder(schemaContext.getQName(),
             schemaContext.getPath(), schemaContext);
 
-        final Set<Module> modules = schemaContext.getModules();
+        final Collection<? extends Module> modules = schemaContext.getModules();
         for (final Module module : modules) {
             for (final DataSchemaNode childNode : module.getChildNodes()) {
                 final LeafRefContext childLeafRefContext = buildLeafRefContextReferencingTree(childNode, module);
@@ -47,8 +46,7 @@ final class LeafRefContextTreeBuilder {
         }
 
         for (final Module module : modules) {
-            final Collection<DataSchemaNode> childNodes = module.getChildNodes();
-            for (final DataSchemaNode childNode : childNodes) {
+            for (final DataSchemaNode childNode : module.getChildNodes()) {
                 final LeafRefContext childLeafRefContext = buildLeafRefContextReferencedByTree(childNode, module);
 
                 if (childLeafRefContext.hasReferencedChild() || childLeafRefContext.isReferenced()) {

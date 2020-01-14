@@ -15,7 +15,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.util.Set;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -65,7 +65,7 @@ public class RpcStmtTest {
         assertNotNull(anyXml);
 
         final Module fooModule = result.findModule("foo", Revision.of("2016-09-23")).get();
-        final Set<RpcDefinition> rpcs = fooModule.getRpcs();
+        final Collection<? extends RpcDefinition> rpcs = fooModule.getRpcs();
         assertEquals(2, rpcs.size());
 
         RpcDefinition fooRpc1 = null;
@@ -103,7 +103,7 @@ public class RpcStmtTest {
         assertNotNull(schemaContext);
 
         final Module barModule = schemaContext.findModule("bar", Revision.of("2016-11-25")).get();
-        final Set<RpcDefinition> rpcs = barModule.getRpcs();
+        final Collection<? extends RpcDefinition> rpcs = barModule.getRpcs();
         assertEquals(1, rpcs.size());
 
         final RpcDefinition barRpc = rpcs.iterator().next();

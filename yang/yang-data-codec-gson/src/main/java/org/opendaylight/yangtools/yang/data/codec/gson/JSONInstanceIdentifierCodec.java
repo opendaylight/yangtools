@@ -36,13 +36,13 @@ abstract class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceI
 
     @Override
     protected final Module moduleForPrefix(final String prefix) {
-        final Iterator<Module> modules = context.findModules(prefix).iterator();
+        final Iterator<? extends Module> modules = context.findModules(prefix).iterator();
         return modules.hasNext() ? modules.next() : null;
     }
 
     @Override
     protected final String prefixForNamespace(final URI namespace) {
-        final Iterator<Module> modules = context.findModules(namespace).iterator();
+        final Iterator<? extends Module> modules = context.findModules(namespace).iterator();
         return modules.hasNext() ? modules.next().getName() : null;
     }
 

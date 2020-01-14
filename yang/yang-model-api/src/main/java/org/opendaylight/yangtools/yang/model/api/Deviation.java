@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import java.util.List;
+import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Interface describing YANG 'deviation' statement.
@@ -28,7 +29,7 @@ public interface Deviation extends DocumentedNode {
     /**
      * Returns deviate children.
      *
-     * @return List of all deviate statements defined in this deviation.
+     * @return Collection of all deviate statements defined in this deviation.
      */
-    List<DeviateDefinition> getDeviates();
+    @NonNull Collection<? extends DeviateDefinition> getDeviates();
 }
