@@ -11,7 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -35,14 +36,14 @@ public class Bug394Test {
                 bug394.getQNameModule(), "logrecords"));
         assertNotNull(logrecords);
 
-        final List<UnknownSchemaNode> nodes = logrecords.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> nodes = logrecords.getUnknownSchemaNodes();
         assertEquals(2, nodes.size());
 
-        final List<ExtensionDefinition> extensions = bug394_ext.getExtensionSchemaNodes();
+        final Collection<? extends ExtensionDefinition> extensions = bug394_ext.getExtensionSchemaNodes();
         assertEquals(3, extensions.size());
 
-        assertTrue(extensions.contains(nodes.get(0).getExtensionDefinition()));
-        assertTrue(extensions.contains(nodes.get(1).getExtensionDefinition()));
+        final Iterator<? extends UnknownSchemaNode> it = nodes.iterator();
+        assertTrue(extensions.contains(it.next().getExtensionDefinition()));
+        assertTrue(extensions.contains(it.next().getExtensionDefinition()));
     }
-
 }

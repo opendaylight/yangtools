@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 final class RestrictedBooleanType extends AbstractRestrictedType<BooleanTypeDefinition>
         implements BooleanTypeDefinition {
     RestrictedBooleanType(final BooleanTypeDefinition baseType, final SchemaPath path,
-            final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, unknownSchemaNodes);
     }
 

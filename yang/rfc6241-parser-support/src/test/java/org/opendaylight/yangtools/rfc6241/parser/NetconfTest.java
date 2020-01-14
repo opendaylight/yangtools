@@ -63,7 +63,7 @@ public class NetconfTest {
                 .buildEffective();
 
         final Module module = context.findModule(NetconfConstants.RFC6241_MODULE).get();
-        final Iterator<RpcDefinition> it = module.getRpcs().iterator();
+        final Iterator<? extends RpcDefinition> it = module.getRpcs().iterator();
         assertExtension(false, it.next());
         assertExtension(false, it.next());
         assertExtension(true, it.next());

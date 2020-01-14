@@ -12,8 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -44,9 +43,8 @@ public class ControllerStmtParserTest {
     private static void salDomBrokerImplModuleTest(final SchemaContext context) {
         final Module module = context.findModule("opendaylight-sal-dom-broker-impl", Revision.of("2013-10-28")).get();
 
-        final Set<AugmentationSchemaNode> augmentations = module.getAugmentations();
         boolean checked = false;
-        for (final AugmentationSchemaNode augmentationSchema : augmentations) {
+        for (final AugmentationSchemaNode augmentationSchema : module.getAugmentations()) {
             final DataSchemaNode dataNode = augmentationSchema
                     .getDataChildByName(QName.create(module.getQNameModule(), "dom-broker-impl"));
             if (dataNode instanceof CaseSchemaNode) {
@@ -57,10 +55,10 @@ public class ControllerStmtParserTest {
                     final ContainerSchemaNode containerNode = (ContainerSchemaNode) dataNode2;
                     final DataSchemaNode leaf = containerNode
                             .getDataChildByName(QName.create(module.getQNameModule(), "type"));
-                    final List<UnknownSchemaNode> unknownSchemaNodes = leaf.getUnknownSchemaNodes();
+                    final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = leaf.getUnknownSchemaNodes();
                     assertEquals(1, unknownSchemaNodes.size());
 
-                    final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.get(0);
+                    final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
                     assertEquals("dom-async-data-broker", unknownSchemaNode.getQName().getLocalName());
                     assertEquals(unknownSchemaNode.getQName(), unknownSchemaNode.getPath().getLastComponent());
 
@@ -101,11 +99,11 @@ public class ControllerStmtParserTest {
 
         final ContainerSchemaNode containerNode = (ContainerSchemaNode) dataNode2;
         final DataSchemaNode leaf = containerNode.getDataChildByName(QName.create(module.getQNameModule(), "type"));
-        final List<UnknownSchemaNode> unknownSchemaNodes = leaf.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = leaf.getUnknownSchemaNodes();
 
         assertEquals(1, unknownSchemaNodes.size());
 
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.get(0);
+        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
 
         assertEquals(unknownSchemaNode.getQName(), unknownSchemaNode.getPath().getLastComponent());
         assertEquals("dom-async-data-broker", unknownSchemaNode.getQName().getLocalName());
@@ -130,10 +128,10 @@ public class ControllerStmtParserTest {
 
         final DataSchemaNode type = schemaServiceContainer.getDataChildByName(QName.create(module.getQNameModule(),
             "type"));
-        final List<UnknownSchemaNode> typeUnknownSchemaNodes = type.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> typeUnknownSchemaNodes = type.getUnknownSchemaNodes();
         assertEquals(1, typeUnknownSchemaNodes.size());
 
-        final UnknownSchemaNode typeUnknownSchemaNode = typeUnknownSchemaNodes.get(0);
+        final UnknownSchemaNode typeUnknownSchemaNode = typeUnknownSchemaNodes.iterator().next();
         final QNameModule qNameModule = QNameModule.create(
             URI.create("urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom"), Revision.of("2013-10-28"));
         final QName qName = QName.create(qNameModule, "schema-service");

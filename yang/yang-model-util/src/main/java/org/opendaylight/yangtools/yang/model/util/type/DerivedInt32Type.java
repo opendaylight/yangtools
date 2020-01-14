@@ -17,7 +17,7 @@ final class DerivedInt32Type extends AbstractRangeRestrictedDerivedType<Int32Typ
         implements Int32TypeDefinition {
     DerivedInt32Type(final Int32TypeDefinition baseType, final SchemaPath path, final Object defaultValue,
             final String description, final String reference, final Status status, final String units,
-            final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 

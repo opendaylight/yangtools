@@ -11,8 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -26,10 +26,10 @@ public class YinFileExtensionStmtTest extends AbstractYinModulesTest {
         Module testModule = TestUtils.findModule(context, "config").get();
         assertNotNull(testModule);
 
-        List<ExtensionDefinition> extensions = testModule.getExtensionSchemaNodes();
+        Collection<? extends ExtensionDefinition> extensions = testModule.getExtensionSchemaNodes();
         assertEquals(5, extensions.size());
 
-        Iterator<ExtensionDefinition> extIterator = extensions.iterator();
+        Iterator<? extends ExtensionDefinition> extIterator = extensions.iterator();
         ExtensionDefinition extension = extIterator.next();
         assertEquals("name", extension.getArgument());
         assertEquals("java-class", extension.getQName().getLocalName());

@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 final class DerivedUnionType extends AbstractDerivedType<UnionTypeDefinition> implements UnionTypeDefinition {
     DerivedUnionType(final UnionTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
         final String description, final String reference, final Status status, final String units,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 

@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.junit.Assert.assertEquals;
@@ -14,7 +13,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Collection;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -35,13 +33,13 @@ public class Bug6871Test {
 
         final Module foo = schemaContext.findModule("foo", Revision.of("2016-12-14")).get();
 
-        final Set<NotificationDefinition> notifications = foo.getNotifications();
+        final Collection<? extends NotificationDefinition> notifications = foo.getNotifications();
         assertEquals(1, notifications.size());
         final NotificationDefinition myNotification = notifications.iterator().next();
-        Collection<MustDefinition> mustConstraints = myNotification.getMustConstraints();
+        Collection<? extends MustDefinition> mustConstraints = myNotification.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
-        final Set<RpcDefinition> rpcs = foo.getRpcs();
+        final Collection<? extends RpcDefinition> rpcs = foo.getRpcs();
         assertEquals(1, rpcs.size());
         final RpcDefinition myRpc = rpcs.iterator().next();
 

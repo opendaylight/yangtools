@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -198,57 +199,57 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     }
 
     @Override
-    public Set<ModuleImport> getImports() {
+    public Collection<? extends ModuleImport> getImports() {
         return imports;
     }
 
     @Override
-    public Set<FeatureDefinition> getFeatures() {
+    public Collection<? extends FeatureDefinition> getFeatures() {
         return features;
     }
 
     @Override
-    public Set<NotificationDefinition> getNotifications() {
+    public Collection<? extends NotificationDefinition> getNotifications() {
         return notifications;
     }
 
     @Override
-    public Set<AugmentationSchemaNode> getAugmentations() {
+    public Collection<? extends AugmentationSchemaNode> getAugmentations() {
         return augmentations;
     }
 
     @Override
-    public Set<RpcDefinition> getRpcs() {
+    public Collection<? extends RpcDefinition> getRpcs() {
         return rpcs;
     }
 
     @Override
-    public Set<Deviation> getDeviations() {
+    public Collection<? extends Deviation> getDeviations() {
         return deviations;
     }
 
     @Override
-    public List<ExtensionDefinition> getExtensionSchemaNodes() {
+    public Collection<? extends ExtensionDefinition> getExtensionSchemaNodes() {
         return extensionNodes;
     }
 
     @Override
-    public Set<IdentitySchemaNode> getIdentities() {
+    public Collection<? extends IdentitySchemaNode> getIdentities() {
         return identities;
     }
 
     @Override
-    public final Set<TypeDefinition<?>> getTypeDefinitions() {
+    public final Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
         return typeDefinitions;
     }
 
     @Override
-    public final Set<DataSchemaNode> getChildNodes() {
+    public final Collection<? extends DataSchemaNode> getChildNodes() {
         return publicChildNodes;
     }
 
     @Override
-    public final Set<GroupingDefinition> getGroupings() {
+    public final Collection<? extends GroupingDefinition> getGroupings() {
         return groupings;
     }
 
@@ -259,7 +260,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     }
 
     @Override
-    public Set<UsesNode> getUses() {
+    public Collection<? extends UsesNode> getUses() {
         return uses;
     }
 

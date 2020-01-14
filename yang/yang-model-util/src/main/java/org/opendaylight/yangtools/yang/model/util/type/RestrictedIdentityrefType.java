@@ -17,12 +17,12 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 final class RestrictedIdentityrefType extends AbstractRestrictedType<IdentityrefTypeDefinition>
         implements IdentityrefTypeDefinition {
     RestrictedIdentityrefType(final IdentityrefTypeDefinition baseType, final SchemaPath path,
-            final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, unknownSchemaNodes);
     }
 
     @Override
-    public Set<IdentitySchemaNode> getIdentities() {
+    public Set<? extends IdentitySchemaNode> getIdentities() {
         return getBaseType().getIdentities();
     }
 

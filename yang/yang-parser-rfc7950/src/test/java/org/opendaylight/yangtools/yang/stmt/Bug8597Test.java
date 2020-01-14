@@ -12,7 +12,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -26,9 +25,7 @@ public class Bug8597Test {
         assertNotNull(context);
 
         final Module foo = context.findModule("foo").get();
-        final Set<ModuleImport> imports = foo.getImports();
-
-        for (final ModuleImport moduleImport : imports) {
+        for (final ModuleImport moduleImport : foo.getImports()) {
             switch (moduleImport.getModuleName()) {
                 case "bar":
                     assertEquals(Revision.ofNullable("1970-01-01"), moduleImport.getRevision());
