@@ -5,15 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -29,7 +28,7 @@ public class TypedefSubStmtsTest {
                 .buildEffective();
         assertNotNull(result);
 
-        Set<TypeDefinition<?>> typedefs = result.getTypeDefinitions();
+        Collection<? extends TypeDefinition<?>> typedefs = result.getTypeDefinitions();
         assertEquals(1, typedefs.size());
 
         TypeDefinition<?> typedef = typedefs.iterator().next();

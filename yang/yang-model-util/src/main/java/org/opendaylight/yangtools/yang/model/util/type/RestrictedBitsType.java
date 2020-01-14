@@ -19,7 +19,7 @@ final class RestrictedBitsType extends AbstractRestrictedType<BitsTypeDefinition
     private final @NonNull ImmutableList<Bit> bits;
 
     RestrictedBitsType(final BitsTypeDefinition baseType, final SchemaPath path,
-            final Collection<UnknownSchemaNode> unknownSchemaNodes, final Collection<Bit> bits) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes, final Collection<Bit> bits) {
         super(baseType, path, unknownSchemaNodes);
         this.bits = ImmutableList.copyOf(bits);
     }

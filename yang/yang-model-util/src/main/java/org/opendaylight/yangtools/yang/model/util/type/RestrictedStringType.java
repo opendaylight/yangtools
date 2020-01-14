@@ -23,9 +23,9 @@ final class RestrictedStringType extends AbstractLengthRestrictedType<StringType
     private final @NonNull ImmutableList<PatternConstraint> patternConstraints;
 
     RestrictedStringType(final StringTypeDefinition baseType, final SchemaPath path,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes,
-        final @Nullable LengthConstraint lengthConstraints,
-        final List<PatternConstraint> patternConstraints) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
+            final @Nullable LengthConstraint lengthConstraints,
+            final List<PatternConstraint> patternConstraints) {
         super(baseType, path, unknownSchemaNodes, lengthConstraints);
         this.patternConstraints = ImmutableList.copyOf(patternConstraints);
     }

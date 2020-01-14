@@ -21,7 +21,7 @@ abstract class AbstractRestrictedType<T extends TypeDefinition<T>> extends Abstr
     private final @NonNull T baseType;
 
     AbstractRestrictedType(final T baseType, final SchemaPath path,
-            final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(path, unknownSchemaNodes);
         this.baseType = requireNonNull(baseType);
     }

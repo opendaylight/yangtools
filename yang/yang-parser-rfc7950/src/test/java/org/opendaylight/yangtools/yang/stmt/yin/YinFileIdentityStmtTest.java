@@ -15,8 +15,8 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -29,10 +29,10 @@ public class YinFileIdentityStmtTest extends AbstractYinModulesTest {
         Module testModule = TestUtils.findModule(context, "config").get();
         assertNotNull(testModule);
 
-        Set<IdentitySchemaNode> identities = testModule.getIdentities();
+        Collection<? extends IdentitySchemaNode> identities = testModule.getIdentities();
         assertEquals(2, identities.size());
 
-        Iterator<IdentitySchemaNode> idIterator = identities.iterator();
+        Iterator<? extends IdentitySchemaNode> idIterator = identities.iterator();
         IdentitySchemaNode id = idIterator.next();
 
         assertThat(id.getQName().getLocalName(), anyOf(is("module-type"), is("service-type")));

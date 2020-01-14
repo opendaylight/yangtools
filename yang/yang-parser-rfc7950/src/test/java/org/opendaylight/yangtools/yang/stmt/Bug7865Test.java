@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -30,15 +30,15 @@ public class Bug7865Test {
 
         final DataSchemaNode root = context.getDataChildByName(foo("root"));
         assertTrue(root instanceof ContainerSchemaNode);
-        final List<UnknownSchemaNode> unknownSchemaNodes = root.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = root.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
         final UnknownSchemaNode unknownNode = unknownSchemaNodes.iterator().next();
-        final List<UnknownSchemaNode> subUnknownSchemaNodes = unknownNode.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> subUnknownSchemaNodes = unknownNode.getUnknownSchemaNodes();
         assertEquals(1, subUnknownSchemaNodes.size());
 
         final UnknownSchemaNode subUnknownNode = subUnknownSchemaNodes.iterator().next();
-        final List<UnknownSchemaNode> subSubUnknownSchemaNodes = subUnknownNode.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> subSubUnknownSchemaNodes = subUnknownNode.getUnknownSchemaNodes();
         assertEquals(1, subSubUnknownSchemaNodes.size());
 
         final UnknownSchemaNode subSubUnknownNode = subSubUnknownSchemaNodes.iterator().next();
@@ -49,5 +49,4 @@ public class Bug7865Test {
     private static QName foo(final String localName) {
         return QName.create(NS, localName);
     }
-
 }

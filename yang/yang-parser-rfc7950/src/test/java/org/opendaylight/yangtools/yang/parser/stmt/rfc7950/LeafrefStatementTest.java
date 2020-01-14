@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.junit.Assert.assertEquals;
@@ -13,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Set;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -33,7 +32,7 @@ public class LeafrefStatementTest {
         assertNotNull(schemaContext);
 
         final Module foo = schemaContext.findModule("foo", Revision.of("2016-12-20")).get();
-        final Set<TypeDefinition<?>> typeDefinitions = foo.getTypeDefinitions();
+        final Collection<? extends TypeDefinition<?>> typeDefinitions = foo.getTypeDefinitions();
         assertEquals(1, typeDefinitions.size());
 
         final TypeDefinition<?> typeDefinition = typeDefinitions.iterator().next();

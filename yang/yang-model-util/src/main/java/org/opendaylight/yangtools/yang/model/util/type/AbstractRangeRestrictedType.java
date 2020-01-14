@@ -21,7 +21,8 @@ abstract class AbstractRangeRestrictedType<T extends RangeRestrictedTypeDefiniti
     private final @Nullable RangeConstraint<N> rangeConstraint;
 
     AbstractRangeRestrictedType(final T baseType, final SchemaPath path,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes, final @Nullable RangeConstraint<N> rangeConstraint) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
+            final @Nullable RangeConstraint<N> rangeConstraint) {
         super(baseType, path, unknownSchemaNodes);
         this.rangeConstraint = rangeConstraint;
     }

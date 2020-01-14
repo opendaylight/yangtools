@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 final class RestrictedUint64Type extends AbstractRangeRestrictedType<Uint64TypeDefinition, Uint64>
         implements Uint64TypeDefinition {
     RestrictedUint64Type(final Uint64TypeDefinition baseType, final SchemaPath path,
-            final Collection<UnknownSchemaNode> unknownSchemaNodes,
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final @Nullable RangeConstraint<Uint64> rangeConstraint) {
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }

@@ -113,7 +113,7 @@ public class YangParserWithContextTest {
         final Module testModule = context.findModule("test2", Revision.of("2013-06-18")).get();
         final Module contextModule = context.findModules(URI.create("urn:opendaylight.baz")).iterator().next();
         assertNotNull(contextModule);
-        final Set<GroupingDefinition> groupings = contextModule.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings = contextModule.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition grouping = groupings.iterator().next();
 
@@ -124,7 +124,7 @@ public class YangParserWithContextTest {
                 testModule.getQNameModule(), "destination"));
 
         // check uses
-        final Set<UsesNode> uses = destination.getUses();
+        final Collection<? extends UsesNode> uses = destination.getUses();
         assertEquals(1, uses.size());
 
         // check uses process
@@ -184,26 +184,26 @@ public class YangParserWithContextTest {
         assertFalse(addresses_u.equals(addresses_g));
 
         // grouping defined by 'uses'
-        final Set<GroupingDefinition> groupings_u = destination.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings_u = destination.getGroupings();
         assertEquals(1, groupings_u.size());
         final GroupingDefinition grouping_u = groupings_u.iterator().next();
         assertTrue(grouping_u.isAddedByUses());
 
         // grouping defined in 'grouping' node
-        final Set<GroupingDefinition> groupings_g = grouping.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings_g = grouping.getGroupings();
         assertEquals(1, groupings_g.size());
         final GroupingDefinition grouping_g = groupings_g.iterator().next();
         assertFalse(grouping_g.isAddedByUses());
         assertFalse(grouping_u.equals(grouping_g));
 
-        final List<UnknownSchemaNode> nodes_u = destination.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> nodes_u = destination.getUnknownSchemaNodes();
         assertEquals(1, nodes_u.size());
-        final UnknownSchemaNode node_u = nodes_u.get(0);
+        final UnknownSchemaNode node_u = nodes_u.iterator().next();
         assertTrue(node_u.isAddedByUses());
 
-        final List<UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
         assertEquals(1, nodes_g.size());
-        final UnknownSchemaNode node_g = nodes_g.get(0);
+        final UnknownSchemaNode node_g = nodes_g.iterator().next();
         assertFalse(node_g.isAddedByUses());
         assertFalse(node_u.equals(node_g));
     }
@@ -219,7 +219,7 @@ public class YangParserWithContextTest {
                 module.getQNameModule(), "peer"));
         final ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName(QName.create(
                 module.getQNameModule(), "destination"));
-        final Set<UsesNode> usesNodes = destination.getUses();
+        final Collection<? extends UsesNode> usesNodes = destination.getUses();
         assertEquals(1, usesNodes.size());
         final UsesNode usesNode = usesNodes.iterator().next();
 
@@ -255,14 +255,14 @@ public class YangParserWithContextTest {
         assertEquals(Optional.of("address reference added by refine"), refineLeaf.getReference());
         assertFalse(refineLeaf.isConfiguration());
         assertTrue(refineLeaf.isMandatory());
-        final Collection<MustDefinition> leafMustConstraints = refineLeaf.getMustConstraints();
+        final Collection<? extends MustDefinition> leafMustConstraints = refineLeaf.getMustConstraints();
         assertEquals(1, leafMustConstraints.size());
         final MustDefinition leafMust = leafMustConstraints.iterator().next();
         assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)", leafMust.toString());
 
         // container port
         assertNotNull(refineContainer);
-        final Collection<MustDefinition> mustConstraints = refineContainer.getMustConstraints();
+        final Collection<? extends MustDefinition> mustConstraints = refineContainer.getMustConstraints();
         assertTrue(mustConstraints.isEmpty());
         assertEquals(Optional.of("description of port defined by refine"), refineContainer.getDescription());
         assertEquals(Optional.of("port reference added by refine"), refineContainer.getReference());
@@ -288,7 +288,7 @@ public class YangParserWithContextTest {
                 .buildEffective();
 
         final Module module = context.findModule("test3", Revision.of("2013-06-18")).get();
-        final Set<IdentitySchemaNode> identities = module.getIdentities();
+        final Collection<? extends IdentitySchemaNode> identities = module.getIdentities();
         assertEquals(1, identities.size());
 
         final IdentitySchemaNode identity = identities.iterator().next();
@@ -315,10 +315,10 @@ public class YangParserWithContextTest {
         final Module module = context.findModule("test3", Revision.of("2013-06-18")).get();
         final ContainerSchemaNode network = (ContainerSchemaNode) module.getDataChildByName(QName.create(
                 module.getQNameModule(), "network"));
-        final List<UnknownSchemaNode> unknownNodes = network.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownNodes = network.getUnknownSchemaNodes();
         assertEquals(1, unknownNodes.size());
 
-        final UnknownSchemaNode un = unknownNodes.get(0);
+        final UnknownSchemaNode un = unknownNodes.iterator().next();
         final QName unType = un.getNodeType();
         assertEquals(URI.create("urn:custom.types.demo"), unType.getNamespace());
         assertEquals(Revision.ofNullable("2012-04-16"), unType.getRevision());
@@ -371,7 +371,7 @@ public class YangParserWithContextTest {
                 .buildEffective();
 
         final Module testModule = context.findModule("deviation-test", Revision.of("2013-02-27")).get();
-        final Set<Deviation> deviations = testModule.getDeviations();
+        final Collection<? extends Deviation> deviations = testModule.getDeviations();
         assertEquals(1, deviations.size());
         final Deviation dev = deviations.iterator().next();
 

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -90,7 +91,7 @@ final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode
     }
 
     @Override
-    public Set<AugmentationSchemaNode> getAvailableAugmentations() {
+    public Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
         return augmentations;
     }
 

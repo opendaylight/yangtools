@@ -14,8 +14,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -28,10 +28,10 @@ public class YinFileImportStmtTest extends AbstractYinModulesTest {
         Module testModule = TestUtils.findModule(context, "ietf-netconf-monitoring").get();
         assertNotNull(testModule);
 
-        Set<ModuleImport> imports = testModule.getImports();
+        Collection<? extends ModuleImport> imports = testModule.getImports();
         assertEquals(2, imports.size());
 
-        Iterator<ModuleImport> importsIterator = imports.iterator();
+        Iterator<? extends ModuleImport> importsIterator = imports.iterator();
         ModuleImport moduleImport = importsIterator.next();
 
         assertThat(moduleImport.getModuleName(), anyOf(is("ietf-yang-types"), is("ietf-inet-types")));

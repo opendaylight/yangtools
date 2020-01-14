@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -77,7 +77,7 @@ final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeD
 
     private final int fractionDigits;
 
-    BaseDecimalType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,
+    BaseDecimalType(final SchemaPath path, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final int fractionDigits, final RangeConstraint<BigDecimal> rangeConstraint) {
         super(path, unknownSchemaNodes, rangeConstraint);
         this.fractionDigits = fractionDigits;

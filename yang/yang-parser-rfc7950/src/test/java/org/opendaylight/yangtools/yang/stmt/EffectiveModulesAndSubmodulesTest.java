@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -16,7 +15,6 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -50,7 +48,7 @@ public class EffectiveModulesAndSubmodulesTest {
 
         assertNotNull(result);
 
-        final Set<Module> modules = result.getModules();
+        final Collection<? extends Module> modules = result.getModules();
         assertNotNull(modules);
         assertEquals(2, modules.size());
 
@@ -73,9 +71,8 @@ public class EffectiveModulesAndSubmodulesTest {
         assertNotNull(root);
         assertNotNull(imported);
 
-        final Collection<DataSchemaNode> rootChildNodes = root.getChildNodes();
-        final Collection<DataSchemaNode> importedChildNodes = imported
-                .getChildNodes();
+        final Collection<? extends DataSchemaNode> rootChildNodes = root.getChildNodes();
+        final Collection<? extends DataSchemaNode> importedChildNodes = imported.getChildNodes();
 
         assertNotNull(rootChildNodes);
         assertNotNull(importedChildNodes);
@@ -83,8 +80,8 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(3, rootChildNodes.size());
         assertEquals(1, importedChildNodes.size());
 
-        final Set<Module> rootSubmodules = root.getSubmodules();
-        final Set<Module> importedSubmodules = imported.getSubmodules();
+        final Collection<? extends Module> rootSubmodules = root.getSubmodules();
+        final Collection<? extends Module> importedSubmodules = imported.getSubmodules();
 
         assertNotNull(rootSubmodules);
         assertNotNull(importedSubmodules);
@@ -112,8 +109,8 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(ROOT, sub1.getQNameModule());
         assertEquals(ROOT, sub2.getQNameModule());
 
-        final Collection<DataSchemaNode> sub1ChildNodes = sub1.getChildNodes();
-        final Collection<DataSchemaNode> sub2ChildNodes = sub2.getChildNodes();
+        final Collection<? extends DataSchemaNode> sub1ChildNodes = sub1.getChildNodes();
+        final Collection<? extends DataSchemaNode> sub2ChildNodes = sub2.getChildNodes();
 
         assertNotNull(sub1ChildNodes);
         assertNotNull(sub2ChildNodes);
@@ -121,8 +118,8 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(1, sub1ChildNodes.size());
         assertEquals(1, sub2ChildNodes.size());
 
-        final Set<Module> sub1Submodules = sub1.getSubmodules();
-        final Set<Module> sub2Submodules = sub2.getSubmodules();
+        final Collection<? extends Module> sub1Submodules = sub1.getSubmodules();
+        final Collection<? extends Module> sub2Submodules = sub2.getSubmodules();
 
         assertNotNull(sub1Submodules);
         assertNotNull(sub2Submodules);
@@ -144,11 +141,11 @@ public class EffectiveModulesAndSubmodulesTest {
 
         assertEquals(ROOT, sub1Submodule.getQNameModule());
 
-        final Collection<DataSchemaNode> sub1SubmoduleChildNodes = sub1Submodule.getChildNodes();
+        final Collection<? extends DataSchemaNode> sub1SubmoduleChildNodes = sub1Submodule.getChildNodes();
         assertNotNull(sub1SubmoduleChildNodes);
         assertEquals(1, sub1SubmoduleChildNodes.size());
 
-        final Set<Module> sub1SubmoduleSubmodules = sub1Submodule.getSubmodules();
+        final Collection<? extends Module> sub1SubmoduleSubmodules = sub1Submodule.getSubmodules();
         assertNotNull(sub1SubmoduleSubmodules);
         assertEquals(0, sub1SubmoduleSubmodules.size());
 
@@ -166,7 +163,7 @@ public class EffectiveModulesAndSubmodulesTest {
 
     private static void findModulesSubTest(final SchemaContext result, final Module root, final Module imported) {
         final Module foundRoot = result.findModule("root-module").get();
-        final Set<Module> foundRoots = result.findModules(URI.create("root-module"));
+        final Collection<? extends Module> foundRoots = result.findModules(URI.create("root-module"));
         final Module foundRoot3 = result.findModule(URI.create("root-module")).get();
 
         assertNotNull(foundRoot);
@@ -182,7 +179,7 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(root, foundRoot3);
 
         final Module foundImported = result.findModule("imported-module").get();
-        final Set<Module> foundImporteds = result.findModules(URI.create("imported-module"));
+        final Collection<? extends Module> foundImporteds = result.findModules(URI.create("imported-module"));
         final Module foundImported3 = result.findModule(URI.create("imported-module")).get();
 
         assertNotNull(foundImported);

@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.SetMultimap;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -90,7 +91,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     protected abstract Map<QNameModule, Module> getModuleMap();
 
     @Override
-    public Set<DataSchemaNode> getDataDefinitions() {
+    public Collection<? extends DataSchemaNode> getDataDefinitions() {
         final Set<DataSchemaNode> dataDefs = new HashSet<>();
         for (Module m : getModules()) {
             dataDefs.addAll(m.getChildNodes());
@@ -99,7 +100,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Set<NotificationDefinition> getNotifications() {
+    public Collection<? extends NotificationDefinition> getNotifications() {
         final Set<NotificationDefinition> notifications = new HashSet<>();
         for (Module m : getModules()) {
             notifications.addAll(m.getNotifications());
@@ -108,7 +109,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Set<RpcDefinition> getOperations() {
+    public Collection<? extends RpcDefinition> getOperations() {
         final Set<RpcDefinition> rpcs = new HashSet<>();
         for (Module m : getModules()) {
             rpcs.addAll(m.getRpcs());
@@ -117,7 +118,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Set<ExtensionDefinition> getExtensions() {
+    public Collection<? extends ExtensionDefinition> getExtensions() {
         final Set<ExtensionDefinition> extensions = new HashSet<>();
         for (Module m : getModules()) {
             extensions.addAll(m.getExtensionSchemaNodes());
@@ -126,7 +127,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Optional<Module> findModule(final String name, final Optional<Revision> revision) {
+    public Optional<? extends Module> findModule(final String name, final Optional<Revision> revision) {
         for (final Module module : getNameToModules().get(name)) {
             if (revision.equals(module.getRevision())) {
                 return Optional.of(module);
@@ -142,12 +143,12 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Set<Module> findModules(final URI namespace) {
+    public Collection<? extends Module> findModules(final URI namespace) {
         return getNamespaceToModules().get(namespace);
     }
 
     @Override
-    public Set<Module> findModules(final String name) {
+    public Collection<? extends Module> findModules(final String name) {
         return getNameToModules().get(name);
     }
 
@@ -184,7 +185,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
+    public Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
         final List<UnknownSchemaNode> result = new ArrayList<>();
         for (Module module : getModules()) {
             result.addAll(module.getUnknownSchemaNodes());
@@ -193,7 +194,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Set<TypeDefinition<?>> getTypeDefinitions() {
+    public Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
         final Set<TypeDefinition<?>> result = new LinkedHashSet<>();
         for (Module module : getModules()) {
             result.addAll(module.getTypeDefinitions());
@@ -202,7 +203,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Set<DataSchemaNode> getChildNodes() {
+    public Collection<? extends DataSchemaNode> getChildNodes() {
         final Set<DataSchemaNode> result = new LinkedHashSet<>();
         for (Module module : getModules()) {
             result.addAll(module.getChildNodes());
@@ -211,7 +212,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Set<GroupingDefinition> getGroupings() {
+    public Collection<? extends GroupingDefinition> getGroupings() {
         final Set<GroupingDefinition> result = new LinkedHashSet<>();
         for (Module module : getModules()) {
             result.addAll(module.getGroupings());
@@ -232,7 +233,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Set<UsesNode> getUses() {
+    public Collection<? extends UsesNode> getUses() {
         return Collections.emptySet();
     }
 
@@ -242,7 +243,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Set<AugmentationSchemaNode> getAvailableAugmentations() {
+    public Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
         return Collections.emptySet();
     }
 }

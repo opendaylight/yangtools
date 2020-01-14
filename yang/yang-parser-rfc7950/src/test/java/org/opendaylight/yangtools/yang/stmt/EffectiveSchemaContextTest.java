@@ -19,7 +19,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -56,22 +55,22 @@ public class EffectiveSchemaContextTest {
                 .buildEffective();
         assertNotNull(schemaContext);
 
-        final Set<DataSchemaNode> dataDefinitions = schemaContext.getDataDefinitions();
+        final Collection<? extends DataSchemaNode> dataDefinitions = schemaContext.getDataDefinitions();
         assertEquals(3, dataDefinitions.size());
 
-        final Collection<DataSchemaNode> childNodes = schemaContext.getChildNodes();
+        final Collection<? extends DataSchemaNode> childNodes = schemaContext.getChildNodes();
         assertEquals(3, childNodes.size());
 
-        final Set<NotificationDefinition> notifications = schemaContext.getNotifications();
+        final Collection<? extends NotificationDefinition> notifications = schemaContext.getNotifications();
         assertEquals(3, notifications.size());
 
-        final Set<RpcDefinition> rpcs = schemaContext.getOperations();
+        final Collection<? extends RpcDefinition> rpcs = schemaContext.getOperations();
         assertEquals(3, rpcs.size());
 
-        final Set<ExtensionDefinition> extensions = schemaContext.getExtensions();
+        final Collection<? extends ExtensionDefinition> extensions = schemaContext.getExtensions();
         assertEquals(3, extensions.size());
 
-        final List<UnknownSchemaNode> unknownSchemaNodes = schemaContext.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = schemaContext.getUnknownSchemaNodes();
         assertEquals(3, unknownSchemaNodes.size());
 
         assertNull(schemaContext.getDataChildByName(QName.create("foo-namespace", "2016-09-21", "foo-cont")));

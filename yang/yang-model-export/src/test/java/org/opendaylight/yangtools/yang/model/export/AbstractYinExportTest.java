@@ -28,7 +28,7 @@ abstract class AbstractYinExportTest {
     final void exportYinModules(final String yangDir, final String yinDir) throws IOException, SAXException,
             XMLStreamException {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResourceDirectory(yangDir);
-        final Collection<Module> modules = schemaContext.getModules();
+        final Collection<? extends Module> modules = schemaContext.getModules();
         assertNotEquals(0, modules.size());
 
         for (Module module : modules) {
