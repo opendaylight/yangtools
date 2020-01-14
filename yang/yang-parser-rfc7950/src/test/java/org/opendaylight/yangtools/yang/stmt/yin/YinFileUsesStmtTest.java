@@ -12,8 +12,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -28,10 +28,10 @@ public class YinFileUsesStmtTest extends AbstractYinModulesTest {
     public void testUses() {
         final Module testModule = TestUtils.findModule(context, "main-impl").get();
 
-        final Set<AugmentationSchemaNode> augmentations = testModule.getAugmentations();
+        final Collection<? extends AugmentationSchemaNode> augmentations = testModule.getAugmentations();
         assertEquals(1, augmentations.size());
 
-        final Iterator<AugmentationSchemaNode> augmentIterator = augmentations.iterator();
+        final Iterator<? extends AugmentationSchemaNode> augmentIterator = augmentations.iterator();
         final AugmentationSchemaNode augment = augmentIterator.next();
 
         final ContainerSchemaNode container = (ContainerSchemaNode) augment.findDataChildByName(

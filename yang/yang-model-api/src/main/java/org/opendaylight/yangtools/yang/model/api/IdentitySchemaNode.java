@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import java.util.Set;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
@@ -30,12 +30,15 @@ public interface IdentitySchemaNode extends SchemaNode {
      * @return set of existing identities from which the new identity is derived or an empty Set if the identity is
      *         a root identity.
      */
-    @NonNull Set<IdentitySchemaNode> getBaseIdentities();
+    @NonNull Collection<? extends IdentitySchemaNode> getBaseIdentities();
 
     /**
      * Get identities derived from this identity.
      *
      * @return collection of identities derived from this identity
      */
-    @NonNull Set<IdentitySchemaNode> getDerivedIdentities();
+    // FIXME: 5.0.0: this causes circular references in implementation objects under immutables+builder pattern,
+    //               and really should be a SchemaContext-level utility (i.e. walk entire SchemaContext, cache the
+    //               result)
+    @NonNull Collection<? extends IdentitySchemaNode> getDerivedIdentities();
 }

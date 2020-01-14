@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
-import java.util.List;
+import java.util.Collection;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -72,7 +72,7 @@ public class Bug3874ExtensionTest {
         assertTrue(myContainer2 instanceof ContainerSchemaNode);
         assertEquals(myContainer2, yangModeledAnyXml.getSchemaOfAnyXmlData());
 
-        List<UnknownSchemaNode> unknownSchemaNodes = yangModeledAnyXml.getUnknownSchemaNodes();
+        Collection<? extends UnknownSchemaNode> unknownSchemaNodes = yangModeledAnyXml.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
         UnknownSchemaNode next = unknownSchemaNodes.iterator().next();

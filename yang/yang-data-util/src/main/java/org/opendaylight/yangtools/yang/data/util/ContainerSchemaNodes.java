@@ -128,22 +128,22 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Set<GroupingDefinition> getGroupings() {
+        public Collection<? extends GroupingDefinition> getGroupings() {
             return rpcDefinition.getGroupings();
         }
 
         @Override
-        public Set<TypeDefinition<?>> getTypeDefinitions() {
+        public Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
             return rpcDefinition.getTypeDefinitions();
         }
 
         @Override
-        public Set<AugmentationSchemaNode> getAvailableAugmentations() {
+        public Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
             return ImmutableSet.of();
         }
 
         @Override
-        public Collection<DataSchemaNode> getChildNodes() {
+        public Collection<? extends DataSchemaNode> getChildNodes() {
             final ContainerSchemaNode input = rpcDefinition.getInput();
             final ContainerSchemaNode output = rpcDefinition.getOutput();
             if (input == null && output == null) {
@@ -176,12 +176,12 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Set<ActionDefinition> getActions() {
+        public Collection<? extends ActionDefinition> getActions() {
             return ImmutableSet.of();
         }
 
         @Override
-        public Set<NotificationDefinition> getNotifications() {
+        public Collection<? extends NotificationDefinition> getNotifications() {
             return ImmutableSet.of();
         }
     }
@@ -189,7 +189,7 @@ public final class ContainerSchemaNodes {
     private static final class NotificationContainerSchemaNode extends AbstractContainerSchemaNode {
 
         private final NotificationDefinition notification;
-        private final ImmutableMap<QName, DataSchemaNode> mapNodes;
+        private final ImmutableMap<QName, ? extends DataSchemaNode> mapNodes;
 
         private NotificationContainerSchemaNode(final NotificationDefinition notification) {
             super(notification);
@@ -203,22 +203,22 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Set<AugmentationSchemaNode> getAvailableAugmentations() {
+        public Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
             return notification.getAvailableAugmentations();
         }
 
         @Override
-        public Set<TypeDefinition<?>> getTypeDefinitions() {
+        public Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
             return notification.getTypeDefinitions();
         }
 
         @Override
-        public Collection<DataSchemaNode> getChildNodes() {
+        public Collection<? extends DataSchemaNode> getChildNodes() {
             return notification.getChildNodes();
         }
 
         @Override
-        public Set<GroupingDefinition> getGroupings() {
+        public Collection<? extends GroupingDefinition> getGroupings() {
             return notification.getGroupings();
         }
 
@@ -235,7 +235,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Set<ActionDefinition> getActions() {
+        public Collection<? extends ActionDefinition> getActions() {
             return ImmutableSet.of();
         }
     }

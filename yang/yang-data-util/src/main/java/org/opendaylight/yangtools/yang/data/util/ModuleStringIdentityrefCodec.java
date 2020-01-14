@@ -44,7 +44,7 @@ public abstract class ModuleStringIdentityrefCodec extends AbstractModuleStringI
 
     @Override
     protected String prefixForNamespace(final URI namespace) {
-        final Iterator<Module> modules = context.findModules(namespace).iterator();
+        final Iterator<? extends Module> modules = context.findModules(namespace).iterator();
         return modules.hasNext() ? modules.next().getName() : null;
     }
 }
