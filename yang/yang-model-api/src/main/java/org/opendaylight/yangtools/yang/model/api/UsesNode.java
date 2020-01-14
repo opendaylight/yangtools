@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 
@@ -21,6 +21,7 @@ public interface UsesNode extends WhenConditionAware, WithStatus, CopyableNode {
      *
      * @return schema path to 'grouping' on which this 'uses' statement points
      */
+    // FIXME: 5.0.0: this is effective model, hence we should return GroupingDefinition
     @NonNull SchemaPath getGroupingPath();
 
     /**
@@ -28,12 +29,13 @@ public interface UsesNode extends WhenConditionAware, WithStatus, CopyableNode {
      *
      * @return Set of augment statements defined under this uses node
      */
-    @NonNull Set<AugmentationSchemaNode> getAugmentations();
+    @NonNull Collection<? extends AugmentationSchemaNode> getAugmentations();
 
     /**
      * Some of the properties of each node in the grouping can be refined with the "refine" statement.
      *
      * @return Map, where key is schema path of refined node and value is refined node
      */
+    // FIXME: 5.0.0: this should probably be SchemaPath.RelativeSchemaPath (which needs to be exposed)
     @NonNull Map<SchemaPath, SchemaNode> getRefines();
 }

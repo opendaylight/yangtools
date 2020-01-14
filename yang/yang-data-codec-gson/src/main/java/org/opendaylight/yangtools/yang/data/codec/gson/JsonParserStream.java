@@ -372,7 +372,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             moduleNamePart = childName.substring(0, lastIndexOfColon);
             nodeNamePart = childName.substring(lastIndexOfColon + 1);
 
-            final Iterator<Module> m = codecs.getSchemaContext().findModules(moduleNamePart).iterator();
+            final Iterator<? extends Module> m = codecs.getSchemaContext().findModules(moduleNamePart).iterator();
             namespace = m.hasNext() ? m.next().getNamespace() : null;
         } else {
             nodeNamePart = childName;
