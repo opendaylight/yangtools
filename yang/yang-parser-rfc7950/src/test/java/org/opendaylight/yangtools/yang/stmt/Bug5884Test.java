@@ -12,7 +12,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -41,16 +40,12 @@ public class Bug5884Test {
         final ContainerSchemaNode testContainer = (ContainerSchemaNode) rootContainer.getDataChildByName(
             testContainerQname);
         final ChoiceSchemaNode dataChildByName = (ChoiceSchemaNode) testContainer.getDataChildByName(choice);
-        final Set<AugmentationSchemaNode> augmentations = foo.getAugmentations();
-        final Set<AugmentationSchemaNode> availableAugmentations = dataChildByName.getAvailableAugmentations();
-        final Iterator<AugmentationSchemaNode> iterator = augmentations.iterator();
-        final Iterator<AugmentationSchemaNode> availableIterator = availableAugmentations.iterator();
 
-        testIterator(iterator);
-        testIterator(availableIterator);
+        testIterator(foo.getAugmentations().iterator());
+        testIterator(dataChildByName.getAvailableAugmentations().iterator());
     }
 
-    private static void testIterator(final Iterator<AugmentationSchemaNode> iterator) {
+    private static void testIterator(final Iterator<? extends AugmentationSchemaNode> iterator) {
         while (iterator.hasNext()) {
             AugmentationSchemaNode allAugments = iterator.next();
             final DataSchemaNode currentChoice = allAugments.getChildNodes().iterator().next();

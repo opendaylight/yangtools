@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -15,8 +14,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -51,10 +50,10 @@ public class IncludedStmtsTest {
         final Module testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
-        final Set<TypeDefinition<?>> typedefs = testModule.getTypeDefinitions();
+        final Collection<? extends TypeDefinition<?>> typedefs = testModule.getTypeDefinitions();
         assertEquals(2, typedefs.size());
 
-        final Iterator<TypeDefinition<?>> typedefsIterator = typedefs.iterator();
+        final Iterator<? extends TypeDefinition<?>> typedefsIterator = typedefs.iterator();
         TypeDefinition<?> typedef = typedefsIterator.next();
         assertThat(typedef.getQName().getLocalName(), anyOf(is("new-string-type"), is("new-int32-type")));
         assertThat(typedef.getBaseType().getQName().getLocalName(), anyOf(is("string"), is("int32")));
@@ -68,10 +67,10 @@ public class IncludedStmtsTest {
         final Module testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
-        final Set<FeatureDefinition> features = testModule.getFeatures();
+        final Collection<? extends FeatureDefinition> features = testModule.getFeatures();
         assertEquals(2, features.size());
 
-        final Iterator<FeatureDefinition> featuresIterator = features.iterator();
+        final Iterator<? extends FeatureDefinition> featuresIterator = features.iterator();
         FeatureDefinition feature = featuresIterator.next();
         assertThat(feature.getQName().getLocalName(), anyOf(is("new-feature1"), is("new-feature2")));
         feature = featuresIterator.next();

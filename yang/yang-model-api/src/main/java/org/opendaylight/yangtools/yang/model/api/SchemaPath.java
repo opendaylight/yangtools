@@ -34,6 +34,7 @@ public abstract class SchemaPath implements Immutable {
     /**
      * An absolute SchemaPath.
      */
+    // FIXME: 5.0.0: expose as a top-level construct (and use in APIs)
     private static final class AbsoluteSchemaPath extends SchemaPath {
         private AbsoluteSchemaPath(final SchemaPath parent, final QName qname) {
             super(parent, qname);
@@ -53,6 +54,7 @@ public abstract class SchemaPath implements Immutable {
     /**
      * A relative SchemaPath.
      */
+    // FIXME: 5.0.0: expose as a top-level construct (and use in APIs)
     private static final class RelativeSchemaPath extends SchemaPath {
         private RelativeSchemaPath(final SchemaPath parent, final QName qname) {
             super(parent, qname);
@@ -260,7 +262,7 @@ public abstract class SchemaPath implements Immutable {
      *         path from the schema node towards the root.
      */
     public Iterable<QName> getPathTowardsRoot() {
-        return () -> new UnmodifiableIterator<QName>() {
+        return () -> new UnmodifiableIterator<>() {
             private SchemaPath current = SchemaPath.this;
 
             @Override

@@ -44,13 +44,13 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     @Override
     protected Module moduleForPrefix(final String prefix) {
         final String prefixedNS = getNamespaceContext().getNamespaceURI(prefix);
-        final Iterator<Module> modules = context.findModules(URI.create(prefixedNS)).iterator();
+        final Iterator<? extends Module> modules = context.findModules(URI.create(prefixedNS)).iterator();
         return modules.hasNext() ? modules.next() : null;
     }
 
     @Override
     protected String prefixForNamespace(final URI namespace) {
-        final Iterator<Module> modules = context.findModules(namespace).iterator();
+        final Iterator<? extends Module> modules = context.findModules(namespace).iterator();
         return modules.hasNext() ? modules.next().getName() : null;
     }
 

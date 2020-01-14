@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -16,7 +15,7 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Set;
+import java.util.Collection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -80,8 +79,8 @@ public class SubstatementValidatorTest {
 
     @Test
     public void bug6173Test() throws Exception {
-        final Set<Module> loadModules = TestUtils.loadModules(getClass().getResource(
-                "/substatement-validator/empty-element").toURI()).getModules();
+        final Collection<? extends Module> loadModules = TestUtils.loadModules(getClass()
+            .getResource("/substatement-validator/empty-element").toURI()).getModules();
         assertEquals(1, loadModules.size());
     }
 
