@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -39,9 +38,7 @@ public class AugmentToExtensionTest {
         final Module devicesModule = TestUtils.findModule(context, "augment-module").get();
         final ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName(
             QName.create(devicesModule.getQNameModule(), "my-container"));
-        final Set<UsesNode> uses = devicesContainer.getUses();
-
-        for (final UsesNode usesNode : uses) {
+        for (final UsesNode usesNode : devicesContainer.getUses()) {
             assertTrue(usesNode.getAugmentations().isEmpty());
         }
     }
@@ -55,12 +52,9 @@ public class AugmentToExtensionTest {
 
         final ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName(QName
                 .create(devicesModule.getQNameModule(), "my-container"));
-        final Set<UsesNode> uses = devicesContainer.getUses();
-
         boolean augmentationIsInContainer = false;
-        for (final UsesNode usesNode : uses) {
-            final Set<AugmentationSchemaNode> augmentations = usesNode.getAugmentations();
-            for (final AugmentationSchemaNode augmentationSchema : augmentations) {
+        for (final UsesNode usesNode : devicesContainer.getUses()) {
+            for (final AugmentationSchemaNode augmentationSchema : usesNode.getAugmentations()) {
                 augmentationIsInContainer = true;
             }
         }

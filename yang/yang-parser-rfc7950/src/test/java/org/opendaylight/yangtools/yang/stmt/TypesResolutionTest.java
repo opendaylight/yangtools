@@ -17,9 +17,10 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
 import java.net.URI;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -63,7 +64,7 @@ public class TypesResolutionTest {
     @Test
     public void testIPVersion() {
         Module tested = TestUtils.findModule(context, "ietf-inet-types").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
+        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         assertEquals(14, typedefs.size());
 
         TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-version");
@@ -94,7 +95,7 @@ public class TypesResolutionTest {
     @Test
     public void testEnumeration() {
         Module tested = TestUtils.findModule(context, "custom-types-test").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
+        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
 
         TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-version");
         EnumTypeDefinition enumType = (EnumTypeDefinition) type.getBaseType();
@@ -126,7 +127,7 @@ public class TypesResolutionTest {
     @Test
     public void testIpAddress() {
         Module tested = TestUtils.findModule(context, "ietf-inet-types").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
+        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-address");
         UnionTypeDefinition baseType = (UnionTypeDefinition) type.getBaseType();
         List<TypeDefinition<?>> unionTypes = baseType.getTypes();
@@ -153,7 +154,7 @@ public class TypesResolutionTest {
     @Test
     public void testDomainName() {
         Module tested = TestUtils.findModule(context, "ietf-inet-types").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
+        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         StringTypeDefinition type = (StringTypeDefinition) TestUtils.findTypedef(typedefs, "domain-name");
         assertNotNull(type.getBaseType());
         List<PatternConstraint> patterns = type.getPatternConstraints();
@@ -191,7 +192,7 @@ public class TypesResolutionTest {
     @Test
     public void testIdentity() {
         Module tested = TestUtils.findModule(context, "custom-types-test").get();
-        Set<IdentitySchemaNode> identities = tested.getIdentities();
+        Collection<? extends IdentitySchemaNode> identities = tested.getIdentities();
         assertEquals(5, identities.size());
         IdentitySchemaNode cryptoAlg = null;
         IdentitySchemaNode cryptoBase = null;
@@ -225,57 +226,59 @@ public class TypesResolutionTest {
         LeafSchemaNode leaf = (LeafSchemaNode) tested.getDataChildByName(
                 QName.create(tested.getQNameModule(), "mybits"));
         BitsTypeDefinition leafType = (BitsTypeDefinition) leaf.getType();
-        List<Bit> bits = leafType.getBits();
-        assertEquals(3, bits.size());
+        Iterator<? extends Bit> bits = leafType.getBits().iterator();
 
-        Bit bit1 = bits.get(0);
+        Bit bit1 = bits.next();
         assertEquals("disable-nagle", bit1.getName());
         assertEquals(0L, bit1.getPosition());
 
-        Bit bit2 = bits.get(1);
+        Bit bit2 = bits.next();
         assertEquals("auto-sense-speed", bit2.getName());
         assertEquals(1L, bit2.getPosition());
 
-        Bit bit3 = bits.get(2);
+        Bit bit3 = bits.next();
         assertEquals("only-10-Mb", bit3.getName());
         assertEquals(2L, bit3.getPosition());
+
+        assertFalse(bits.hasNext());
     }
 
     @Test
     public void testBitsType2() {
         Module tested = TestUtils.findModule(context, "custom-types-test").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
+        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "access-operations-type");
 
         BitsTypeDefinition bitsType = (BitsTypeDefinition) testedType.getBaseType();
-        List<Bit> bits = bitsType.getBits();
-        assertEquals(5, bits.size());
+        Iterator<? extends Bit> bits = bitsType.getBits().iterator();
 
-        Bit bit0 = bits.get(0);
+        Bit bit0 = bits.next();
         assertEquals("create", bit0.getName());
         assertEquals(0L, bit0.getPosition());
 
-        Bit bit1 = bits.get(1);
+        Bit bit1 = bits.next();
         assertEquals("delete", bit1.getName());
         assertEquals(365L, bit1.getPosition());
 
-        Bit bit2 = bits.get(2);
+        Bit bit2 = bits.next();
         assertEquals("read", bit2.getName());
         assertEquals(500L, bit2.getPosition());
 
-        Bit bit3 = bits.get(3);
+        Bit bit3 = bits.next();
         assertEquals("update", bit3.getName());
         assertEquals(501L, bit3.getPosition());
 
-        Bit bit4 = bits.get(4);
+        Bit bit4 = bits.next();
         assertEquals("exec", bit4.getName());
         assertEquals(502L, bit4.getPosition());
+
+        assertFalse(bits.hasNext());
     }
 
     @Test
     public void testIanaTimezones() {
         Module tested = TestUtils.findModule(context, "iana-timezones").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
+        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "iana-timezone");
 
         String expectedDesc = "A timezone location as defined by the IANA timezone";
@@ -307,7 +310,7 @@ public class TypesResolutionTest {
     @Test
     public void testObjectId128() {
         Module tested = TestUtils.findModule(context, "ietf-yang-types").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
+        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         StringTypeDefinition testedType = (StringTypeDefinition) TestUtils.findTypedef(typedefs,
                 "object-identifier-128");
 
@@ -338,7 +341,7 @@ public class TypesResolutionTest {
     @Test
     public void testIdentityref() {
         Module tested = TestUtils.findModule(context, "custom-types-test").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
+        Collection<? extends TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "service-type-ref");
         IdentityrefTypeDefinition baseType = (IdentityrefTypeDefinition) testedType.getBaseType();
         QName identity = baseType.getIdentities().iterator().next().getQName();

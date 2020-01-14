@@ -18,8 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 final class RestrictedDecimalType extends AbstractRangeRestrictedType<DecimalTypeDefinition, BigDecimal>
         implements DecimalTypeDefinition {
     RestrictedDecimalType(final DecimalTypeDefinition baseType, final SchemaPath path,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes,
-        final @Nullable RangeConstraint<BigDecimal> rangeConstraint) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
+            final @Nullable RangeConstraint<BigDecimal> rangeConstraint) {
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }
 

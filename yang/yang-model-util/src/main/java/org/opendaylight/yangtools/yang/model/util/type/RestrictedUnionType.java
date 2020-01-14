@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
 final class RestrictedUnionType extends AbstractRestrictedType<UnionTypeDefinition> implements UnionTypeDefinition {
     RestrictedUnionType(final UnionTypeDefinition baseType, final SchemaPath path,
-            final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, unknownSchemaNodes);
     }
 

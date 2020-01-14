@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.Test;
@@ -176,7 +177,7 @@ public class Bug6887Test {
 
         BitsTypeDefinition bitsType = (BitsTypeDefinition) myBitsLeaf.getType();
 
-        List<Bit> bits = bitsType.getBits();
+        Collection<? extends Bit> bits = bitsType.getBits();
         assertEquals(2, bits.size());
         Bit bitB = createBit(createSchemaPath(true, bar.getQNameModule(), "my-bits-leaf", "my-derived-bits-type",
             "bit-b"), 2);
@@ -317,7 +318,7 @@ public class Bug6887Test {
         return BitBuilder.create(path, position).build();
     }
 
-    private static void assertContainsBits(final List<Bit> bitList, final Bit... bits) {
+    private static void assertContainsBits(final Collection<? extends Bit> bitList, final Bit... bits) {
         for (final Bit bit : bits) {
             assertTrue(bitList.contains(bit));
         }

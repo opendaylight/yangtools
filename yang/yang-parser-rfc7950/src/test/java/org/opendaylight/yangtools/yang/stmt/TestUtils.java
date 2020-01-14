@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -100,30 +99,27 @@ public final class TestUtils {
         return ctx.getModules().iterator().next();
     }
 
-    public static Optional<Module> findModule(final SchemaContext context, final String moduleName) {
+    public static Optional<? extends Module> findModule(final SchemaContext context, final String moduleName) {
         return context.getModules().stream().filter(module -> moduleName.equals(module.getName())).findAny();
     }
 
-    public static ModuleImport findImport(final Set<ModuleImport> imports, final String prefix) {
-        ModuleImport result = null;
+    public static ModuleImport findImport(final Collection<? extends ModuleImport> imports, final String prefix) {
         for (ModuleImport moduleImport : imports) {
             if (moduleImport.getPrefix().equals(prefix)) {
-                result = moduleImport;
-                break;
+                return moduleImport;
             }
         }
-        return result;
+        return null;
     }
 
-    public static TypeDefinition<?> findTypedef(final Set<TypeDefinition<?>> typedefs, final String name) {
-        TypeDefinition<?> result = null;
+    public static TypeDefinition<?> findTypedef(final Collection<? extends TypeDefinition<?>> typedefs,
+            final String name) {
         for (TypeDefinition<?> td : typedefs) {
             if (td.getQName().getLocalName().equals(name)) {
-                result = td;
-                break;
+                return td;
             }
         }
-        return result;
+        return null;
     }
 
     public static SchemaPath createPath(final boolean absolute, final QNameModule module, final String... names) {
@@ -187,7 +183,7 @@ public final class TestUtils {
         }
     }
 
-    public static List<Module> findModules(final Set<Module> modules, final String moduleName) {
+    public static List<Module> findModules(final Collection<? extends Module> modules, final String moduleName) {
         List<Module> result = new ArrayList<>();
         for (Module module : modules) {
             if (module.getName().equals(moduleName)) {

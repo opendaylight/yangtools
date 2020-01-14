@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -26,12 +26,12 @@ public abstract class AbstractEffectiveOperationContainerSchemaNode<D extends De
     }
 
     @Override
-    public final Set<ActionDefinition> getActions() {
+    public final Collection<? extends ActionDefinition> getActions() {
         return ImmutableSet.of();
     }
 
     @Override
-    public final Set<NotificationDefinition> getNotifications() {
+    public final Collection<? extends NotificationDefinition> getNotifications() {
         return ImmutableSet.of();
     }
 

@@ -5,14 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -50,7 +49,7 @@ public class YangParserIdentityTest {
     public void testParsingImportPrefixIdentityTestModule() throws Exception {
         Module module = TestUtils.findModule(TestUtils.loadModules(getClass().getResource("/identity/import").toURI()),
             "prefiximportidentitytest").get();
-        Set<ModuleImport> imports = module.getImports();
+        Collection<? extends ModuleImport> imports = module.getImports();
         assertEquals(imports.size(), 1);
         ModuleImport dummy = TestUtils.findImport(imports, "dummy");
         assertNotEquals(dummy.getPrefix(), module.getPrefix());

@@ -12,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -26,20 +26,20 @@ public class Bug4456Test {
         SchemaContext schema = StmtTestUtils.parseYangSources("/bugs/bug4456");
         assertNotNull(schema);
 
-        Set<Module> modules = schema.findModules(URI.create("foo"));
+        Set<Module> modules = (Set<Module>) schema.findModules(URI.create("foo"));
         assertEquals(1, modules.size());
         Module moduleFoo = modules.iterator().next();
 
-        List<ExtensionDefinition> extensionSchemaNodes = moduleFoo.getExtensionSchemaNodes();
+        Collection<? extends ExtensionDefinition> extensionSchemaNodes = moduleFoo.getExtensionSchemaNodes();
         assertEquals(5, extensionSchemaNodes.size());
         for (ExtensionDefinition extensionDefinition : extensionSchemaNodes) {
 
-            List<UnknownSchemaNode> unknownSchemaNodes = extensionDefinition.getUnknownSchemaNodes();
+            Collection<? extends UnknownSchemaNode> unknownSchemaNodes = extensionDefinition.getUnknownSchemaNodes();
             assertEquals(1, unknownSchemaNodes.size());
             UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
             String unknownNodeExtensionDefName = unknownSchemaNode.getExtensionDefinition().getQName().getLocalName();
 
-            List<UnknownSchemaNode> subUnknownSchemaNodes = unknownSchemaNode.getUnknownSchemaNodes();
+            Collection<? extends UnknownSchemaNode> subUnknownSchemaNodes = unknownSchemaNode.getUnknownSchemaNodes();
             assertEquals(1, subUnknownSchemaNodes.size());
             UnknownSchemaNode subUnknownSchemaNode = subUnknownSchemaNodes.iterator().next();
             String subUnknownNodeExtensionDefName = subUnknownSchemaNode.getExtensionDefinition().getQName()

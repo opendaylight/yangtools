@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -44,10 +43,10 @@ public class MustAndWhenStmtTest {
         assertNotNull(container);
         assertTrue(container.isPresenceContainer());
 
-        final Collection<MustDefinition> musts = container.getMustConstraints();
+        final Collection<? extends MustDefinition> musts = container.getMustConstraints();
         assertEquals(2, musts.size());
 
-        final Iterator<MustDefinition> mustsIterator = musts.iterator();
+        final Iterator<? extends MustDefinition> mustsIterator = musts.iterator();
         MustDefinition mustStmt = mustsIterator.next();
         assertThat(mustStmt.getXpath().getOriginalString(), anyOf(is("ifType != 'ethernet' or (ifType = 'ethernet' and "
                 + "ifMTU = 1500)"), is("ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)")));

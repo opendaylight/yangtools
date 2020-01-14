@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -16,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.Range;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import org.junit.AfterClass;
@@ -99,9 +99,9 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-bits"));
         assertNotNull(currentLeaf.getType());
 
-        final List<BitsTypeDefinition.Bit> bitsEffIter = ((BitsTypeDefinition) currentLeaf.getType()).getBits();
-        final Bit bitEff = bitsEffIter.get(0);
-        final Bit bitEffSecond = bitsEffIter.get(1);
+        final Iterator<? extends Bit> bitsEffIter = ((BitsTypeDefinition) currentLeaf.getType()).getBits().iterator();
+        final Bit bitEff = bitsEffIter.next();
+        final Bit bitEffSecond = bitsEffIter.next();
 
         final BitsTypeDefinition bitsEff = ((BitsSpecificationEffectiveStatement)
                 ((LeafEffectiveStatement) currentLeaf).effectiveSubstatements().iterator().next())

@@ -72,8 +72,7 @@ public class Bug6316Test {
         final TypeDefinition<? extends TypeDefinition<?>> type = bitsLeaf.getType();
         assertTrue(type instanceof BitsTypeDefinition);
         final BitsTypeDefinition myBits = (BitsTypeDefinition) type;
-        final List<Bit> positions = myBits.getBits();
-        for (final Bit bit : positions) {
+        for (final Bit bit : myBits.getBits()) {
             final String name = bit.getName();
             switch (name) {
                 case "zero":

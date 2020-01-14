@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -13,9 +12,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.net.URI;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -78,11 +76,11 @@ public class EffectiveModuleTest {
         final ContainerSchemaNode contSchemaNode = (ContainerSchemaNode) rootModule.getDataChildByName(CONT);
         assertNotNull(contSchemaNode);
 
-        final Set<AugmentationSchemaNode> augmentations = rootModule.getAugmentations();
+        final Collection<? extends AugmentationSchemaNode> augmentations = rootModule.getAugmentations();
         assertEquals(1, augmentations.size());
         assertEquals(CONT_SCHEMA_PATH, augmentations.iterator().next().getTargetPath());
 
-        final Set<ModuleImport> imports = rootModule.getImports();
+        final Collection<? extends ModuleImport> imports = rootModule.getImports();
         assertEquals(1, imports.size());
         final ModuleImport importStmt = imports.iterator().next();
         assertNotNull(importStmt);
@@ -90,19 +88,19 @@ public class EffectiveModuleTest {
         assertEquals(Optional.of(REVISION), importStmt.getRevision());
         assertEquals("imp-pref", importStmt.getPrefix());
 
-        final Set<Module> submodules = rootModule.getSubmodules();
+        final Collection<? extends Module> submodules = rootModule.getSubmodules();
         assertEquals(1, submodules.size());
         assertEquals("submod", submodules.iterator().next().getName());
 
-        final Set<NotificationDefinition> notifications = rootModule.getNotifications();
+        final Collection<? extends NotificationDefinition> notifications = rootModule.getNotifications();
         assertEquals(1, notifications.size());
         assertEquals("notif1", notifications.iterator().next().getQName().getLocalName());
 
-        final Set<RpcDefinition> rpcs = rootModule.getRpcs();
+        final Collection<? extends RpcDefinition> rpcs = rootModule.getRpcs();
         assertEquals(1, rpcs.size());
         assertEquals("rpc1", rpcs.iterator().next().getQName().getLocalName());
 
-        final Set<Deviation> deviations = rootModule.getDeviations();
+        final Collection<? extends Deviation> deviations = rootModule.getDeviations();
         assertEquals(1, deviations.size());
         final Deviation deviationStmt = deviations.iterator().next();
         assertNotNull(deviationStmt);
@@ -113,11 +111,11 @@ public class EffectiveModuleTest {
         assertEquals(DeviateKind.ADD, deviationStmt.getDeviates().iterator().next().getDeviateType());
         assertEquals(Optional.of("deviate reference"), deviationStmt.getReference());
 
-        final Set<IdentitySchemaNode> identities = rootModule.getIdentities();
+        final Collection<? extends IdentitySchemaNode> identities = rootModule.getIdentities();
         assertEquals(1, identities.size());
         assertEquals("identity1", identities.iterator().next().getQName().getLocalName());
 
-        final Set<FeatureDefinition> features = rootModule.getFeatures();
+        final Collection<? extends FeatureDefinition> features = rootModule.getFeatures();
         assertEquals(1, features.size());
         final FeatureDefinition featureStmt = features.iterator().next();
         assertNotNull(featureStmt);
@@ -127,7 +125,7 @@ public class EffectiveModuleTest {
         assertEquals(Optional.of("feature1 reference"), featureStmt.getReference());
         assertEquals(Status.CURRENT, featureStmt.getStatus());
 
-        final List<ExtensionDefinition> extensionSchemaNodes = rootModule.getExtensionSchemaNodes();
+        final Collection<? extends ExtensionDefinition> extensionSchemaNodes = rootModule.getExtensionSchemaNodes();
         assertEquals(1, extensionSchemaNodes.size());
         assertEquals("ext1", extensionSchemaNodes.iterator().next().getQName().getLocalName());
     }

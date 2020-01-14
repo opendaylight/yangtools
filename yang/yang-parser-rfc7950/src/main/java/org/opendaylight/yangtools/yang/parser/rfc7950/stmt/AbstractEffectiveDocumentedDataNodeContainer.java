@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -62,12 +63,12 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
     }
 
     @Override
-    public final Set<TypeDefinition<?>> getTypeDefinitions() {
+    public final Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
         return typeDefinitions;
     }
 
     @Override
-    public final Set<DataSchemaNode> getChildNodes() {
+    public final Collection<? extends DataSchemaNode> getChildNodes() {
         return publicChildNodes;
     }
 

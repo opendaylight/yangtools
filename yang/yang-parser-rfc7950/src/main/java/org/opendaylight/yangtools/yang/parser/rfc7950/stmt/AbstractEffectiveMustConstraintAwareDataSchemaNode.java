@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.MustConstraintAware;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
@@ -39,7 +40,7 @@ public abstract class AbstractEffectiveMustConstraintAwareDataSchemaNode<D exten
     }
 
     @Override
-    public final ImmutableSet<MustDefinition> getMustConstraints() {
+    public final Collection<? extends MustDefinition> getMustConstraints() {
         return derivedSet(MUST_CONSTRAINTS, MustDefinition.class);
     }
 }

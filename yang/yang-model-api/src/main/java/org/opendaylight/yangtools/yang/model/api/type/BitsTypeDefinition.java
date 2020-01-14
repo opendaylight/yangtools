@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -24,7 +24,7 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
      * @return list of <code>Bit</code> type instastances with data about all
      *         individual bits of <code>bits</code> YANG built-in type
      */
-    @NonNull List<Bit> getBits();
+    @NonNull Collection<? extends Bit> getBits();
 
     static int hashCode(final @NonNull BitsTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
@@ -48,6 +48,7 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
      * Contains the methods for accessing the data about the individual bit of
      * <code>bits</code> YANG type.
      */
+    // FIXME: 5.0.0: Bit should not be a SchemaNode
     interface Bit extends SchemaNode {
         /**
          * Returns the name of the concrete bit.

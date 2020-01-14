@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.leafref.context;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Set;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -85,8 +84,7 @@ public class DataTreeCandidateValidatorTest3 {
     public static void init() throws DataValidationFailedException {
         context = YangParserTestUtils.parseYangResourceDirectory("/leafref-validation");
 
-        final Set<Module> modules = context.getModules();
-        for (final Module module : modules) {
+        for (final Module module : context.getModules()) {
             if (module.getName().equals("leafref-validation3")) {
                 mainModule = module;
             }

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
@@ -61,12 +60,12 @@ public class OperationAsContainer extends ForwardingObject implements ContainerS
     }
 
     @Override
-    public final Set<TypeDefinition<?>> getTypeDefinitions() {
+    public final Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
         return delegate.getTypeDefinitions();
     }
 
     @Override
-    public final Set<GroupingDefinition> getGroupings() {
+    public final Collection<? extends GroupingDefinition> getGroupings() {
         return delegate.getGroupings();
     }
 
@@ -112,12 +111,12 @@ public class OperationAsContainer extends ForwardingObject implements ContainerS
     }
 
     @Override
-    public Set<UsesNode> getUses() {
+    public Collection<? extends UsesNode> getUses() {
         return ImmutableSet.of();
     }
 
     @Override
-    public final Set<AugmentationSchemaNode> getAvailableAugmentations() {
+    public final Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
         return ImmutableSet.of();
     }
 
@@ -127,7 +126,7 @@ public class OperationAsContainer extends ForwardingObject implements ContainerS
     }
 
     @Override
-    public final Collection<DataSchemaNode> getChildNodes() {
+    public final Collection<? extends DataSchemaNode> getChildNodes() {
         final List<DataSchemaNode> ret = new ArrayList<>();
         final ContainerSchemaNode input = getInput();
         final ContainerSchemaNode output = getOutput();
@@ -158,7 +157,7 @@ public class OperationAsContainer extends ForwardingObject implements ContainerS
     }
 
     @Override
-    public final Set<ActionDefinition> getActions() {
+    public final Collection<? extends ActionDefinition> getActions() {
         return ImmutableSet.of();
     }
 
@@ -169,7 +168,7 @@ public class OperationAsContainer extends ForwardingObject implements ContainerS
     }
 
     @Override
-    public final Set<NotificationDefinition> getNotifications() {
+    public final Collection<? extends NotificationDefinition> getNotifications() {
         return ImmutableSet.of();
     }
 
@@ -180,7 +179,7 @@ public class OperationAsContainer extends ForwardingObject implements ContainerS
     }
 
     @Override
-    public final Collection<MustDefinition> getMustConstraints() {
+    public final Collection<? extends MustDefinition> getMustConstraints() {
         return ImmutableSet.of();
     }
 

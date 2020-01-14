@@ -119,7 +119,7 @@ public abstract class AbstractMountPointContextFactory extends AbstractDynamicMo
                 checkArgument(value instanceof String, "Unexpected module leaf value %s", value);
                 return (String) value;
             }).orElseThrow(() -> new IllegalArgumentException("Mount module missing in " + entry));
-            final Iterator<Module> it = schemaContext.findModules(moduleName).iterator();
+            final Iterator<? extends Module> it = schemaContext.findModules(moduleName).iterator();
             checkArgument(it.hasNext(), "Failed to find a module named %s", moduleName);
             final QNameModule module = it.next().getQNameModule();
 

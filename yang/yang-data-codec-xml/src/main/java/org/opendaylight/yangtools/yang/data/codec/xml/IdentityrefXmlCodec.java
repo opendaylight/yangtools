@@ -45,7 +45,7 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
             }
 
             final String prefixedNS = ctx.getNamespaceURI(prefix);
-            final Iterator<Module> modules = schemaContext.findModules(URI.create(prefixedNS)).iterator();
+            final Iterator<? extends Module> modules = schemaContext.findModules(URI.create(prefixedNS)).iterator();
             checkArgument(modules.hasNext(), "Could not find module for namespace %s", prefixedNS);
             return modules.next().getQNameModule();
         }).getQName();

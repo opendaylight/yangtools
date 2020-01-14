@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -81,7 +82,7 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     }
 
     @Override
-    public Set<AugmentationSchemaNode> getAugmentations() {
+    public Collection<? extends AugmentationSchemaNode> getAugmentations() {
         return augmentations;
     }
 

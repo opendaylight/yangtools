@@ -18,7 +18,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -117,7 +116,7 @@ public class UsesAugmentTest {
         final Deque<QName> path = new ArrayDeque<>();
 
         // * notification pcreq
-        final Set<NotificationDefinition> notifications = testModule.getNotifications();
+        final Collection<? extends NotificationDefinition> notifications = testModule.getNotifications();
         assertEquals(1, notifications.size());
         final NotificationDefinition pcreq = notifications.iterator().next();
         assertNotNull(pcreq);
@@ -125,7 +124,7 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         SchemaPath expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, pcreq.getPath());
-        Collection<DataSchemaNode> childNodes = pcreq.getChildNodes();
+        Collection<? extends DataSchemaNode> childNodes = pcreq.getChildNodes();
         assertEquals(4, childNodes.size());
         // * |-- leaf version
         LeafSchemaNode version = (LeafSchemaNode) pcreq.getDataChildByName(QName.create(testModule.getQNameModule(),
@@ -642,7 +641,7 @@ public class UsesAugmentTest {
     @Test
     public void testTypedefs() throws Exception {
         final Module testModule = TestUtils.findModule(context, "grouping-definitions").get();
-        final Set<TypeDefinition<?>> types = testModule.getTypeDefinitions();
+        final Collection<? extends TypeDefinition<?>> types = testModule.getTypeDefinitions();
 
         TypeDefinition<?> intExt = null;
         for (final TypeDefinition<?> td : types) {

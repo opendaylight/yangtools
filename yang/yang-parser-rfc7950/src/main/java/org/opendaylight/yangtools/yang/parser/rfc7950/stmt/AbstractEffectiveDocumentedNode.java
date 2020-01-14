@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
@@ -57,7 +58,7 @@ public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredState
     }
 
     @Override
-    public final ImmutableList<UnknownSchemaNode> getUnknownSchemaNodes() {
+    public final Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
         final ImmutableList<UnknownSchemaNode> existing =
                 (ImmutableList<UnknownSchemaNode>) UNKNOWN_NODES.getAcquire(this);
         return existing != null ? existing : loadUnknownSchemaNodes();

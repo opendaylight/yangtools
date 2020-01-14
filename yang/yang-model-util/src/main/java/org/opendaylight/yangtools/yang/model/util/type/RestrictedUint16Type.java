@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 final class RestrictedUint16Type extends AbstractRangeRestrictedType<Uint16TypeDefinition, Uint16>
         implements Uint16TypeDefinition {
     RestrictedUint16Type(final Uint16TypeDefinition baseType, final SchemaPath path,
-            final Collection<UnknownSchemaNode> unknownSchemaNodes,
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final @Nullable RangeConstraint<Uint16> rangeConstraint) {
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }

@@ -17,10 +17,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.SortedMap;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,7 +68,7 @@ public class GroupingTest {
         final ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName(QName.create(
                 testModule.getQNameModule(), "destination"));
 
-        final Set<UsesNode> usesNodes = destination.getUses();
+        final Collection<? extends UsesNode> usesNodes = destination.getUses();
         assertEquals(1, usesNodes.size());
         final UsesNode usesNode = usesNodes.iterator().next();
         final Map<SchemaPath, SchemaNode> refines = usesNode.getRefines();
@@ -105,7 +103,7 @@ public class GroupingTest {
         assertEquals(Optional.of("address reference added by refine"), refineLeaf.getReference());
         assertFalse(refineLeaf.isConfiguration());
         assertFalse(refineLeaf.isMandatory());
-        final Collection<MustDefinition> leafMustConstraints = refineLeaf.getMustConstraints();
+        final Collection<? extends MustDefinition> leafMustConstraints = refineLeaf.getMustConstraints();
         assertEquals(1, leafMustConstraints.size());
         final MustDefinition leafMust = leafMustConstraints.iterator().next();
         assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)", leafMust.toString());
@@ -113,7 +111,7 @@ public class GroupingTest {
 
         // container port
         assertNotNull(refineContainer);
-        final Collection<MustDefinition> mustConstraints = refineContainer.getMustConstraints();
+        final Collection<? extends MustDefinition> mustConstraints = refineContainer.getMustConstraints();
         assertTrue(mustConstraints.isEmpty());
         assertEquals(Optional.of("description of port defined by refine"), refineContainer.getDescription());
         assertEquals(Optional.of("port reference added by refine"), refineContainer.getReference());
@@ -137,10 +135,10 @@ public class GroupingTest {
     @Test
     public void testGrouping() {
         final Module testModule = TestUtils.findModule(ctx, "baz").get();
-        final Set<GroupingDefinition> groupings = testModule.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings = testModule.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition grouping = groupings.iterator().next();
-        final Collection<DataSchemaNode> children = grouping.getChildNodes();
+        final Collection<? extends DataSchemaNode> children = grouping.getChildNodes();
         assertEquals(5, children.size());
     }
 
@@ -151,7 +149,7 @@ public class GroupingTest {
 
 
         // get grouping
-        final Set<GroupingDefinition> groupings = baz.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings = baz.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition grouping = groupings.iterator().next();
 
@@ -162,7 +160,7 @@ public class GroupingTest {
                 foo.getQNameModule(), "destination"));
 
         // check uses
-        final Set<UsesNode> uses = destination.getUses();
+        final Collection<? extends UsesNode> uses = destination.getUses();
         assertEquals(1, uses.size());
 
         // check uses process
@@ -239,26 +237,26 @@ public class GroupingTest {
         assertEquals(addresses_g, SchemaNodeUtils.getRootOriginalIfPossible(addresses_u));
 
         // grouping defined by 'uses'
-        final Set<GroupingDefinition> groupings_u = destination.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings_u = destination.getGroupings();
         assertEquals(1, groupings_u.size());
         final GroupingDefinition grouping_u = groupings_u.iterator().next();
         TestUtils.checkIsAddedByUses(grouping_u, true);
 
         // grouping defined in 'grouping' node
-        final Set<GroupingDefinition> groupings_g = grouping.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings_g = grouping.getGroupings();
         assertEquals(1, groupings_g.size());
         final GroupingDefinition grouping_g = groupings_g.iterator().next();
         TestUtils.checkIsAddedByUses(grouping_g, false);
         assertFalse(grouping_u.equals(grouping_g));
 
-        final List<UnknownSchemaNode> nodes_u = destination.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> nodes_u = destination.getUnknownSchemaNodes();
         assertEquals(1, nodes_u.size());
-        final UnknownSchemaNode node_u = nodes_u.get(0);
+        final UnknownSchemaNode node_u = nodes_u.iterator().next();
         assertTrue(node_u.isAddedByUses());
 
-        final List<UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
         assertEquals(1, nodes_g.size());
-        final UnknownSchemaNode node_g = nodes_g.get(0);
+        final UnknownSchemaNode node_g = nodes_g.iterator().next();
         assertFalse(node_g.isAddedByUses());
         assertFalse(node_u.equals(node_g));
     }
@@ -269,12 +267,12 @@ public class GroupingTest {
         // suffix _g = defined in grouping
 
         // get grouping
-        final Set<GroupingDefinition> groupings = baz.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings = baz.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition grouping = groupings.iterator().next();
 
         // check uses
-        final Set<UsesNode> uses = foo.getUses();
+        final Collection<? extends UsesNode> uses = foo.getUses();
         assertEquals(1, uses.size());
 
         // check uses process
@@ -358,35 +356,35 @@ public class GroupingTest {
         assertEquals(addresses_g, SchemaNodeUtils.getRootOriginalIfPossible(addresses_u));
 
         // grouping defined by 'uses'
-        final Set<GroupingDefinition> groupings_u = foo.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings_u = foo.getGroupings();
         assertEquals(1, groupings_u.size());
         final GroupingDefinition grouping_u = groupings_u.iterator().next();
         TestUtils.checkIsAddedByUses(grouping_u, true);
 
         // grouping defined in 'grouping' node
-        final Set<GroupingDefinition> groupings_g = grouping.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings_g = grouping.getGroupings();
         assertEquals(1, groupings_g.size());
         final GroupingDefinition grouping_g = groupings_g.iterator().next();
         TestUtils.checkIsAddedByUses(grouping_g, false);
         assertFalse(grouping_u.equals(grouping_g));
 
-        final List<UnknownSchemaNode> nodes_u = foo.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> nodes_u = foo.getUnknownSchemaNodes();
         assertEquals(1, nodes_u.size());
-        final UnknownSchemaNode node_u = nodes_u.get(0);
+        final UnknownSchemaNode node_u = nodes_u.iterator().next();
         assertTrue(node_u.isAddedByUses());
 
-        final List<UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
         assertEquals(1, nodes_g.size());
-        final UnknownSchemaNode node_g = nodes_g.get(0);
+        final UnknownSchemaNode node_g = nodes_g.iterator().next();
         assertFalse(node_g.isAddedByUses());
         assertFalse(node_u.equals(node_g));
 
         final UsesNode un = uses.iterator().next();
-        final Set<AugmentationSchemaNode> usesAugments = un.getAugmentations();
+        final Collection<? extends AugmentationSchemaNode> usesAugments = un.getAugmentations();
         assertEquals(1, usesAugments.size());
         final AugmentationSchemaNode augment = usesAugments.iterator().next();
         assertEquals(Optional.of("inner augment"), augment.getDescription());
-        final Collection<DataSchemaNode> children = augment.getChildNodes();
+        final Collection<? extends DataSchemaNode> children = augment.getChildNodes();
         assertEquals(1, children.size());
         final DataSchemaNode leaf = children.iterator().next();
         assertTrue(leaf instanceof LeafSchemaNode);
@@ -399,7 +397,7 @@ public class GroupingTest {
         assertEquals(1, ctx.getModules().size());
 
         final Module testModule = TestUtils.findModule(ctx, "cascade-uses").get();
-        final Set<GroupingDefinition> groupings = testModule.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings = testModule.getGroupings();
 
         GroupingDefinition gu = null;
         GroupingDefinition gv = null;
@@ -443,7 +441,7 @@ public class GroupingTest {
             Revision.of("2013-07-18"));
 
         // grouping-U
-        Collection<DataSchemaNode> childNodes = gu.getChildNodes();
+        Collection<? extends DataSchemaNode> childNodes = gu.getChildNodes();
         assertEquals(7, childNodes.size());
 
         final LeafSchemaNode leafGroupingU = (LeafSchemaNode) gu.getDataChildByName(QName.create(
@@ -614,8 +612,7 @@ public class GroupingTest {
                 .getDataChildByName(QName.create(foo.getQNameModule(), "my-leaf"));
 
         TypeDefinition<?> impType = null;
-        final Set<TypeDefinition<?>> typeDefinitions = imp.getTypeDefinitions();
-        for (final TypeDefinition<?> typeDefinition : typeDefinitions) {
+        for (final TypeDefinition<?> typeDefinition : imp.getTypeDefinitions()) {
             if (typeDefinition.getQName().getLocalName().equals("imp-type")) {
                 impType = typeDefinition;
                 break;
