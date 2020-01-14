@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 /**
  * Data Schema Node represents abstract supertype from which all data tree definitions are derived. Unlike what
  * the name would suggest, this interface corresponds more to RFC7950 {@code data definition statement} than to
@@ -27,12 +29,16 @@ package org.opendaylight.yangtools.yang.model.api;
  * @see AnydataSchemaNode
  */
 public interface DataSchemaNode extends SchemaNode, CopyableNode, WhenConditionAware {
+    public enum ConfigValue {
+        TRUE,
+        FALSE,
+        UNDEFINED,
+    }
+
     /**
-     * Returns <code>true</code> if the data represents configuration data,
-     * otherwise returns <code>false</code>.
+     * Returns indication of whether this node represents configuration, operational state or undefined.
      *
-     * @return <code>true</code> if the data represents configuration data,
-     *         otherwise returns <code>false</code>
+     * @return Indication of whether this node represents configuration, operational state or undefined.
      */
-    boolean isConfiguration();
+    @NonNull ConfigValue isConfiguration();
 }

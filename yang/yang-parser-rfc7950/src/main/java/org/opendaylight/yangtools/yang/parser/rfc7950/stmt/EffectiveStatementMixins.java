@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode.ConfigValue;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -189,8 +190,18 @@ public final class EffectiveStatementMixins {
     public interface DataSchemaNodeMixin<A, D extends DeclaredStatement<A>>
             extends DataSchemaNode, CopyableMixin<A, D>, SchemaNodeMixin<A, D>, WhenConditionMixin<A, D> {
         @Override
-        default boolean isConfiguration() {
-            return (flags() & FlagsBuilder.CONFIGURATION) != 0;
+        default ConfigValue isConfiguration() {
+            final int config = flags() & FlagsBuilder.MASK_CONFIGURATION;
+            switch (config) {
+                case FlagsBuilder.CONFIGURATION_FALSE:
+                    return ConfigValue.FALSE;
+                case FlagsBuilder.CONFIGURATION_TRUE:
+                    return ConfigValue.TRUE;
+                case FlagsBuilder.CONFIGURATION_UNDEF:
+                    return ConfigValue.UNDEFINED;
+                default:
+                    throw new IllegalStateException("Unhandled config flags " + config);
+            }
         }
     }
 
@@ -343,8 +354,8 @@ public final class EffectiveStatementMixins {
         }
 
         @Override
-        default boolean isConfiguration() {
-            return false;
+        default ConfigValue isConfiguration() {
+            return ConfigValue.FALSE;
         }
 
         @Override
@@ -428,8 +439,10 @@ public final class EffectiveStatementMixins {
             static final int STATUS_OBSOLETE      = 0x0003;
             static final int MASK_STATUS          = 0x0003;
 
-            static final int CONFIGURATION        = 0x0004;
-            static final int MANDATORY            = 0x0008;
+            static final int CONFIGURATION_UNDEF  = 0x0000;
+            static final int CONFIGURATION_TRUE   = 0x0004;
+            static final int CONFIGURATION_FALSE  = 0x0008;
+            static final int MASK_CONFIGURATION   = 0x000C;
 
             static final int AUGMENTING           = 0x0010;
             static final int ADDED_BY_USES        = 0x0020;
@@ -437,15 +450,27 @@ public final class EffectiveStatementMixins {
 
             static final int USER_ORDERED         = 0x0040;
             static final int PRESENCE             = 0x0080;
+            static final int MANDATORY            = 0x0100;
 
             private int flags;
 
-            public FlagsBuilder setConfiguration(final boolean config) {
-                if (config) {
-                    flags |= CONFIGURATION;
-                } else {
-                    flags &= ~CONFIGURATION;
+            public FlagsBuilder setConfiguration(final ConfigValue config) {
+                final int bits;
+                switch (config) {
+                    case FALSE:
+                        bits = CONFIGURATION_FALSE;
+                        break;
+                    case TRUE:
+                        bits = CONFIGURATION_TRUE;
+                        break;
+                    case UNDEFINED:
+                        bits = CONFIGURATION_UNDEF;
+                        break;
+                    default:
+                        throw new IllegalStateException("Unhandled value " + config);
                 }
+
+                flags = flags & ~MASK_CONFIGURATION | bits;
                 return this;
             }
 
