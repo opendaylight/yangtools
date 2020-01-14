@@ -41,5 +41,5 @@ public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, D
      *
      * @return Collection of unique constraints of this list schema node
      */
-    @NonNull Collection<UniqueConstraint> getUniqueConstraints();
+    @NonNull Collection<? extends UniqueConstraint> getUniqueConstraints();
 }

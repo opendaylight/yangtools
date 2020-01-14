@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
@@ -39,14 +40,14 @@ public class Bug6897Test {
         assertContainsNotifications(schemaContext, "top-list", "top-list-notification");
         assertContainsNotifications(schemaContext, "top", "top-notification");
 
-        final Set<GroupingDefinition> groupings = schemaContext.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings = schemaContext.getGroupings();
         assertEquals(1, groupings.size());
         assertContainsNotifications(groupings.iterator().next(), "grp-notification");
 
-        final Set<Module> modules = schemaContext.getModules();
+        final Collection<? extends Module> modules = schemaContext.getModules();
         assertEquals(1, modules.size());
         final Module foo = modules.iterator().next();
-        final Set<AugmentationSchemaNode> augmentations = foo.getAugmentations();
+        final Collection<? extends AugmentationSchemaNode> augmentations = foo.getAugmentations();
         assertEquals(1, augmentations.size());
         assertContainsNotifications(augmentations.iterator().next(), "aug-notification", "grp-notification");
     }
@@ -61,7 +62,7 @@ public class Bug6897Test {
 
     private static void assertContainsNotifications(final NotificationNodeContainer notificationContainer,
             final String... notificationNames) {
-        final Set<NotificationDefinition> notifications = notificationContainer.getNotifications();
+        final Collection<? extends NotificationDefinition> notifications = notificationContainer.getNotifications();
         assertEquals(notificationNames.length, notifications.size());
 
         final Set<QName> notificationQNames = new HashSet<>();

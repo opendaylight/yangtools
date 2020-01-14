@@ -652,7 +652,7 @@ public final class XmlParserStream implements Closeable, Flushable {
 
     private Optional<QNameModule> resolveXmlNamespace(final String xmlNamespace) {
         return resolvedNamespaces.computeIfAbsent(xmlNamespace, nsUri -> {
-            final Iterator<Module> it = codecs.getSchemaContext().findModules(URI.create(nsUri)).iterator();
+            final Iterator<? extends Module> it = codecs.getSchemaContext().findModules(URI.create(nsUri)).iterator();
             return it.hasNext() ? Optional.of(it.next().getQNameModule()) : Optional.empty();
         });
     }

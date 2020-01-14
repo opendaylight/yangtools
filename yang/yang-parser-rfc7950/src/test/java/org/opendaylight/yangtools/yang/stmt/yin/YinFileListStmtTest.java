@@ -40,10 +40,10 @@ public class YinFileListStmtTest extends AbstractYinModulesTest {
         assertEquals(1, keys.size());
         assertEquals("name", keys.get(0).getLocalName());
 
-        final Collection<DataSchemaNode> children = list.getChildNodes();
+        final Collection<? extends DataSchemaNode> children = list.getChildNodes();
         assertEquals(4, children.size());
 
-        final Iterator<DataSchemaNode> childrenIterator = children.iterator();
+        final Iterator<? extends DataSchemaNode> childrenIterator = children.iterator();
         LeafSchemaNode leaf = (LeafSchemaNode) childrenIterator.next();
         assertEquals("name", leaf.getQName().getLocalName());
         assertEquals(Optional.of("Unique module instance name"), leaf.getDescription());
