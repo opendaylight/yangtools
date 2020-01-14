@@ -8,19 +8,15 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -29,15 +25,20 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  *
  * <p>
  * Iterator instance is eagerly created, walking happens on initialization. Iteration is not ordered.
+ *
+ * @deprecated Use {@link SchemaNodeUtils#getAllContainers(DataNodeContainer)},
+ *             {@link SchemaNodeUtils#getAllTypeDefinitions(DataNodeContainer)} or
+ *             {@link SchemaNodeUtils#traverse(DataNodeAggregator, DataNodeContainer)} instead.
  */
-public class DataNodeIterator implements Iterator<DataSchemaNode> {
-
+@Deprecated
+public class DataNodeIterator extends DataNodeAggregator implements Iterator<DataSchemaNode> {
     private final List<ListSchemaNode> allLists = new ArrayList<>();
     private final List<ContainerSchemaNode> allContainers = new ArrayList<>();
     private final List<ChoiceSchemaNode> allChoices = new ArrayList<>();
     private final List<DataSchemaNode> allChilds = new ArrayList<>();
     private final List<GroupingDefinition> allGroupings = new ArrayList<>();
     private final List<TypeDefinition<?>> allTypedefs = new ArrayList<>();
+
     private final DataNodeContainer container;
 
     public DataNodeIterator(final DataNodeContainer container) {
@@ -46,7 +47,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
         }
 
         this.container = container;
-        traverse(this.container);
+        SchemaNodeUtils.traverse(this, container);
     }
 
     /**
@@ -94,79 +95,6 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
         return allTypedefs;
     }
 
-    private void traverse(final DataNodeContainer dataNode) {
-        if (dataNode == null) {
-            return;
-        }
-
-        final Iterable<DataSchemaNode> childNodes = dataNode.getChildNodes();
-        if (childNodes != null) {
-            for (DataSchemaNode childNode : childNodes) {
-                if (childNode.isAugmenting()) {
-                    continue;
-                }
-                allChilds.add(childNode);
-                if (childNode instanceof ContainerSchemaNode) {
-                    final ContainerSchemaNode containerNode = (ContainerSchemaNode) childNode;
-                    allContainers.add(containerNode);
-                    traverse(containerNode);
-                } else if (childNode instanceof ListSchemaNode) {
-                    final ListSchemaNode list = (ListSchemaNode) childNode;
-                    allLists.add(list);
-                    traverse(list);
-                } else if (childNode instanceof ChoiceSchemaNode) {
-                    final ChoiceSchemaNode choiceNode = (ChoiceSchemaNode) childNode;
-                    allChoices.add(choiceNode);
-                    for (final CaseSchemaNode caseNode : choiceNode.getCases().values()) {
-                        traverse(caseNode);
-                    }
-                }
-            }
-        }
-
-        this.allTypedefs.addAll(dataNode.getTypeDefinitions());
-        traverseModule(dataNode);
-        traverseGroupings(dataNode);
-
-    }
-
-    private void traverseModule(final DataNodeContainer dataNode) {
-        final Module module;
-        if (dataNode instanceof Module) {
-            module = (Module) dataNode;
-        } else {
-            return;
-        }
-
-        final Set<NotificationDefinition> notifications = module.getNotifications();
-        for (NotificationDefinition notificationDefinition : notifications) {
-            traverse(notificationDefinition);
-        }
-
-        final Set<RpcDefinition> rpcs = module.getRpcs();
-        for (RpcDefinition rpcDefinition : rpcs) {
-            this.allTypedefs.addAll(rpcDefinition.getTypeDefinitions());
-            ContainerSchemaNode input = rpcDefinition.getInput();
-            if (input != null) {
-                traverse(input);
-            }
-            ContainerSchemaNode output = rpcDefinition.getOutput();
-            if (output != null) {
-                traverse(output);
-            }
-        }
-    }
-
-    private void traverseGroupings(final DataNodeContainer dataNode) {
-        final Set<GroupingDefinition> groupings = dataNode.getGroupings();
-        if (groupings != null) {
-            for (GroupingDefinition grouping : groupings) {
-                allGroupings.add(grouping);
-                traverse(grouping);
-            }
-        }
-    }
-
     @Override
     public boolean hasNext() {
         return !container.getChildNodes().isEmpty();
@@ -175,5 +103,35 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
     @Override
     public DataSchemaNode next() {
         return allChilds.iterator().next();
+    }
+
+    @Override
+    protected void addChild(final DataSchemaNode childNode) {
+        allChilds.add(childNode);
+    }
+
+    @Override
+    protected void addContainer(final ContainerSchemaNode containerNode) {
+        allContainers.add(containerNode);
+    }
+
+    @Override
+    protected void addList(final ListSchemaNode list) {
+        allLists.add(list);
+    }
+
+    @Override
+    protected void addChoice(final ChoiceSchemaNode choiceNode) {
+        allChoices.add(choiceNode);
+    }
+
+    @Override
+    protected void addTypedefs(final Collection<? extends TypeDefinition<?>> typeDefs) {
+        allTypedefs.addAll(typeDefs);
+    }
+
+    @Override
+    protected void addGrouping(final GroupingDefinition grouping) {
+        allGroupings.add(grouping);
     }
 }
