@@ -14,9 +14,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -37,7 +36,7 @@ public class Bug5942Test {
         final DataSchemaNode root = schemaContext.getDataChildByName(QName.create("foo", "2016-06-02", "root"));
         assertTrue(root instanceof ContainerSchemaNode);
 
-        final Set<UsesNode> uses = ((ContainerSchemaNode) root).getUses();
+        final Collection<? extends UsesNode> uses = ((ContainerSchemaNode) root).getUses();
         assertEquals(1, uses.size());
         final UsesNode usesNode = uses.iterator().next();
 
@@ -50,7 +49,7 @@ public class Bug5942Test {
         assertThat(when, instanceOf(WithExpression.class));
         assertEquals("0!=1", when.getOriginalString());
 
-        final List<UnknownSchemaNode> unknownSchemaNodes = usesNode.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = usesNode.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
         final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
         assertEquals("argument", unknownSchemaNode.getNodeParameter());

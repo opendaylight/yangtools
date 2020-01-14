@@ -19,7 +19,7 @@ final class DerivedInstanceIdentifierType extends AbstractDerivedType<InstanceId
 
     DerivedInstanceIdentifierType(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path,
             final Object defaultValue, final String description, final String reference, final Status status,
-            final String units, final Collection<UnknownSchemaNode> unknownSchemaNodes,
+            final String units, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final boolean requireInstance) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
         this.requireInstance = requireInstance;

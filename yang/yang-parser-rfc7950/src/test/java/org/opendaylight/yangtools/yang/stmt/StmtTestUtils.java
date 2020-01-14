@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import com.google.common.io.Files;
@@ -65,7 +64,7 @@ public final class StmtTestUtils {
         }
     }
 
-    public static List<Module> findModules(final Set<Module> modules, final String moduleName) {
+    public static List<Module> findModules(final Collection<? extends Module> modules, final String moduleName) {
         final List<Module> result = new ArrayList<>();
         for (final Module module : modules) {
             if (module.getName().equals(moduleName)) {
@@ -84,15 +83,14 @@ public final class StmtTestUtils {
     }
 
     public static void printReferences(final Module module, final boolean isSubmodule, final String indent) {
-        LOG.debug("{}{} {}", indent, (isSubmodule ? "Submodule" : "Module"), module.getName());
-        final Set<Module> submodules = module.getSubmodules();
-        for (final Module submodule : submodules) {
+        LOG.debug("{}{} {}", indent, isSubmodule ? "Submodule" : "Module", module.getName());
+        for (final Module submodule : module.getSubmodules()) {
             printReferences(submodule, true, indent + "      ");
             printChilds(submodule.getChildNodes(), indent + "            ");
         }
     }
 
-    public static void printChilds(final Collection<DataSchemaNode> childNodes, final String indent) {
+    public static void printChilds(final Collection<? extends DataSchemaNode> childNodes, final String indent) {
 
         for (final DataSchemaNode child : childNodes) {
             LOG.debug("{}{} {}", indent, "Child", child.getQName().getLocalName());
@@ -257,8 +255,7 @@ public final class StmtTestUtils {
     public static Module findImportedModule(final SchemaContext context, final Module rootModule,
             final String importedModuleName) {
         ModuleImport requestedModuleImport = null;
-        final Set<ModuleImport> rootImports = rootModule.getImports();
-        for (final ModuleImport moduleImport : rootImports) {
+        for (final ModuleImport moduleImport : rootModule.getImports()) {
             if (moduleImport.getModuleName().equals(importedModuleName)) {
                 requestedModuleImport = moduleImport;
                 break;

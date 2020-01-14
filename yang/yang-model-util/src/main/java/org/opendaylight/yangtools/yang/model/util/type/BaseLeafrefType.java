@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -20,7 +20,7 @@ final class BaseLeafrefType extends AbstractBaseType<LeafrefTypeDefinition> impl
     private final boolean requireInstance;
 
     BaseLeafrefType(final SchemaPath path, final PathExpression pathStatement, final boolean requireInstance,
-            final List<UnknownSchemaNode> unknownSchemaNodes) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(path, unknownSchemaNodes);
         this.pathStatement = requireNonNull(pathStatement);
         this.requireInstance = requireInstance;

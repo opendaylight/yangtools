@@ -116,13 +116,13 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
             module -> checkModuleDependency(module, rootModules)));
     }
 
-    private static Multimap<String, Module> getStringModuleMap(final SchemaContext delegate) {
+    private static Multimap<String, ? extends Module> getStringModuleMap(final SchemaContext delegate) {
         return Multimaps.index(delegate.getModules(), Module::getName);
     }
 
     //dealing with imported module other than root and directly importing root
-    private static Collection<Module> getImportedModules(final Map<ModuleId, Module> allModules,
-            final Set<Module> baseModules, final TreeMultimap<String, Module> nameToModulesAll) {
+    private static Collection<Module> getImportedModules(final Map<ModuleId, ? extends Module> allModules,
+            final Collection<? extends Module> baseModules, final TreeMultimap<String, Module> nameToModulesAll) {
 
         List<Module> relatedModules = new LinkedList<>();
 

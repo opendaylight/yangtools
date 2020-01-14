@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import java.util.List;
+import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Builder;
@@ -36,7 +36,7 @@ public abstract class TypeBuilder<T extends TypeDefinition<T>> implements Builde
         return path;
     }
 
-    final @NonNull List<UnknownSchemaNode> getUnknownSchemaNodes() {
+    final @NonNull Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownSchemaNodes.build();
     }
 

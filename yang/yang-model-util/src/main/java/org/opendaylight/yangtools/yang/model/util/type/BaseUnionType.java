@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 final class BaseUnionType extends AbstractBaseType<UnionTypeDefinition> implements UnionTypeDefinition {
     private final ImmutableList<TypeDefinition<?>> types;
 
-    BaseUnionType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,
+    BaseUnionType(final SchemaPath path, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final Collection<TypeDefinition<?>> types) {
         super(path, unknownSchemaNodes);
         this.types = ImmutableList.copyOf(types);

@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
 final class RestrictedEmptyType extends AbstractRestrictedType<EmptyTypeDefinition> implements EmptyTypeDefinition {
     RestrictedEmptyType(final EmptyTypeDefinition baseType, final SchemaPath path,
-            final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, unknownSchemaNodes);
     }
 

@@ -17,7 +17,7 @@ final class RestrictedInstanceIdentifierType extends AbstractRestrictedType<Inst
     private final boolean requireInstance;
 
     RestrictedInstanceIdentifierType(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes, final boolean requireInstance) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes, final boolean requireInstance) {
         super(baseType, path, unknownSchemaNodes);
         this.requireInstance = requireInstance;
     }

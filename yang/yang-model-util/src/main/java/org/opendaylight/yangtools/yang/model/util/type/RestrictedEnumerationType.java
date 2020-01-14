@@ -19,7 +19,7 @@ final class RestrictedEnumerationType extends AbstractRestrictedType<EnumTypeDef
     private final @NonNull ImmutableList<EnumPair> values;
 
     RestrictedEnumerationType(final EnumTypeDefinition baseType, final SchemaPath path,
-            final Collection<UnknownSchemaNode> unknownSchemaNodes, final Collection<EnumPair> values) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes, final Collection<EnumPair> values) {
         super(baseType, path, unknownSchemaNodes);
         this.values = ImmutableList.copyOf(values);
     }

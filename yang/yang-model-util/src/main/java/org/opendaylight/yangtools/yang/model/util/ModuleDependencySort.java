@@ -62,19 +62,19 @@ public final class ModuleDependencySort {
      * @return Sorted list of Modules. Modules can be further processed in returned order.
      * @throws IllegalArgumentException when provided modules are not consistent.
      */
-    public static List<Module> sort(final Collection<Module> modules) {
+    public static List<Module> sort(final Collection<? extends Module> modules) {
         final List<Node> sorted = sortInternal(modules);
         // Cast to Module from Node and return
         return Lists.transform(sorted, input -> input == null ? null : ((ModuleNodeImpl) input).getReference());
     }
 
-    private static List<Node> sortInternal(final Collection<Module> modules) {
+    private static List<Node> sortInternal(final Collection<? extends Module> modules) {
         final Table<String, Optional<Revision>, ModuleNodeImpl> moduleGraph = createModuleGraph(modules);
         return TopologicalSort.sort(new HashSet<>(moduleGraph.values()));
     }
 
     private static Table<String, Optional<Revision>, ModuleNodeImpl> createModuleGraph(
-            final Collection<Module> builders) {
+            final Collection<? extends Module> builders) {
         final Table<String, Optional<Revision>, ModuleNodeImpl> moduleGraph = HashBasedTable.create();
 
         processModules(moduleGraph, builders);
@@ -87,7 +87,7 @@ public final class ModuleDependencySort {
      * Extract module:revision from modules.
      */
     private static void processDependencies(final Table<String, Optional<Revision>, ModuleNodeImpl> moduleGraph,
-            final Collection<Module> mmbs) {
+            final Collection<? extends Module> mmbs) {
         final Map<URI, Module> allNS = new HashMap<>();
 
         // Create edges in graph
@@ -137,7 +137,7 @@ public final class ModuleDependencySort {
         }
     }
 
-    private static Collection<ModuleImport> allImports(final Module mod) {
+    private static Collection<? extends ModuleImport> allImports(final Module mod) {
         if (mod.getSubmodules().isEmpty()) {
             return mod.getImports();
         }
@@ -188,7 +188,7 @@ public final class ModuleDependencySort {
      * Extract dependencies from modules to fill dependency graph.
      */
     private static void processModules(final Table<String, Optional<Revision>, ModuleNodeImpl> moduleGraph,
-            final Iterable<Module> modules) {
+            final Iterable<? extends Module> modules) {
 
         // Process nodes
         for (final Module momb : modules) {

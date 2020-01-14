@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -23,7 +22,7 @@ abstract class AbstractTypeDefinition<T extends TypeDefinition<T>> implements Im
     private final @NonNull ImmutableList<UnknownSchemaNode> unknownSchemaNodes;
     private final @NonNull SchemaPath path;
 
-    AbstractTypeDefinition(final SchemaPath path, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+    AbstractTypeDefinition(final SchemaPath path, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         this.path = requireNonNull(path);
         this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
     }
@@ -39,7 +38,7 @@ abstract class AbstractTypeDefinition<T extends TypeDefinition<T>> implements Im
     }
 
     @Override
-    public final List<UnknownSchemaNode> getUnknownSchemaNodes() {
+    public final Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownSchemaNodes;
     }
 
