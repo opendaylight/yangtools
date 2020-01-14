@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Set;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
@@ -17,7 +17,7 @@ public class TwoRevisionsTest {
 
     @Test
     public void testTwoRevisions() throws Exception {
-        Set<Module> modules = TestUtils.loadModules(getClass().getResource("/ietf").toURI()).getModules();
+        Collection<? extends Module> modules = TestUtils.loadModules(getClass().getResource("/ietf").toURI()).getModules();
         //FIXME: following assert needs module revisions .equals() solution first
         assertEquals(2, TestUtils.findModules(modules, "network-topology").size());
     }
