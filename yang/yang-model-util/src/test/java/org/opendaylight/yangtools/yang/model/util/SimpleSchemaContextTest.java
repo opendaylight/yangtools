@@ -14,6 +14,7 @@ import static org.mockito.Mockito.mock;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -54,17 +55,19 @@ public class SimpleSchemaContextTest {
     }
 
     private static void assertGetModules(final List<Module> expected, final Module... modules) {
-        final Set<Module> actual = SimpleSchemaContext.forModules(ImmutableSet.copyOf(modules)).getModules();
+        final Set<Module> actual = SimpleSchemaContext.forModules(ImmutableList.copyOf(modules)).getModules();
         assertArrayEquals(expected.toArray(), actual.toArray());
     }
 
     private static void assertFindModules(final List<Module> expected, final String name, final Module... modules) {
-        final Set<Module> actual = SimpleSchemaContext.forModules(ImmutableSet.copyOf(modules)).findModules(name);
+        final Collection<? extends Module> actual = SimpleSchemaContext.forModules(ImmutableList.copyOf(modules))
+                .findModules(name);
         assertArrayEquals(expected.toArray(), actual.toArray());
     }
 
     private static void assertFindModules(final List<Module> expected, final URI uri, final Module... modules) {
-        final Set<Module> actual = SimpleSchemaContext.forModules(ImmutableSet.copyOf(modules)).findModules(uri);
+        final Collection<? extends Module> actual = SimpleSchemaContext.forModules(ImmutableSet.copyOf(modules))
+                .findModules(uri);
         assertArrayEquals(expected.toArray(), actual.toArray());
     }
 

@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 final class BaseEnumerationType extends AbstractBaseType<EnumTypeDefinition> implements EnumTypeDefinition {
     private final @NonNull ImmutableList<EnumPair> values;
 
-    BaseEnumerationType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,
+    BaseEnumerationType(final SchemaPath path, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
             final Collection<EnumPair> values) {
         super(path, unknownSchemaNodes);
         this.values = ImmutableList.copyOf(values);

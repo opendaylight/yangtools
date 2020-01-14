@@ -14,6 +14,7 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -44,18 +45,18 @@ public class Bug5946Test {
                 .getResource("/bugs/bug5946/foo.yang").toURI()));
         assertNotNull(context);
 
-        Collection<UniqueConstraint> uniqueConstraints = getListConstraints(context, WITHOUT_UNIQUE);
+        Collection<? extends UniqueConstraint> uniqueConstraints = getListConstraints(context, WITHOUT_UNIQUE);
         assertNotNull(uniqueConstraints);
         assertTrue(uniqueConstraints.isEmpty());
 
-        Collection<UniqueConstraint> simpleUniqueConstraints = getListConstraints(context, SIMPLE_UNIQUE);
+        Collection<? extends UniqueConstraint> simpleUniqueConstraints = getListConstraints(context, SIMPLE_UNIQUE);
         assertNotNull(simpleUniqueConstraints);
         assertEquals(1, simpleUniqueConstraints.size());
         Collection<Relative> simpleUniqueConstraintTag = simpleUniqueConstraints.iterator().next().getTag();
         assertTrue(simpleUniqueConstraintTag.contains(L1_ID));
         assertTrue(simpleUniqueConstraintTag.contains(C_L3_ID));
 
-        Collection<UniqueConstraint> multipleUniqueConstraints = getListConstraints(context, MULTIPLE_UNIQUE);
+        Collection<? extends UniqueConstraint> multipleUniqueConstraints = getListConstraints(context, MULTIPLE_UNIQUE);
         assertNotNull(multipleUniqueConstraints);
         assertEquals(3, multipleUniqueConstraints.size());
         boolean l1l2 = false;
@@ -86,7 +87,8 @@ public class Bug5946Test {
         }
     }
 
-    private static Collection<UniqueConstraint> getListConstraints(final SchemaContext context, final QName listQName) {
+    private static @NonNull Collection<? extends UniqueConstraint> getListConstraints(final SchemaContext context,
+            final QName listQName) {
         DataSchemaNode dataChildByName = context.getDataChildByName(listQName);
         assertTrue(dataChildByName instanceof ListSchemaNode);
         return ((ListSchemaNode) dataChildByName).getUniqueConstraints();

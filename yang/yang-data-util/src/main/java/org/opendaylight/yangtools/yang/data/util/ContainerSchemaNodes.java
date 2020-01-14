@@ -16,7 +16,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -68,7 +67,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Set<UsesNode> getUses() {
+        public Collection<? extends UsesNode> getUses() {
             return ImmutableSet.of();
         }
 
@@ -108,7 +107,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Collection<MustDefinition> getMustConstraints() {
+        public Collection<? extends MustDefinition> getMustConstraints() {
             return ImmutableList.of();
         }
 
@@ -128,22 +127,22 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Set<GroupingDefinition> getGroupings() {
+        public Collection<? extends GroupingDefinition> getGroupings() {
             return rpcDefinition.getGroupings();
         }
 
         @Override
-        public Set<TypeDefinition<?>> getTypeDefinitions() {
+        public Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
             return rpcDefinition.getTypeDefinitions();
         }
 
         @Override
-        public Set<AugmentationSchemaNode> getAvailableAugmentations() {
+        public Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
             return ImmutableSet.of();
         }
 
         @Override
-        public Collection<DataSchemaNode> getChildNodes() {
+        public Collection<? extends DataSchemaNode> getChildNodes() {
             final ContainerSchemaNode input = rpcDefinition.getInput();
             final ContainerSchemaNode output = rpcDefinition.getOutput();
             if (input == null && output == null) {
@@ -176,12 +175,12 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Set<ActionDefinition> getActions() {
+        public Collection<? extends ActionDefinition> getActions() {
             return ImmutableSet.of();
         }
 
         @Override
-        public Set<NotificationDefinition> getNotifications() {
+        public Collection<? extends NotificationDefinition> getNotifications() {
             return ImmutableSet.of();
         }
     }
@@ -189,7 +188,7 @@ public final class ContainerSchemaNodes {
     private static final class NotificationContainerSchemaNode extends AbstractContainerSchemaNode {
 
         private final NotificationDefinition notification;
-        private final ImmutableMap<QName, DataSchemaNode> mapNodes;
+        private final ImmutableMap<QName, ? extends DataSchemaNode> mapNodes;
 
         private NotificationContainerSchemaNode(final NotificationDefinition notification) {
             super(notification);
@@ -198,27 +197,27 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Set<NotificationDefinition> getNotifications() {
+        public Collection<? extends NotificationDefinition> getNotifications() {
             return ImmutableSet.of(notification);
         }
 
         @Override
-        public Set<AugmentationSchemaNode> getAvailableAugmentations() {
+        public Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
             return notification.getAvailableAugmentations();
         }
 
         @Override
-        public Set<TypeDefinition<?>> getTypeDefinitions() {
+        public Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
             return notification.getTypeDefinitions();
         }
 
         @Override
-        public Collection<DataSchemaNode> getChildNodes() {
+        public Collection<? extends DataSchemaNode> getChildNodes() {
             return notification.getChildNodes();
         }
 
         @Override
-        public Set<GroupingDefinition> getGroupings() {
+        public Collection<? extends GroupingDefinition> getGroupings() {
             return notification.getGroupings();
         }
 
@@ -235,7 +234,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Set<ActionDefinition> getActions() {
+        public Collection<? extends ActionDefinition> getActions() {
             return ImmutableSet.of();
         }
     }

@@ -19,7 +19,7 @@ final class RestrictedLeafrefType extends AbstractRestrictedType<LeafrefTypeDefi
     private final boolean requireInstance;
 
     RestrictedLeafrefType(final LeafrefTypeDefinition baseType, final SchemaPath path,
-            final Collection<UnknownSchemaNode> unknownSchemaNodes, final boolean requireInstance) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes, final boolean requireInstance) {
         super(baseType, path, unknownSchemaNodes);
 
         this.requireInstance = requireInstance;

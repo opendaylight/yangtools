@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 
 final class DerivedBooleanType extends AbstractDerivedType<BooleanTypeDefinition> implements BooleanTypeDefinition {
     DerivedBooleanType(final BooleanTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
-        final String description, final String reference, final Status status, final String units,
-        final Collection<UnknownSchemaNode> unknownSchemNodes) {
+            final String description, final String reference, final Status status, final String units,
+            final Collection<? extends UnknownSchemaNode> unknownSchemNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
 

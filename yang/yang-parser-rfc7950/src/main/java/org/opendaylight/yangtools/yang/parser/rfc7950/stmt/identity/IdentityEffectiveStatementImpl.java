@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -61,13 +62,13 @@ final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<I
     }
 
     @Override
-    public Set<IdentitySchemaNode> getBaseIdentities() {
+    public Collection<? extends IdentitySchemaNode> getBaseIdentities() {
         checkState(sealed, "Attempt to get base identities from unsealed identity effective statement %s", getQName());
         return baseIdentities;
     }
 
     @Override
-    public Set<IdentitySchemaNode> getDerivedIdentities() {
+    public Collection<? extends IdentitySchemaNode> getDerivedIdentities() {
         return Collections.unmodifiableSet(derivedIdentities);
     }
 

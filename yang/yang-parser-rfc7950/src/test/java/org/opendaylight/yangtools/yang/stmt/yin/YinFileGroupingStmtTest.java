@@ -15,7 +15,6 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -31,10 +30,10 @@ public class YinFileGroupingStmtTest extends AbstractYinModulesTest {
         final Module testModule = TestUtils.findModule(context, "config").get();
         assertNotNull(testModule);
 
-        final Set<GroupingDefinition> groupings = testModule.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings = testModule.getGroupings();
         assertEquals(1, groupings.size());
 
-        final Iterator<GroupingDefinition> groupingsIterator = groupings.iterator();
+        final Iterator<? extends GroupingDefinition> groupingsIterator = groupings.iterator();
         final GroupingDefinition grouping = groupingsIterator.next();
         assertEquals("service-ref", grouping.getQName().getLocalName());
         assertEquals(Optional.of("Type of references to a particular service instance. This type\n"
@@ -44,7 +43,7 @@ public class YinFileGroupingStmtTest extends AbstractYinModulesTest {
                 + "is expected to inject a reference to the service as the value\n"
                 + "of the container."), grouping.getDescription());
 
-        final Collection<DataSchemaNode> children = grouping.getChildNodes();
+        final Collection<? extends DataSchemaNode> children = grouping.getChildNodes();
         assertEquals(2, children.size());
 
         final LeafSchemaNode leaf1 = (LeafSchemaNode) grouping.findDataChildByName(QName.create(

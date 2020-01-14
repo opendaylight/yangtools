@@ -10,12 +10,11 @@ package org.opendaylight.yangtools.yang.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -47,7 +46,7 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
      * @return set of <code>DataSchemaNode</code> instances which represents
      *         YANG data nodes at the module top level
      */
-    Set<DataSchemaNode> getDataDefinitions();
+    Collection<? extends DataSchemaNode> getDataDefinitions();
 
     /**
      * Returns modules which are part of the schema context. Returned set is required to have its iteration ordered
@@ -56,7 +55,7 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
      *
      * @return set of the modules which belong to the schema context
      */
-    Set<Module> getModules();
+    Collection<? extends Module> getModules();
 
     /**
      * Returns rpc definition instances which are defined as the direct
@@ -65,7 +64,7 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
      * @return set of <code>RpcDefinition</code> instances which represents
      *         nodes defined via <code>rpc</code> YANG keyword
      */
-    Set<RpcDefinition> getOperations();
+    Collection<? extends RpcDefinition> getOperations();
 
     /**
      * Returns extension definition instances which are defined as the direct
@@ -74,7 +73,7 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
      * @return set of <code>ExtensionDefinition</code> instances which
      *         represents nodes defined via <code>extension</code> YANG keyword
      */
-    Set<ExtensionDefinition> getExtensions();
+    Collection<? extends ExtensionDefinition> getExtensions();
 
     /**
      * Returns the module matching specified {@link QNameModule}, if present.
@@ -130,7 +129,7 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
      * @return module instance which has name and revision the same as are the values specified in parameters
      *                <code>name</code> and <code>revision</code>.
      */
-    default Optional<Module> findModule(final String name, final Optional<Revision> revision) {
+    default Optional<? extends Module> findModule(final String name, final Optional<Revision> revision) {
         return findModules(name).stream().filter(module -> revision.equals(module.getRevision())).findAny();
     }
 
@@ -144,7 +143,7 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
      * @return module instance which has name and revision the same as are the values specified in parameters
      *         <code>name</code> and <code>revision</code>.
      */
-    default Optional<Module> findModule(final String name, final @Nullable Revision revision) {
+    default Optional<? extends Module> findModule(final String name, final @Nullable Revision revision) {
         return findModule(name, Optional.ofNullable(revision));
     }
 
@@ -156,7 +155,7 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
      *                and no revision.
      * @throws NullPointerException if name is null
      */
-    default Optional<Module> findModule(final String name) {
+    default Optional<? extends Module> findModule(final String name) {
         return findModule(name, Optional.empty());
     }
 
@@ -168,8 +167,8 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
      *            string with the module name
      * @return set of module instances with specified name.
      */
-    default Set<Module> findModules(final String name) {
-        return Sets.filter(getModules(), m -> name.equals(m.getName()));
+    default Collection<? extends Module> findModules(final String name) {
+        return Collections2.filter(getModules(), m -> name.equals(m.getName()));
     }
 
     /**
@@ -181,12 +180,12 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
      * @return module instance which has namespace equal to the
      *         <code>namespace</code> or <code>null</code> in other cases
      */
-    default Set<Module> findModules(final URI namespace) {
-        return Sets.filter(getModules(), m -> namespace.equals(m.getNamespace()));
+    default Collection<? extends Module> findModules(final URI namespace) {
+        return Collections2.filter(getModules(), m -> namespace.equals(m.getNamespace()));
     }
 
     @Override
-    default Set<ActionDefinition> getActions() {
+    default Collection<? extends ActionDefinition> getActions() {
         return ImmutableSet.of();
     }
 
@@ -198,7 +197,8 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
 
     @Override
     default Optional<NotificationDefinition> findNotification(final QName qname) {
-        final Optional<Set<NotificationDefinition>> defs = findModule(qname.getModule()).map(Module::getNotifications);
+        final Optional<Collection<? extends NotificationDefinition>> defs = findModule(qname.getModule())
+                .map(Module::getNotifications);
         if (defs.isPresent()) {
             for (NotificationDefinition def : defs.get()) {
                 if (qname.equals(def.getQName())) {
@@ -220,7 +220,7 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
     }
 
     @Override
-    default Collection<MustDefinition> getMustConstraints() {
+    default Collection<? extends MustDefinition> getMustConstraints() {
         return ImmutableSet.of();
     }
 

@@ -24,7 +24,7 @@ public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTyp
      * @return set of identities to which the instance of this type refers (in YANG 1.1 models) or a set containing
      *         just one identity (in YANG 1.0 models)
      */
-    @NonNull Set<IdentitySchemaNode> getIdentities();
+    @NonNull Set<? extends IdentitySchemaNode> getIdentities();
 
     static int hashCode(final @NonNull IdentityrefTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
