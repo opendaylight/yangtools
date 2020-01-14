@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -15,8 +14,8 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -89,7 +88,7 @@ public class MoreRevisionsTest {
                 .addSources(NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021, IETF_TYPES)
                 .buildEffective();
         assertNotNull(result);
-        Set<Module> modules = result.getModules();
+        Collection<? extends Module> modules = result.getModules();
 
         assertEquals(3, modules.size());
         assertEquals(2, StmtTestUtils.findModules(modules, "network-topology").size());
@@ -155,7 +154,7 @@ public class MoreRevisionsTest {
         Revision rev20121115 = Revision.of("2012-11-15");
 
         Module interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).get();
-        Set<ModuleImport> imports = interfacesModule20121115.getImports();
+        Collection<? extends ModuleImport> imports = interfacesModule20121115.getImports();
         assertEquals(1, imports.size());
         ModuleImport interfacesImport = imports.iterator().next();
         assertEquals("ietf-yang-types", interfacesImport.getModuleName());
@@ -167,7 +166,7 @@ public class MoreRevisionsTest {
         Revision rev20101004 = Revision.of("2010-10-04");
 
         Module monitoringModule20101004 = context.findModule("ietf-netconf-monitoring", rev20101004).get();
-        Set<ModuleImport> imports = monitoringModule20101004.getImports();
+        Collection<? extends ModuleImport> imports = monitoringModule20101004.getImports();
         assertEquals(2, imports.size());
         for (ModuleImport monitoringImport : imports) {
             if (monitoringImport.getModuleName().equals("ietf-yang-types")) {
@@ -228,7 +227,7 @@ public class MoreRevisionsTest {
         QName lastChangeTypeQName = ((LeafSchemaNode) leafLastChange).getType().getQName();
         assertEquals(dateTimeTypeDef20100924, lastChangeTypeQName);
 
-        Set<ModuleImport> imports = interfacesModule20121115.getImports();
+        Collection<? extends ModuleImport> imports = interfacesModule20121115.getImports();
         assertEquals(1, imports.size());
         ModuleImport interfacesImport = imports.iterator().next();
         assertEquals("ietf-yang-types", interfacesImport.getModuleName());
@@ -249,7 +248,7 @@ public class MoreRevisionsTest {
         QName lockedTimeTypeQName = ((LeafSchemaNode) leafLockedTime).getType().getQName();
         assertEquals(dateTimeTypeDef20130715, lockedTimeTypeQName);
 
-        Set<ModuleImport> imports = monitoringModule19700101.getImports();
+        Collection<? extends ModuleImport> imports = monitoringModule19700101.getImports();
         assertEquals(1, imports.size());
         ModuleImport monitoringImport = imports.iterator().next();
         assertEquals("ietf-yang-types", monitoringImport.getModuleName());

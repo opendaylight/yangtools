@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -13,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.util.List;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -37,8 +36,8 @@ public class ExtensionStmtTest {
 
         assertEquals(1, testModule.getExtensionSchemaNodes().size());
 
-        final List<ExtensionDefinition> extensions = testModule.getExtensionSchemaNodes();
-        final ExtensionDefinition extension = extensions.get(0);
+        final Collection<? extends ExtensionDefinition> extensions = testModule.getExtensionSchemaNodes();
+        final ExtensionDefinition extension = extensions.iterator().next();
         assertEquals("opendaylight", extension.getQName().getLocalName());
         assertEquals("name", extension.getArgument());
         assertTrue(extension.isYinElement());
@@ -57,8 +56,8 @@ public class ExtensionStmtTest {
 
         assertEquals(1, testModule1.getExtensionSchemaNodes().size());
 
-        final List<ExtensionDefinition> extensions = testModule1.getExtensionSchemaNodes();
-        final ExtensionDefinition extensionDefinition = extensions.get(0);
+        final Collection<? extends ExtensionDefinition> extensions = testModule1.getExtensionSchemaNodes();
+        final ExtensionDefinition extensionDefinition = extensions.iterator().next();
 
         final Module testModule2 = result.findModules("ext-use").iterator().next();
         assertNotNull(testModule2);
@@ -68,8 +67,8 @@ public class ExtensionStmtTest {
         assertNotNull(leaf);
 
         assertEquals(1, leaf.getUnknownSchemaNodes().size());
-        final List<UnknownSchemaNode> unknownNodes = leaf.getUnknownSchemaNodes();
-        final UnknownSchemaNode extensionUse = unknownNodes.get(0);
+        final Collection<? extends UnknownSchemaNode> unknownNodes = leaf.getUnknownSchemaNodes();
+        final UnknownSchemaNode extensionUse = unknownNodes.iterator().next();
         assertEquals(extensionDefinition.getQName().getLocalName(), extensionUse.getExtensionDefinition().getQName()
                 .getLocalName());
         assertEquals(extensionDefinition.getArgument(), extensionUse.getExtensionDefinition().getArgument());

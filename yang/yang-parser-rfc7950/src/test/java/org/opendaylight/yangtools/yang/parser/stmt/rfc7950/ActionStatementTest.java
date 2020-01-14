@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
@@ -41,14 +42,14 @@ public class ActionStatementTest {
         assertContainsActions(schemaContext, "top-list", "top-list-action");
         assertContainsActions(schemaContext, "top", "top-action");
 
-        final Set<GroupingDefinition> groupings = schemaContext.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings = schemaContext.getGroupings();
         assertEquals(1, groupings.size());
         assertContainsActions(groupings.iterator().next(), "grp-action");
 
-        final Set<Module> modules = schemaContext.getModules();
+        final Collection<? extends Module> modules = schemaContext.getModules();
         assertEquals(1, modules.size());
         final Module foo = modules.iterator().next();
-        final Set<AugmentationSchemaNode> augmentations = foo.getAugmentations();
+        final Collection<? extends AugmentationSchemaNode> augmentations = foo.getAugmentations();
         assertEquals(1, augmentations.size());
         assertContainsActions(augmentations.iterator().next(), "aug-action", "grp-action");
     }
@@ -63,7 +64,7 @@ public class ActionStatementTest {
 
     private static void assertContainsActions(final ActionNodeContainer actionContainer,
             final String... actionNames) {
-        final Set<ActionDefinition> actions = actionContainer.getActions();
+        final Collection<? extends ActionDefinition> actions = actionContainer.getActions();
         assertEquals(actionNames.length, actions.size());
 
         final Set<QName> actionQNames = new HashSet<>();

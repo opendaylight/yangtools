@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * Interface for all nodes which are possible targets of augmentation. The
@@ -20,5 +20,5 @@ public interface AugmentationTarget {
      *
      * @return set of augmentations targeting this element.
      */
-    Set<AugmentationSchemaNode> getAvailableAugmentations();
+    Collection<? extends AugmentationSchemaNode> getAvailableAugmentations();
 }
