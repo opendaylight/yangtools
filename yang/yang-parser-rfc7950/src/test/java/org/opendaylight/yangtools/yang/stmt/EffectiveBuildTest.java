@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -95,12 +94,12 @@ public class EffectiveBuildTest {
         SchemaContext result = RFC7950Reactors.defaultReactor().newBuild().addSource(YANG_EXT).buildEffective();
         assertNotNull(result);
 
-        Set<GroupingDefinition> groupings = result.getGroupings();
+        Collection<? extends GroupingDefinition> groupings = result.getGroupings();
         assertEquals(1, groupings.size());
 
         GroupingDefinition grp = groupings.iterator().next();
 
-        Collection<DataSchemaNode> childNodes = grp.getChildNodes();
+        Collection<? extends DataSchemaNode> childNodes = grp.getChildNodes();
         assertEquals(1, childNodes.size());
         DataSchemaNode child = childNodes.iterator().next();
 

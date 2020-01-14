@@ -13,7 +13,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -82,8 +81,7 @@ public class OpenconfigVersionMultipleImportTest {
     private static Module findImportedModule(final SchemaContext context, final Module rootModule,
             final String importedModuleName) {
         ModuleImport requestedModuleImport = null;
-        Set<ModuleImport> rootImports = rootModule.getImports();
-        for (ModuleImport moduleImport : rootImports) {
+        for (ModuleImport moduleImport : rootModule.getImports()) {
             if (moduleImport.getModuleName().equals(importedModuleName)) {
                 requestedModuleImport = moduleImport;
                 break;
