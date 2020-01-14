@@ -103,7 +103,7 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
                 .setUserOrdered(findFirstArgument(substatements, OrderedByEffectiveStatement.class, "system")
                     .equals("user"))
                 .toFlags();
-        if (configuration && keyDefinition.isEmpty()) {
+        if (configuration && keyDefinition.isEmpty() && !inGrouping(ctx)) {
             LOG.info("Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While "
                     + " this is fine with OpenDaylight, it can cause interoperability issues with other systems "
                     + "[at {}]", ctx.getStatementArgument(), ref);
@@ -115,6 +115,17 @@ abstract class AbstractListStatementSupport extends BaseQNameStatementSupport<Li
                 ? new EmptyListEffectiveStatement(declared, path, flags, ctx, substatements, keyDefinition)
                         : new RegularListEffectiveStatement(declared, path, flags, ctx, substatements, keyDefinition,
                             elementCountConstraint.orElse(null), original);
+    }
+
+    private static final boolean inGrouping(final StmtContext<?, ?, ?> ctx) {
+        StmtContext<?, ?, ?> parent = ctx.getParentContext();
+        while (parent != null) {
+            if (parent.getPublicDefinition() == YangStmtMapping.GROUPING) {
+                return true;
+            }
+            parent = parent.getParentContext();
+        }
+        return false;
     }
 
     @Override
