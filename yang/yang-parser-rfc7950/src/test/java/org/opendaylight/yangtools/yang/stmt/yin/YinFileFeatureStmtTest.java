@@ -15,8 +15,8 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
@@ -42,10 +42,10 @@ public class YinFileFeatureStmtTest {
         Module testModule = TestUtils.findModule(context, "yang-with-features").get();
         assertNotNull(testModule);
 
-        Set<FeatureDefinition> features = testModule.getFeatures();
+        Collection<? extends FeatureDefinition> features = testModule.getFeatures();
         assertEquals(2, features.size());
 
-        Iterator<FeatureDefinition> featuresIterator = features.iterator();
+        Iterator<? extends FeatureDefinition> featuresIterator = features.iterator();
         FeatureDefinition feature = featuresIterator.next();
 
         assertThat(feature.getQName().getLocalName(), anyOf(is("arbitrary-names"), is("pre-provisioning")));

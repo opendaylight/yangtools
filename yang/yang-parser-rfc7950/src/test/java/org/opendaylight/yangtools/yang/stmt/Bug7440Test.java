@@ -5,14 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -34,11 +32,11 @@ public class Bug7440Test {
         final Module foo = schemaContext.findModule("foo", revision).get();
         final Module bar = schemaContext.findModule("bar", revision).get();
 
-        final Set<Deviation> deviations = foo.getDeviations();
+        final Collection<? extends Deviation> deviations = foo.getDeviations();
         assertEquals(1, deviations.size());
         final Deviation deviation = deviations.iterator().next();
 
-        final List<DeviateDefinition> deviates = deviation.getDeviates();
+        final Collection<? extends DeviateDefinition> deviates = deviation.getDeviates();
         assertEquals(1, deviates.size());
         final DeviateDefinition deviateReplace = deviates.iterator().next();
 

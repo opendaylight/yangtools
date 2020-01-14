@@ -9,12 +9,8 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -58,19 +54,9 @@ public final class EffectiveStatementMixins {
     // Marker interface requiring all mixins to be derived from EffectiveStatement.
     private interface Mixin<A, D extends DeclaredStatement<A>> extends EffectiveStatement<A, D> {
         @SuppressWarnings("unchecked")
-        default <T> Collection<T> filterEffectiveStatements(final Class<T> type) {
+        default <T> Collection<? extends T> filterEffectiveStatements(final Class<T> type) {
             // Yeah, this is not nice, but saves one transformation
-            return (Collection<T>) Collections2.filter(effectiveSubstatements(), type::isInstance);
-        }
-
-        // FIXME: YANGTOOLS-1068: eliminate this once we can return collections
-        default <T> List<T> filterEffectiveStatementsList(final Class<T> type) {
-            return ImmutableList.copyOf(filterEffectiveStatements(type));
-        }
-
-        // FIXME: YANGTOOLS-1068: eliminate this once we can return collections
-        default <T> Set<T> filterEffectiveStatementsSet(final Class<T> type) {
-            return ImmutableSet.copyOf(filterEffectiveStatements(type));
+            return (Collection<? extends T>) Collections2.filter(effectiveSubstatements(), type::isInstance);
         }
     }
 
@@ -83,8 +69,8 @@ public final class EffectiveStatementMixins {
     public interface AugmentationTargetMixin<A, D extends DeclaredStatement<A>>
             extends Mixin<A, D>, AugmentationTarget {
         @Override
-        default Set<AugmentationSchemaNode> getAvailableAugmentations() {
-            return filterEffectiveStatementsSet(AugmentationSchemaNode.class);
+        default Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
+            return filterEffectiveStatements(AugmentationSchemaNode.class);
         }
     }
 
@@ -111,8 +97,8 @@ public final class EffectiveStatementMixins {
     public interface ActionNodeContainerMixin<A, D extends DeclaredStatement<A>>
             extends Mixin<A, D>, ActionNodeContainer {
         @Override
-        default Set<ActionDefinition> getActions() {
-            return filterEffectiveStatementsSet(ActionDefinition.class);
+        default Collection<? extends ActionDefinition> getActions() {
+            return filterEffectiveStatements(ActionDefinition.class);
         }
     }
 
@@ -125,8 +111,8 @@ public final class EffectiveStatementMixins {
     public interface NotificationNodeContainerMixin<A, D extends DeclaredStatement<A>>
             extends Mixin<A, D>, NotificationNodeContainer {
         @Override
-        default Set<NotificationDefinition> getNotifications() {
-            return filterEffectiveStatementsSet(NotificationDefinition.class);
+        default Collection<? extends NotificationDefinition> getNotifications() {
+            return filterEffectiveStatements(NotificationDefinition.class);
         }
     }
 
@@ -138,7 +124,7 @@ public final class EffectiveStatementMixins {
      */
     public interface MustConstraintMixin<A, D extends DeclaredStatement<A>> extends Mixin<A, D>, MustConstraintAware {
         @Override
-        default Collection<MustDefinition> getMustConstraints() {
+        default Collection<? extends MustDefinition> getMustConstraints() {
             return filterEffectiveStatements(MustDefinition.class);
         }
     }
@@ -164,26 +150,25 @@ public final class EffectiveStatementMixins {
      */
     public interface DataNodeContainerMixin<A, D extends DeclaredStatement<A>> extends DataNodeContainer, Mixin<A, D> {
         @Override
-        default Set<TypeDefinition<?>> getTypeDefinitions() {
+        default Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
             // TODO: the cast here is needed to work around Java 11 javac type inference issue
-            return (Set) effectiveSubstatements().stream().filter(TypedefEffectiveStatement.class::isInstance)
-                    .map(stmt -> ((TypedefEffectiveStatement) stmt).getTypeDefinition())
-                    .collect(ImmutableSet.toImmutableSet());
+            return Collections2.transform(filterEffectiveStatements(TypedefEffectiveStatement.class),
+                TypedefEffectiveStatement::getTypeDefinition);
         }
 
         @Override
-        default Collection<DataSchemaNode> getChildNodes() {
+        default Collection<? extends DataSchemaNode> getChildNodes() {
             return filterEffectiveStatements(DataSchemaNode.class);
         }
 
         @Override
-        default Set<GroupingDefinition> getGroupings() {
-            return filterEffectiveStatementsSet(GroupingDefinition.class);
+        default Collection<? extends GroupingDefinition> getGroupings() {
+            return filterEffectiveStatements(GroupingDefinition.class);
         }
 
         @Override
-        default Set<UsesNode> getUses() {
-            return filterEffectiveStatementsSet(UsesNode.class);
+        default Collection<? extends UsesNode> getUses() {
+            return filterEffectiveStatements(UsesNode.class);
         }
     }
 
@@ -244,8 +229,8 @@ public final class EffectiveStatementMixins {
         }
 
         @Override
-        default List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return filterEffectiveStatementsList(UnknownSchemaNode.class);
+        default Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
+            return filterEffectiveStatements(UnknownSchemaNode.class);
         }
     }
 

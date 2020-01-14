@@ -16,8 +16,7 @@ import static org.junit.Assert.fail;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -85,11 +84,11 @@ public class YangDataExtensionTest {
                 .buildEffective();
         assertNotNull(schemaContext);
 
-        final Set<ExtensionDefinition> extensions = schemaContext.getExtensions();
+        final Collection<? extends ExtensionDefinition> extensions = schemaContext.getExtensions();
         assertEquals(1, extensions.size());
 
         final Module foo = schemaContext.findModule(FOO_QNAMEMODULE).get();
-        final List<UnknownSchemaNode> unknownSchemaNodes = foo.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = foo.getUnknownSchemaNodes();
         assertEquals(2, unknownSchemaNodes.size());
 
         YangDataSchemaNode myYangDataANode = null;
@@ -118,7 +117,7 @@ public class YangDataExtensionTest {
         assertNotNull(schemaContext);
 
         final Module baz = schemaContext.findModule("baz", REVISION).get();
-        final List<UnknownSchemaNode> unknownSchemaNodes = baz.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = baz.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
         final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
@@ -146,7 +145,7 @@ public class YangDataExtensionTest {
         assertNotNull(schemaContext);
 
         final Module foobar = schemaContext.findModule("foobar", REVISION).get();
-        final List<UnknownSchemaNode> unknownSchemaNodes = foobar.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = foobar.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
         final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
@@ -177,10 +176,10 @@ public class YangDataExtensionTest {
                 QName.create(bar.getQNameModule(), "cont")).get();
         assertNotNull(cont);
 
-        final Set<ExtensionDefinition> extensions = schemaContext.getExtensions();
+        final Collection<? extends ExtensionDefinition> extensions = schemaContext.getExtensions();
         assertEquals(1, extensions.size());
 
-        final List<UnknownSchemaNode> unknownSchemaNodes = cont.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = cont.getUnknownSchemaNodes();
         assertEquals(0, unknownSchemaNodes.size());
     }
 

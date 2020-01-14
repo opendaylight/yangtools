@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -29,7 +28,7 @@ public interface DataNodeContainer {
      *
      * @return typedef statements in lexicographical order
      */
-    Set<TypeDefinition<?>> getTypeDefinitions();
+    Collection<? extends TypeDefinition<?>> getTypeDefinitions();
 
     /**
      * Returns set of all child nodes defined within this DataNodeContainer. Although the return type is a collection,
@@ -42,14 +41,14 @@ public interface DataNodeContainer {
      *
      * @return child nodes in lexicographical order
      */
-    Collection<DataSchemaNode> getChildNodes();
+    Collection<? extends DataSchemaNode> getChildNodes();
 
     /**
      * Returns set of all groupings defined within this DataNodeContainer.
      *
      * @return grouping statements in lexicographical order
      */
-    Set<GroupingDefinition> getGroupings();
+    Collection<? extends GroupingDefinition> getGroupings();
 
     /**
      * Returns the child node corresponding to the specified name.
@@ -115,7 +114,7 @@ public interface DataNodeContainer {
      *
      * @return Set of all uses nodes defined within this DataNodeContainer
      */
-    Set<UsesNode> getUses();
+    Collection<? extends UsesNode> getUses();
 
     /**
      * Returns a {@code data node} identified by a QName. This method is distinct from

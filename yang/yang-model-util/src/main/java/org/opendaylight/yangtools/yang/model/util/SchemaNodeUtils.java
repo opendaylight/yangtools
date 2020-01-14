@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -108,7 +107,7 @@ public final class SchemaNodeUtils {
             return;
         }
 
-        final Iterable<DataSchemaNode> childNodes = dataNode.getChildNodes();
+        final Iterable<? extends DataSchemaNode> childNodes = dataNode.getChildNodes();
         if (childNodes != null) {
             for (DataSchemaNode childNode : childNodes) {
                 if (childNode.isAugmenting()) {
@@ -165,7 +164,7 @@ public final class SchemaNodeUtils {
     }
 
     private static void traverseGroupings(final DataNodeAggregator aggregator, final DataNodeContainer dataNode) {
-        final Set<GroupingDefinition> groupings = dataNode.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings = dataNode.getGroupings();
         if (groupings != null) {
             for (GroupingDefinition grouping : groupings) {
                 aggregator.addGrouping(grouping);

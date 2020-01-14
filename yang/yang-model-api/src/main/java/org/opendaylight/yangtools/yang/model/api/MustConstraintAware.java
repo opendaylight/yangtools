@@ -21,5 +21,5 @@ public interface MustConstraintAware {
      * @return collection of <code>MustDefinition</code> (XPath) instances which represents the concrete data
      *         constraints
      */
-    Collection<MustDefinition> getMustConstraints();
+    Collection<? extends MustDefinition> getMustConstraints();
 }

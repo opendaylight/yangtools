@@ -42,7 +42,7 @@ final class IdentityrefJSONCodec implements JSONCodec<QName> {
                 return parentModule;
             }
 
-            final Iterator<Module> modules = schemaContext.findModules(prefix).iterator();
+            final Iterator<? extends Module> modules = schemaContext.findModules(prefix).iterator();
             checkArgument(modules.hasNext(), "Could not find module %s", prefix);
             return modules.next().getQNameModule();
         }).getQName();
