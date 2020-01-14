@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -24,7 +24,7 @@ public class YinFileRpcStmtTest extends AbstractYinModulesTest {
     public void testRpc() {
         Module testModule = TestUtils.findModule(context, "ietf-netconf-monitoring").get();
 
-        Set<RpcDefinition> rpcs = testModule.getRpcs();
+        Collection<? extends RpcDefinition> rpcs = testModule.getRpcs();
         assertEquals(1, rpcs.size());
 
         RpcDefinition rpc = rpcs.iterator().next();

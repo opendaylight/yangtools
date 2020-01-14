@@ -627,8 +627,7 @@ public final class SchemaContextUtil {
             return module;
         }
 
-        final Set<ModuleImport> imports = module.getImports();
-        for (final ModuleImport mi : imports) {
+        for (final ModuleImport mi : module.getImports()) {
             if (prefix.equals(mi.getPrefix())) {
                 return context.findModule(mi.getModuleName(), mi.getRevision()).orElse(null);
             }

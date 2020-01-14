@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
-import java.util.List;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -35,9 +35,9 @@ public class Bug1412Test {
 
         final ContainerSchemaNode node = (ContainerSchemaNode) bug1412.getDataChildByName(QName.create(
                 bug1412.getQNameModule(), "node"));
-        List<UnknownSchemaNode> unknownNodes = node.getUnknownSchemaNodes();
+        Collection<? extends UnknownSchemaNode> unknownNodes = node.getUnknownSchemaNodes();
         assertEquals(1, unknownNodes.size());
-        final UnknownSchemaNode action = unknownNodes.get(0);
+        final UnknownSchemaNode action = unknownNodes.iterator().next();
 
         final QNameModule qm = QNameModule.create(URI.create("urn:test:bug1412"), Revision.of("2014-07-25"));
         QName expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "action");

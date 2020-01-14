@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import static org.junit.Assert.assertEquals;
@@ -13,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -33,7 +33,7 @@ public class IdentityrefStatementTest {
         assertNotNull(schemaContext);
 
         final Module foo = schemaContext.findModule("foo", Revision.of("2017-01-11")).get();
-        final Set<IdentitySchemaNode> identities = foo.getIdentities();
+        final Collection<? extends IdentitySchemaNode> identities = foo.getIdentities();
         assertEquals(3, identities.size());
 
         final LeafSchemaNode idrefLeaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
