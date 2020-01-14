@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -15,8 +14,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -79,10 +78,10 @@ public class IdentityStmtTest {
         Module testModule = result.findModules("legal-chained-identity-test").iterator().next();
         assertNotNull(testModule);
 
-        Set<IdentitySchemaNode> identities = testModule.getIdentities();
+        Collection<? extends IdentitySchemaNode> identities = testModule.getIdentities();
         assertEquals(4, identities.size());
 
-        Iterator<IdentitySchemaNode> identitiesIterator = identities.iterator();
+        Iterator<? extends IdentitySchemaNode> identitiesIterator = identities.iterator();
         IdentitySchemaNode identity = identitiesIterator.next();
         assertThat(identity.getQName().getLocalName(), anyOf(is("first-identity"), is("second-identity"),
             is("third-identity"), is("fourth-identity")));
@@ -108,7 +107,7 @@ public class IdentityStmtTest {
         assertNotNull(result);
 
         Module testModule = result.findModules("duplicate-identity-test").iterator().next();
-        Set<IdentitySchemaNode> identities = testModule.getIdentities();
+        Collection<? extends IdentitySchemaNode> identities = testModule.getIdentities();
         assertEquals(1, identities.size());
     }
 }

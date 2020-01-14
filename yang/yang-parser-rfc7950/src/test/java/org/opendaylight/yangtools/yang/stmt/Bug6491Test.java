@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -34,7 +34,7 @@ public class Bug6491Test {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6491/".concat(path));
         assertNotNull(context);
         final Module module = context.findModule("bar", moduleRevision).get();
-        final Set<ModuleImport> imports = module.getImports();
+        final Collection<? extends ModuleImport> imports = module.getImports();
         assertNotNull(imports);
         assertEquals(1, imports.size());
         assertEquals(importedRevision, imports.iterator().next().getRevision());

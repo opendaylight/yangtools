@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -15,10 +14,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
@@ -54,10 +52,10 @@ public class GroupingAndUsesStmtTest {
         final Module testModule = result.findModules("baz").iterator().next();
         assertNotNull(testModule);
 
-        final Set<GroupingDefinition> groupings = testModule.getGroupings();
+        final Collection<? extends GroupingDefinition> groupings = testModule.getGroupings();
         assertEquals(1, groupings.size());
 
-        final Iterator<GroupingDefinition> groupingsIterator = groupings.iterator();
+        final Iterator<? extends GroupingDefinition> groupingsIterator = groupings.iterator();
         final GroupingDefinition grouping = groupingsIterator.next();
         assertEquals("target", grouping.getQName().getLocalName());
         assertEquals(5, grouping.getChildNodes().size());
@@ -84,9 +82,9 @@ public class GroupingAndUsesStmtTest {
         assertEquals(1, grouping.getTypeDefinitions().size());
         assertEquals("group-type", grouping.getTypeDefinitions().iterator().next().getQName().getLocalName());
 
-        final List<UnknownSchemaNode> unknownSchemaNodes = grouping.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = grouping.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
-        final UnknownSchemaNode extensionUse = unknownSchemaNodes.get(0);
+        final UnknownSchemaNode extensionUse = unknownSchemaNodes.iterator().next();
         assertEquals("opendaylight", extensionUse.getExtensionDefinition().getQName().getLocalName());
     }
 
@@ -100,7 +98,7 @@ public class GroupingAndUsesStmtTest {
         final Module testModule = result.findModules("foo").iterator().next();
         assertNotNull(testModule);
 
-        final Set<UsesNode> usesNodes = testModule.getUses();
+        final Collection<? extends UsesNode> usesNodes = testModule.getUses();
         assertEquals(1, usesNodes.size());
 
         UsesNode usesNode = usesNodes.iterator().next();

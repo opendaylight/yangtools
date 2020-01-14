@@ -28,6 +28,7 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
      * @return set of ChoiceCaseNode objects defined in this node which represents set of arguments of the YANG
      *         <code>case</code> substatement of the <code>choice</code> statement.
      */
+    // FIXME: 5.0.0: revert back to collection + lookup
     SortedMap<QName, CaseSchemaNode> getCases();
 
     /**

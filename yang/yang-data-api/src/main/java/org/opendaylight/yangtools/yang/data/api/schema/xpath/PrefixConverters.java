@@ -51,7 +51,7 @@ public final class PrefixConverters {
         b.put(module.getPrefix(), module.getQNameModule());
 
         for (ModuleImport i : module.getImports()) {
-            final Optional<Module> mod = ctx.findModule(i.getModuleName(), i.getRevision());
+            final Optional<? extends Module> mod = ctx.findModule(i.getModuleName(), i.getRevision());
             checkArgument(mod.isPresent(), "Unsatisfied import of %s by module %s", i, module);
 
             b.put(i.getPrefix(), mod.get().getQNameModule());

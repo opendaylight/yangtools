@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.odlext.parser;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -106,12 +105,12 @@ final class YangModeledAnyxmlEffectiveStatementImpl
     }
 
     @Override
-    public Collection<MustDefinition> getMustConstraints() {
+    public Collection<? extends MustDefinition> getMustConstraints() {
         return delegateSchemaNode().getMustConstraints();
     }
 
     @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
+    public Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
         return delegateSchemaNode().getUnknownSchemaNodes();
     }
 

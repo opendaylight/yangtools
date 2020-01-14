@@ -12,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -103,8 +102,7 @@ public class DataTreeCandidateValidatorTest {
     public static void init() throws DataValidationFailedException {
         context = YangParserTestUtils.parseYangResourceDirectory("/leafref-validation");
 
-        final Set<Module> modules = context.getModules();
-        for (final Module module : modules) {
+        for (final Module module : context.getModules()) {
             if (module.getName().equals("leafref-validation")) {
                 valModule = module;
             }

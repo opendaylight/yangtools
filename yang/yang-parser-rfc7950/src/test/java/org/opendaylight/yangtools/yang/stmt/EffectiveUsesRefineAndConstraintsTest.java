@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -14,8 +13,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -40,7 +39,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
                 .buildEffective();
         assertNotNull(result);
 
-        Set<Module> modules = result.getModules();
+        Collection<? extends Module> modules = result.getModules();
         assertNotNull(modules);
         assertEquals(1, modules.size());
 
