@@ -20,6 +20,7 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +45,7 @@ public class SimpleSchemaContext extends AbstractSchemaContext implements Annota
     private final ImmutableSet<Module> modules;
     private final ImmutableMap<QName, AnnotationSchemaNode> annotations;
 
-    protected SimpleSchemaContext(final Set<Module> modules) {
+    protected SimpleSchemaContext(final Collection<? extends Module> modules) {
         /*
          * Instead of doing this on each invocation of getModules(), pre-compute it once and keep it around -- better
          * than the set we got in.
@@ -85,7 +86,7 @@ public class SimpleSchemaContext extends AbstractSchemaContext implements Annota
      * Create a new instance from specified modules. Note that no module validation is done and hence the consistency
      * of the resulting SchemaContext is completely in hands of the caller.
      */
-    public static SimpleSchemaContext forModules(final Set<Module> modules) {
+    public static SimpleSchemaContext forModules(final Collection<? extends Module> modules) {
         return new SimpleSchemaContext(modules);
     }
 

@@ -10,25 +10,24 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileTypeDefStmtTest extends AbstractYinModulesTest {
-
     @Test
     public void testTypedef() {
         Module testModule = TestUtils.findModule(context, "config").get();
         assertNotNull(testModule);
 
-        Set<TypeDefinition<?>> typeDefs = testModule.getTypeDefinitions();
+        Collection<? extends TypeDefinition<?>> typeDefs = testModule.getTypeDefinitions();
         assertEquals(1, typeDefs.size());
 
-        Iterator<TypeDefinition<?>> typeDefIterator = typeDefs.iterator();
+        Iterator<? extends TypeDefinition<?>> typeDefIterator = typeDefs.iterator();
         TypeDefinition<?> typeDef = typeDefIterator.next();
         assertEquals("service-type-ref", typeDef.getQName().getLocalName());
         assertEquals(Optional.of("Internal type of references to service type identity."), typeDef.getDescription());
