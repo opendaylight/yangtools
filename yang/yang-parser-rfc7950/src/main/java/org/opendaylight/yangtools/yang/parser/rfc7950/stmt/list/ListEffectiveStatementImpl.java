@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -90,7 +91,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
             this.keyDefinition = ImmutableList.of();
         }
 
-        if (isConfiguration() && keyDefinition.isEmpty()) {
+        if (isConfiguration() && keyDefinition.isEmpty() && !inGrouping(ctx)) {
             LOG.info("Configuration list {} does not define any keys in violation of RFC7950 section 7.8.2. While "
                     + " this is fine with OpenDaylight, it can cause interoperability issues with other systems "
                     + "[at {}]", ctx.getStatementArgument(), ctx.getStatementSourceReference());
@@ -183,5 +184,16 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     @Override
     public String toString() {
         return "list " + getQName().getLocalName();
+    }
+
+    private static boolean inGrouping(final StmtContext<?, ?, ?> ctx) {
+        StmtContext<?, ?, ?> parent = ctx.getParentContext();
+        while (parent != null) {
+            if (parent.getPublicDefinition() == YangStmtMapping.GROUPING) {
+                return true;
+            }
+            parent = parent.getParentContext();
+        }
+        return false;
     }
 }
