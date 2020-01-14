@@ -20,7 +20,8 @@ abstract class AbstractLengthRestrictedType<T extends LengthRestrictedTypeDefini
     private final @Nullable LengthConstraint lengthConstraint;
 
     AbstractLengthRestrictedType(final T baseType, final SchemaPath path,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes, final @Nullable LengthConstraint lengthConstraint) {
+            final Collection<? extends UnknownSchemaNode> unknownSchemaNodes,
+            final @Nullable LengthConstraint lengthConstraint) {
         super(baseType, path, unknownSchemaNodes);
         this.lengthConstraint = lengthConstraint;
     }

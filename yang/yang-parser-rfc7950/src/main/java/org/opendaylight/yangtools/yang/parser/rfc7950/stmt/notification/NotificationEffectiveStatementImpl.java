@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 import com.google.common.collect.ImmutableSet;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -88,12 +89,12 @@ final class NotificationEffectiveStatementImpl
     }
 
     @Override
-    public ImmutableSet<MustDefinition> getMustConstraints() {
+    public Collection<? extends MustDefinition> getMustConstraints() {
         return derivedSet(MUST_CONSTRAINTS, MustDefinition.class);
     }
 
     @Override
-    public Set<AugmentationSchemaNode> getAvailableAugmentations() {
+    public Collection<? extends AugmentationSchemaNode> getAvailableAugmentations() {
         return augmentations;
     }
 

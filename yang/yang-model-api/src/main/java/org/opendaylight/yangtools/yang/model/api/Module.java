@@ -8,9 +8,8 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.net.URI;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -106,9 +105,9 @@ public interface Module extends DataNodeContainer, DocumentedNode, Immutable, No
      * @return set of module imports which are specified in the module as the argument of YANG {@code import}
      *         statements.
      */
-    Set<ModuleImport> getImports();
+    Collection<? extends ModuleImport> getImports();
 
-    Set<Module> getSubmodules();
+    Collection<? extends Module> getSubmodules();
 
     /**
      * Returns {@link FeatureDefinition} instances which contain data from {@code feature} statements defined in the
@@ -120,7 +119,7 @@ public interface Module extends DataNodeContainer, DocumentedNode, Immutable, No
      * @return feature statements in lexicographical order which are specified in the module as the argument of YANG
      *         {@code feature} statements.
      */
-    Set<FeatureDefinition> getFeatures();
+    Collection<? extends FeatureDefinition> getFeatures();
 
     /**
      * Returns {@link AugmentationSchemaNode} instances which contain data from {@code augment} statements defined
@@ -129,7 +128,7 @@ public interface Module extends DataNodeContainer, DocumentedNode, Immutable, No
      * @return set of the augmentation schema instances which are specified in the module as YANG {@code augment}
      *         statement and are lexicographically ordered
      */
-    Set<AugmentationSchemaNode> getAugmentations();
+    Collection<? extends AugmentationSchemaNode> getAugmentations();
 
     /**
      * Returns {@link RpcDefinition} instances which contain data from {@code rpc} statements defined in the module.
@@ -137,14 +136,14 @@ public interface Module extends DataNodeContainer, DocumentedNode, Immutable, No
      * @return set of the RPC definition instances which are specified in the module as YANG {@code rpc} statements and
      *         are lexicographicaly ordered
      */
-    Set<RpcDefinition> getRpcs();
+    Collection<? extends RpcDefinition> getRpcs();
 
     /**
      * Returns {@link Deviation} instances which contain data from {@code deviation} statements defined in the module.
      *
      * @return set of the deviation instances
      */
-    Set<Deviation> getDeviations();
+    Collection<? extends Deviation> getDeviations();
 
     /**
      * Returns {@link IdentitySchemaNode} instances which contain data from {@code identity} statements defined in the
@@ -153,7 +152,7 @@ public interface Module extends DataNodeContainer, DocumentedNode, Immutable, No
      * @return set of identity schema node instances which are specified in the module as YANG {@code identity}
      *         statements and are lexicographically ordered
      */
-    Set<IdentitySchemaNode> getIdentities();
+    Collection<? extends IdentitySchemaNode> getIdentities();
 
     /**
      * Returns {@link ExtensionDefinition} instances which contain data from {@code extension} statements defined in
@@ -162,5 +161,5 @@ public interface Module extends DataNodeContainer, DocumentedNode, Immutable, No
      * @return set of extension definition instances which are specified in the module as YANG {@code extension}
      *         statements and are lexicographically ordered
      */
-    List<ExtensionDefinition> getExtensionSchemaNodes();
+    Collection<? extends ExtensionDefinition> getExtensionSchemaNodes();
 }

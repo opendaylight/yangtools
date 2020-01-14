@@ -14,7 +14,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Set;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -30,7 +30,7 @@ public class Bug4933Test {
         assertNotNull(context);
 
         final Module foo = context.findModules("foo").iterator().next();
-        Set<Deviation> deviations = foo.getDeviations();
+        Collection<? extends Deviation> deviations = foo.getDeviations();
         assertEquals(4, deviations.size());
     }
 

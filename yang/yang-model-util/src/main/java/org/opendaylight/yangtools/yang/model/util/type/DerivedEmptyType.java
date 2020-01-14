@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 final class DerivedEmptyType extends AbstractDerivedType<EmptyTypeDefinition> implements EmptyTypeDefinition {
     DerivedEmptyType(final EmptyTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
         final String description, final String reference, final Status status, final String units,
-        final Collection<UnknownSchemaNode> unknownSchemNodes) {
+        final Collection<? extends UnknownSchemaNode> unknownSchemNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
 

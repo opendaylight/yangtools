@@ -194,7 +194,7 @@ public class DeclaredStatementsTest {
         final Module testModule = schemaContext.findModules("augment-declared-test").iterator().next();
         assertNotNull(testModule);
 
-        final Set<AugmentationSchemaNode> augmentationSchemas = testModule.getAugmentations();
+        final Collection<? extends AugmentationSchemaNode> augmentationSchemas = testModule.getAugmentations();
         assertNotNull(augmentationSchemas);
         assertEquals(1, augmentationSchemas.size());
 
@@ -245,7 +245,7 @@ public class DeclaredStatementsTest {
         final IncludeStatement includeStatement = moduleStatement.getIncludes().iterator().next();
         assertEquals("child-module-declared-test", includeStatement.getModule());
 
-        final Set<Module> submodules = testModule.getSubmodules();
+        final Collection<? extends Module> submodules = testModule.getSubmodules();
         assertNotNull(submodules);
         assertEquals(1, submodules.size());
 

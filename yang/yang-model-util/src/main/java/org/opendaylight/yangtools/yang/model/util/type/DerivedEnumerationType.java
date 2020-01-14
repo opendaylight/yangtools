@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 final class DerivedEnumerationType extends AbstractDerivedType<EnumTypeDefinition> implements EnumTypeDefinition {
     DerivedEnumerationType(final EnumTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
         final String description, final String reference, final Status status, final String units,
-        final Collection<UnknownSchemaNode> unknownSchemNodes) {
+        final Collection<? extends UnknownSchemaNode> unknownSchemNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
 

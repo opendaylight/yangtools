@@ -11,9 +11,9 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -40,7 +40,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     private final ImmutableMap<QName, DataSchemaNode> mappedChildSchemas;
 
     public EffectiveAugmentationSchema(final AugmentationSchemaNode augmentSchema,
-            final Set<DataSchemaNode> realChildSchemas) {
+            final Collection<? extends DataSchemaNode> realChildSchemas) {
         this.delegate = requireNonNull(augmentSchema);
         this.realChildSchemas = ImmutableSet.copyOf(realChildSchemas);
 
@@ -94,22 +94,22 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     }
 
     @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
+    public Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
         return delegate.getUnknownSchemaNodes();
     }
 
     @Override
-    public Set<TypeDefinition<?>> getTypeDefinitions() {
+    public Collection<? extends TypeDefinition<?>> getTypeDefinitions() {
         return delegate.getTypeDefinitions();
     }
 
     @Override
-    public Set<DataSchemaNode> getChildNodes() {
+    public Collection<? extends DataSchemaNode> getChildNodes() {
         return realChildSchemas;
     }
 
     @Override
-    public Set<GroupingDefinition> getGroupings() {
+    public Collection<? extends GroupingDefinition> getGroupings() {
         return delegate.getGroupings();
     }
 
@@ -119,7 +119,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     }
 
     @Override
-    public Set<UsesNode> getUses() {
+    public Collection<? extends UsesNode> getUses() {
         return delegate.getUses();
     }
 
@@ -129,7 +129,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     }
 
     @Override
-    public Set<ActionDefinition> getActions() {
+    public Collection<? extends ActionDefinition> getActions() {
         return delegate.getActions();
     }
 
@@ -139,7 +139,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     }
 
     @Override
-    public Set<NotificationDefinition> getNotifications() {
+    public Collection<? extends NotificationDefinition> getNotifications() {
         return delegate.getNotifications();
     }
 

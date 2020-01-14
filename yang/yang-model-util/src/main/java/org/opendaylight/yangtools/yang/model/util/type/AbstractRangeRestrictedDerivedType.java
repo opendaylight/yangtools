@@ -21,7 +21,7 @@ abstract class AbstractRangeRestrictedDerivedType<T extends RangeRestrictedTypeD
 
     AbstractRangeRestrictedDerivedType(final T baseType, final SchemaPath path,
             final Object defaultValue, final String description, final String reference, final Status status,
-            final String units, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+            final String units, final Collection<? extends UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 

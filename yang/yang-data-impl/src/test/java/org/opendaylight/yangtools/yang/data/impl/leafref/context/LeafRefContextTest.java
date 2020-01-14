@@ -12,7 +12,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
-import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,8 +34,7 @@ public class LeafRefContextTest {
     public static void init() {
         context = YangParserTestUtils.parseYangResourceDirectory("/leafref-context-test/correct-modules");
 
-        final Set<Module> modules = context.getModules();
-        for (final Module module : modules) {
+        for (final Module module : context.getModules()) {
             if (module.getName().equals("leafref-test2")) {
                 rootMod = module;
             }

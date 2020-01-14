@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -25,7 +25,7 @@ public interface ActionNodeContainer {
      *
      * @return set of action nodes
      */
-    @NonNull Set<ActionDefinition> getActions();
+    @NonNull Collection<? extends ActionDefinition> getActions();
 
     /**
      * Find an action based on its QName. Default implementation searches the set returned by {@link #getActions()}.
