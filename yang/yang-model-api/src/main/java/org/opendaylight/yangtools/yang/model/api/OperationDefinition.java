@@ -5,11 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * Common interface for an operation.
@@ -21,14 +20,14 @@ public interface OperationDefinition extends SchemaNode {
      *
      * @return Set of type definitions declared under this operation.
      */
-    Set<TypeDefinition<?>> getTypeDefinitions();
+    Collection<? extends TypeDefinition<?>> getTypeDefinitions();
 
     /**
      * Returns the set of grouping statements declared under this operation.
      *
      * @return Set of grouping statements declared under this operation.
      */
-    Set<GroupingDefinition> getGroupings();
+    Collection<? extends GroupingDefinition> getGroupings();
 
     /**
      * Returns definition of input parameters for this operation.

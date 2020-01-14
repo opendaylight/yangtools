@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -13,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.util.Set;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
@@ -28,15 +27,15 @@ public class Bug6410Test {
     public void testTypedefsInRpc() throws ReactorException {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(sourceForResource("/bugs/bug6410/foo.yang"));
 
-        final Set<Module> modules = schemaContext.getModules();
+        final Collection<? extends Module> modules = schemaContext.getModules();
         assertEquals(1, modules.size());
         final Module module = modules.iterator().next();
 
-        final Set<RpcDefinition> rpcs = module.getRpcs();
+        final Collection<? extends RpcDefinition> rpcs = module.getRpcs();
         assertEquals(1, rpcs.size());
         final RpcDefinition rpc = rpcs.iterator().next();
 
-        final Set<TypeDefinition<?>> typeDefs = rpc.getTypeDefinitions();
+        final Collection<? extends TypeDefinition<?>> typeDefs = rpc.getTypeDefinitions();
         assertEquals(2, typeDefs.size());
     }
 

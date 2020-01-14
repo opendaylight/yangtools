@@ -5,12 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import com.google.common.collect.Range;
 import java.io.File;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,11 +43,11 @@ public class Bug4623Test {
 
         final TypeDefinition<?> type = leaf.getType();
         Assert.assertNotNull(type);
-        final List<UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
         Assert.assertNotNull(unknownSchemaNodes);
         Assert.assertFalse(unknownSchemaNodes.size() == 0);
 
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.get(0);
+        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
         Assert.assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
         Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(),
             "urn:simple.extension.typedefs");
@@ -85,11 +85,11 @@ public class Bug4623Test {
 
         final TypeDefinition<?> type = leaf.getType();
         Assert.assertNotNull(type);
-        final List<UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
         Assert.assertNotNull(unknownSchemaNodes);
         Assert.assertFalse(unknownSchemaNodes.size() == 0);
 
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.get(0);
+        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
         Assert.assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
         Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(),
             "urn:simple.extension.typedefs");
@@ -127,11 +127,11 @@ public class Bug4623Test {
 
         final TypeDefinition<?> type = leaf.getType();
         Assert.assertNotNull(type);
-        final List<UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
+        final Collection<? extends UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
         Assert.assertNotNull(unknownSchemaNodes);
         Assert.assertFalse(unknownSchemaNodes.size() == 0);
 
-        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.get(0);
+        final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
         Assert.assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
         Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(),
             "urn:simple.extension.typedefs");

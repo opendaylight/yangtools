@@ -14,7 +14,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-import java.util.Set;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -42,8 +41,7 @@ public class LeafRefContextTreeBuilderTest {
     public static void init() {
         context = YangParserTestUtils.parseYangResourceDirectory("/leafref-context-test/correct-modules");
 
-        final Set<Module> modules = context.getModules();
-        for (final Module module : modules) {
+        for (final Module module : context.getModules()) {
             if (module.getName().equals("leafref-test")) {
                 tstMod = module;
             }
