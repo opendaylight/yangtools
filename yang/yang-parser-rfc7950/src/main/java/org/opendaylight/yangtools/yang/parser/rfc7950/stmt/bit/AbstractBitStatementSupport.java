@@ -7,32 +7,33 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
-abstract class AbstractBitStatementSupport extends AbstractQNameStatementSupport<BitStatement, BitEffectiveStatement> {
+abstract class AbstractBitStatementSupport
+        extends AbstractStatementSupport<String, BitStatement, BitEffectiveStatement> {
     AbstractBitStatementSupport() {
         super(YangStmtMapping.BIT);
     }
 
     @Override
-    public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.parseIdentifier(ctx, value);
+    public final String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        // Performs de-duplication and interning in one go
+        return StmtContextUtils.parseIdentifier(ctx, value).getLocalName();
     }
 
     @Override
-    public final BitStatement createDeclared(final StmtContext<QName, BitStatement, ?> ctx) {
+    public final BitStatement createDeclared(final StmtContext<String, BitStatement, ?> ctx) {
         return new BitStatementImpl(ctx);
     }
 
     @Override
     public final BitEffectiveStatement createEffective(
-            final StmtContext<QName, BitStatement, BitEffectiveStatement> ctx) {
+            final StmtContext<String, BitStatement, BitEffectiveStatement> ctx) {
         return new BitEffectiveStatementImpl(ctx);
     }
 }

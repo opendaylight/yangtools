@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 @Beta
+// FIXME: 5.0.0: this should use Uint32
 public interface PositionEffectiveStatement extends EffectiveStatement<Long, PositionStatement> {
 
 }

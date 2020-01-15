@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -48,8 +48,7 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
      * Contains the methods for accessing the data about the individual bit of
      * <code>bits</code> YANG type.
      */
-    // FIXME: 5.0.0: Bit should not be a SchemaNode
-    interface Bit extends SchemaNode {
+    interface Bit extends DocumentedNode.WithStatus {
         /**
          * Returns the name of the concrete bit.
          *
