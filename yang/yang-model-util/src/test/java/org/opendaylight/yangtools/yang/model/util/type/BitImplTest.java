@@ -11,13 +11,9 @@ import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 
 public class BitImplTest {
@@ -27,48 +23,18 @@ public class BitImplTest {
     @SuppressWarnings({"ObjectEqualsNull", "EqualsBetweenInconvertibleTypes"})
     public void test() throws URISyntaxException {
 
-        // hashCode method test
-        final URI uriA1 = new URI("some:uriA1");
-        final URI uriA2 = new URI("some:uriA2");
-        final URI uriB1 = new URI("some:uriB1");
-        final URI uriB2 = new URI("some:uriB2");
+        String nameA2 = "someNameA2";
 
-        QName qnameA1 = QName.create(uriA1, Revision.of("2000-01-01"), "someNameA1");
-        QName qnameA2 = QName.create(uriA2, Revision.of("2002-01-01"), "someNameA2");
-        SchemaPath schemaPathA = SchemaPath.create(true, qnameA1, qnameA2);
+        BitImpl biA = new BitImpl(nameA2, 55L, "description", "reference", Status.CURRENT, emptyList());
 
-        final QName qnameB1 = QName.create(uriB1, Revision.of("2000-01-01"), "someNameB1");
-        final QName qnameB2 = QName.create(uriB2, Revision.of("2002-01-01"), "someNameB2");
-        final SchemaPath schemaPathB = SchemaPath.create(true, qnameB1, qnameB2);
-
-        BitImpl biA = new BitImpl(schemaPathA, 55L, "description", "reference", Status.CURRENT, emptyList());
-
-        assertEquals("biA should equals to itsefl", biA, biA);
+        assertEquals("biA should equals to itself", biA, biA);
         assertFalse("biA shouldn't equal to null", biA.equals(null));
         assertFalse("biA shouldn't equal to object of other type", biA.equals("str"));
 
-         // // test schemaPath
-        biA = new BitImpl(schemaPathA, 55L, "description", "reference", Status.CURRENT, emptyList());
-        BitImpl biB = new BitImpl(schemaPathB, 55L, "description", "reference", Status.CURRENT, emptyList());
-        assertFalse("biA shouldn't equal to biB", biA.equals(biB));
-
-        biA = new BitImpl(schemaPathB, 55L, "description", "reference", Status.CURRENT, emptyList());
-        biB = new BitImpl(schemaPathB, 55L, "description", "reference", Status.CURRENT, emptyList());
-        assertEquals("biA should equal to biB", biA, biB);
-
-        biA = new BitImpl(schemaPathA, 55L, "description", "reference", Status.CURRENT, emptyList());
-        biB = new BitImpl(schemaPathB, 55L, "description", "reference", Status.CURRENT, emptyList());
-        assertFalse("biA shouldn't equal to biB", biA.equals(biB));
-
-        biA = new BitImpl(schemaPathA, 55L, "description", "reference", Status.CURRENT, emptyList());
-        biB = new BitImpl(schemaPathA, 55L, "description", "reference", Status.CURRENT, emptyList());
-        assertEquals("biA should equal to biB", biA, biB);
-
-        biA = new BitImpl(schemaPathA, 55L, "description", "reference", Status.CURRENT, emptyList());
+        biA = new BitImpl(nameA2, 55L, "description", "reference", Status.CURRENT, emptyList());
 
         // test of getter methods
-        assertEquals("Incorrect value for qname.", qnameA2, biA.getQName());
-        assertEquals("Incorrect value for schema path.", schemaPathA, biA.getPath());
+        assertEquals("Incorrect value for name.", nameA2, biA.getName());
         assertEquals("Incorrect value for description.", Optional.of("description"), biA.getDescription());
         assertEquals("Incorrect value for reference.", Optional.of("reference"), biA.getReference());
         assertEquals("Incorrect value for status.", Status.CURRENT, biA.getStatus());

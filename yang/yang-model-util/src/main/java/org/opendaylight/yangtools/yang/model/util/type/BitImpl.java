@@ -13,44 +13,30 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 final class BitImpl implements Bit, Immutable {
     private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
-    private final @NonNull SchemaPath schemaPath;
+    private final @NonNull String name;
     private final String description;
     private final String reference;
     private final @NonNull Status status;
     private final long position;
 
-    BitImpl(final SchemaPath schemaPath, final long position, final String description,
+    BitImpl(final String name, final long position, final String description,
             final String reference, final Status status, final List<UnknownSchemaNode> unknownNodes) {
-        this.schemaPath = requireNonNull(schemaPath, "Schema Path should not be null");
-
+        this.name = requireNonNull(name);
         checkArgument(position >= 0L && position <= 4294967295L, "Invalid position %s", position);
         this.position = position;
         this.description = description;
         this.reference = reference;
         this.status = requireNonNull(status);
         this.unknownNodes = ImmutableList.copyOf(unknownNodes);
-    }
-
-    @Override
-    public QName getQName() {
-        return schemaPath.getLastComponent();
-    }
-
-    @Override
-    public SchemaPath getPath() {
-        return schemaPath;
     }
 
     @Override
@@ -80,18 +66,12 @@ final class BitImpl implements Bit, Immutable {
 
     @Override
     public String getName() {
-        return getQName().getLocalName();
+        return name;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + getQName().hashCode();
-        result = prime * result + schemaPath.hashCode();
-        result = prime * result + Long.hashCode(position);
-        result = prime * result + unknownNodes.hashCode();
-        return result;
+        return 31 * name.hashCode() + Long.hashCode(position);
     }
 
     @Override
@@ -99,18 +79,15 @@ final class BitImpl implements Bit, Immutable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof Bit)) {
             return false;
         }
         final Bit other = (Bit) obj;
-        return Objects.equals(schemaPath, other.getPath());
+        return name.equals(other.getName()) && position == other.getPosition();
     }
 
     @Override
     public String toString() {
-        return Bit.class.getSimpleName() + "[name=" + getQName().getLocalName() + ", position=" + position + "]";
+        return Bit.class.getSimpleName() + "[name=" + name + ", position=" + position + "]";
     }
 }

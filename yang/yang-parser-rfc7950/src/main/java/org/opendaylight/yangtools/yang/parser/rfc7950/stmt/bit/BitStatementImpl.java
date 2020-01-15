@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class BitStatementImpl extends AbstractDeclaredStatement<QName> implements BitStatement {
-    BitStatementImpl(final StmtContext<QName, BitStatement, ?> context) {
+final class BitStatementImpl extends AbstractDeclaredStatement<String> implements BitStatement {
+    BitStatementImpl(final StmtContext<String, BitStatement, ?> context) {
         super(context);
     }
 }
