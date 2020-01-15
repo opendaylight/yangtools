@@ -13,17 +13,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
@@ -178,31 +174,25 @@ public class Bug6887Test {
 
         List<Bit> bits = bitsType.getBits();
         assertEquals(2, bits.size());
-        Bit bitB = createBit(createSchemaPath(true, bar.getQNameModule(), "my-bits-leaf", "my-derived-bits-type",
-            "bit-b"), 2);
-        Bit bitC = createBit(createSchemaPath(true, bar.getQNameModule(), "my-bits-leaf", "my-derived-bits-type",
-            "bit-c"), 3);
+        Bit bitB = createBit("bit-b", 2);
+        Bit bitC = createBit("bit-c", 3);
         assertContainsBits(bits, bitB, bitC);
 
         bitsType = bitsType.getBaseType();
         bits = bitsType.getBits();
         assertEquals(3, bits.size());
-        bitB = createBit(createSchemaPath(true, bar.getQNameModule(), "my-derived-bits-type", "my-base-bits-type",
-            "bit-b"), 2);
-        bitC = createBit(createSchemaPath(true, bar.getQNameModule(), "my-derived-bits-type", "my-base-bits-type",
-            "bit-c"), 3);
-        Bit bitD = createBit(createSchemaPath(true, bar.getQNameModule(), "my-derived-bits-type", "my-base-bits-type",
-            "bit-d"), 4);
+        bitB = createBit("bit-b", 2);
+        bitC = createBit("bit-c", 3);
+        Bit bitD = createBit("bit-d", 4);
         assertContainsBits(bits, bitB, bitC, bitD);
 
         bitsType = bitsType.getBaseType();
         bits = bitsType.getBits();
         assertEquals(4, bits.size());
-        final Bit bitA = createBit(createSchemaPath(true, bar.getQNameModule(), "my-base-bits-type", "bits", "bit-a"),
-            1);
-        bitB = createBit(createSchemaPath(true, bar.getQNameModule(), "my-base-bits-type", "bits", "bit-b"), 2);
-        bitC = createBit(createSchemaPath(true, bar.getQNameModule(), "my-base-bits-type", "bits", "bit-c"), 3);
-        bitD = createBit(createSchemaPath(true, bar.getQNameModule(), "my-base-bits-type", "bits", "bit-d"), 4);
+        final Bit bitA = createBit("bit-a", 1);
+        bitB = createBit("bit-b", 2);
+        bitC = createBit("bit-c", 3);
+        bitD = createBit("bit-d", 4);
         assertContainsBits(bits, bitA, bitB, bitC, bitD);
 
         final LeafSchemaNode myBitsLeaf2 = (LeafSchemaNode) bar.getDataChildByName(
@@ -212,12 +202,9 @@ public class Bug6887Test {
         bitsType = (BitsTypeDefinition) myBitsLeaf2.getType();
         bits = bitsType.getBits();
         assertEquals(3, bits.size());
-        bitB = createBit(createSchemaPath(true, bar.getQNameModule(), "my-derived-bits-type", "my-base-bits-type",
-            "bit-b"), 2);
-        bitC = createBit(createSchemaPath(true, bar.getQNameModule(), "my-derived-bits-type", "my-base-bits-type",
-            "bit-c"), 3);
-        bitD = createBit(createSchemaPath(true, bar.getQNameModule(), "my-derived-bits-type", "my-base-bits-type",
-            "bit-d"), 4);
+        bitB = createBit("bit-b", 2);
+        bitC = createBit("bit-c", 3);
+        bitD = createBit("bit-d", 4);
         assertContainsBits(bits, bitB, bitC, bitD);
     }
 
@@ -313,19 +300,13 @@ public class Bug6887Test {
         }
     }
 
-    private static Bit createBit(final SchemaPath path, final long position) {
-        return BitBuilder.create(path, position).build();
+    private static Bit createBit(final String name, final long position) {
+        return BitBuilder.create(name, position).build();
     }
 
     private static void assertContainsBits(final List<Bit> bitList, final Bit... bits) {
         for (final Bit bit : bits) {
             assertTrue(bitList.contains(bit));
         }
-    }
-
-    private static SchemaPath createSchemaPath(final boolean absolute, final QNameModule qnameModule,
-            final String... localNames) {
-        return SchemaPath.create(Arrays.stream(localNames).map(localName -> QName.create(qnameModule, localName))
-            .collect(Collectors.toList()), true);
     }
 }

@@ -5,13 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -19,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit.BitEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -37,16 +37,18 @@ final class BitsTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBas
 
         final YangVersion yangVersion = ctx.getRootVersion();
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof BitEffectiveStatementImpl) {
+            if (stmt instanceof BitEffectiveStatement) {
                 SourceException.throwIf(yangVersion != YangVersion.VERSION_1_1, ctx.getStatementSourceReference(),
                         "Restricted bits type is allowed only in YANG 1.1 version.");
-                final BitEffectiveStatementImpl bitSubStmt = (BitEffectiveStatementImpl) stmt;
+                final BitEffectiveStatement bitSubStmt = (BitEffectiveStatement) stmt;
 
+                // FIXME: this looks like a duplicate of BitsSpecificationEffectiveStatement
+                final Optional<Long> declared = bitSubStmt.getDeclaredPosition();
                 final long effectivePos;
-                if (bitSubStmt.getDeclaredPosition() == null) {
-                    effectivePos = getBaseTypeBitPosition(bitSubStmt.getName(), baseType, ctx);
+                if (declared.isEmpty()) {
+                    effectivePos = getBaseTypeBitPosition(bitSubStmt.argument(), baseType, ctx);
                 } else {
-                    effectivePos = bitSubStmt.getDeclaredPosition();
+                    effectivePos = declared.get();
                 }
 
                 builder.addBit(EffectiveTypeUtil.buildBit(bitSubStmt, effectivePos));

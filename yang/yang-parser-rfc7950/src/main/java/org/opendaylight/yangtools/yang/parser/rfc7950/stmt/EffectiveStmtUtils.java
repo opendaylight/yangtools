@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -143,8 +142,8 @@ public final class EffectiveStmtUtils {
         while (iter.hasNext() && !defaultValues.isEmpty()) {
             final EffectiveStatement<?, ?> effectiveSubstatement = iter.next();
             if (YangStmtMapping.BIT.equals(effectiveSubstatement.statementDefinition())) {
-                final QName bitQName = (QName) effectiveSubstatement.argument();
-                if (defaultValues.remove(bitQName.getLocalName()) && containsIfFeature(effectiveSubstatement)) {
+                final String bitName = (String) effectiveSubstatement.argument();
+                if (defaultValues.remove(bitName) && containsIfFeature(effectiveSubstatement)) {
                     return true;
                 }
             } else if (YangStmtMapping.ENUM.equals(effectiveSubstatement.statementDefinition())
