@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Mutable;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
@@ -26,21 +25,21 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
  */
 @Beta
 public final class BitBuilder implements Builder<Bit>, Mutable {
-    private final SchemaPath schemaPath;
-    private final Long position;
+    private final String name;
+    private final long position;
 
     private ImmutableList<UnknownSchemaNode> unknownSchemaNodes = ImmutableList.of();
     private Status status = Status.CURRENT;
     private String description;
     private String reference;
 
-    private BitBuilder(final SchemaPath schemaPath, final Long position) {
-        this.schemaPath = requireNonNull(schemaPath);
-        this.position = requireNonNull(position);
+    private BitBuilder(final String name, final long position) {
+        this.name = requireNonNull(name);
+        this.position = position;
     }
 
-    public static BitBuilder create(final SchemaPath schemaPath, final Long position) {
-        return new BitBuilder(schemaPath, position);
+    public static BitBuilder create(final String name, final long position) {
+        return new BitBuilder(name, position);
     }
 
     public BitBuilder setDescription(final String description) {
@@ -70,6 +69,6 @@ public final class BitBuilder implements Builder<Bit>, Mutable {
 
     @Override
     public Bit build() {
-        return new BitImpl(schemaPath, position, description, reference, status, unknownSchemaNodes);
+        return new BitImpl(name, position, description, reference, status, unknownSchemaNodes);
     }
 }

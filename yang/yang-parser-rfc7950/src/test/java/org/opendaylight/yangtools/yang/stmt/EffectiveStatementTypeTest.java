@@ -124,7 +124,6 @@ public class EffectiveStatementTypeTest {
         assertEquals(3, bitsEff.getBits().size());
         assertEquals(Optional.empty(), bitsEff.getDefaultValue());
 
-        assertNotNull(bitEff.getPath());
         assertNotNull(bitEff.getUnknownSchemaNodes());
         assertEquals(Optional.of("test bit"), bitEff.getDescription());
         assertEquals(Optional.of("test bit ref"), bitEff.getReference());
@@ -135,7 +134,6 @@ public class EffectiveStatementTypeTest {
         assertFalse(bitEff.equals(bitEffSecond));
         assertNotNull(bitEff.toString());
         assertEquals("one", bitEff.getName());
-        assertNotNull(bitEff.getQName());
         assertEquals(0, bitEff.getPosition());
     }
 
