@@ -12,13 +12,12 @@ import static com.google.common.base.Verify.verifyNotNull;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
 
-public interface BitStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
-        IfFeatureAwareDeclaredStatement<QName> {
+public interface BitStatement extends DocumentedDeclaredStatement.WithStatus<String>,
+        IfFeatureAwareDeclaredStatement<String> {
     default @NonNull String getName() {
         // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(argument()).getLocalName();
+        return verifyNotNull(argument());
     }
 
     default @Nullable PositionStatement getPosition() {

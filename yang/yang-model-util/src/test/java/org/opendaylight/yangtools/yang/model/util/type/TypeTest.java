@@ -56,7 +56,7 @@ public class TypeTest {
     private static final QName Q_NAME = QName.create("test.namespace", "2016-01-01", "test-name");
     private static final SchemaPath SCHEMA_PATH = SchemaPath.create(true, Q_NAME);
     private static final PathExpression REVISION_AWARE_XPATH = new PathExpressionImpl("/test", true);
-    private static final Bit BIT_A = BitBuilder.create(SCHEMA_PATH, 55L).setDescription("description")
+    private static final Bit BIT_A = BitBuilder.create(Q_NAME.getLocalName(), 55L).setDescription("description")
             .setReference("reference").build();
     private static final Optional<String> ABSENT = Optional.empty();
 
@@ -457,10 +457,8 @@ public class TypeTest {
     @Test(expected = InvalidBitDefinitionException.class)
     public void invalidBitDefinitionExceptionTest() {
         final BitsTypeBuilder bitsTypeBuilder = BaseTypes.bitsTypeBuilder(SCHEMA_PATH);
-        final QName qName = QName.create("test.namespace.1", "2016-01-02", "test-name-1");
-        final SchemaPath schemaPath = SchemaPath.create(true, qName);
         bitsTypeBuilder.addBit(BIT_A);
-        bitsTypeBuilder.addBit(BitBuilder.create(schemaPath, 55L).build());
+        bitsTypeBuilder.addBit(BitBuilder.create("test-name-1", 55L).build());
         bitsTypeBuilder.build();
     }
 
