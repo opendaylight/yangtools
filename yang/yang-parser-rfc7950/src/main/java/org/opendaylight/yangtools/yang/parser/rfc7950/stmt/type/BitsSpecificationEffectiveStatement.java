@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -17,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit.BitEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -33,11 +35,12 @@ final class BitsSpecificationEffectiveStatement extends DeclaredEffectiveStateme
         final BitsTypeBuilder builder = BaseTypes.bitsTypeBuilder(ctx.getSchemaPath().get());
         Long highestPosition = null;
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof BitEffectiveStatementImpl) {
-                final BitEffectiveStatementImpl bitSubStmt = (BitEffectiveStatementImpl) stmt;
+            if (stmt instanceof BitEffectiveStatement) {
+                final BitEffectiveStatement bitSubStmt = (BitEffectiveStatement) stmt;
 
+                final Optional<Uint32> declaredPosition = bitSubStmt.getDeclaredPosition();
                 final long effectivePos;
-                if (bitSubStmt.getDeclaredPosition() == null) {
+                if (declaredPosition.isEmpty()) {
                     if (highestPosition != null) {
                         SourceException.throwIf(highestPosition == 4294967295L, ctx.getStatementSourceReference(),
                                 "Bit %s must have a position statement", bitSubStmt);
@@ -46,7 +49,7 @@ final class BitsSpecificationEffectiveStatement extends DeclaredEffectiveStateme
                         effectivePos = 0L;
                     }
                 } else {
-                    effectivePos = bitSubStmt.getDeclaredPosition().toJava();
+                    effectivePos = declaredPosition.get().toJava();
                 }
 
                 final Bit bit = EffectiveTypeUtil.buildBit(bitSubStmt, effectivePos);
