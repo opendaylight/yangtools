@@ -7,59 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
 
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.Uint32;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-// FIXME: 5.0.0: hide this class
-public final class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, BitStatement>
+final class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, BitStatement>
         implements BitEffectiveStatement {
 
-    private final QName qname;
-    private final SchemaPath schemaPath;
-    private final Uint32 declaredPosition;
-
-    BitEffectiveStatementImpl(final StmtContext<QName, BitStatement, ?> ctx) {
+    BitEffectiveStatementImpl(final StmtContext<String, BitStatement, ?> ctx) {
         super(ctx);
-
-        qname = ctx.getStatementArgument();
-        schemaPath = ctx.getSchemaPath().get();
-
-        Uint32 declaredPositionInit = null;
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof PositionEffectiveStatement) {
-                declaredPositionInit = ((PositionEffectiveStatement) effectiveStatement).argument();
-            }
-        }
-
-        declaredPosition = declaredPositionInit;
-    }
-
-    public Uint32 getDeclaredPosition() {
-        return declaredPosition;
-    }
-
-    public String getName() {
-        return qname.getLocalName();
-    }
-
-    public QName getQName() {
-        return qname;
-    }
-
-    public SchemaPath getPath() {
-        return schemaPath;
     }
 
     @Override
     public String toString() {
-        return BitEffectiveStatementImpl.class.getSimpleName() + "[name=" + qname.getLocalName() + ", position="
-                + declaredPosition + "]";
+        return BitEffectiveStatementImpl.class.getSimpleName() + "[name=" + argument() + ", position="
+                + getDeclaredPosition().orElse(null) + "]";
     }
 }

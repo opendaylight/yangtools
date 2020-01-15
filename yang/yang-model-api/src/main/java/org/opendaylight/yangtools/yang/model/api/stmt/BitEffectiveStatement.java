@@ -8,10 +8,13 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.common.QName;
+import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 @Beta
-public interface BitEffectiveStatement extends EffectiveStatement<QName, BitStatement> {
-
+public interface BitEffectiveStatement extends EffectiveStatement<String, BitStatement> {
+    default Optional<Uint32> getDeclaredPosition() {
+        return findFirstEffectiveSubstatementArgument(PositionEffectiveStatement.class);
+    }
 }
