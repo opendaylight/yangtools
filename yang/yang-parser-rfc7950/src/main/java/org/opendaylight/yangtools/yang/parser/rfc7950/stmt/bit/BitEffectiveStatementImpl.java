@@ -7,16 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, BitStatement>
-        implements BitEffectiveStatement {
-
+        implements BitEffectiveStatement, Bit {
     BitEffectiveStatementImpl(final StmtContext<String, BitStatement, ?> ctx) {
         super(ctx);
+    }
+
+    @Override
+    public String getName() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(argument());
+    }
+
+    @Override
+    public long getPosition() {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
     @Override
