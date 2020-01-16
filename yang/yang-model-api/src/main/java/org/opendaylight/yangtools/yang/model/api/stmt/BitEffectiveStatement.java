@@ -8,12 +8,17 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import java.util.Optional;
+import com.google.common.base.VerifyException;
+import java.util.NoSuchElementException;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 @Beta
 public interface BitEffectiveStatement extends EffectiveStatement<String, BitStatement> {
-    default Optional<Long> getDeclaredPosition() {
-        return findFirstEffectiveSubstatementArgument(PositionEffectiveStatement.class);
+    default long position() {
+        try {
+            return findFirstEffectiveSubstatementArgument(PositionEffectiveStatement.class).get();
+        } catch (NoSuchElementException e) {
+            throw new VerifyException("No position found in " + this, e);
+        }
     }
 }

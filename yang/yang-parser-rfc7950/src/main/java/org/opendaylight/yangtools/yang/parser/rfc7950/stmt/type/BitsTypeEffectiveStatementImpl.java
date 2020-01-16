@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -37,39 +35,16 @@ final class BitsTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBas
 
         final YangVersion yangVersion = ctx.getRootVersion();
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof BitEffectiveStatement) {
+            if (stmt instanceof Bit) {
                 SourceException.throwIf(yangVersion != YangVersion.VERSION_1_1, ctx.getStatementSourceReference(),
                         "Restricted bits type is allowed only in YANG 1.1 version.");
-                final BitEffectiveStatement bitSubStmt = (BitEffectiveStatement) stmt;
-
-                // FIXME: this looks like a duplicate of BitsSpecificationEffectiveStatement
-                final Optional<Long> declared = bitSubStmt.getDeclaredPosition();
-                final long effectivePos;
-                if (declared.isEmpty()) {
-                    effectivePos = getBaseTypeBitPosition(bitSubStmt.argument(), baseType, ctx);
-                } else {
-                    effectivePos = declared.get();
-                }
-
-                builder.addBit(EffectiveTypeUtil.buildBit(bitSubStmt, effectivePos));
+                builder.addBit((Bit) stmt);
             } else if (stmt instanceof UnknownSchemaNode) {
                 builder.addUnknownSchemaNode((UnknownSchemaNode) stmt);
             }
         }
 
         typeDefinition = builder.build();
-    }
-
-    private static long getBaseTypeBitPosition(final String bitName, final BitsTypeDefinition baseType,
-            final StmtContext<?, ?, ?> ctx) {
-        for (Bit baseTypeBit : baseType.getBits()) {
-            if (bitName.equals(baseTypeBit.getName())) {
-                return baseTypeBit.getPosition();
-            }
-        }
-
-        throw new SourceException(ctx.getStatementSourceReference(),
-                "Bit '%s' is not a subset of its base bits type %s.", bitName, baseType.getQName());
     }
 
     @Override

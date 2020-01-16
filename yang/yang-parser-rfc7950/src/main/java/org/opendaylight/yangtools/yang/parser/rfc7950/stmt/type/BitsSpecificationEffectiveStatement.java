@@ -8,11 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.annotations.VisibleForTesting;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -21,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @VisibleForTesting
 // FIXME: 5.0.0: hide this class
@@ -35,34 +32,9 @@ public final class BitsSpecificationEffectiveStatement extends
         super(ctx);
 
         final BitsTypeBuilder builder = BaseTypes.bitsTypeBuilder(ctx.getSchemaPath().get());
-        Long highestPosition = null;
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof BitEffectiveStatement) {
-                final BitEffectiveStatement bitSubStmt = (BitEffectiveStatement) stmt;
-
-                final Optional<Long> declaredPosition = bitSubStmt.getDeclaredPosition();
-                final long effectivePos;
-                if (declaredPosition.isEmpty()) {
-                    if (highestPosition != null) {
-                        SourceException.throwIf(highestPosition == 4294967295L, ctx.getStatementSourceReference(),
-                                "Bit %s must have a position statement", bitSubStmt);
-                        effectivePos = highestPosition + 1;
-                    } else {
-                        effectivePos = 0L;
-                    }
-                } else {
-                    effectivePos = declaredPosition.get();
-                }
-
-                final Bit bit = EffectiveTypeUtil.buildBit(bitSubStmt, effectivePos);
-                SourceException.throwIf(bit.getPosition() < 0L && bit.getPosition() > 4294967295L,
-                        ctx.getStatementSourceReference(), "Bit %s has illegal position", bit);
-
-                if (highestPosition == null || highestPosition < bit.getPosition()) {
-                    highestPosition = bit.getPosition();
-                }
-
-                builder.addBit(bit);
+            if (stmt instanceof Bit) {
+                builder.addBit((Bit) stmt);
             }
             if (stmt instanceof UnknownSchemaNode) {
                 builder.addUnknownSchemaNode((UnknownSchemaNode) stmt);
