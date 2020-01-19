@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -30,7 +31,7 @@ public interface DataTreeFactory {
      * @return A data tree instance.
      * @throws NullPointerException if treeConfig is null
      */
-    DataTree create(DataTreeConfiguration treeConfig);
+    @NonNull DataTree create(DataTreeConfiguration treeConfig);
 
     /**
      * Create a new data tree based on specified configuration, with a root node derived from the schema context lookup
@@ -44,7 +45,7 @@ public interface DataTreeFactory {
      * @throws IllegalArgumentException if tree configuration does not match the SchemaContext, for example by root path
      *                                  referring to a node which does not exist in the SchemaContext
      */
-    DataTree create(DataTreeConfiguration treeConfig, SchemaContext initialSchemaContext);
+    @NonNull DataTree create(DataTreeConfiguration treeConfig, SchemaContext initialSchemaContext);
 
     /**
      * Create a new data tree based on specified configuration, with the specified node.
@@ -56,6 +57,6 @@ public interface DataTreeFactory {
      * @throws NullPointerException if any of the arguments are null
      * @throws IllegalArgumentException if a mismatch between the arguments is detected
      */
-    DataTree create(DataTreeConfiguration treeConfig, SchemaContext initialSchemaContext,
+    @NonNull DataTree create(DataTreeConfiguration treeConfig, SchemaContext initialSchemaContext,
             NormalizedNodeContainer<?, ?, ?> initialRoot) throws DataValidationFailedException;
 }

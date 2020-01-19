@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
@@ -17,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  * is limited to nodes which were affected by the modification from which
  * this instance originated.
  */
+@NonNullByDefault
 public interface DataTreeCandidate {
     /**
      * Get the candidate tree root node.
@@ -48,5 +51,5 @@ public interface DataTreeCandidate {
      * equals implementation must result in identity comparison.
      */
     @Override
-    boolean equals(Object obj);
+    boolean equals(@Nullable Object obj);
 }
