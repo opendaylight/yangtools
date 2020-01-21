@@ -43,6 +43,8 @@ import org.slf4j.LoggerFactory;
 @Beta
 public final class LazyLeafOperations {
     private static final Logger LOG = LoggerFactory.getLogger(LazyLeafOperations.class);
+
+    // FIXME: 6.0.0: remove this knob
     private static final String EXPENDABLE_PROP_NAME =
             "org.opendaylight.yangtools.yang.data.impl.schema.nodes.lazy-leaves";
 
@@ -51,11 +53,14 @@ public final class LazyLeafOperations {
      * {@link LeafSetEntryNode} as an expendable object. This constant is controlled by {@value #EXPENDABLE_PROP_NAME}
      * system property.
      */
+    // FIXME: 6.0.0: remove this knob
     private static final boolean EXPENDABLE;
 
     static {
         EXPENDABLE = Boolean.parseBoolean(System.getProperty(EXPENDABLE_PROP_NAME, "true"));
-        LOG.info("Leaf nodes are treated as {} nodes", EXPENDABLE ? "transient" : "regular");
+        if (!EXPENDABLE) {
+            LOG.warn("Leaf nodes are treated as regular nodes. This option is deprecated and is schedule for removal.");
+        }
     }
 
     private LazyLeafOperations() {
@@ -68,6 +73,7 @@ public final class LazyLeafOperations {
      * @return True if NormalizedNode implementations in this artifact are treating leaf nodes as transient, i.e. do
      *              not retain them.
      */
+    // FIXME: 6.0.0: remove this method
     public static boolean isEnabled() {
         return EXPENDABLE;
     }
