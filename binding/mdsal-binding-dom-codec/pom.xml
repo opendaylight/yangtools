@@ -29,7 +29,7 @@
             <!-- We are going to shade this -->
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
-            <version>1.9.14</version>
+            <version>1.10.7</version>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.mdsal</groupId>
