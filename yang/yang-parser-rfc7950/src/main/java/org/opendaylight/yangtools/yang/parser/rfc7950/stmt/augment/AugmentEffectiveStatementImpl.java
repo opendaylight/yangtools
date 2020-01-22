@@ -13,7 +13,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -120,29 +119,6 @@ final class AugmentEffectiveStatementImpl
     @Override
     public Set<NotificationDefinition> getNotifications() {
         return notifications;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 17;
-        int result = 1;
-        result = prime * result + Objects.hashCode(targetPath);
-        result = prime * result + Objects.hashCode(whenCondition);
-        result = prime * result + getChildNodes().hashCode();
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof AugmentEffectiveStatementImpl)) {
-            return false;
-        }
-        final AugmentEffectiveStatementImpl other = (AugmentEffectiveStatementImpl) obj;
-        return Objects.equals(targetPath, other.targetPath) && Objects.equals(whenCondition, other.whenCondition)
-                && getChildNodes().equals(other.getChildNodes());
     }
 
     @Override
