@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
-import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.SemVer;
@@ -52,30 +51,6 @@ final class ImportEffectiveStatementImpl extends WithSubstatements<String, Impor
     @Override
     public String getPrefix() {
         return getDeclared().getPrefix().getValue();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getModuleName(), revision, getPrefix(), semVer, getDescription().orElse(null),
-            getReference().orElse(null));
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ImportEffectiveStatementImpl other = (ImportEffectiveStatementImpl) obj;
-        return Objects.equals(getModuleName(), other.getModuleName()) && Objects.equals(revision, other.revision)
-                && Objects.equals(semVer, other.semVer) && Objects.equals(getPrefix(), other.getPrefix())
-                && Objects.equals(getDescription(), other.getDescription())
-                && Objects.equals(getReference(), other.getReference());
     }
 
     @Override

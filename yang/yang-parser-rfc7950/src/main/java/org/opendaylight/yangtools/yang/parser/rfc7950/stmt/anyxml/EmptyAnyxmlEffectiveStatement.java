@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -49,28 +48,6 @@ class EmptyAnyxmlEffectiveStatement extends Default<QName, AnyxmlStatement>
     @Override
     public final Optional<AnyxmlSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
-    }
-
-    @Override
-    public final int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(getQName());
-        result = prime * result + Objects.hashCode(getPath());
-        return result;
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof EmptyAnyxmlEffectiveStatement)) {
-            return false;
-        }
-
-        EmptyAnyxmlEffectiveStatement other = (EmptyAnyxmlEffectiveStatement) obj;
-        return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override

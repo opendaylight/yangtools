@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviation;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
-import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -36,26 +35,6 @@ final class DeviationEffectiveStatementImpl extends WithSubstatements<SchemaNode
     @Override
     public List<DeviateDefinition> getDeviates() {
         return filterEffectiveStatementsList(DeviateDefinition.class);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getTargetPath(), getDeviates(), getDescription().orElse(null), getReference().orElse(null));
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof DeviationEffectiveStatementImpl)) {
-            return false;
-        }
-        final DeviationEffectiveStatementImpl other = (DeviationEffectiveStatementImpl) obj;
-        return Objects.equals(getTargetPath(), other.getTargetPath())
-                && Objects.equals(getDeviates(), other.getDeviates())
-                && Objects.equals(getDescription(),  other.getDescription())
-                && Objects.equals(getReference(), other.getReference());
     }
 
     @Override

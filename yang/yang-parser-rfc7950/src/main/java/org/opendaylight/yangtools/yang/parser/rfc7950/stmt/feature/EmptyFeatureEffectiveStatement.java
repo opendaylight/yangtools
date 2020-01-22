@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.feature;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
@@ -43,27 +42,6 @@ class EmptyFeatureEffectiveStatement extends Default<QName, FeatureStatement>
     @Override
     public final SchemaPath getPath() {
         return path;
-    }
-
-    @Override
-    public final int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(getQName());
-        result = prime * result + Objects.hashCode(getPath());
-        return result;
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof EmptyFeatureEffectiveStatement)) {
-            return false;
-        }
-        final EmptyFeatureEffectiveStatement other = (EmptyFeatureEffectiveStatement) obj;
-        return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override

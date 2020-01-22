@@ -9,7 +9,12 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedMap;
+<<<<<<< HEAD
 import java.util.Objects;
+=======
+import java.util.Collection;
+import java.util.LinkedHashSet;
+>>>>>>> 68e44f106c... Remove hashCode()/equals() from SchemaNode implementations
 import java.util.Optional;
 import java.util.SortedMap;
 import org.eclipse.jdt.annotation.NonNull;
@@ -82,34 +87,7 @@ final class ChoiceEffectiveStatementImpl extends WithSubstatements<QName, Choice
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(getQName());
-        result = prime * result + Objects.hashCode(getPath());
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ChoiceEffectiveStatementImpl other = (ChoiceEffectiveStatementImpl) obj;
-        return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
-    }
-
-    @Override
-
     public String toString() {
-        return ChoiceEffectiveStatementImpl.class.getSimpleName() + "["
-                + "qname=" + getQName()
-                + "]";
+        return ChoiceEffectiveStatementImpl.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
     }
 }

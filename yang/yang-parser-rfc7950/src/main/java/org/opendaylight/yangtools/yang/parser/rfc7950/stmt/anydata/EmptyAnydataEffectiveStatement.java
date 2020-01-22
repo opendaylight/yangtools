@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -58,23 +57,6 @@ class EmptyAnydataEffectiveStatement extends Default<QName, AnydataStatement>
          * :TODO we need to determine a way how to set schema of AnyData
          */
         return Optional.empty();
-    }
-
-    @Override
-    public final int hashCode() {
-        return Objects.hash(getQName(), getPath());
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof EmptyAnydataEffectiveStatement)) {
-            return false;
-        }
-        final EmptyAnydataEffectiveStatement other = (EmptyAnydataEffectiveStatement) obj;
-        return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override
