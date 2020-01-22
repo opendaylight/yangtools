@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 import com.google.common.collect.Iterables;
 import java.net.URI;
