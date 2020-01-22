@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
 import java.util.Set;

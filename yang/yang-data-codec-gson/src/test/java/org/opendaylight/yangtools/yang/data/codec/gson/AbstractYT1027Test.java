@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static com.google.common.base.Verify.verify;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
