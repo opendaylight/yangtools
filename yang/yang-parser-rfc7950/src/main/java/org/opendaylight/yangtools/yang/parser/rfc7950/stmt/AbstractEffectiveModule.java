@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
@@ -91,16 +90,16 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
                 .orElse(null);
 
         final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
-        final Set<ModuleImport> importsInit = new HashSet<>();
-        final Set<NotificationDefinition> notificationsInit = new HashSet<>();
-        final Set<RpcDefinition> rpcsInit = new HashSet<>();
-        final Set<Deviation> deviationsInit = new HashSet<>();
-        final Set<IdentitySchemaNode> identitiesInit = new HashSet<>();
-        final Set<FeatureDefinition> featuresInit = new HashSet<>();
+        final Set<ModuleImport> importsInit = new LinkedHashSet<>();
+        final Set<NotificationDefinition> notificationsInit = new LinkedHashSet<>();
+        final Set<RpcDefinition> rpcsInit = new LinkedHashSet<>();
+        final Set<Deviation> deviationsInit = new LinkedHashSet<>();
+        final Set<IdentitySchemaNode> identitiesInit = new LinkedHashSet<>();
+        final Set<FeatureDefinition> featuresInit = new LinkedHashSet<>();
         final List<ExtensionDefinition> extensionNodesInit = new ArrayList<>();
 
-        final Set<GroupingDefinition> mutableGroupings = new HashSet<>();
-        final Set<UsesNode> mutableUses = new HashSet<>();
+        final Set<GroupingDefinition> mutableGroupings = new LinkedHashSet<>();
+        final Set<UsesNode> mutableUses = new LinkedHashSet<>();
         final Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
         final Set<DataSchemaNode> mutablePublicChildNodes = new LinkedHashSet<>();
 
