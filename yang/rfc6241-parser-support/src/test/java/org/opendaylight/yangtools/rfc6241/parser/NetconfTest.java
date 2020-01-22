@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
 import org.junit.AfterClass;
@@ -63,10 +64,17 @@ public class NetconfTest {
                 .buildEffective();
 
         final Module module = context.findModule(NetconfConstants.RFC6241_MODULE).get();
-        final Iterator<RpcDefinition> it = module.getRpcs().iterator();
-        assertExtension(false, it.next());
-        assertExtension(false, it.next());
+        final Collection<? extends RpcDefinition> rpcs = module.getRpcs();
+        assertEquals(13, rpcs.size());
+        final Iterator<? extends RpcDefinition> it = module.getRpcs().iterator();
+        // get-config
         assertExtension(true, it.next());
+        assertExtension(false, it.next());
+        assertExtension(false, it.next());
+        assertExtension(false, it.next());
+        assertExtension(false, it.next());
+        assertExtension(false, it.next());
+        // get
         assertExtension(true, it.next());
         it.forEachRemaining(def -> assertExtension(false, def));
     }
