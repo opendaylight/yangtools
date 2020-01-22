@@ -9,11 +9,14 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import com.google.common.base.Throwables;
 import java.util.Collection;
 import java.util.Iterator;
 import org.junit.Test;
@@ -23,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
 public class IdentityStmtTest {
@@ -101,13 +105,12 @@ public class IdentityStmtTest {
 
     @Test
     public void duplicateIdentityTest() throws ReactorException {
-        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
-                .addSource(DUPLICATE_IDENTITY_MODULE)
-                .buildEffective();
-        assertNotNull(result);
-
-        Module testModule = result.findModules("duplicate-identity-test").iterator().next();
-        Collection<? extends IdentitySchemaNode> identities = testModule.getIdentities();
-        assertEquals(1, identities.size());
+        try {
+            RFC7950Reactors.defaultReactor().newBuild().addSource(DUPLICATE_IDENTITY_MODULE).buildEffective();
+            fail("Duplicate identities should have been detected");
+        } catch (SomeModifiersUnresolvedException e) {
+            final SourceException cause = Throwables.getCauseAs(e, SourceException.class);
+            assertThat(cause.getMessage(), startsWith("Duplicate identity definition "));
+        }
     }
 }
