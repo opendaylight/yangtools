@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
-import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -83,31 +82,6 @@ final class AugmentEffectiveStatementImpl extends DefaultDataNodeContainer<Schem
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 17;
-        int result = 1;
-        result = prime * result + Objects.hashCode(getTargetPath());
-        result = prime * result + Objects.hashCode(getWhenCondition());
-        result = prime * result + getChildNodes().hashCode();
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof AugmentEffectiveStatementImpl)) {
-            return false;
-        }
-        final AugmentEffectiveStatementImpl other = (AugmentEffectiveStatementImpl) obj;
-        return Objects.equals(getTargetPath(), other.getTargetPath())
-                && Objects.equals(getWhenCondition(), other.getWhenCondition())
-                && getChildNodes().equals(other.getChildNodes());
-    }
-
-    @Override
-
     public String toString() {
         return AugmentEffectiveStatementImpl.class.getSimpleName() + "[" + "targetPath=" + getTargetPath() + ", when="
                 + getWhenCondition() + "]";

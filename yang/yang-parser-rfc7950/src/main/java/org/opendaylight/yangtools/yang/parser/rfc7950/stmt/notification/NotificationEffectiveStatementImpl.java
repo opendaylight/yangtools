@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -62,27 +61,6 @@ final class NotificationEffectiveStatementImpl
     @Override
     public SchemaPath getPath() {
         return path;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(getQName());
-        result = prime * result + Objects.hashCode(path);
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        final NotificationEffectiveStatementImpl other = (NotificationEffectiveStatementImpl) obj;
-        return Objects.equals(getQName(), other.getQName()) && Objects.equals(path, other.path);
     }
 
     @Override

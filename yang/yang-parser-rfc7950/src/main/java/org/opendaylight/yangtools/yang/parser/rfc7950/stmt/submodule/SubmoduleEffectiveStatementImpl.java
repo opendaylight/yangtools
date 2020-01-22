@@ -18,7 +18,6 @@ import com.google.common.collect.Maps;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -125,24 +124,6 @@ final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModule<Subm
         checkState(sealed, "Attempt to get base submodules from unsealed submodule effective statement %s",
             qnameModule);
         return submodules;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getName(), getYangVersion(), qnameModule);
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof SubmoduleEffectiveStatementImpl)) {
-            return false;
-        }
-        final SubmoduleEffectiveStatementImpl other = (SubmoduleEffectiveStatementImpl) obj;
-        return Objects.equals(getName(), other.getName()) && qnameModule.equals(other.qnameModule)
-                && Objects.equals(getYangVersion(), other.getYangVersion());
     }
 
     @Override

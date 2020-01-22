@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -81,27 +80,6 @@ abstract class AbstractIdentityEffectiveStatement extends DefaultArgument<QName,
     @Override
     public final Set<IdentitySchemaNode> getDerivedIdentities() {
         return Collections.unmodifiableSet(derivedIdentities);
-    }
-
-    @Override
-    public final int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(getQName());
-        result = prime * result + Objects.hashCode(getPath());
-        return result;
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof AbstractIdentityEffectiveStatement)) {
-            return false;
-        }
-        final AbstractIdentityEffectiveStatement other = (AbstractIdentityEffectiveStatement) obj;
-        return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override
