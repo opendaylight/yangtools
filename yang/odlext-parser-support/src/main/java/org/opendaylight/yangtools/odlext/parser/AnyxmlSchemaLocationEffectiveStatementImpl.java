@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.annotations.VisibleForTesting;
-import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
@@ -39,31 +38,5 @@ public final class AnyxmlSchemaLocationEffectiveStatementImpl
     @Override
     public @NonNull SchemaPath getPath() {
         return path;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(path);
-        result = prime * result + Objects.hashCode(getNodeType());
-        result = prime * result + Objects.hashCode(getNodeParameter());
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        AnyxmlSchemaLocationEffectiveStatementImpl other = (AnyxmlSchemaLocationEffectiveStatementImpl) obj;
-        return Objects.equals(path, other.path) && Objects.equals(getNodeType(), other.getNodeType())
-                && Objects.equals(getNodeParameter(), other.getNodeParameter());
     }
 }
