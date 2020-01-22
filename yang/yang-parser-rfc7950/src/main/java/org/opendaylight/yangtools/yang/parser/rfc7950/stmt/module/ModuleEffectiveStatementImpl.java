@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -145,23 +144,5 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
             return Optional.of((Map<K, V>) qnameToIdentity);
         }
         return super.getNamespaceContents(namespace);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getName(), getYangVersion(), qnameModule);
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof ModuleEffectiveStatementImpl)) {
-            return false;
-        }
-        ModuleEffectiveStatementImpl other = (ModuleEffectiveStatementImpl) obj;
-        return Objects.equals(getName(), other.getName()) && qnameModule.equals(other.qnameModule)
-                && Objects.equals(getYangVersion(), other.getYangVersion());
     }
 }

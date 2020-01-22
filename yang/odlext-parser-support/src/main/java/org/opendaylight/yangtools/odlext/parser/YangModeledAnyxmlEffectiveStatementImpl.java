@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.odlext.parser;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyxmlSchemaNode;
@@ -112,31 +111,6 @@ final class YangModeledAnyxmlEffectiveStatementImpl
     @Override
     public Collection<? extends UnknownSchemaNode> getUnknownSchemaNodes() {
         return delegateSchemaNode().getUnknownSchemaNodes();
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(getQName());
-        result = prime * result + Objects.hashCode(getPath());
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
-        YangModeledAnyxmlEffectiveStatementImpl other = (YangModeledAnyxmlEffectiveStatementImpl) obj;
-        return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override
