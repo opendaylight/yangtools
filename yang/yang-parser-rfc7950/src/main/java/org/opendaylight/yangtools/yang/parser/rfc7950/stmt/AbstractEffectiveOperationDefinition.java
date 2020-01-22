@@ -13,7 +13,6 @@ import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableSet;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -84,24 +83,6 @@ public abstract class AbstractEffectiveOperationDefinition<D extends DeclaredSta
     @Override
     public final Set<GroupingDefinition> getGroupings() {
         return groupings;
-    }
-
-    @Override
-    public final int hashCode() {
-        return Objects.hash(getQName(), getPath());
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        final AbstractEffectiveOperationDefinition<?> other =
-                (AbstractEffectiveOperationDefinition<?>) obj;
-        return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override

@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviation;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
@@ -58,26 +57,6 @@ final class DeviationEffectiveStatementImpl
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownSchemaNodes;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(targetPath, deviateDefinitions, nullableDescription(), nullableReference());
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof DeviationEffectiveStatementImpl)) {
-            return false;
-        }
-        final DeviationEffectiveStatementImpl other = (DeviationEffectiveStatementImpl) obj;
-        return Objects.equals(targetPath, other.targetPath)
-                && Objects.equals(deviateDefinitions, other.deviateDefinitions)
-                && Objects.equals(nullableDescription(),  other.nullableDescription())
-                && Objects.equals(nullableReference(), other.nullableReference());
     }
 
     @Override

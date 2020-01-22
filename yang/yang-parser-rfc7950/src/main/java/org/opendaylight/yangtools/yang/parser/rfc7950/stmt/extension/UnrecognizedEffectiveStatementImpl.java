@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
-import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -66,30 +65,5 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
     @Override
     public SchemaPath getPath() {
         return path;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(maybeQNameArgument);
-        result = prime * result + Objects.hashCode(path);
-        result = prime * result + Objects.hashCode(getNodeType());
-        result = prime * result + Objects.hashCode(getNodeParameter());
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof UnrecognizedEffectiveStatementImpl)) {
-            return false;
-        }
-        UnrecognizedEffectiveStatementImpl other = (UnrecognizedEffectiveStatementImpl) obj;
-        return Objects.equals(maybeQNameArgument, other.maybeQNameArgument) && Objects.equals(path, other.path)
-                && Objects.equals(getNodeType(), other.getNodeType())
-                && Objects.equals(getNodeParameter(), other.getNodeParameter());
     }
 }
