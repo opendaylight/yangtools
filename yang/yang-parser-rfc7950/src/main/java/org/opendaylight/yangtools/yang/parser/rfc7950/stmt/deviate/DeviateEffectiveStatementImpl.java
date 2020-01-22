@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.util.OptionalBoolean;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
@@ -114,35 +113,5 @@ final class DeviateEffectiveStatementImpl extends DeclaredEffectiveStatementBase
     @Override
     public String getDeviatedUnits() {
         return deviatedUnits;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        DeviateEffectiveStatementImpl other = (DeviateEffectiveStatementImpl) obj;
-        return Objects.equals(deviateType, other.deviateType)
-                && deviatedConfig == other.deviatedConfig
-                && Objects.equals(deviatedDefault, other.deviatedDefault)
-                && deviatedMandatory == other.deviatedMandatory
-                && Objects.equals(deviatedMaxElements, other.deviatedMaxElements)
-                && Objects.equals(deviatedMinElements, other.deviatedMinElements)
-                && Objects.equals(deviatedMustDefinitions, other.deviatedMustDefinitions)
-                && Objects.equals(deviatedType, other.deviatedType)
-                && Objects.equals(deviatedUniqueConstraints, other.deviatedUniqueConstraints)
-                && Objects.equals(deviatedUnits, other.deviatedUnits);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(deviateType, deviatedConfig, deviatedDefault, deviatedMandatory, deviatedMaxElements,
-                deviatedMinElements, deviatedMustDefinitions, deviatedType, deviatedUniqueConstraints, deviatedUnits);
     }
 }

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.openconfig.stmt;
 
-import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
@@ -36,23 +35,5 @@ final class OpenConfigVersionEffectiveStatementImpl extends
     @Override
     public SchemaPath getPath() {
         return path;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(path, getNodeType(), getNodeParameter());
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof OpenConfigVersionEffectiveStatementImpl)) {
-            return false;
-        }
-        final OpenConfigVersionEffectiveStatementImpl other = (OpenConfigVersionEffectiveStatementImpl) obj;
-        return Objects.equals(path, other.path) && Objects.equals(getNodeType(), other.getNodeType())
-                && Objects.equals(getNodeParameter(), other.getNodeParameter());
     }
 }

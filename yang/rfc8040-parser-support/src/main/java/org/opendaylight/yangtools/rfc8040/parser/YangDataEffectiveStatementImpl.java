@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.rfc8040.parser;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Verify;
-import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
@@ -69,25 +68,6 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
     public @NonNull ContainerSchemaNode getContainerSchemaNode() {
         // Verified in the constructor
         return (ContainerSchemaNode) container;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(maybeQNameArgument, path);
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (!(obj instanceof YangDataEffectiveStatementImpl)) {
-            return false;
-        }
-
-        final YangDataEffectiveStatementImpl other = (YangDataEffectiveStatementImpl) obj;
-        return Objects.equals(maybeQNameArgument, other.maybeQNameArgument) && Objects.equals(path, other.path);
     }
 
     @Override

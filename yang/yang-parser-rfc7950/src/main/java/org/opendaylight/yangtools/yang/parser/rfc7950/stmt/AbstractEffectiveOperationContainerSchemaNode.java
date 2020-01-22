@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -39,23 +38,6 @@ public abstract class AbstractEffectiveOperationContainerSchemaNode<D extends De
     public final boolean isPresenceContainer() {
         // FIXME: this should not really be here
         return false;
-    }
-
-    @Override
-    public final int hashCode() {
-        return Objects.hash(getQName(), getPath());
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        AbstractEffectiveOperationContainerSchemaNode<?> other = (AbstractEffectiveOperationContainerSchemaNode<?>) obj;
-        return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override
