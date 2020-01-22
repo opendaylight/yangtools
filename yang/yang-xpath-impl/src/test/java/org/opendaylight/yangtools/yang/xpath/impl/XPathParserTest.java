@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.xpath.impl;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 import com.google.common.collect.ImmutableBiMap;
 import java.net.URI;
