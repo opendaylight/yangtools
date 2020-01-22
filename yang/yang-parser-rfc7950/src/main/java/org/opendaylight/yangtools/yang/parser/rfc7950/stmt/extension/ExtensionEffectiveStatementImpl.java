@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
-import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -140,30 +139,6 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
     @Override
     public boolean isYinElement() {
         return yin;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(qname);
-        result = prime * result + Objects.hashCode(schemaPath);
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ExtensionEffectiveStatementImpl other = (ExtensionEffectiveStatementImpl) obj;
-        return Objects.equals(qname, other.qname) && Objects.equals(schemaPath, other.schemaPath);
     }
 
     @Override

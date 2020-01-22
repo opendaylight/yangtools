@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
 import com.google.common.base.MoreObjects;
-import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -85,29 +84,6 @@ final class ImportEffectiveStatementImpl extends AbstractEffectiveDocumentedNode
     @Override
     public String getPrefix() {
         return prefix;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(moduleName, revision, prefix, semVer, nullableDescription(), nullableReference());
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final ImportEffectiveStatementImpl other = (ImportEffectiveStatementImpl) obj;
-        return Objects.equals(moduleName, other.moduleName) && Objects.equals(revision, other.revision)
-                && Objects.equals(semVer, other.semVer) && Objects.equals(prefix, other.prefix)
-                && Objects.equals(nullableDescription(), other.nullableDescription())
-                && Objects.equals(nullableReference(), other.nullableReference());
     }
 
     @Override
