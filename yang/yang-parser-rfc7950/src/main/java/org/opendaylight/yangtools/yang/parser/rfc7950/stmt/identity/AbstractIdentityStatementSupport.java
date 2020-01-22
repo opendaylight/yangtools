@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSup
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractIdentityStatementSupport
         extends AbstractQNameStatementSupport<IdentityStatement, IdentityEffectiveStatement> {
@@ -43,6 +44,10 @@ abstract class AbstractIdentityStatementSupport
     @Override
     public final void onStatementDefinitionDeclared(
             final Mutable<QName, IdentityStatement, IdentityEffectiveStatement> stmt) {
-        stmt.addToNs(IdentityNamespace.class, stmt.coerceStatementArgument(), stmt);
+        final QName qname = stmt.coerceStatementArgument();
+        final StmtContext<?, ?, ?> prev = stmt.getFromNamespace(IdentityNamespace.class, qname);
+        SourceException.throwIf(prev != null, stmt.getStatementSourceReference(), "Duplicate identity definition %s",
+                qname);
+        stmt.addToNs(IdentityNamespace.class, qname, stmt);
     }
 }
