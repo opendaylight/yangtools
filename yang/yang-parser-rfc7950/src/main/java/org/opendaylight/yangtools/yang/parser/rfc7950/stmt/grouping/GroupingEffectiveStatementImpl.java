@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -81,30 +80,6 @@ final class GroupingEffectiveStatementImpl
     @Override
     public Set<NotificationDefinition> getNotifications() {
         return notifications;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(qname);
-        result = prime * result + Objects.hashCode(path);
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final GroupingEffectiveStatementImpl other = (GroupingEffectiveStatementImpl) obj;
-        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
     }
 
     @Override

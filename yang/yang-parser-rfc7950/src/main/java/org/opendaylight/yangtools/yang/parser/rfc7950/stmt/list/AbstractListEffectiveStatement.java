@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -111,27 +110,6 @@ abstract class AbstractListEffectiveStatement
                 .filter(UniqueConstraint.class::isInstance)
                 .map(UniqueConstraint.class::cast)
                 .collect(ImmutableList.toImmutableList());
-    }
-
-    @Override
-    public final int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(getQName());
-        result = prime * result + Objects.hashCode(getPath());
-        return result;
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof AbstractListEffectiveStatement)) {
-            return false;
-        }
-        final AbstractListEffectiveStatement other = (AbstractListEffectiveStatement) obj;
-        return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override
