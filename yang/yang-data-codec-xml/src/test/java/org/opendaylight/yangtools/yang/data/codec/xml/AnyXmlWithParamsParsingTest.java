@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 
 import java.io.InputStream;
 import java.io.StringWriter;
