@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -70,30 +69,6 @@ final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<I
     @Override
     public Collection<? extends IdentitySchemaNode> getDerivedIdentities() {
         return Collections.unmodifiableSet(derivedIdentities);
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(getQName());
-        result = prime * result + Objects.hashCode(getPath());
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final IdentityEffectiveStatementImpl other = (IdentityEffectiveStatementImpl) obj;
-        return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override

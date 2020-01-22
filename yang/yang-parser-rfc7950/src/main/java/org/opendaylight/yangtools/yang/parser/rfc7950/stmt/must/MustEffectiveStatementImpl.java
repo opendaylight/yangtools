@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;
 
-import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -61,24 +60,6 @@ final class MustEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Re
     @Override
     public Optional<String> getReference() {
         return Optional.ofNullable(reference);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(xpath, description, reference);
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof MustEffectiveStatementImpl)) {
-            return false;
-        }
-        final MustEffectiveStatementImpl other = (MustEffectiveStatementImpl) obj;
-        return Objects.equals(xpath, other.xpath) && Objects.equals(description, other.description)
-                && Objects.equals(reference, other.reference);
     }
 
     @Override

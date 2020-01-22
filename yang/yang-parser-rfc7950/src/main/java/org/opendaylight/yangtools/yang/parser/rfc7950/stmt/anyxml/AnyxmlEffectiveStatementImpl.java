@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml;
 
-import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
@@ -39,31 +38,6 @@ final class AnyxmlEffectiveStatementImpl extends AbstractEffectiveMustConstraint
     @Override
     public Optional<AnyxmlSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(getQName());
-        result = prime * result + Objects.hashCode(getPath());
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
-        AnyxmlEffectiveStatementImpl other = (AnyxmlEffectiveStatementImpl) obj;
-        return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override
