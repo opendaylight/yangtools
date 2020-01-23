@@ -7,67 +7,34 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.EventListener;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.ResumedStatement;
-import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.PredicateValueAddedListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends NamespaceStorageSupport implements Mutable<A, D, E>, ResumedStatement {
+        extends AbstractStmtContext<A, D, E> implements ResumedStatement {
     /**
      * Event listener when an item is added to model namespace.
      */
@@ -75,7 +42,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         /**
          * Invoked whenever a new item is added to a namespace.
          */
-        void namespaceItemAdded(StatementContextBase<?, ?, ?> context, Class<?> namespace, Object key, Object value);
+        void namespaceItemAdded(AbstractStmtContext<?, ?, ?> context, Class<?> namespace, Object key, Object value);
     }
 
     /**
@@ -85,7 +52,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         /**
          * Invoked whenever a processing phase has finished.
          */
-        boolean phaseFinished(StatementContextBase<?, ?, ?> context, ModelProcessingPhase finishedPhase);
+        boolean phaseFinished(AbstractStmtContext<?, ?, ?> context, ModelProcessingPhase finishedPhase);
     }
 
     /**
@@ -96,160 +63,44 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         boolean isFinished();
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(StatementContextBase.class);
-
-    /**
-     * Flag constants, split into two bytes -- the top byte holds presence bits, the bottom byte holds values.
-     */
-    private static final int HAVE_SUPPORTED_BY_FEATURES  = 0x0100;
-    private static final int HAVE_CONFIGURATION          = 0x0200;
-    private static final int HAVE_IGNORE_CONFIG          = 0x0400;
-    private static final int HAVE_IGNORE_IF_FEATURE      = 0x0800;
-    private static final int IS_SUPPORTED_BY_FEATURES    = 0x0001;
-    private static final int IS_CONFIGURATION            = 0x0002;
-    private static final int IS_IGNORE_CONFIG            = 0x0004;
-    private static final int IS_IGNORE_IF_FEATURE        = 0x0008;
-
     private final @NonNull StatementDefinitionContext<A, D, E> definition;
     private final @NonNull StatementSourceReference statementDeclSource;
     private final StmtContext<?, ?, ?> originalCtx;
     private final StmtContext<?, ?, ?> prevCopyCtx;
-    private final CopyHistory copyHistory;
     private final String rawArgument;
 
-    private StatementPhaseState phaseState = StatementPhaseState.initial();
     private List<Mutable<?, ?, ?>> effective = ImmutableList.of();
-    private List<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
     private StatementMap substatements = StatementMap.empty();
-
-    private @Nullable D declaredInstance;
-    private @Nullable E effectiveInstance;
-
-    private boolean isSupportedToBuildEffective = true;
-    private boolean fullyDefined = false;
-
-    /**
-     * This is a memory layout optimization, as we have a few flags SubstatementContext, which would end up wasting
-     * some space for alignment.
-     */
-    private short flags = 0;
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
             final String rawArgument) {
+        super(CopyHistory.original());
         this.definition = requireNonNull(def);
         this.statementDeclSource = requireNonNull(ref);
         this.rawArgument = def.internArgument(rawArgument);
-        this.copyHistory = CopyHistory.original();
         this.originalCtx = null;
         this.prevCopyCtx = null;
     }
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
-        final String rawArgument, final CopyType copyType) {
+            final String rawArgument, final CopyType copyType) {
+        super(CopyHistory.of(copyType, CopyHistory.original()));
         this.definition = requireNonNull(def);
         this.statementDeclSource = requireNonNull(ref);
         this.rawArgument = rawArgument;
-        this.copyHistory = CopyHistory.of(copyType, CopyHistory.original());
         this.originalCtx = null;
         this.prevCopyCtx = null;
     }
 
-    StatementContextBase(final StatementContextBase<A, D, E> original, final CopyType copyType) {
-        this.definition = original.definition;
-        this.statementDeclSource = original.statementDeclSource;
-        this.rawArgument = original.rawArgument;
-        this.copyHistory = CopyHistory.of(copyType, original.getCopyHistory());
-        this.originalCtx = original.getOriginalCtx().orElse(original);
-        this.prevCopyCtx = original;
-    }
-
     StatementContextBase(final StatementContextBase<A, D, E> original) {
+        super(original.getCopyHistory());
         this.definition = original.definition;
         this.statementDeclSource = original.statementDeclSource;
         this.rawArgument = original.rawArgument;
-        this.copyHistory = original.getCopyHistory();
         this.originalCtx = original.getOriginalCtx().orElse(original);
         this.prevCopyCtx = original;
         this.substatements = original.substatements;
         this.effective = original.effective;
-    }
-
-    @Override
-    public Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement() {
-        return effectOfStatement;
-    }
-
-    @Override
-    public void addAsEffectOfStatement(final StmtContext<?, ?, ?> ctx) {
-        if (effectOfStatement.isEmpty()) {
-            effectOfStatement = new ArrayList<>(1);
-        }
-        effectOfStatement.add(ctx);
-    }
-
-    @Override
-    public void addAsEffectOfStatement(final Collection<? extends StmtContext<?, ?, ?>> ctxs) {
-        if (ctxs.isEmpty()) {
-            return;
-        }
-
-        if (effectOfStatement.isEmpty()) {
-            effectOfStatement = new ArrayList<>(ctxs.size());
-        }
-        effectOfStatement.addAll(ctxs);
-    }
-
-    @Override
-    public boolean isSupportedByFeatures() {
-        if (isFlagSet(HAVE_SUPPORTED_BY_FEATURES)) {
-            return isFlagSet(IS_SUPPORTED_BY_FEATURES);
-        }
-        if (isIgnoringIfFeatures()) {
-            flags |= HAVE_SUPPORTED_BY_FEATURES | IS_SUPPORTED_BY_FEATURES;
-            return true;
-        }
-
-        /*
-         * If parent is not supported, then this context is also not supported.
-         * So we do not need to check if-features statements of this context and
-         * we can return false immediately.
-         */
-        if (!isParentSupportedByFeatures()) {
-            flags |= HAVE_SUPPORTED_BY_FEATURES;
-            return false;
-        }
-
-        /*
-         * If parent is supported, we need to check if-features statements of
-         * this context.
-         */
-        // If the set of supported features has not been provided, all features are supported by default.
-        final Set<QName> supportedFeatures = getFromNamespace(SupportedFeaturesNamespace.class,
-                SupportedFeatures.SUPPORTED_FEATURES);
-        final boolean ret = supportedFeatures == null || StmtContextUtils.checkFeatureSupport(this, supportedFeatures);
-        flags |= ret ? HAVE_SUPPORTED_BY_FEATURES | IS_SUPPORTED_BY_FEATURES : HAVE_SUPPORTED_BY_FEATURES;
-        return ret;
-    }
-
-    protected abstract boolean isParentSupportedByFeatures();
-
-    protected abstract boolean isIgnoringIfFeatures();
-
-    protected abstract boolean isIgnoringConfig();
-
-    @Override
-    public boolean isSupportedToBuildEffective() {
-        return isSupportedToBuildEffective;
-    }
-
-    @Override
-    public void setIsSupportedToBuildEffective(final boolean isSupportedToBuildEffective) {
-        this.isSupportedToBuildEffective = isSupportedToBuildEffective;
-    }
-
-    @Override
-    public CopyHistory getCopyHistory() {
-        return copyHistory;
     }
 
     @Override
@@ -261,27 +112,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public Optional<? extends StmtContext<?, ?, ?>> getPreviousCopyCtx() {
         return Optional.ofNullable(prevCopyCtx);
     }
-
-    @Override
-    public ModelProcessingPhase getCompletedPhase() {
-        return phaseState.getCompletedPhase();
-    }
-
-    @Override
-    public void setCompletedPhase(final ModelProcessingPhase completedPhase) {
-        phaseState = phaseState.withCompletedPhase(completedPhase);
-    }
-
-    @Override
-    public abstract StatementContextBase<?, ?, ?> getParentContext();
-
-    /**
-     * Returns the model root for this statement.
-     *
-     * @return root context of statement
-     */
-    @Override
-    public abstract RootStatementContext<?, ?, ?> getRoot();
 
     @Override
     public StatementSource getStatementSource() {
@@ -299,18 +129,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements() {
-        return substatements.values();
-    }
-
-    @Override
     public Collection<? extends Mutable<?, ?, ?>> mutableDeclaredSubstatements() {
         return substatements.values();
-    }
-
-    @Override
-    public Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements() {
-        return mutableEffectiveSubstatements();
     }
 
     @Override
@@ -328,94 +148,35 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
     }
 
+    @Override
     public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
-        if (effective.isEmpty()) {
-            return;
+        if (!effective.isEmpty()) {
+            removeStatement(effective.iterator(), statementDef);
+            shrinkEffective();
         }
-
-        final Iterator<? extends StmtContext<?, ?, ?>> iterator = effective.iterator();
-        while (iterator.hasNext()) {
-            final StmtContext<?, ?, ?> next = iterator.next();
-            if (statementDef.equals(next.getPublicDefinition())) {
-                iterator.remove();
-            }
-        }
-
-        shrinkEffective();
     }
 
-    /**
-     * Removes a statement context from the effective substatements based on its statement definition (i.e statement
-     * keyword) and raw (in String form) statement argument. The statement context is removed only if both statement
-     * definition and statement argument match with one of the effective substatements' statement definition
-     * and argument.
-     *
-     * <p>
-     * If the statementArg parameter is null, the statement context is removed based only on its statement definition.
-     *
-     * @param statementDef statement definition of the statement context to remove
-     * @param statementArg statement argument of the statement context to remove
-     */
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
-            final String statementArg) {
-        if (statementArg == null) {
-            removeStatementFromEffectiveSubstatements(statementDef);
+    @Override
+    final void doRemoveStatement(final StatementDefinition statementDef, final String statementArg) {
+        if (!effective.isEmpty()) {
+            removeStatement(effective.iterator(), statementDef, statementArg);
+            shrinkEffective();
         }
-
-        if (effective.isEmpty()) {
-            return;
-        }
-
-        final Iterator<Mutable<?, ?, ?>> iterator = effective.iterator();
-        while (iterator.hasNext()) {
-            final Mutable<?, ?, ?> next = iterator.next();
-            if (statementDef.equals(next.getPublicDefinition()) && statementArg.equals(next.rawStatementArgument())) {
-                iterator.remove();
-            }
-        }
-
-        shrinkEffective();
     }
 
-    /**
-     * Adds an effective statement to collection of substatements.
-     *
-     * @param substatement substatement
-     * @throws IllegalStateException
-     *             if added in declared phase
-     * @throws NullPointerException
-     *             if statement parameter is null
-     */
-    public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
+    @Override
+    protected void appendEffectiveStatement(final Mutable<?, ?, ?> substatement) {
         beforeAddEffectiveStatement(1);
         effective.add(substatement);
     }
 
-    /**
-     * Adds an effective statement to collection of substatements.
-     *
-     * @param statements substatements
-     * @throws IllegalStateException
-     *             if added in declared phase
-     * @throws NullPointerException
-     *             if statement parameter is null
-     */
-    public void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
-        if (statements.isEmpty()) {
-            return;
-        }
-
-        statements.forEach(Objects::requireNonNull);
+    @Override
+    protected void appendEffectiveStatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
         beforeAddEffectiveStatement(statements.size());
         effective.addAll(statements);
     }
 
     private void beforeAddEffectiveStatement(final int toAdd) {
-        final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
-        checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
-                || inProgressPhase == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Effective statement cannot be added in declared phase at: %s", getStatementSourceReference());
-
         if (effective.isEmpty()) {
             effective = new ArrayList<>(toAdd);
         }
@@ -475,93 +236,16 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return substatements.get(offset);
     }
 
-    final void setFullyDefined() {
-        fullyDefined = true;
-    }
-
     final void resizeSubstatements(final int expectedSize) {
         substatements = substatements.ensureCapacity(expectedSize);
     }
 
     final void walkChildren(final ModelProcessingPhase phase) {
-        checkState(fullyDefined);
+        checkState(fullyDefined());
         substatements.values().forEach(stmt -> {
             stmt.walkChildren(phase);
             stmt.endDeclared(phase);
         });
-    }
-
-    @Override
-    public D buildDeclared() {
-        final ModelProcessingPhase completedPhase = getCompletedPhase();
-        checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION
-                || completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
-        if (declaredInstance == null) {
-            declaredInstance = definition().getFactory().createDeclared(this);
-        }
-        return declaredInstance;
-    }
-
-    @Override
-    public E buildEffective() {
-        if (effectiveInstance == null) {
-            effectiveInstance = definition().getFactory().createEffective(this);
-        }
-        return effectiveInstance;
-    }
-
-    /**
-     * tries to execute current {@link ModelProcessingPhase} of source parsing.
-     *
-     * @param phase
-     *            to be executed (completed)
-     * @return if phase was successfully completed
-     * @throws SourceException
-     *             when an error occurred in source parsing
-     */
-    boolean tryToCompletePhase(final ModelProcessingPhase phase) {
-        boolean finished = phaseState.completeMutations(phase);
-        if (finished) {
-            phaseState = phaseState.trimMutations();
-        }
-
-        for (final StatementContextBase<?, ?, ?> child : substatements.values()) {
-            finished &= child.tryToCompletePhase(phase);
-        }
-        for (final Mutable<?, ?, ?> child : effective) {
-            if (child instanceof StatementContextBase) {
-                finished &= ((StatementContextBase<?, ?, ?>) child).tryToCompletePhase(phase);
-            }
-        }
-
-        if (finished) {
-            onPhaseCompleted(phase);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Occurs on end of {@link ModelProcessingPhase} of source parsing.
-     *
-     * @param phase
-     *            that was to be completed (finished)
-     * @throws SourceException
-     *             when an error occurred in source parsing
-     */
-    private void onPhaseCompleted(final ModelProcessingPhase phase) {
-        // Record new completed phase, so we report the phase as completed on subsequent queries
-        phaseState = phaseState.withCompletedPhase(phase);
-
-        // Now let the state object complete the phase
-        phaseState = phaseState.dispatchListeners(this);
-    }
-
-    /**
-     * Ends declared section of current node.
-     */
-    void endDeclared(final ModelProcessingPhase phase) {
-        definition().onDeclarationFinished(this, phase);
     }
 
     /**
@@ -569,373 +253,33 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *
      * @return statement definition
      */
+    @Override
     protected final @NonNull StatementDefinitionContext<A, D, E> definition() {
         return definition;
     }
 
     @Override
-    protected void checkLocalNamespaceAllowed(final Class<? extends IdentifierNamespace<?, ?>> type) {
-        definition().checkNamespaceAllowed(type);
+    final Collection<? extends AbstractStmtContext<?, ?, ?>> declared() {
+        return substatements.values();
     }
 
     @Override
-    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key,
-            final V value) {
-        // definition().onNamespaceElementAdded(this, type, key, value);
-    }
-
-    final <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, final K key,
-            final OnNamespaceItemAdded listener) {
-        final Object potential = getFromNamespace(type, key);
-        if (potential != null) {
-            LOG.trace("Listener on {} key {} satisfied immediately", type, key);
-            listener.namespaceItemAdded(this, type, key, potential);
-            return;
-        }
-
-        getBehaviour(type).addListener(new KeyedValueAddedListener<>(this, key) {
-            @Override
-            void onValueAdded(final Object value) {
-                listener.namespaceItemAdded(StatementContextBase.this, type, key, value);
-            }
-        });
-    }
-
-    final <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type,
-            final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
-            final OnNamespaceItemAdded listener) {
-        final Optional<Entry<K, V>> existing = getFromNamespace(type, criterion);
-        if (existing.isPresent()) {
-            final Entry<K, V> entry = existing.get();
-            LOG.debug("Listener on {} criterion {} found a pre-existing match: {}", type, criterion, entry);
-            waitForPhase(entry.getValue(), type, phase, criterion, listener);
-            return;
-        }
-
-        final NamespaceBehaviourWithListeners<K, V, N> behaviour = getBehaviour(type);
-        behaviour.addListener(new PredicateValueAddedListener<K, V>(this) {
-            @Override
-            boolean onValueAdded(final K key, final V value) {
-                if (criterion.match(key)) {
-                    LOG.debug("Listener on {} criterion {} matched added key {}", type, criterion, key);
-                    waitForPhase(value, type, phase, criterion, listener);
-                    return true;
-                }
-
-                return false;
-            }
-        });
-    }
-
-    final <K, V, N extends IdentifierNamespace<K, V>> void selectMatch(final Class<N> type,
-            final NamespaceKeyCriterion<K> criterion, final OnNamespaceItemAdded listener) {
-        final Optional<Entry<K, V>> optMatch = getFromNamespace(type, criterion);
-        checkState(optMatch.isPresent(), "Failed to find a match for criterion %s in namespace %s node %s", criterion,
-            type, this);
-        final Entry<K, V> match = optMatch.get();
-        listener.namespaceItemAdded(StatementContextBase.this, type, match.getKey(), match.getValue());
-    }
-
-    final <K, V, N extends IdentifierNamespace<K, V>> void waitForPhase(final Object value, final Class<N> type,
-            final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
-            final OnNamespaceItemAdded listener) {
-        ((StatementContextBase<?, ? ,?>) value).addPhaseCompletedListener(phase,
-            (context, phaseCompleted) -> {
-                selectMatch(type, criterion, listener);
-                return true;
-            });
-    }
-
-    private <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getBehaviour(
-            final Class<N> type) {
-        final NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
-        checkArgument(behaviour instanceof NamespaceBehaviourWithListeners, "Namespace %s does not support listeners",
-            type);
-
-        return (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
+    final Collection<? extends Mutable<?, ?, ?>> effective() {
+        return effective;
     }
 
     @Override
-    public StatementDefinition getPublicDefinition() {
-        return definition().getPublicView();
-    }
-
-    @Override
-    public ModelActionBuilder newInferenceAction(final ModelProcessingPhase phase) {
-        return getRoot().getSourceContext().newInferenceAction(phase);
-    }
-
-    private static <T> Multimap<ModelProcessingPhase, T> newMultimap() {
-        return Multimaps.newListMultimap(new EnumMap<>(ModelProcessingPhase.class), () -> new ArrayList<>(1));
-    }
-
-    /**
-     * Adds {@link OnPhaseFinished} listener for a {@link ModelProcessingPhase} end. If the base has already completed
-     * the listener is notified immediately.
-     *
-     * @param phase requested completion phase
-     * @param listener listener to invoke
-     * @throws NullPointerException if any of the arguments is null
-     */
-    void addPhaseCompletedListener(final ModelProcessingPhase phase, final OnPhaseFinished listener) {
-        checkNotNull(phase, "Statement context processing phase cannot be null at: %s", getStatementSourceReference());
-        checkNotNull(listener, "Statement context phase listener cannot be null at: %s", getStatementSourceReference());
-
-        ModelProcessingPhase finishedPhase = getCompletedPhase();
-        while (finishedPhase != null) {
-            if (phase.equals(finishedPhase)) {
-                listener.phaseFinished(this, finishedPhase);
-                return;
-            }
-            finishedPhase = finishedPhase.getPreviousPhase();
-        }
-        phaseState = phaseState.addListener(phase, listener);
-    }
-
-    /**
-     * Adds a {@link ContextMutation} to a {@link ModelProcessingPhase}.
-     *
-     * @throws IllegalStateException
-     *             when the mutation was registered after phase was completed
-     */
-    void addMutation(final ModelProcessingPhase phase, final ContextMutation mutation) {
-        ModelProcessingPhase finishedPhase = getCompletedPhase();
-        while (finishedPhase != null) {
-            checkState(!phase.equals(finishedPhase), "Mutation registered after phase was completed at: %s",
-                getStatementSourceReference());
-            finishedPhase = finishedPhase.getPreviousPhase();
-        }
-        phaseState = phaseState.addMutation(phase, mutation);
-    }
-
-    @Override
-    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final Class<N> namespace,
-            final KT key,final StmtContext<?, ?, ?> stmt) {
-        addContextToNamespace(namespace, key, stmt);
-    }
-
-    @Override
-    public final Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
-            final QNameModule targetModule) {
-        checkState(stmt.getCompletedPhase() == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Attempted to copy statement %s which has completed phase %s", stmt, stmt.getCompletedPhase());
-        checkArgument(stmt instanceof SubstatementContext, "Unsupported statement %s", stmt);
-        return childCopyOf((SubstatementContext<?, ?, ?>) stmt, type, targetModule);
-    }
-
-    private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
-            final SubstatementContext<X, Y, Z> original, final CopyType type, final QNameModule targetModule) {
-        final Optional<StatementSupport<?, ?, ?>> implicitParent = definition.getImplicitParentFor(
-            original.getPublicDefinition());
-
-        final SubstatementContext<X, Y, Z> result;
-        final SubstatementContext<X, Y, Z> copy;
-
-        if (implicitParent.isPresent()) {
-            final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implicitParent.get());
-            result = new SubstatementContext(this, def, original.getSourceReference(),
-                original.rawStatementArgument(), original.getStatementArgument(), type);
-
-            final CopyType childCopyType;
-            switch (type) {
-                case ADDED_BY_AUGMENTATION:
-                    childCopyType = CopyType.ORIGINAL;
-                    break;
-                case ADDED_BY_USES_AUGMENTATION:
-                    childCopyType = CopyType.ADDED_BY_USES;
-                    break;
-                case ADDED_BY_USES:
-                case ORIGINAL:
-                default:
-                    childCopyType = type;
-            }
-
-            copy = new SubstatementContext<>(original, result, childCopyType, targetModule);
-            result.addEffectiveSubstatement(copy);
-        } else {
-            result = copy = new SubstatementContext<>(original, this, type, targetModule);
-        }
-
-        original.definition().onStatementAdded(copy);
-        original.copyTo(copy, type, targetModule);
-        return result;
-    }
-
-    @Override
-    public @NonNull StatementDefinition getDefinition() {
+    public StatementDefinition getDefinition() {
         return getPublicDefinition();
     }
 
     @Override
-    public @NonNull StatementSourceReference getSourceReference() {
+    public StatementSourceReference getSourceReference() {
         return getStatementSourceReference();
     }
 
     @Override
     public boolean isFullyDefined() {
-        return fullyDefined;
-    }
-
-    @Beta
-    public final boolean hasImplicitParentSupport() {
-        return definition.getFactory() instanceof ImplicitParentAwareStatementSupport;
-    }
-
-    @Beta
-    public final StatementContextBase<?, ?, ?> wrapWithImplicit(final StatementContextBase<?, ?, ?> original) {
-        final Optional<StatementSupport<?, ?, ?>> optImplicit = definition.getImplicitParentFor(
-            original.getPublicDefinition());
-        if (optImplicit.isEmpty()) {
-            return original;
-        }
-
-        final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(optImplicit.get());
-        final CopyType type = original.getCopyHistory().getLastOperation();
-        final SubstatementContext<?, ?, ?> result = new SubstatementContext(original.getParentContext(), def,
-            original.getStatementSourceReference(), original.rawStatementArgument(), original.getStatementArgument(),
-            type);
-
-        result.addEffectiveSubstatement(new SubstatementContext<>(original, result));
-        result.setCompletedPhase(original.getCompletedPhase());
-        return result;
-    }
-
-    /**
-     * Config statements are not all that common which means we are performing a recursive search towards the root
-     * every time {@link #isConfiguration()} is invoked. This is quite expensive because it causes a linear search
-     * for the (usually non-existent) config statement.
-     *
-     * <p>
-     * This method maintains a resolution cache, so once we have returned a result, we will keep on returning the same
-     * result without performing any lookups.
-     */
-
-    final boolean substatementIsConfiguration(final StatementContextBase<?, ?, ?> parent) {
-        if (isIgnoringConfig()) {
-            return true;
-        }
-        if (isFlagSet(HAVE_CONFIGURATION)) {
-            return isFlagSet(IS_CONFIGURATION);
-        }
-
-        final StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils.findFirstSubstatement(this,
-            ConfigStatement.class);
-        final boolean parentIsConfig = parent.isConfiguration();
-
-        final boolean isConfig;
-        if (configStatement != null) {
-            isConfig = configStatement.coerceStatementArgument();
-
-            // Validity check: if parent is config=false this cannot be a config=true
-            InferenceException.throwIf(isConfig && !parentIsConfig, getStatementSourceReference(),
-                    "Parent node has config=false, this node must not be specifed as config=true");
-        } else {
-            // If "config" statement is not specified, the default is the same as the parent's "config" value.
-            isConfig = parentIsConfig;
-        }
-
-        // Resolved, make sure we cache this return
-        flags |= isConfig ? HAVE_CONFIGURATION | IS_CONFIGURATION : HAVE_CONFIGURATION;
-        return isConfig;
-    }
-
-    /**
-     * This method maintains a resolution cache for ignore config, so once we have returned a result, we will
-     * keep on returning the same result without performing any lookups.
-     */
-    final boolean substatementIsIgnoringConfig(final StatementContextBase<?, ?, ?> parent) {
-        if (isFlagSet(HAVE_IGNORE_CONFIG)) {
-            return isFlagSet(IS_IGNORE_CONFIG);
-        }
-
-        final boolean ret = definition().isIgnoringConfig() || parent.isIgnoringConfig();
-        flags |= ret ? HAVE_IGNORE_CONFIG | IS_IGNORE_CONFIG : HAVE_IGNORE_CONFIG;
-        return ret;
-    }
-
-    private boolean isFlagSet(final int bit) {
-        return (flags & bit) != 0;
-    }
-
-    /**
-     * This method maintains a resolution cache for ignore if-feature, so once we have returned a result, we will
-     * keep on returning the same result without performing any lookups.
-     */
-    final boolean substatementIsIgnoringIfFeatures(final StatementContextBase<?, ?, ?> parent) {
-        if (isFlagSet(HAVE_IGNORE_IF_FEATURE)) {
-            return isFlagSet(IS_IGNORE_IF_FEATURE);
-        }
-
-        final boolean ret = definition().isIgnoringIfFeatures() || parent.isIgnoringIfFeatures();
-        flags |= ret ? HAVE_IGNORE_IF_FEATURE | IS_IGNORE_IF_FEATURE : HAVE_IGNORE_IF_FEATURE;
-        return ret;
-    }
-
-    final void copyTo(final StatementContextBase<?, ?, ?> target, final CopyType typeOfCopy,
-            @Nullable final QNameModule targetModule) {
-        final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(substatements.size() + effective.size());
-
-        for (final Mutable<?, ?, ?> stmtContext : substatements.values()) {
-            if (stmtContext.isSupportedByFeatures()) {
-                copySubstatement(stmtContext, target, typeOfCopy, targetModule, buffer);
-            }
-        }
-
-        for (final Mutable<?, ?, ?> stmtContext : effective) {
-            copySubstatement(stmtContext, target, typeOfCopy, targetModule, buffer);
-        }
-
-        target.addEffectiveSubstatements(buffer);
-    }
-
-    private void copySubstatement(final Mutable<?, ?, ?> stmtContext,  final Mutable<?, ?, ?> target,
-            final CopyType typeOfCopy, final QNameModule newQNameModule, final Collection<Mutable<?, ?, ?>> buffer) {
-        if (needToCopyByUses(stmtContext)) {
-            final Mutable<?, ?, ?> copy = target.childCopyOf(stmtContext, typeOfCopy, newQNameModule);
-            LOG.debug("Copying substatement {} for {} as {}", stmtContext, this, copy);
-            buffer.add(copy);
-        } else if (isReusedByUses(stmtContext)) {
-            LOG.debug("Reusing substatement {} for {}", stmtContext, this);
-            buffer.add(stmtContext);
-        } else {
-            LOG.debug("Skipping statement {}", stmtContext);
-        }
-    }
-
-    // FIXME: revise this, as it seems to be wrong
-    private static final ImmutableSet<YangStmtMapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
-        YangStmtMapping.DESCRIPTION,
-        YangStmtMapping.REFERENCE,
-        YangStmtMapping.STATUS);
-    private static final ImmutableSet<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(
-        YangStmtMapping.TYPE,
-        YangStmtMapping.TYPEDEF,
-        YangStmtMapping.USES);
-
-    private static boolean needToCopyByUses(final StmtContext<?, ?, ?> stmtContext) {
-        final StatementDefinition def = stmtContext.getPublicDefinition();
-        if (REUSED_DEF_SET.contains(def)) {
-            LOG.debug("Will reuse {} statement {}", def, stmtContext);
-            return false;
-        }
-        if (NOCOPY_FROM_GROUPING_SET.contains(def)) {
-            return !YangStmtMapping.GROUPING.equals(stmtContext.coerceParentContext().getPublicDefinition());
-        }
-
-        LOG.debug("Will copy {} statement {}", def, stmtContext);
-        return true;
-    }
-
-    private static boolean isReusedByUses(final StmtContext<?, ?, ?> stmtContext) {
-        return REUSED_DEF_SET.contains(stmtContext.getPublicDefinition());
-    }
-
-    @Override
-    public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
-    }
-
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("definition", definition).add("rawArgument", rawArgument);
+        return fullyDefined();
     }
 }
