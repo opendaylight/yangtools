@@ -5,18 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -38,9 +36,6 @@ public class CaseStmtTest {
     private DataSchemaNode tempSecondChild;
     private DataSchemaNode tempThirdChild;
     private CaseSchemaNode tempChoice;
-
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
 
     @Before
     public void setup() throws Exception {
@@ -531,14 +526,14 @@ public class CaseStmtTest {
     }
 
     @Test
-    public void testInferenceExceptionChoice() throws Exception {
-        expectedEx.expect(ReactorException.class);
-        schema = StmtTestUtils.parseYangSources("/case-test/case-test-exceptions/choice");
+    public void testInferenceExceptionChoice() {
+        assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/case-test/case-test-exceptions/choice"));
     }
 
     @Test
     public void testInferenceExceptionCase() throws Exception {
-        expectedEx.expect(ReactorException.class);
-        schema = StmtTestUtils.parseYangSources("/case-test/case-test-exceptions/case");
+        assertThrows(ReactorException.class,
+            () -> StmtTestUtils.parseYangSources("/case-test/case-test-exceptions/case"));
     }
 }
