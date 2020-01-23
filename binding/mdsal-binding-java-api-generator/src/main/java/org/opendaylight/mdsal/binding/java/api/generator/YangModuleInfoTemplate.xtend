@@ -148,9 +148,8 @@ class YangModuleInfoTemplate {
                     «val name = imp.moduleName»
                     «val rev = imp.revision»
                     «IF !rev.present»
-                        «val Set<Module> modules = ctx.modules»
                         «val TreeMap<Optional<Revision>, Module> sorted = new TreeMap(REVISION_COMPARATOR)»
-                        «FOR module : modules»
+                        «FOR module : ctx.modules»
                             «IF module.name.equals(name)»
                                 «sorted.put(module.revision, module)»
                             «ENDIF»

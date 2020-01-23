@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingTypeObjectCodecTreeNode;
 import org.opendaylight.yangtools.concepts.IllegalArgumentCodec;
@@ -111,8 +110,7 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
                 return codec.deserialize(qname);
             }
 
-            Set<ModuleImport> imports = module.getImports();
-            for (ModuleImport moduleImport : imports) {
+            for (ModuleImport moduleImport : module.getImports()) {
                 if (moduleImport.getPrefix().equals(defaultValuePrefix)) {
                     Module importedModule = schemaContext.findModule(moduleImport.getModuleName(),
                         moduleImport.getRevision()).get();
