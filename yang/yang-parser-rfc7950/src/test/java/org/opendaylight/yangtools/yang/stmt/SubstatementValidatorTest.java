@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -18,9 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
@@ -29,9 +28,6 @@ public class SubstatementValidatorTest {
     @SuppressWarnings("checkstyle:regexpSinglelineJava")
     private final PrintStream stdout = System.out;
     private final ByteArrayOutputStream output = new ByteArrayOutputStream();
-
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
 
     @Before
     public void setUp() throws UnsupportedEncodingException {
@@ -71,10 +67,9 @@ public class SubstatementValidatorTest {
     }
 
     @Test
-    public void missingElementException() throws Exception {
-        expectedEx.expect(SomeModifiersUnresolvedException.class);
-
-        TestUtils.loadModules(getClass().getResource("/substatement-validator/missing-element").toURI());
+    public void missingElementException() {
+        assertThrows(SomeModifiersUnresolvedException.class, () -> TestUtils.loadModules(
+            SubstatementValidatorTest.class.getResource("/substatement-validator/missing-element").toURI()));
     }
 
     @Test
@@ -86,7 +81,7 @@ public class SubstatementValidatorTest {
 
     @Test
     public void bug4310test() throws Exception {
-        expectedEx.expect(SomeModifiersUnresolvedException.class);
-        TestUtils.loadModules(getClass().getResource("/substatement-validator/bug-4310").toURI());
+        assertThrows(SomeModifiersUnresolvedException.class, () -> TestUtils.loadModules(
+            SubstatementValidatorTest.class.getResource("/substatement-validator/bug-4310").toURI()));
     }
 }
