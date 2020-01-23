@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.util.concurrent;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 final class QueuedNotificationManagerMXBeanImpl implements QueuedNotificationManagerMXBean {
     private final AbstractQueuedNotificationManager<?, ?, ?> manager;
@@ -23,7 +24,8 @@ final class QueuedNotificationManagerMXBeanImpl implements QueuedNotificationMan
      */
     @Override
     public List<ListenerNotificationQueueStats> getCurrentListenerQueueStats() {
-        return manager.getListenerNotificationQueueStats();
+        return manager.streamTasks().map(t -> new ListenerNotificationQueueStats(t.key().toString(), t.size()))
+                .collect(Collectors.toList());
     }
 
     /**

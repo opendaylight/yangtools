@@ -10,9 +10,7 @@ package org.opendaylight.yangtools.util.concurrent;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import java.util.List;
 import java.util.concurrent.Executor;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -69,16 +67,6 @@ abstract class AbstractQueuedNotificationManager<T, L, N> extends AbstractBatchi
      */
     public final QueuedNotificationManagerMXBean getMXBean() {
         return mxBean;
-    }
-
-    /**
-     * Returns {@link ListenerNotificationQueueStats} instances for each current listener
-     * notification task in progress.
-     */
-    // FIXME: drop visibility to package-protected
-    public final List<ListenerNotificationQueueStats> getListenerNotificationQueueStats() {
-        return streamTasks().map(t -> new ListenerNotificationQueueStats(t.key().toString(), t.size()))
-                .collect(Collectors.toList());
     }
 
     @Override
