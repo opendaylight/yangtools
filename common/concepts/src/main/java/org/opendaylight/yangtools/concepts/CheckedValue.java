@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -144,12 +143,8 @@ public class CheckedValue<T, E extends Exception> extends Variant<T, E> {
     @SuppressWarnings("unchecked")
     public <X extends Exception> CheckedValue<T, X> mapException(final Function<? super E, X> mapper) {
         requireNonNull(mapper);
-        if (isFirst()) {
-            return (CheckedValue<T, X>) this;
-        }
-        return new CheckedValue<>(mapper.apply(second()), null);
+        return isFirst() ? (CheckedValue<T, X>) this : new CheckedValue<>(mapper.apply(second()), null);
     }
-
 
     @SuppressWarnings("unchecked")
     public <U> CheckedValue<U, E> flatMap(final Function<? super T, CheckedValue<U, E>> mapper) {
@@ -255,13 +250,7 @@ public class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * @return A {@link CompletableFuture}.
      */
     public final CompletableFuture<T> toCompletableFuture() {
-        if (isFirst()) {
-            return CompletableFuture.completedFuture(first());
-        }
-        // FIXME: Java 9: use CompletableFuture.failedFuture()
-        final CompletableFuture<T> future = new CompletableFuture<>();
-        future.completeExceptionally(second());
-        return future;
+        return isFirst() ? CompletableFuture.completedFuture(first()) : CompletableFuture.failedFuture(second());
     }
 
     /**
@@ -271,12 +260,7 @@ public class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * @return A {@link FluentFuture}.
      */
     public final FluentFuture<T> toFluentFuture() {
-        final ListenableFuture<T> future;
-        if (isFirst()) {
-            future = Futures.immediateFuture(first());
-        } else {
-            future = Futures.immediateFailedFuture(second());
-        }
-        return FluentFuture.from(future);
+        return FluentFuture.from(isFirst() ? Futures.immediateFuture(first())
+                : Futures.immediateFailedFuture(second()));
     }
 }
