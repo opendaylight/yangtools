@@ -774,7 +774,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
+    public final Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
             final QNameModule targetModule) {
         checkState(stmt.getCompletedPhase() == ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Attempted to copy statement %s which has completed phase %s", stmt, stmt.getCompletedPhase());
