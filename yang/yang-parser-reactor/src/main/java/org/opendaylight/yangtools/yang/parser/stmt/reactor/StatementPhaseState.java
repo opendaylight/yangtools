@@ -39,7 +39,7 @@ abstract class StatementPhaseState {
         }
 
         @Override
-        StatementPhaseState dispatchListeners(final StatementContextBase<?, ?, ?> context) {
+        StatementPhaseState dispatchListeners(final AbstractStmtContext<?, ?, ?> context) {
             return this;
         }
 
@@ -93,7 +93,7 @@ abstract class StatementPhaseState {
         }
 
         @Override
-        StatementPhaseState dispatchListeners(final StatementContextBase<?, ?, ?> context) {
+        StatementPhaseState dispatchListeners(final AbstractStmtContext<?, ?, ?> context) {
             final ModelProcessingPhase phase = nonnullPhase();
             final Collection<OnPhaseFinished> satisfied = listeners.get(phase);
             if (satisfied.isEmpty()) {
@@ -206,7 +206,7 @@ abstract class StatementPhaseState {
 
     abstract StatementPhaseState addListener(ModelProcessingPhase phase, OnPhaseFinished listener);
 
-    abstract StatementPhaseState dispatchListeners(StatementContextBase<?, ?, ?> context);
+    abstract StatementPhaseState dispatchListeners(AbstractStmtContext<?, ?, ?> context);
 
     abstract StatementPhaseState addMutation(ModelProcessingPhase phase, ContextMutation mutation);
 
