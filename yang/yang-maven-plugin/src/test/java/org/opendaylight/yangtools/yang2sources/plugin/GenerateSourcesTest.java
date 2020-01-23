@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
@@ -110,8 +109,8 @@ public class GenerateSourcesTest {
 
         @Override
         public Collection<File> generateSources(final EffectiveModelContext context, final File outputBaseDir,
-                final Set<Module> currentModules, final Function<Module, Optional<String>> moduleResourcePathResolver)
-                        throws IOException {
+                final Collection<? extends Module> currentModules,
+                final Function<Module, Optional<String>> moduleResourcePathResolver) throws IOException {
             called++;
             outputDir = outputBaseDir;
             return new ArrayList<>();

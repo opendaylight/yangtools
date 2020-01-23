@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -26,8 +25,8 @@ public class CodeGeneratorTestImpl implements BasicCodeGenerator, MavenProjectAw
 
     @Override
     public Collection<File> generateSources(final EffectiveModelContext context, final File outputBaseDir,
-            final Set<Module> currentModules, final Function<Module, Optional<String>> moduleResourcePathResolver)
-                    throws IOException {
+            final Collection<? extends Module> currentModules,
+            final Function<Module, Optional<String>> moduleResourcePathResolver) throws IOException {
         LOG.debug("{} generateSources:context: {}", getClass().getCanonicalName(), context);
         LOG.debug("{} generateSources:outputBaseDir: {}", getClass().getCanonicalName(), outputBaseDir);
         LOG.debug("{} generateSources:currentModules: {}", getClass().getCanonicalName(), currentModules);
