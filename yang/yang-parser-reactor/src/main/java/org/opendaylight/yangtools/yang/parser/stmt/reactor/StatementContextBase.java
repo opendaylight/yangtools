@@ -809,12 +809,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
             copy = new SubstatementContext<>(original, result, childCopyType, targetModule);
             result.addEffectiveSubstatement(copy);
-            original.definition().onStatementAdded(copy);
         } else {
             result = copy = new SubstatementContext<>(original, this, type, targetModule);
-            original.definition().onStatementAdded(copy);
         }
 
+        original.definition().onStatementAdded(copy);
         original.copyTo(copy, type, targetModule);
         return result;
     }
