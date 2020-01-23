@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -339,5 +341,35 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
         // FIXME: this seems to be unused, but looks useful.
         void setCompletedPhase(ModelProcessingPhase completedPhase);
+
+        /**
+         * A child-proxying {@link Mutable} context, which can be explicitly queried for specific schema tree child.
+         *
+         * @param <A> Argument type
+         * @param <D> Declared Statement representation
+         * @param <E> Effective Statement representation
+         */
+        @Beta
+        interface SchemaTree<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+                extends Mutable<A, D, E> {
+            /**
+             * Find an inferred child node. Caller indicates that its inference logic has determined that specified
+             * schema tree child should exist and expects an inference guidance as follows:
+             * <ul>
+             *   <li>A present value is returned if the node has been found</li>
+             *   <li>{@code InferenceException} is thrown if the node has not been found</li>
+             *   <li>An absent value is returned if the node has been found, but conformance options (or other logic)
+             *       indicates any further inference does not have an effect on result of computation and this node
+             *       should be ignored.</li>
+             * </ul>
+             *
+             * @param qname resolved node identifier of child node
+             * @return An optional mutable context, empty if the inferred node exists, but has been determined to have
+             *         no effect on overall result.
+             * @throws NullPointerException if qname is null
+             * @throws InferenceException if the specified child does not exist
+             */
+            Optional<Mutable<?, ?, ?>> inferSchemaTreeChild(QName qname);
+        }
     }
 }
