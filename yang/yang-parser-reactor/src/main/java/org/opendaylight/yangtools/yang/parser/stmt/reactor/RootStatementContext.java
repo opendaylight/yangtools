@@ -256,4 +256,9 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     protected boolean isParentSupportedByFeatures() {
         return true;
     }
+
+    @Override
+    final AbstractStmtContext<A, D, E> reparent(final AbstractStmtContext<?, ?, ?> newParent) {
+        throw new UnsupportedOperationException("Root statement cannot be reparented to " + newParent);
+    }
 }

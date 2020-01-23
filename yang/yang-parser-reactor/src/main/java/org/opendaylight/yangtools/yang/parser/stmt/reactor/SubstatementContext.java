@@ -9,95 +9,96 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Verify;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.VarHandle;
 import java.util.Optional;
-import org.opendaylight.yangtools.util.OptionalBoolean;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
-        StatementContextBase<A, D, E> {
-    private final StatementContextBase<?, ?, ?> parent;
+        StatementContextBase<A, D, E> implements ChildStmtContext<A, D, E> {
+    private static final VarHandle SCHEMA_PATH;
+    private static final VarHandle CONFIGURATION;
+    private static final VarHandle IGNORE_CONFIG;
+    private static final VarHandle IGNORE_IF_FEATURE;
+
+    static {
+        final Lookup lookup = MethodHandles.lookup();
+
+        try {
+            SCHEMA_PATH = lookup.findVarHandle(SubstatementContext.class, "schemaPath", Object.class);
+            CONFIGURATION = lookup.findVarHandle(SubstatementContext.class, "configuration", byte.class);
+            IGNORE_CONFIG = lookup.findVarHandle(SubstatementContext.class, "ignoreConfig", byte.class);
+            IGNORE_IF_FEATURE = lookup.findVarHandle(SubstatementContext.class, "ignoreIfFeature", byte.class);
+
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    private final AbstractStmtContext<?, ?, ?> parent;
     private final A argument;
 
-    /**
-     * Config statements are not all that common which means we are performing a recursive search towards the root
-     * every time {@link #isConfiguration()} is invoked. This is quite expensive because it causes a linear search
-     * for the (usually non-existent) config statement.
-     *
-     * <p>
-     * This field maintains a resolution cache, so once we have returned a result, we will keep on returning the same
-     * result without performing any lookups.
-     */
-    // BooleanField value
+    // Used through CONFIGURATION
+    @SuppressWarnings("unused")
     private byte configuration;
 
     /**
      * This field maintains a resolution cache for ignore config, so once we have returned a result, we will
      * keep on returning the same result without performing any lookups.
      */
-    // BooleanField value
+    // Used through IGNORE_CONFIG
+    @SuppressWarnings("unused")
     private byte ignoreConfig;
 
     /**
      * This field maintains a resolution cache for ignore if-feature, so once we have returned a result, we will
      * keep on returning the same result without performing any lookups.
      */
-    // BooleanField value
+    // Used through IGNORE_IF_FEATURE
+    @SuppressWarnings("unused")
     private byte ignoreIfFeature;
 
-    private volatile SchemaPath schemaPath;
+    // Accessed through SCHEMA_PATH
+    @SuppressWarnings("unused")
+    private volatile Object schemaPath;
 
-    SubstatementContext(final StatementContextBase<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
+    SubstatementContext(final AbstractStmtContext<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
             final StatementSourceReference ref, final String rawArgument) {
         super(def, ref, rawArgument);
         this.parent = requireNonNull(parent, "Parent must not be null");
         this.argument = def.parseArgumentValue(this, rawStatementArgument());
     }
 
-    SubstatementContext(final StatementContextBase<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
+    SubstatementContext(final AbstractStmtContext<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
         final StatementSourceReference ref, final String rawArgument, final A argument, final CopyType copyType) {
         super(def, ref, rawArgument, copyType);
         this.parent = requireNonNull(parent, "Parent must not be null");
         this.argument = argument;
     }
 
-    SubstatementContext(final StatementContextBase<A, D, E> original, final StatementContextBase<?, ?, ?> parent,
-            final CopyType copyType, final QNameModule targetModule) {
-        super(original, copyType);
-        this.parent = requireNonNull(parent, "Parent must not be null");
-        this.argument = targetModule == null ? original.getStatementArgument()
-                : original.definition().adaptArgumentValue(original, targetModule);
-    }
-
-    SubstatementContext(final StatementContextBase<A, D, E> original, final StatementContextBase<?, ?, ?> parent) {
+    private SubstatementContext(final StatementContextBase<A, D, E> original,
+            final AbstractStmtContext<?, ?, ?> parent) {
         super(original);
         this.parent = requireNonNull(parent, "Parent must not be null");
         this.argument = original.getStatementArgument();
     }
 
     @Override
-    public StatementContextBase<?, ?, ?> getParentContext() {
+    public AbstractStmtContext<?, ?, ?> parent() {
+        return parent;
+    }
+
+    @Override
+    public @NonNull AbstractStmtContext<?, ?, ?> getParentContext() {
         return parent;
     }
 
@@ -126,85 +127,14 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         return argument;
     }
 
-    private SchemaPath createSchemaPath() {
-        final Optional<SchemaPath> maybeParentPath = parent.getSchemaPath();
-        Verify.verify(maybeParentPath.isPresent(), "Parent %s does not have a SchemaPath", parent);
-        final SchemaPath parentPath = maybeParentPath.get();
-
-        if (StmtContextUtils.isUnknownStatement(this)) {
-            return parentPath.createChild(getPublicDefinition().getStatementName());
-        }
-        if (argument instanceof QName) {
-            final QName qname = (QName) argument;
-            if (StmtContextUtils.producesDeclared(this, UsesStatement.class)) {
-                return maybeParentPath.orElse(null);
-            }
-
-            return parentPath.createChild(qname);
-        }
-        if (argument instanceof String) {
-            // FIXME: This may yield illegal argument exceptions
-            final Optional<StmtContext<?, ?, ?>> originalCtx = getOriginalCtx();
-            final QName qname = StmtContextUtils.qnameFromArgument(originalCtx.orElse(this), (String) argument);
-            return parentPath.createChild(qname);
-        }
-        if (argument instanceof SchemaNodeIdentifier
-                && (StmtContextUtils.producesDeclared(this, AugmentStatement.class)
-                        || StmtContextUtils.producesDeclared(this, RefineStatement.class)
-                        || StmtContextUtils.producesDeclared(this, DeviationStatement.class))) {
-
-            return parentPath.createChild(((SchemaNodeIdentifier) argument).getPathFromRoot());
-        }
-
-        // FIXME: this does not look right
-        return maybeParentPath.orElse(null);
-    }
-
     @Override
     public Optional<SchemaPath> getSchemaPath() {
-        SchemaPath local = schemaPath;
-        if (local == null) {
-            synchronized (this) {
-                local = schemaPath;
-                if (local == null) {
-                    local = createSchemaPath();
-                    schemaPath = local;
-                }
-            }
-        }
-
-        return Optional.ofNullable(local);
+        return substatementSchemaPath(this, SCHEMA_PATH);
     }
 
     @Override
     public boolean isConfiguration() {
-        if (isIgnoringConfig()) {
-            return true;
-        }
-
-        if (OptionalBoolean.isPresent(configuration)) {
-            return OptionalBoolean.get(configuration);
-        }
-
-        final StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils.findFirstSubstatement(this,
-            ConfigStatement.class);
-        final boolean parentIsConfig = parent.isConfiguration();
-
-        final boolean isConfig;
-        if (configStatement != null) {
-            isConfig = configStatement.coerceStatementArgument();
-
-            // Validity check: if parent is config=false this cannot be a config=true
-            InferenceException.throwIf(isConfig && !parentIsConfig, getStatementSourceReference(),
-                    "Parent node has config=false, this node must not be specifed as config=true");
-        } else {
-            // If "config" statement is not specified, the default is the same as the parent's "config" value.
-            isConfig = parentIsConfig;
-        }
-
-        // Resolved, make sure we cache this return
-        configuration = OptionalBoolean.of(isConfig);
-        return isConfig;
+        return substatementIsConfiguration(this, CONFIGURATION);
     }
 
     @Override
@@ -213,56 +143,22 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     @Override
-    public YangVersion getRootVersion() {
-        return getRoot().getRootVersion();
-    }
-
-    @Override
-    public void setRootVersion(final YangVersion version) {
-        getRoot().setRootVersion(version);
-    }
-
-    @Override
-    public void addMutableStmtToSeal(final MutableStatement mutableStatement) {
-        getRoot().addMutableStmtToSeal(mutableStatement);
-    }
-
-    @Override
-    public void addRequiredSource(final SourceIdentifier dependency) {
-        getRoot().addRequiredSource(dependency);
-    }
-
-    @Override
-    public void setRootIdentifier(final SourceIdentifier identifier) {
-        getRoot().setRootIdentifier(identifier);
-    }
-
-    @Override
     protected boolean isIgnoringIfFeatures() {
-        if (OptionalBoolean.isPresent(ignoreIfFeature)) {
-            return OptionalBoolean.get(ignoreIfFeature);
-        }
-
-        final boolean ret = definition().isIgnoringIfFeatures() || parent.isIgnoringIfFeatures();
-        ignoreIfFeature = OptionalBoolean.of(ret);
-
-        return ret;
+        return substatementIsIgnoringIfFeatures(this, IGNORE_IF_FEATURE);
     }
 
     @Override
     protected boolean isIgnoringConfig() {
-        if (OptionalBoolean.isPresent(ignoreConfig)) {
-            return OptionalBoolean.get(ignoreConfig);
-        }
-
-        final boolean ret = definition().isIgnoringConfig() || parent.isIgnoringConfig();
-        ignoreConfig = OptionalBoolean.of(ret);
-
-        return ret;
+        return substatementIsIgnoringConfig(this, IGNORE_CONFIG);
     }
 
     @Override
     protected boolean isParentSupportedByFeatures() {
         return parent.isSupportedByFeatures();
+    }
+
+    @Override
+    SubstatementContext<A, D, E> reparent(final AbstractStmtContext<?, ?, ?> newParent) {
+        return new SubstatementContext<>(this, parent);
     }
 }

@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules.SupportedModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.AbstractStmtContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,10 +144,10 @@ abstract class AbstractDeviateStatementSupport
             @Override
             public void apply(final InferenceContext ctx) {
                 // FIXME once BUG-7760 gets fixed, there will be no need for these dirty casts
-                final StatementContextBase<?, ?, ?> sourceNodeStmtCtx =
-                        (StatementContextBase<?, ?, ?>) sourceCtxPrerequisite.resolve(ctx);
-                final StatementContextBase<?, ?, ?> targetNodeStmtCtx =
-                        (StatementContextBase<?, ?, ?>) targetCtxPrerequisite.resolve(ctx);
+                final AbstractStmtContext<?, ?, ?> sourceNodeStmtCtx =
+                        (AbstractStmtContext<?, ?, ?>) sourceCtxPrerequisite.resolve(ctx);
+                final AbstractStmtContext<?, ?, ?> targetNodeStmtCtx =
+                        (AbstractStmtContext<?, ?, ?>) targetCtxPrerequisite.resolve(ctx);
 
                 switch (deviateKind) {
                     case NOT_SUPPORTED:
@@ -234,8 +234,8 @@ abstract class AbstractDeviateStatementSupport
 
     @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
             justification = "https://github.com/spotbugs/spotbugs/issues/811")
-    private static void performDeviateAdd(final StatementContextBase<?, ?, ?> deviateStmtCtx,
-            final StatementContextBase<?, ?, ?> targetCtx) {
+    private static void performDeviateAdd(final AbstractStmtContext<?, ?, ?> deviateStmtCtx,
+            final AbstractStmtContext<?, ?, ?> targetCtx) {
         for (Mutable<?, ?, ?> originalStmtCtx : deviateStmtCtx.mutableDeclaredSubstatements()) {
             validateDeviationTarget(originalStmtCtx, targetCtx);
             addStatement(originalStmtCtx, targetCtx);
@@ -243,7 +243,7 @@ abstract class AbstractDeviateStatementSupport
     }
 
     private static void addStatement(final Mutable<?, ?, ?> stmtCtxToBeAdded,
-            final StatementContextBase<?, ?, ?> targetCtx) {
+            final AbstractStmtContext<?, ?, ?> targetCtx) {
         if (!StmtContextUtils.isUnknownStatement(stmtCtxToBeAdded)) {
             final StatementDefinition stmtToBeAdded = stmtCtxToBeAdded.getPublicDefinition();
             if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || YangStmtMapping.DEFAULT.equals(stmtToBeAdded)
@@ -263,8 +263,8 @@ abstract class AbstractDeviateStatementSupport
 
     @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
             justification = "https://github.com/spotbugs/spotbugs/issues/811")
-    private static void performDeviateReplace(final StatementContextBase<?, ?, ?> deviateStmtCtx,
-            final StatementContextBase<?, ?, ?> targetCtx) {
+    private static void performDeviateReplace(final AbstractStmtContext<?, ?, ?> deviateStmtCtx,
+            final AbstractStmtContext<?, ?, ?> targetCtx) {
         for (Mutable<?, ?, ?> originalStmtCtx : deviateStmtCtx.mutableDeclaredSubstatements()) {
             validateDeviationTarget(originalStmtCtx, targetCtx);
             replaceStatement(originalStmtCtx, targetCtx);
@@ -272,7 +272,7 @@ abstract class AbstractDeviateStatementSupport
     }
 
     private static void replaceStatement(final Mutable<?, ?, ?> stmtCtxToBeReplaced,
-            final StatementContextBase<?, ?, ?> targetCtx) {
+            final AbstractStmtContext<?, ?, ?> targetCtx) {
         final StatementDefinition stmtToBeReplaced = stmtCtxToBeReplaced.getPublicDefinition();
 
         if (YangStmtMapping.DEFAULT.equals(stmtToBeReplaced)
@@ -314,8 +314,8 @@ abstract class AbstractDeviateStatementSupport
 
     @SuppressFBWarnings(value = "UPM_UNCALLED_PRIVATE_METHOD",
             justification = "https://github.com/spotbugs/spotbugs/issues/811")
-    private static void performDeviateDelete(final StatementContextBase<?, ?, ?> deviateStmtCtx,
-            final StatementContextBase<?, ?, ?> targetCtx) {
+    private static void performDeviateDelete(final AbstractStmtContext<?, ?, ?> deviateStmtCtx,
+            final AbstractStmtContext<?, ?, ?> targetCtx) {
         for (Mutable<?, ?, ?> originalStmtCtx : deviateStmtCtx.mutableDeclaredSubstatements()) {
             validateDeviationTarget(originalStmtCtx, targetCtx);
             deleteStatement(originalStmtCtx, targetCtx);
@@ -323,7 +323,7 @@ abstract class AbstractDeviateStatementSupport
     }
 
     private static void deleteStatement(final StmtContext<?, ?, ?> stmtCtxToBeDeleted,
-            final StatementContextBase<?, ?, ?> targetCtx) {
+            final AbstractStmtContext<?, ?, ?> targetCtx) {
         final StatementDefinition stmtToBeDeleted = stmtCtxToBeDeleted.getPublicDefinition();
         final String stmtArgument = stmtCtxToBeDeleted.rawStatementArgument();
 
@@ -349,7 +349,7 @@ abstract class AbstractDeviateStatementSupport
     }
 
     private static void copyStatement(final Mutable<?, ?, ?> stmtCtxToBeCopied,
-            final StatementContextBase<?, ?, ?> targetCtx) {
+            final AbstractStmtContext<?, ?, ?> targetCtx) {
         // we need to make a copy of the statement context only if it is an unknown statement, otherwise
         // we can reuse the original statement context
         if (!StmtContextUtils.isUnknownStatement(stmtCtxToBeCopied)) {
