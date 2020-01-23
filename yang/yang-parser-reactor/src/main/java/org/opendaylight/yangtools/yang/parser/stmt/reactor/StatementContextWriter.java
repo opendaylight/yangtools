@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
@@ -78,11 +79,16 @@ final class StatementContextWriter implements StatementWriter {
     }
 
     private void exitStatement() {
-        StatementContextBase<?, ?, ?> parentContext = current.getParentContext();
+        AbstractStmtContext<?, ?, ?> parentContext = current.getParentContext();
         while (parentContext != null && StatementSource.CONTEXT == parentContext.getStatementSource()) {
             parentContext.endDeclared(phase);
             parentContext = parentContext.getParentContext();
         }
-        current = parentContext;
+        if (parentContext != null) {
+            verify(parentContext instanceof StatementContextBase, "Unexpected parent %s", parentContext);
+            current = (StatementContextBase<?, ?, ?>) parentContext;
+        } else {
+            current = null;
+        }
     }
 }
