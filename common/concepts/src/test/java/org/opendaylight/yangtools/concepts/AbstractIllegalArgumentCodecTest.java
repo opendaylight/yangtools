@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import static org.junit.Assert.assertThrows;
+
 import org.junit.Test;
 
 public class AbstractIllegalArgumentCodecTest {
@@ -24,13 +26,13 @@ public class AbstractIllegalArgumentCodecTest {
 
     private final TestCodec codec = new TestCodec();
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNullDeserialize() {
-        codec.deserialize(null);
+        assertThrows(NullPointerException.class, () -> codec.deserialize(null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNullSerialize() {
-        codec.serialize(null);
+        assertThrows(NullPointerException.class, () -> codec.serialize(null));
     }
 }

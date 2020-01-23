@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.concepts;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -24,19 +25,20 @@ import java.util.function.Supplier;
 import org.junit.Test;
 
 public class CheckedValueTest {
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testNullValue() {
-        CheckedValue.ofValue(null);
+        assertThrows(NullPointerException.class, () -> CheckedValue.ofValue(null));
     }
 
-    @Test(expected = IllegalStateException.class)
     public void testExceptionGet() {
-        CheckedValue.ofException(new Exception()).get();
+        final CheckedValue<?, ?> value = CheckedValue.ofException(new Exception());
+        assertThrows(IllegalStateException.class, () -> value.get());
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testValueException() {
-        CheckedValue.ofValue("foo").getException();
+        final CheckedValue<?, ?> value = CheckedValue.ofValue("foo");
+        assertThrows(IllegalStateException.class, () -> value.getException());
     }
 
     @Test
@@ -141,11 +143,11 @@ public class CheckedValueTest {
             .orElseThrow((Supplier<NullPointerException>)NullPointerException::new));
     }
 
-    @Test(expected = InterruptedException.class)
-    public void testThrowableOrElseThrow() throws InterruptedException {
-        final String foo = "foo";
-        final Exception cause = new NullPointerException(foo);
-        CheckedValue.ofException(cause).orElseThrow((Supplier<InterruptedException>)InterruptedException::new);
+    @Test
+    public void testThrowableOrElseThrow() {
+        final CheckedValue<?, ?> value = CheckedValue.ofException(new NullPointerException("foo"));
+        final Exception mock = mock(Exception.class);
+        assertThrows(mock.getClass(), () -> value.orElseThrow(() -> mock));
     }
 
     @Test
