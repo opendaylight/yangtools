@@ -146,7 +146,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
         } else if (nodeSchema instanceof ChoiceSchemaNode) {
             boolean haveAddressable = false;
             boolean haveUnaddressable = false;
-            for (CaseSchemaNode child : ((ChoiceSchemaNode) nodeSchema).getCases().values()) {
+            for (CaseSchemaNode child : ((ChoiceSchemaNode) nodeSchema).getCases()) {
                 switch (computeChildAddressabilitySummary(child)) {
                     case ADDRESSABLE:
                         haveAddressable = true;

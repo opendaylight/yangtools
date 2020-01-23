@@ -358,7 +358,7 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
 
     private static @NonNull Optional<CaseSchemaNode> findInstantiatedCase(final ChoiceSchemaNode instantiatedChoice,
             final CaseSchemaNode originalDefinition) {
-        CaseSchemaNode potential = instantiatedChoice.getCaseNodeByName(originalDefinition.getQName());
+        CaseSchemaNode potential = instantiatedChoice.findCase(originalDefinition.getQName()).orElse(null);
         if (originalDefinition.equals(potential)) {
             return Optional.of(potential);
         }

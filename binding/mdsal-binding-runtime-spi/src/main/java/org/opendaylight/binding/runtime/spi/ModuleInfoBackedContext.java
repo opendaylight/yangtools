@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContextProvider;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
@@ -61,7 +62,8 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
     private static final class WithFallback extends ModuleInfoBackedContext {
         private final @NonNull ClassLoadingStrategy fallback;
 
-        WithFallback(final ClassLoadingStrategy fallback) {
+        WithFallback(final YangTextSchemaContextResolver resolver, final ClassLoadingStrategy fallback) {
+            super(resolver);
             this.fallback = requireNonNull(fallback);
         }
 
@@ -146,7 +148,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
                     }
             });
 
-    private final YangTextSchemaContextResolver ctxResolver = YangTextSchemaContextResolver.create("binding-context");
+    private final YangTextSchemaContextResolver ctxResolver;
 
     @GuardedBy("this")
     private final ListMultimap<String, AbstractRegisteredModuleInfo> packageToInfoReg =
@@ -155,8 +157,8 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
     private final ListMultimap<SourceIdentifier, AbstractRegisteredModuleInfo> sourceToInfoReg =
             MultimapBuilder.hashKeys().arrayListValues().build();
 
-    ModuleInfoBackedContext() {
-        // Hidden on purpose
+    ModuleInfoBackedContext(final YangTextSchemaContextResolver resolver) {
+        this.ctxResolver = requireNonNull(resolver);
     }
 
     @Beta
@@ -166,11 +168,28 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
     }
 
     public static ModuleInfoBackedContext create() {
-        return new ModuleInfoBackedContext();
+        return create("unnamed");
+    }
+
+    public static ModuleInfoBackedContext create(final String id) {
+        return new ModuleInfoBackedContext(YangTextSchemaContextResolver.create(id));
     }
 
     public static ModuleInfoBackedContext create(final ClassLoadingStrategy loadingStrategy) {
-        return new WithFallback(loadingStrategy);
+        return create("unnamed", loadingStrategy);
+    }
+
+    public static ModuleInfoBackedContext create(final String id, final ClassLoadingStrategy loadingStrategy) {
+        return new WithFallback(YangTextSchemaContextResolver.create(id), loadingStrategy);
+    }
+
+    public static ModuleInfoBackedContext create(final String id, final YangParserFactory factory) {
+        return new ModuleInfoBackedContext(YangTextSchemaContextResolver.create(id, factory));
+    }
+
+    public static ModuleInfoBackedContext create(final String id, final YangParserFactory factory,
+            final ClassLoadingStrategy loadingStrategy) {
+        return new WithFallback(YangTextSchemaContextResolver.create(id, factory), loadingStrategy);
     }
 
     @Override
