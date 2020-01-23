@@ -246,10 +246,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          *                                  from an alien implementation.
          * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
          */
-        // FIXME: 5.0.0: remove generic arguments X, Y, Z. Callers should not care, as the returned copy can actually
-        //               be an encapsulating implicit statement.
-        <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
-                StmtContext<X, Y, Z> stmt, CopyType type, @Nullable QNameModule targetModule);
+        Mutable<?, ?, ?> childCopyOf(StmtContext<?, ?, ?> stmt, CopyType type, @Nullable QNameModule targetModule);
 
         /**
          * Create a child sub-statement, which is a child of this statement, inheriting all attributes from specified
@@ -263,8 +260,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          *                                  from an alien implementation.
          * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
          */
-        default <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
-                final StmtContext<X, Y, Z> stmt, final CopyType type) {
+        default Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type) {
             return childCopyOf(stmt, type, null);
         }
 

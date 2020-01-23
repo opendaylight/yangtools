@@ -774,14 +774,16 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
-            final StmtContext<X, Y, Z> stmt, final CopyType type, final QNameModule targetModule) {
+    public Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
+            final QNameModule targetModule) {
         checkState(stmt.getCompletedPhase() == ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Attempted to copy statement %s which has completed phase %s", stmt, stmt.getCompletedPhase());
-
         checkArgument(stmt instanceof SubstatementContext, "Unsupported statement %s", stmt);
+        return childCopyOf((SubstatementContext<?, ?, ?>) stmt, type, targetModule);
+    }
 
-        final SubstatementContext<X, Y, Z> original = (SubstatementContext<X, Y, Z>)stmt;
+    private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
+            final SubstatementContext<X, Y, Z> original, final CopyType type, final QNameModule targetModule) {
         final Optional<StatementSupport<?, ?, ?>> implicitParent = definition.getImplicitParentFor(
             original.getPublicDefinition());
 
