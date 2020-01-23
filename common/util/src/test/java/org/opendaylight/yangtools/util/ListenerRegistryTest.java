@@ -13,19 +13,13 @@ import static org.junit.Assert.assertNotNull;
 import com.google.common.collect.ImmutableSet;
 import java.util.EventListener;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
 
 public class ListenerRegistryTest {
-
     private TestEventListener testEventListener;
     private ExtendedTestEventListener extendedTestEventListener;
     private ListenerRegistry<TestEventListener> registry;
-
-    @Rule
-    public ExpectedException expException = ExpectedException.none();
 
     @Before
     public void init() {
