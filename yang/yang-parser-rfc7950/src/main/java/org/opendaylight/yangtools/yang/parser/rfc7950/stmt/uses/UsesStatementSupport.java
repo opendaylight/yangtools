@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.AbstractStmtContext;
 
 public final class UsesStatementSupport
         extends AbstractQNameStatementSupport<UsesStatement, UsesEffectiveStatement> {
@@ -72,10 +72,10 @@ public final class UsesStatementSupport
 
             @Override
             public void apply(final InferenceContext ctx) {
-                final StatementContextBase<?, ?, ?> targetNodeStmtCtx =
-                        (StatementContextBase<?, ?, ?>) targetNodePre.resolve(ctx);
-                final StatementContextBase<?, ?, ?> sourceGrpStmtCtx =
-                        (StatementContextBase<?, ?, ?>) sourceGroupingPre.resolve(ctx);
+                final AbstractStmtContext<?, ?, ?> targetNodeStmtCtx =
+                        (AbstractStmtContext<?, ?, ?>) targetNodePre.resolve(ctx);
+                final AbstractStmtContext<?, ?, ?> sourceGrpStmtCtx =
+                        (AbstractStmtContext<?, ?, ?>) sourceGroupingPre.resolve(ctx);
 
                 UsesStatementImpl.copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                 UsesStatementImpl.resolveUsesNode(usesNode, targetNodeStmtCtx);

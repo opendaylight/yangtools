@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.AbstractStmtContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +57,7 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
      *             instance of SourceException
      */
     static void copyFromSourceToTarget(final Mutable<?, ?, ?> sourceGrpStmtCtx,
-            final StatementContextBase<?, ?, ?> targetCtx,
+            final AbstractStmtContext<?, ?, ?> targetCtx,
             final Mutable<QName, UsesStatement, UsesEffectiveStatement> usesNode) {
         final Collection<? extends Mutable<?, ?, ?>> declared = sourceGrpStmtCtx.mutableDeclaredSubstatements();
         final Collection<? extends Mutable<?, ?, ?>> effective = sourceGrpStmtCtx.mutableEffectiveSubstatements();
@@ -79,7 +79,7 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
     }
 
     private static void copyStatement(final Mutable<?, ?, ?> original,
-            final StatementContextBase<?, ?, ?> targetCtx, final QNameModule targetModule,
+            final AbstractStmtContext<?, ?, ?> targetCtx, final QNameModule targetModule,
             final Collection<Mutable<?, ?, ?>> buffer) {
         if (needToCopyByUses(original)) {
             final Mutable<?, ?, ?> copy = targetCtx.childCopyOf(original, CopyType.ADDED_BY_USES, targetModule);
@@ -158,13 +158,13 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
             return;
         }
 
-        Verify.verify(refineTargetNodeCtx instanceof StatementContextBase);
-        addOrReplaceNodes(subStmtCtx, (StatementContextBase<?, ?, ?>) refineTargetNodeCtx);
+        Verify.verify(refineTargetNodeCtx instanceof AbstractStmtContext);
+        addOrReplaceNodes(subStmtCtx, (AbstractStmtContext<?, ?, ?>) refineTargetNodeCtx);
         subStmtCtx.addAsEffectOfStatement(refineTargetNodeCtx);
     }
 
     private static void addOrReplaceNodes(final Mutable<?, ?, ?> subStmtCtx,
-            final StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
+            final AbstractStmtContext<?, ?, ?> refineTargetNodeCtx) {
         for (final Mutable<?, ?, ?> refineSubstatementCtx : subStmtCtx.mutableDeclaredSubstatements()) {
             if (isSupportedRefineSubstatement(refineSubstatementCtx)) {
                 addOrReplaceNode(refineSubstatementCtx, refineTargetNodeCtx);
@@ -173,7 +173,7 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
     }
 
     private static void addOrReplaceNode(final Mutable<?, ?, ?> refineSubstatementCtx,
-            final StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
+            final AbstractStmtContext<?, ?, ?> refineTargetNodeCtx) {
 
         final StatementDefinition refineSubstatementDef = refineSubstatementCtx.getPublicDefinition();
 

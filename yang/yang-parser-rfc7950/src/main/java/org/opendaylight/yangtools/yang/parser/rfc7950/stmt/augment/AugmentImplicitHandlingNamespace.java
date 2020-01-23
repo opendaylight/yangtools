@@ -12,7 +12,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.AbstractStmtContext;
 
 /**
  * Helper namespace for attaching target information to augmentation statements. This is then used to ensure that
@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
  */
 @Beta
 public interface AugmentImplicitHandlingNamespace
-        extends IdentifierNamespace<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>> {
-    NamespaceBehaviour<StmtContext<?, ?, ?>, StatementContextBase<?, ?, ?>, @NonNull AugmentImplicitHandlingNamespace>
+        extends IdentifierNamespace<StmtContext<?, ?, ?>, AbstractStmtContext<?, ?, ?>> {
+    NamespaceBehaviour<StmtContext<?, ?, ?>, AbstractStmtContext<?, ?, ?>, @NonNull AugmentImplicitHandlingNamespace>
         BEHAVIOUR = NamespaceBehaviour.treeScoped(AugmentImplicitHandlingNamespace.class);
 
 }
