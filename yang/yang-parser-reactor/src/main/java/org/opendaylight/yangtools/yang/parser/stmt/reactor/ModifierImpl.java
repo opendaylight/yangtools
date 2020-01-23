@@ -137,10 +137,10 @@ final class ModifierImpl implements ModelActionBuilder {
         return mod;
     }
 
-    private static StatementContextBase<?, ?, ?> contextImpl(final Object value) {
-        checkArgument(value instanceof StatementContextBase, "Supplied context %s is not provided by this reactor.",
+    private static AbstractStmtContext<?, ?, ?> contextImpl(final Object value) {
+        checkArgument(value instanceof AbstractStmtContext, "Supplied context %s is not provided by this reactor.",
             value);
-        return StatementContextBase.class.cast(value);
+        return (AbstractStmtContext<?, ?, ?>) value;
     }
 
     boolean tryApply() {
@@ -297,7 +297,7 @@ final class ModifierImpl implements ModelActionBuilder {
 
     private final class PhaseMutation<C> extends AbstractPrerequisite<C> implements ContextMutation {
         @SuppressWarnings("unchecked")
-        PhaseMutation(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) {
+        PhaseMutation(final AbstractStmtContext<?, ?, ?> context, final ModelProcessingPhase phase) {
             context.addMutation(phase, this);
             resolvePrereq((C) context);
         }
@@ -312,7 +312,7 @@ final class ModifierImpl implements ModelActionBuilder {
             implements OnPhaseFinished {
         @SuppressWarnings("unchecked")
         @Override
-        public boolean phaseFinished(final StatementContextBase<?, ?, ?> context,
+        public boolean phaseFinished(final AbstractStmtContext<?, ?, ?> context,
                 final ModelProcessingPhase finishedPhase) {
             return resolvePrereq((C) context);
         }
@@ -320,7 +320,7 @@ final class ModifierImpl implements ModelActionBuilder {
 
     private final class NamespaceMutation<N extends IdentifierNamespace<?, ?>>
             extends AbstractPrerequisite<Mutable<?, ?, ?>>  {
-        NamespaceMutation(final StatementContextBase<?, ?, ?> ctx, final Class<N> namespace) {
+        NamespaceMutation(final AbstractStmtContext<?, ?, ?> ctx, final Class<N> namespace) {
             resolvePrereq(ctx);
         }
     }
@@ -334,14 +334,14 @@ final class ModifierImpl implements ModelActionBuilder {
         }
 
         @Override
-        public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace,
+        public void namespaceItemAdded(final AbstractStmtContext<?, ?, ?> context, final Class<?> namespace,
                 final Object key, final Object value) {
-            ((StatementContextBase<?, ?, ?>) value).addPhaseCompletedListener(phase, this);
+            ((AbstractStmtContext<?, ?, ?>) value).addPhaseCompletedListener(phase, this);
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public boolean phaseFinished(final StatementContextBase<?, ?, ?> context,
+        public boolean phaseFinished(final AbstractStmtContext<?, ?, ?> context,
                 final ModelProcessingPhase finishedPhase) {
             return resolvePrereq((C) context);
         }
@@ -363,9 +363,9 @@ final class ModifierImpl implements ModelActionBuilder {
 
         @SuppressWarnings("unchecked")
         @Override
-        public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace,
+        public void namespaceItemAdded(final AbstractStmtContext<?, ?, ?> context, final Class<?> namespace,
                 final Object key, final Object value) {
-            StatementContextBase<?, ?, ?> targetCtx = contextImpl(value);
+            AbstractStmtContext<?, ?, ?> targetCtx = contextImpl(value);
             targetCtx.addMutation(modPhase, this);
             resolvePrereq((C) targetCtx);
         }
@@ -395,11 +395,11 @@ final class ModifierImpl implements ModelActionBuilder {
         }
 
         @Override
-        public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace,
+        public void namespaceItemAdded(final AbstractStmtContext<?, ?, ?> context, final Class<?> namespace,
                 final Object key, final Object value) {
             LOG.debug("Action for {} got key {}", keys, key);
 
-            final StatementContextBase<?, ?, ?> target = contextImpl(value);
+            final AbstractStmtContext<?, ?, ?> target = contextImpl(value);
             if (!target.isSupportedByFeatures()) {
                 LOG.debug("Key {} in {} is not supported", key, keys);
                 resolvePrereq(null);
@@ -422,7 +422,7 @@ final class ModifierImpl implements ModelActionBuilder {
         }
 
         @SuppressWarnings("unchecked")
-        private void hookOnto(final StatementContextBase<?, ?, ?> context, final Class<?> namespace, final K key) {
+        private void hookOnto(final AbstractStmtContext<?, ?, ?> context, final Class<?> namespace, final K key) {
             context.onNamespaceItemAddedAction((Class) namespace, requireNonNull(key), this);
         }
     }
