@@ -272,21 +272,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public abstract RootStatementContext<?, ?, ?> getRoot();
 
-    /**
-     * Returns the origin of the statement.
-     *
-     * @return origin of statement
-     */
     @Override
     public StatementSource getStatementSource() {
         return statementDeclSource.getStatementSource();
     }
 
-    /**
-     * Returns a reference to statement source.
-     *
-     * @return reference of statement source
-     */
     @Override
     public StatementSourceReference getStatementSourceReference() {
         return statementDeclSource;
@@ -703,9 +693,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
     }
 
-    /**
-     * See {@link StatementSupport#getPublicView()}.
-     */
     @Override
     public StatementDefinition getPublicDefinition() {
         return definition().getPublicView();
