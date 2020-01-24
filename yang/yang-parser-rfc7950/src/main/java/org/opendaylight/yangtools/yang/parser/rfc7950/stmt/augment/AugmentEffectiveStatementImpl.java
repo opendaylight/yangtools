@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.compat.NotificationNodeCon
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.AbstractStmtContext;
 
 final class AugmentEffectiveStatementImpl
         extends AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
@@ -75,14 +75,14 @@ final class AugmentEffectiveStatementImpl
     protected Collection<? extends EffectiveStatement<?, ?>> initSubstatements(
             final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx,
             final Collection<? extends StmtContext<?, ?, ?>> substatementsInit) {
-        final StatementContextBase<?, ?, ?> implicitDef = ctx.getFromNamespace(AugmentImplicitHandlingNamespace.class,
+        final AbstractStmtContext<?, ?, ?> implicitDef = ctx.getFromNamespace(AugmentImplicitHandlingNamespace.class,
             ctx);
         return implicitDef == null ? super.initSubstatements(ctx, substatementsInit)
                 : Collections2.transform(Collections2.filter(substatementsInit,
                     StmtContext::isSupportedToBuildEffective),
                     subCtx -> {
-                        verify(subCtx instanceof StatementContextBase);
-                        return implicitDef.wrapWithImplicit((StatementContextBase<?, ?, ?>) subCtx).buildEffective();
+                        verify(subCtx instanceof AbstractStmtContext);
+                        return implicitDef.wrapWithImplicit((AbstractStmtContext<?, ?, ?>) subCtx).buildEffective();
                     });
     }
 
