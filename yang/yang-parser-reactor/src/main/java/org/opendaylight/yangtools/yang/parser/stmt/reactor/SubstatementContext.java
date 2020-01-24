@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Verify;
 import java.util.Optional;
-import org.opendaylight.yangtools.util.OptionalBoolean;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -19,14 +18,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
@@ -39,32 +36,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         StatementContextBase<A, D, E> {
     private final StatementContextBase<?, ?, ?> parent;
     private final A argument;
-
-    /**
-     * Config statements are not all that common which means we are performing a recursive search towards the root
-     * every time {@link #isConfiguration()} is invoked. This is quite expensive because it causes a linear search
-     * for the (usually non-existent) config statement.
-     *
-     * <p>
-     * This field maintains a resolution cache, so once we have returned a result, we will keep on returning the same
-     * result without performing any lookups.
-     */
-    // BooleanField value
-    private byte configuration;
-
-    /**
-     * This field maintains a resolution cache for ignore config, so once we have returned a result, we will
-     * keep on returning the same result without performing any lookups.
-     */
-    // BooleanField value
-    private byte ignoreConfig;
-
-    /**
-     * This field maintains a resolution cache for ignore if-feature, so once we have returned a result, we will
-     * keep on returning the same result without performing any lookups.
-     */
-    // BooleanField value
-    private byte ignoreIfFeature;
 
     private volatile SchemaPath schemaPath;
 
@@ -178,33 +149,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     @Override
     public boolean isConfiguration() {
-        if (isIgnoringConfig()) {
-            return true;
-        }
-
-        if (OptionalBoolean.isPresent(configuration)) {
-            return OptionalBoolean.get(configuration);
-        }
-
-        final StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils.findFirstSubstatement(this,
-            ConfigStatement.class);
-        final boolean parentIsConfig = parent.isConfiguration();
-
-        final boolean isConfig;
-        if (configStatement != null) {
-            isConfig = configStatement.coerceStatementArgument();
-
-            // Validity check: if parent is config=false this cannot be a config=true
-            InferenceException.throwIf(isConfig && !parentIsConfig, getStatementSourceReference(),
-                    "Parent node has config=false, this node must not be specifed as config=true");
-        } else {
-            // If "config" statement is not specified, the default is the same as the parent's "config" value.
-            isConfig = parentIsConfig;
-        }
-
-        // Resolved, make sure we cache this return
-        configuration = OptionalBoolean.of(isConfig);
-        return isConfig;
+        return substatementIsConfiguration(parent);
     }
 
     @Override
@@ -239,26 +184,12 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     @Override
     protected boolean isIgnoringIfFeatures() {
-        if (OptionalBoolean.isPresent(ignoreIfFeature)) {
-            return OptionalBoolean.get(ignoreIfFeature);
-        }
-
-        final boolean ret = definition().isIgnoringIfFeatures() || parent.isIgnoringIfFeatures();
-        ignoreIfFeature = OptionalBoolean.of(ret);
-
-        return ret;
+        return substatementIsIgnoringIfFeatures(parent);
     }
 
     @Override
     protected boolean isIgnoringConfig() {
-        if (OptionalBoolean.isPresent(ignoreConfig)) {
-            return OptionalBoolean.get(ignoreConfig);
-        }
-
-        final boolean ret = definition().isIgnoringConfig() || parent.isIgnoringConfig();
-        ignoreConfig = OptionalBoolean.of(ret);
-
-        return ret;
+        return substatementIsIgnoringConfig(parent);
     }
 
     @Override
