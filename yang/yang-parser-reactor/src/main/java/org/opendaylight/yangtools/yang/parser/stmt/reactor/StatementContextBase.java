@@ -311,23 +311,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return Collections.unmodifiableCollection(effective);
     }
 
-    /**
-     * Remove a set of statements from effective statements.
-     *
-     * @param statements statements to be removed
-     * @deprecated This method was used by EffectiveStatementBase to restore proper order of effects of uses statements.
-     *             It is no longer used in that capacity and slated for removal.
-     */
-    // FIXME: 5.0.0: remove this method
-    @Deprecated(forRemoval = true)
-    public void removeStatementsFromEffectiveSubstatements(
-            final Collection<? extends StmtContext<?, ?, ?>> statements) {
-        if (!effective.isEmpty()) {
-            effective.removeAll(statements);
-            shrinkEffective();
-        }
-    }
-
     private void shrinkEffective() {
         if (effective.isEmpty()) {
             effective = ImmutableList.of();
