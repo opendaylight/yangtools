@@ -30,11 +30,23 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
-
+    /**
+     * Returns the origin of the statement.
+     *
+     * @return origin of statement
+     */
     @NonNull StatementSource getStatementSource();
 
+    /**
+     * Returns a reference to statement source.
+     *
+     * @return reference of statement source
+     */
     @NonNull StatementSourceReference getStatementSourceReference();
 
+    /**
+     * See {@link StatementSupport#getPublicView()}.
+     */
     @NonNull StatementDefinition getPublicDefinition();
 
     /**
