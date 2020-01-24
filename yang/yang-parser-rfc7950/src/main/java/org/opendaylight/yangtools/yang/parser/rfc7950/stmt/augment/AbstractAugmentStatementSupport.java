@@ -41,7 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.AbstractStmtContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,8 +101,8 @@ abstract class AbstractAugmentStatementSupport
         augmentAction.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                final StatementContextBase<?, ?, ?> augmentTargetCtx =
-                        (StatementContextBase<?, ?, ?>) target.resolve(ctx);
+                final AbstractStmtContext<?, ?, ?> augmentTargetCtx =
+                        (AbstractStmtContext<?, ?, ?>) target.resolve(ctx);
                 if (!isSupportedAugmentTarget(augmentTargetCtx)
                         || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
                     augmentNode.setIsSupportedToBuildEffective(false);
@@ -115,7 +115,7 @@ abstract class AbstractAugmentStatementSupport
                     augmentNode.addToNs(AugmentImplicitHandlingNamespace.class, augmentNode, augmentTargetCtx);
                 }
 
-                final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) augmentNode;
+                final AbstractStmtContext<?, ?, ?> augmentSourceCtx = (AbstractStmtContext<?, ?, ?>) augmentNode;
                 // FIXME: this is a workaround for models which augment a node which is added via an extension
                 //        which we do not handle. This needs to be reworked in terms of unknown schema nodes.
                 try {
@@ -129,7 +129,7 @@ abstract class AbstractAugmentStatementSupport
                 }
             }
 
-            private void updateAugmentOrder(final StatementContextBase<?, ?, ?> augmentSourceCtx) {
+            private void updateAugmentOrder(final AbstractStmtContext<?, ?, ?> augmentSourceCtx) {
                 Integer currentOrder = augmentSourceCtx.getFromNamespace(StmtOrderingNamespace.class,
                     YangStmtMapping.AUGMENT);
                 if (currentOrder == null) {
@@ -173,8 +173,8 @@ abstract class AbstractAugmentStatementSupport
         return parent;
     }
 
-    static void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
-            final StatementContextBase<?, ?, ?> targetCtx) {
+    static void copyFromSourceToTarget(final AbstractStmtContext<?, ?, ?> sourceCtx,
+            final AbstractStmtContext<?, ?, ?> targetCtx) {
         final CopyType typeOfCopy = UsesStatement.class.equals(sourceCtx.coerceParentContext().getPublicDefinition()
                 .getDeclaredRepresentationClass()) ? CopyType.ADDED_BY_USES_AUGMENTATION
                 : CopyType.ADDED_BY_AUGMENTATION;
@@ -219,7 +219,7 @@ abstract class AbstractAugmentStatementSupport
         return StmtContextUtils.findFirstSubstatement(ctx, WhenStatement.class) != null;
     }
 
-    private static void copyStatement(final Mutable<?, ?, ?> original, final StatementContextBase<?, ?, ?> target,
+    private static void copyStatement(final Mutable<?, ?, ?> original, final AbstractStmtContext<?, ?, ?> target,
             final CopyType typeOfCopy, final Collection<Mutable<?, ?, ?>> buffer,
             final boolean skipCheckOfMandatoryNodes) {
         if (needToCopyByAugment(original)) {
@@ -232,7 +232,7 @@ abstract class AbstractAugmentStatementSupport
     }
 
     private static void validateNodeCanBeCopiedByAugment(final StmtContext<?, ?, ?> sourceCtx,
-            final StatementContextBase<?, ?, ?> targetCtx, final CopyType typeOfCopy,
+            final AbstractStmtContext<?, ?, ?> targetCtx, final CopyType typeOfCopy,
             final boolean skipCheckOfMandatoryNodes) {
 
         if (WhenStatement.class.equals(sourceCtx.getPublicDefinition().getDeclaredRepresentationClass())) {
