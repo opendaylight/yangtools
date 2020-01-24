@@ -34,7 +34,6 @@ import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.util.OptionalBoolean;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -43,9 +42,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -98,6 +99,18 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private static final Logger LOG = LoggerFactory.getLogger(StatementContextBase.class);
 
+    /**
+     * Flag constants, split into two bytes -- the top byte holds presence bits, the bottom byte holds values.
+     */
+    private static final int HAVE_SUPPORTED_BY_FEATURES  = 0x0100;
+    private static final int HAVE_CONFIGURATION          = 0x0200;
+    private static final int HAVE_IGNORE_CONFIG          = 0x0400;
+    private static final int HAVE_IGNORE_IF_FEATURE      = 0x0800;
+    private static final int IS_SUPPORTED_BY_FEATURES    = 0x0001;
+    private static final int IS_CONFIGURATION            = 0x0002;
+    private static final int IS_IGNORE_CONFIG            = 0x0004;
+    private static final int IS_IGNORE_IF_FEATURE        = 0x0008;
+
     private final @NonNull StatementDefinitionContext<A, D, E> definition;
     private final @NonNull StatementSourceReference statementDeclSource;
     private final StmtContext<?, ?, ?> originalCtx;
@@ -111,15 +124,18 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private List<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
     private StatementMap substatements = StatementMap.empty();
 
-    private boolean isSupportedToBuildEffective = true;
     private @Nullable ModelProcessingPhase completedPhase;
     private @Nullable D declaredInstance;
     private @Nullable E effectiveInstance;
 
-    // BooleanFields value
-    private byte supportedByFeatures;
+    private boolean isSupportedToBuildEffective = true;
+    private boolean fullyDefined = false;
 
-    private boolean fullyDefined;
+    /**
+     * This is a memory layout optimization, as we have a few flags SubstatementContext, which would end up wasting
+     * some space for alignment.
+     */
+    private short flags = 0;
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
             final String rawArgument) {
@@ -188,23 +204,21 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public boolean isSupportedByFeatures() {
-        if (OptionalBoolean.isPresent(supportedByFeatures)) {
-            return OptionalBoolean.get(supportedByFeatures);
+        if (isFlagSet(HAVE_SUPPORTED_BY_FEATURES)) {
+            return isFlagSet(IS_SUPPORTED_BY_FEATURES);
         }
-
         if (isIgnoringIfFeatures()) {
-            supportedByFeatures = OptionalBoolean.of(true);
+            flags |= HAVE_SUPPORTED_BY_FEATURES | IS_SUPPORTED_BY_FEATURES;
             return true;
         }
 
-        final boolean isParentSupported = isParentSupportedByFeatures();
         /*
          * If parent is not supported, then this context is also not supported.
          * So we do not need to check if-features statements of this context and
          * we can return false immediately.
          */
-        if (!isParentSupported) {
-            supportedByFeatures = OptionalBoolean.of(false);
+        if (!isParentSupportedByFeatures()) {
+            flags |= HAVE_SUPPORTED_BY_FEATURES;
             return false;
         }
 
@@ -216,7 +230,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final Set<QName> supportedFeatures = getFromNamespace(SupportedFeaturesNamespace.class,
                 SupportedFeatures.SUPPORTED_FEATURES);
         final boolean ret = supportedFeatures == null || StmtContextUtils.checkFeatureSupport(this, supportedFeatures);
-        supportedByFeatures = OptionalBoolean.of(ret);
+        flags |= ret ? HAVE_SUPPORTED_BY_FEATURES | IS_SUPPORTED_BY_FEATURES : HAVE_SUPPORTED_BY_FEATURES;
         return ret;
     }
 
@@ -465,7 +479,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     final void setFullyDefined() {
-        this.fullyDefined = true;
+        fullyDefined = true;
     }
 
     final void resizeSubstatements(final int expectedSize) {
@@ -827,6 +841,77 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         result.addEffectiveSubstatement(new SubstatementContext<>(original, result));
         result.setCompletedPhase(original.getCompletedPhase());
         return result;
+    }
+
+    /**
+     * Config statements are not all that common which means we are performing a recursive search towards the root
+     * every time {@link #isConfiguration()} is invoked. This is quite expensive because it causes a linear search
+     * for the (usually non-existent) config statement.
+     *
+     * <p>
+     * This method maintains a resolution cache, so once we have returned a result, we will keep on returning the same
+     * result without performing any lookups.
+     */
+
+    final boolean substatementIsConfiguration(final StatementContextBase<?, ?, ?> parent) {
+        if (isIgnoringConfig()) {
+            return true;
+        }
+        if (isFlagSet(HAVE_CONFIGURATION)) {
+            return isFlagSet(IS_CONFIGURATION);
+        }
+
+        final StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils.findFirstSubstatement(this,
+            ConfigStatement.class);
+        final boolean parentIsConfig = parent.isConfiguration();
+
+        final boolean isConfig;
+        if (configStatement != null) {
+            isConfig = configStatement.coerceStatementArgument();
+
+            // Validity check: if parent is config=false this cannot be a config=true
+            InferenceException.throwIf(isConfig && !parentIsConfig, getStatementSourceReference(),
+                    "Parent node has config=false, this node must not be specifed as config=true");
+        } else {
+            // If "config" statement is not specified, the default is the same as the parent's "config" value.
+            isConfig = parentIsConfig;
+        }
+
+        // Resolved, make sure we cache this return
+        flags |= isConfig ? HAVE_CONFIGURATION | IS_CONFIGURATION : HAVE_CONFIGURATION;
+        return isConfig;
+    }
+
+    /**
+     * This method maintains a resolution cache for ignore config, so once we have returned a result, we will
+     * keep on returning the same result without performing any lookups.
+     */
+    final boolean substatementIsIgnoringConfig(final StatementContextBase<?, ?, ?> parent) {
+        if (isFlagSet(HAVE_IGNORE_CONFIG)) {
+            return isFlagSet(IS_IGNORE_CONFIG);
+        }
+
+        final boolean ret = definition().isIgnoringConfig() || parent.isIgnoringConfig();
+        flags |= ret ? HAVE_IGNORE_CONFIG | IS_IGNORE_CONFIG : HAVE_IGNORE_CONFIG;
+        return ret;
+    }
+
+    private boolean isFlagSet(final int bit) {
+        return (flags & bit) != 0;
+    }
+
+    /**
+     * This method maintains a resolution cache for ignore if-feature, so once we have returned a result, we will
+     * keep on returning the same result without performing any lookups.
+     */
+    final boolean substatementIsIgnoringIfFeatures(final StatementContextBase<?, ?, ?> parent) {
+        if (isFlagSet(HAVE_IGNORE_IF_FEATURE)) {
+            return isFlagSet(IS_IGNORE_IF_FEATURE);
+        }
+
+        final boolean ret = definition().isIgnoringIfFeatures() || parent.isIgnoringIfFeatures();
+        flags |= ret ? HAVE_IGNORE_IF_FEATURE | IS_IGNORE_IF_FEATURE : HAVE_IGNORE_IF_FEATURE;
+        return ret;
     }
 
     final void copyTo(final StatementContextBase<?, ?, ?> target, final CopyType typeOfCopy,
