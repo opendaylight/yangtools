@@ -17,7 +17,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -118,13 +117,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private final CopyHistory copyHistory;
     private final String rawArgument;
 
-    private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = ImmutableMultimap.of();
-    private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = ImmutableMultimap.of();
+    private StatementPhaseState phaseState = StatementPhaseState.initial();
     private List<Mutable<?, ?, ?>> effective = ImmutableList.of();
     private List<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
     private StatementMap substatements = StatementMap.empty();
 
-    private @Nullable ModelProcessingPhase completedPhase;
     private @Nullable D declaredInstance;
     private @Nullable E effectiveInstance;
 
@@ -267,12 +264,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public ModelProcessingPhase getCompletedPhase() {
-        return completedPhase;
+        return phaseState.getCompletedPhase();
     }
 
     @Override
     public void setCompletedPhase(final ModelProcessingPhase completedPhase) {
-        this.completedPhase = completedPhase;
+        phaseState = phaseState.withCompletedPhase(completedPhase);
     }
 
     @Override
@@ -496,6 +493,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public D buildDeclared() {
+        final ModelProcessingPhase completedPhase = getCompletedPhase();
         checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION
                 || completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         if (declaredInstance == null) {
@@ -522,26 +520,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *             when an error occurred in source parsing
      */
     boolean tryToCompletePhase(final ModelProcessingPhase phase) {
-
-        boolean finished = true;
-        final Collection<ContextMutation> openMutations = phaseMutation.get(phase);
-        if (!openMutations.isEmpty()) {
-            final Iterator<ContextMutation> it = openMutations.iterator();
-            while (it.hasNext()) {
-                final ContextMutation current = it.next();
-                if (current.isFinished()) {
-                    it.remove();
-                } else {
-                    finished = false;
-                }
-            }
-
-            if (openMutations.isEmpty()) {
-                phaseMutation.removeAll(phase);
-                if (phaseMutation.isEmpty()) {
-                    phaseMutation = ImmutableMultimap.of();
-                }
-            }
+        boolean finished = phaseState.completeMutations(phase);
+        if (finished) {
+            phaseState = phaseState.trimMutations();
         }
 
         for (final StatementContextBase<?, ?, ?> child : substatements.values()) {
@@ -569,27 +550,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *             when an error occurred in source parsing
      */
     private void onPhaseCompleted(final ModelProcessingPhase phase) {
-        completedPhase = phase;
+        // Record new completed phase, so we report the phase as completed on subsequent queries
+        phaseState = phaseState.withCompletedPhase(phase);
 
-        final Collection<OnPhaseFinished> listeners = phaseListeners.get(phase);
-        if (listeners.isEmpty()) {
-            return;
-        }
-
-        final Iterator<OnPhaseFinished> listener = listeners.iterator();
-        while (listener.hasNext()) {
-            final OnPhaseFinished next = listener.next();
-            if (next.phaseFinished(this, phase)) {
-                listener.remove();
-            }
-        }
-
-        if (listeners.isEmpty()) {
-            phaseListeners.removeAll(phase);
-            if (phaseListeners.isEmpty()) {
-                phaseListeners = ImmutableMultimap.of();
-            }
-        }
+        // Now let the state object complete the phase
+        phaseState = phaseState.dispatchListeners(this);
     }
 
     /**
@@ -716,7 +681,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         checkNotNull(phase, "Statement context processing phase cannot be null at: %s", getStatementSourceReference());
         checkNotNull(listener, "Statement context phase listener cannot be null at: %s", getStatementSourceReference());
 
-        ModelProcessingPhase finishedPhase = completedPhase;
+        ModelProcessingPhase finishedPhase = getCompletedPhase();
         while (finishedPhase != null) {
             if (phase.equals(finishedPhase)) {
                 listener.phaseFinished(this, finishedPhase);
@@ -724,11 +689,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             }
             finishedPhase = finishedPhase.getPreviousPhase();
         }
-        if (phaseListeners.isEmpty()) {
-            phaseListeners = newMultimap();
-        }
-
-        phaseListeners.put(phase, listener);
+        phaseState = phaseState.addListener(phase, listener);
     }
 
     /**
@@ -738,17 +699,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *             when the mutation was registered after phase was completed
      */
     void addMutation(final ModelProcessingPhase phase, final ContextMutation mutation) {
-        ModelProcessingPhase finishedPhase = completedPhase;
+        ModelProcessingPhase finishedPhase = getCompletedPhase();
         while (finishedPhase != null) {
             checkState(!phase.equals(finishedPhase), "Mutation registered after phase was completed at: %s",
                 getStatementSourceReference());
             finishedPhase = finishedPhase.getPreviousPhase();
         }
-
-        if (phaseMutation.isEmpty()) {
-            phaseMutation = newMultimap();
-        }
-        phaseMutation.put(phase, mutation);
+        phaseState = phaseState.addMutation(phase, mutation);
     }
 
     @Override
