@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
-        StatementContextBase<A, D, E> {
+        AbstractResumedStatement<A, D, E> {
     private final StatementContextBase<?, ?, ?> parent;
     private final A argument;
 
@@ -61,10 +61,11 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
                 : original.definition().adaptArgumentValue(original, targetModule);
     }
 
-    SubstatementContext(final StatementContextBase<A, D, E> original, final StatementContextBase<?, ?, ?> parent) {
+    private SubstatementContext(final SubstatementContext<A, D, E> original,
+            final StatementContextBase<?, ?, ?> parent) {
         super(original);
         this.parent = requireNonNull(parent, "Parent must not be null");
-        this.argument = original.getStatementArgument();
+        this.argument = original.argument;
     }
 
     @Override
@@ -195,5 +196,10 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     @Override
     protected boolean isParentSupportedByFeatures() {
         return parent.isSupportedByFeatures();
+    }
+
+    @Override
+    SubstatementContext<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
+        return new SubstatementContext<>(this, newParent);
     }
 }
