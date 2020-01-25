@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -28,16 +27,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.Resumed
  * Intermediate subclass of StatementContextBase facing the parser stream via implementation of ResumedStatement. This
  * shields inference-type substatements from these details.
  *
- * <p>
- * NOTE: this class is visible only for migration purposes until we get rid of
- *       {@link #appendImplicitStatement(StatementSupport)}, at which point this class will be hidden become hidden.
- *
  * @param <A> Argument type
  * @param <D> Declared Statement representation
  * @param <E> Effective Statement representation
  */
-@Beta
-public abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends StatementContextBase<A, D, E> implements ResumedStatement {
     private StatementMap substatements = StatementMap.empty();
 
@@ -83,16 +77,6 @@ public abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>
     @Override
     public boolean isFullyDefined() {
         return fullyDefined();
-    }
-
-    // YANG example: RPC/action statements always have 'input' and 'output' defined
-    // FIXME: consider the design here, as they seem to have an effective input/output, determined just before they
-    //        complete 'fully declared' phase, i.e. if we are finishing full definition, we should be able to seed
-    //        effective statements with those implicits.
-    @Deprecated
-    public void appendImplicitStatement(final StatementSupport<?, ?, ?> statementToAdd) {
-        createSubstatement(substatements.capacity(), new StatementDefinitionContext<>(statementToAdd),
-                ImplicitSubstatement.of(getStatementSourceReference()), null);
     }
 
     /**
