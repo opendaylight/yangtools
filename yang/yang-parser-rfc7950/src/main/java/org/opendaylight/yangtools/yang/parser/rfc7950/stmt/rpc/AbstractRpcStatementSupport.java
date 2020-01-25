@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.AbstractResumedStatement;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 abstract class AbstractRpcStatementSupport
         extends AbstractQNameStatementSupport<RpcStatement, RpcEffectiveStatement> {
@@ -65,12 +65,11 @@ abstract class AbstractRpcStatementSupport
     public final void onFullDefinitionDeclared(final Mutable<QName, RpcStatement, RpcEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        // FIXME: there should be a better way to do this. Append effective statement perhaps?
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
-            ((AbstractResumedStatement<?, ?, ?>) stmt).appendImplicitStatement(implictInput());
+            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(implictInput(), null);
         }
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
-            ((AbstractResumedStatement<?, ?, ?>) stmt).appendImplicitStatement(implictOutput());
+            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(implictOutput(), null);
         }
     }
 

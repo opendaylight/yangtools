@@ -56,6 +56,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
@@ -376,6 +377,19 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
 
         shrinkEffective();
+    }
+
+    // YANG example: RPC/action statements always have 'input' and 'output' defined
+    @Beta
+    public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> @NonNull Mutable<X, Y, Z>
+            appendImplicitSubstatement(final StatementSupport<X, Y, Z> support, final String rawArg) {
+        // FIXME: YANGTOOLS-652: This does not need to be a SubstatementContext, in can be a specialized
+        //                       StatementContextBase subclass.
+        final Mutable<X, Y, Z> ret = new SubstatementContext<>(this, new StatementDefinitionContext<>(support),
+                ImplicitSubstatement.of(getStatementSourceReference()), rawArg);
+        support.onStatementAdded(ret);
+        addEffectiveSubstatement(ret);
+        return ret;
     }
 
     /**
