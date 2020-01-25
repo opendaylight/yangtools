@@ -102,17 +102,19 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // Flag bit assignments
     private static final int IS_SUPPORTED_BY_FEATURES    = 0x01;
     private static final int HAVE_SUPPORTED_BY_FEATURES  = 0x02;
-    private static final int IS_CONFIGURATION            = 0x04;
-    private static final int HAVE_CONFIGURATION          = 0x08;
+    private static final int IS_IGNORE_IF_FEATURE        = 0x04;
+    private static final int HAVE_IGNORE_IF_FEATURE      = 0x08;
+    // Note: these four are related
     private static final int IS_IGNORE_CONFIG            = 0x10;
     private static final int HAVE_IGNORE_CONFIG          = 0x20;
-    private static final int IS_IGNORE_IF_FEATURE        = 0x40;
-    private static final int HAVE_IGNORE_IF_FEATURE      = 0x80;
+    private static final int IS_CONFIGURATION            = 0x40;
+    private static final int HAVE_CONFIGURATION          = 0x80;
 
     // Have-and-set flag constants, also used as masks
     private static final int SET_SUPPORTED_BY_FEATURES = HAVE_SUPPORTED_BY_FEATURES | IS_SUPPORTED_BY_FEATURES;
     private static final int SET_CONFIGURATION = HAVE_CONFIGURATION | IS_CONFIGURATION;
-    private static final int SET_IGNORE_CONFIG = HAVE_IGNORE_CONFIG | IS_IGNORE_CONFIG;
+    // Note: implies SET_CONFIGURATION, allowing fewer bit operations to be performed
+    private static final int SET_IGNORE_CONFIG = HAVE_IGNORE_CONFIG | IS_IGNORE_CONFIG | SET_CONFIGURATION;
     private static final int SET_IGNORE_IF_FEATURE = HAVE_IGNORE_IF_FEATURE | IS_IGNORE_IF_FEATURE;
 
     private final @NonNull StatementDefinitionContext<A, D, E> definition;
@@ -862,29 +864,34 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * <p>
      * This method maintains a resolution cache, so once we have returned a result, we will keep on returning the same
      * result without performing any lookups, solely to support {@link SubstatementContext#isConfiguration()}.
+     *
+     * <p>
+     * Note: use of this method implies that {@link #isIgnoringConfig()} is realized with
+     *       {@link #isIgnoringConfig(StatementContextBase)}.
      */
     final boolean isConfiguration(final StatementContextBase<?, ?, ?> parent) {
-        if (isIgnoringConfig()) {
-            return true;
-        }
         final int fl = flags & SET_CONFIGURATION;
         if (fl != 0) {
             return fl == SET_CONFIGURATION;
         }
+        if (isIgnoringConfig(parent)) {
+            // Note: SET_CONFIGURATION has been stored in flags
+            return true;
+        }
+
         final StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils.findFirstSubstatement(this,
             ConfigStatement.class);
-        final boolean parentIsConfig = parent.isConfiguration();
-
         final boolean isConfig;
         if (configStatement != null) {
             isConfig = configStatement.coerceStatementArgument();
-
-            // Validity check: if parent is config=false this cannot be a config=true
-            InferenceException.throwIf(isConfig && !parentIsConfig, getStatementSourceReference(),
-                    "Parent node has config=false, this node must not be specifed as config=true");
+            if (isConfig) {
+                // Validity check: if parent is config=false this cannot be a config=true
+                InferenceException.throwIf(!parent.isConfiguration(), getStatementSourceReference(),
+                        "Parent node has config=false, this node must not be specifed as config=true");
+            }
         } else {
             // If "config" statement is not specified, the default is the same as the parent's "config" value.
-            isConfig = parentIsConfig;
+            isConfig = parent.isConfiguration();
         }
 
         // Resolved, make sure we cache this return
@@ -898,6 +905,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * This method maintains a resolution cache for ignore config, so once we have returned a result, we will
      * keep on returning the same result without performing any lookups. Exists only to support
      * {@link SubstatementContext#isIgnoringConfig()}.
+     *
+     * <p>
+     * Note: use of this method implies that {@link #isConfiguration()} is realized with
+     *       {@link #isConfiguration(StatementContextBase)}.
      */
     final boolean isIgnoringConfig(final StatementContextBase<?, ?, ?> parent) {
         final int fl = flags & SET_IGNORE_CONFIG;
