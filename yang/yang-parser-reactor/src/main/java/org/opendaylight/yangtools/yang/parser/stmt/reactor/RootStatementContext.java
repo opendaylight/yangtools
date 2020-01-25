@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -194,36 +195,6 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         }
         return null;
     }
-
-    @Override
-    public YangVersion getRootVersion() {
-        return rootVersion == null ? DEFAULT_VERSION : rootVersion;
-    }
-
-    @Override
-    public void setRootVersion(final YangVersion version) {
-        checkArgument(sourceContext.getSupportedVersions().contains(version),
-                "Unsupported yang version %s in %s", version, getStatementSourceReference());
-        checkState(this.rootVersion == null, "Version of root %s has been already set to %s", argument,
-                this.rootVersion);
-        this.rootVersion = requireNonNull(version);
-    }
-
-    @Override
-    public void addMutableStmtToSeal(final MutableStatement mutableStatement) {
-        sourceContext.addMutableStmtToSeal(mutableStatement);
-    }
-
-    @Override
-    public void addRequiredSource(final SourceIdentifier dependency) {
-        checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
-                "Add required module is allowed only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase");
-        if (requiredSources.isEmpty()) {
-            requiredSources = new HashSet<>();
-        }
-        requiredSources.add(dependency);
-    }
-
     /**
      * Return the set of required sources.
      *
@@ -231,11 +202,6 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      */
     Collection<SourceIdentifier> getRequiredSources() {
         return ImmutableSet.copyOf(requiredSources);
-    }
-
-    @Override
-    public void setRootIdentifier(final SourceIdentifier identifier) {
-        this.rootIdentifier = requireNonNull(identifier);
     }
 
     SourceIdentifier getRootIdentifier() {
@@ -255,6 +221,35 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     @Override
     protected boolean isParentSupportedByFeatures() {
         return true;
+    }
+
+    void setRootIdentifierImpl(final SourceIdentifier identifier) {
+        this.rootIdentifier = requireNonNull(identifier);
+    }
+
+    @NonNull YangVersion getRootVersionImpl() {
+        return rootVersion == null ? DEFAULT_VERSION : rootVersion;
+    }
+
+    void setRootVersionImpl(final YangVersion version) {
+        checkArgument(sourceContext.getSupportedVersions().contains(version),
+                "Unsupported yang version %s in %s", version, getStatementSourceReference());
+        checkState(this.rootVersion == null, "Version of root %s has been already set to %s", argument,
+                this.rootVersion);
+        this.rootVersion = requireNonNull(version);
+    }
+
+    void addMutableStmtToSealImpl(final MutableStatement mutableStatement) {
+        sourceContext.addMutableStmtToSeal(mutableStatement);
+    }
+
+    void addRequiredSourceImpl(final SourceIdentifier dependency) {
+        checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+                "Add required module is allowed only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase");
+        if (requiredSources.isEmpty()) {
+            requiredSources = new HashSet<>();
+        }
+        requiredSources.add(dependency);
     }
 
     @Override
