@@ -41,7 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  * of this class, hence recursive lookups from them cross this class.
  */
 public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
-        StatementContextBase<A, D, E> {
+        AbstractResumedStatement<A, D, E> {
 
     public static final YangVersion DEFAULT_VERSION = YangVersion.VERSION_1;
 
@@ -255,5 +255,10 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     @Override
     protected boolean isParentSupportedByFeatures() {
         return true;
+    }
+
+    @Override
+    StatementContextBase<A, D, E> reparent(final StatementContextBase<?, ?, ?> newParent) {
+        throw new UnsupportedOperationException("Root statement cannot be reparented to" + newParent);
     }
 }
