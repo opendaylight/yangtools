@@ -290,7 +290,17 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
             return childCopyOf(stmt, type, null);
         }
 
+        @Override
+        default Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements() {
+            return mutableDeclaredSubstatements();
+        }
+
         @NonNull Collection<? extends Mutable<?, ?, ?>> mutableDeclaredSubstatements();
+
+        @Override
+        default Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements() {
+            return mutableEffectiveSubstatements();
+        }
 
         @NonNull Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements();
 
