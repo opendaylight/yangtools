@@ -89,6 +89,7 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
         }
     }
 
+    // FIXME: YANGTOOLS-652: these maps look very much like those in InferredStatementContext
     private static final ImmutableSet<YangStmtMapping> TOP_REUSED_DEF_SET = ImmutableSet.of(
         YangStmtMapping.TYPE,
         YangStmtMapping.TYPEDEF);
