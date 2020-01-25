@@ -29,6 +29,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
+/**
+ * An inference context associated with an instance of a statement.
+ *
+ * @param <A> Argument type
+ * @param <D> Declared Statement representation
+ * @param <E> Effective Statement representation
+ */
 public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
     /**
      * Returns the origin of the statement.
@@ -215,6 +222,13 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      */
     @NonNull YangVersion getRootVersion();
 
+    /**
+     * An mutable view of an inference context associated with an instance of a statement.
+     *
+     * @param <A> Argument type
+     * @param <D> Declared Statement representation
+     * @param <E> Effective Statement representation
+     */
     interface Mutable<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
             extends StmtContext<A, D, E> {
 
