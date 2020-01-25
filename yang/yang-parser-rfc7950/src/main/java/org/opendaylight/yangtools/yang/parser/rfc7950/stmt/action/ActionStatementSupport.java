@@ -91,11 +91,12 @@ public final class ActionStatementSupport
         super.onFullDefinitionDeclared(stmt);
 
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
-            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitStatement(InputStatementRFC7950Support.getInstance());
+            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(
+                InputStatementRFC7950Support.getInstance(), null);
         }
-
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
-            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitStatement(OutputStatementRFC7950Support.getInstance());
+            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(
+                OutputStatementRFC7950Support.getInstance(), null);
         }
     }
 

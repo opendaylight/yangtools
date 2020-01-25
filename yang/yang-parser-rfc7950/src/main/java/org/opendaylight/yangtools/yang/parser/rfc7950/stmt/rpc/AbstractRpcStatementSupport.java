@@ -66,11 +66,10 @@ abstract class AbstractRpcStatementSupport
         super.onFullDefinitionDeclared(stmt);
 
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
-            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitStatement(implictInput());
+            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(implictInput(), null);
         }
-
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
-            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitStatement(implictOutput());
+            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitSubstatement(implictOutput(), null);
         }
     }
 

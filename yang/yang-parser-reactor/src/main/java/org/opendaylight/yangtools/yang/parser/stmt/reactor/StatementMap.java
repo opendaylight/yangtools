@@ -30,17 +30,17 @@ import org.eclipse.jdt.annotation.Nullable;
 abstract class StatementMap {
     private static final class Empty extends StatementMap {
         @Override
-        StatementContextBase<?, ?, ?> get(final int index) {
+        AbstractResumedStatement<?, ?, ?> get(final int index) {
             return null;
         }
 
         @Override
-        StatementMap put(final int index, final StatementContextBase<?, ?, ?> obj) {
+        StatementMap put(final int index, final AbstractResumedStatement<?, ?, ?> obj) {
             return index == 0 ? new Singleton(obj) : new Regular(index, obj);
         }
 
         @Override
-        Collection<StatementContextBase<?, ?, ?>> values() {
+        Collection<AbstractResumedStatement<?, ?, ?>> values() {
             return ImmutableList.of();
         }
 
@@ -61,37 +61,37 @@ abstract class StatementMap {
     }
 
     private static final class Regular extends StatementMap {
-        private StatementContextBase<?, ?, ?>[] elements;
+        private AbstractResumedStatement<?, ?, ?>[] elements;
         private int size;
 
         Regular(final int expectedLimit) {
-            elements = new StatementContextBase<?, ?, ?>[expectedLimit];
+            elements = new AbstractResumedStatement<?, ?, ?>[expectedLimit];
         }
 
-        Regular(final int index, final StatementContextBase<?, ?, ?> object) {
+        Regular(final int index, final AbstractResumedStatement<?, ?, ?> object) {
             this(index + 1, index, object);
         }
 
-        Regular(final StatementContextBase<?, ?, ?> object0, final int index,
-                final StatementContextBase<?, ?, ?> object) {
+        Regular(final AbstractResumedStatement<?, ?, ?> object0, final int index,
+                final AbstractResumedStatement<?, ?, ?> object) {
             this(index + 1, 0, object0);
             elements[index] = requireNonNull(object);
             size = 2;
         }
 
-        Regular(final int expectedLimit, final int index, final StatementContextBase<?, ?, ?> object) {
+        Regular(final int expectedLimit, final int index, final AbstractResumedStatement<?, ?, ?> object) {
             this(expectedLimit);
             elements[index] = requireNonNull(object);
             size = 1;
         }
 
         @Override
-        StatementContextBase<?, ?, ?> get(final int index) {
+        AbstractResumedStatement<?, ?, ?> get(final int index) {
             return index >= elements.length ? null : elements[index];
         }
 
         @Override
-        StatementMap put(final int index, final StatementContextBase<?, ?, ?> obj) {
+        StatementMap put(final int index, final AbstractResumedStatement<?, ?, ?> obj) {
             if (index < elements.length) {
                 checkArgument(elements[index] == null);
             } else {
@@ -105,7 +105,7 @@ abstract class StatementMap {
         }
 
         @Override
-        Collection<StatementContextBase<?, ?, ?>> values() {
+        Collection<AbstractResumedStatement<?, ?, ?>> values() {
             return new RegularAsCollection<>(elements, size);
         }
 
@@ -148,7 +148,7 @@ abstract class StatementMap {
 
         @Override
         public Iterator<T> iterator() {
-            return new AbstractIterator<T>() {
+            return new AbstractIterator<>() {
                 private int nextOffset = 0;
 
                 @Override
@@ -172,25 +172,25 @@ abstract class StatementMap {
     }
 
     private static final class Singleton extends StatementMap {
-        private final StatementContextBase<?, ?, ?> object;
+        private final AbstractResumedStatement<?, ?, ?> object;
 
-        Singleton(final StatementContextBase<?, ?, ?> object) {
+        Singleton(final AbstractResumedStatement<?, ?, ?> object) {
             this.object = requireNonNull(object);
         }
 
         @Override
-        StatementContextBase<?, ?, ?> get(final int index) {
+        AbstractResumedStatement<?, ?, ?> get(final int index) {
             return index == 0 ? object : null;
         }
 
         @Override
-        StatementMap put(final int index, final StatementContextBase<?, ?, ?> obj) {
+        StatementMap put(final int index, final AbstractResumedStatement<?, ?, ?> obj) {
             checkArgument(index != 0);
             return new Regular(this.object, index, obj);
         }
 
         @Override
-        Collection<StatementContextBase<?, ?, ?>> values() {
+        Collection<AbstractResumedStatement<?, ?, ?>> values() {
             return ImmutableList.of(object);
         }
 
@@ -222,7 +222,7 @@ abstract class StatementMap {
      * @param index Element index, must be non-negative
      * @return Requested element or null if there is no element at that index
      */
-    abstract @Nullable StatementContextBase<?, ?, ?> get(int index);
+    abstract @Nullable AbstractResumedStatement<?, ?, ?> get(int index);
 
     /**
      * Add a statement at specified index.
@@ -232,7 +232,7 @@ abstract class StatementMap {
      * @return New statement map
      * @throws IllegalArgumentException if the index is already occupied
      */
-    abstract @NonNull StatementMap put(int index, @NonNull StatementContextBase<?, ?, ?> obj);
+    abstract @NonNull StatementMap put(int index, @NonNull AbstractResumedStatement<?, ?, ?> obj);
 
     /**
      * Return a read-only view of the elements in this map. Unlike other maps, this view does not detect concurrent
@@ -241,7 +241,7 @@ abstract class StatementMap {
      *
      * @return Read-only view of available statements.
      */
-    abstract @NonNull Collection<StatementContextBase<?, ?, ?>> values();
+    abstract @NonNull Collection<AbstractResumedStatement<?, ?, ?>> values();
 
     abstract int size();
 
