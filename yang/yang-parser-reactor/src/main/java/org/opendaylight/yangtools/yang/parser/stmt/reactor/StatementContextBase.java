@@ -56,10 +56,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.ResumedStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
@@ -68,7 +66,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends NamespaceStorageSupport implements Mutable<A, D, E>, ResumedStatement {
+        extends NamespaceStorageSupport implements Mutable<A, D, E> {
     /**
      * Event listener when an item is added to model namespace.
      */
@@ -128,17 +126,20 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = ImmutableMultimap.of();
     private List<Mutable<?, ?, ?>> effective = ImmutableList.of();
     private List<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
-    private StatementMap substatements = StatementMap.empty();
 
     private @Nullable ModelProcessingPhase completedPhase;
     private @Nullable D declaredInstance;
     private @Nullable E effectiveInstance;
 
-    // Common state bits
+    // Master flag controlling whether this context can yield an effective statement
+    // FIXME: investigate the mechanics that are being supported by this, as it would be beneficial if we can get rid
+    //        of this flag -- eliminating the initial alignment shadow used by below gap-filler fields.
     private boolean isSupportedToBuildEffective = true;
+
+    // Flag for use with AbstractResumedStatement. This is hiding in the alignment shadow created by above boolean
     private boolean fullyDefined;
 
-    // Flags for use with SubstatementContext. These are hiding in the alignment shadow created by above booleans and
+    // Flags for use with SubstatementContext. These are hiding in the alignment shadow created by above boolean and
     // hence improve memory layout.
     private byte flags;
 
@@ -178,7 +179,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.copyHistory = original.getCopyHistory();
         this.originalCtx = original.getOriginalCtx().orElse(original);
         this.prevCopyCtx = original;
-        this.substatements = original.substatements;
         this.effective = original.effective;
     }
 
@@ -300,14 +300,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements() {
-        return substatements.values();
-    }
-
-    @Override
-    public Collection<? extends Mutable<?, ?, ?>> mutableDeclaredSubstatements() {
-        return substatements.values();
-    }
+    public abstract Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements();
 
     @Override
     public Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements() {
@@ -422,74 +415,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
     }
 
-    /**
-     * Create a new substatement at the specified offset.
-     *
-     * @param offset Substatement offset
-     * @param def definition context
-     * @param ref source reference
-     * @param argument statement argument
-     * @param <X> new substatement argument type
-     * @param <Y> new substatement declared type
-     * @param <Z> new substatement effective type
-     * @return A new substatement
-     */
-    @SuppressWarnings("checkstyle:methodTypeParameterName")
-    public final <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
-            StatementContextBase<X, Y, Z> createSubstatement(final int offset,
-                    final StatementDefinitionContext<X, Y, Z> def, final StatementSourceReference ref,
-                    final String argument) {
-        final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
-        checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Declared statement cannot be added in effective phase at: %s", getStatementSourceReference());
-
-        final Optional<StatementSupport<?, ?, ?>> implicitParent = definition.getImplicitParentFor(def.getPublicView());
-        if (implicitParent.isPresent()) {
-            return createImplicitParent(offset, implicitParent.get(), ref, argument).createSubstatement(offset, def,
-                    ref, argument);
-        }
-
-        final StatementContextBase<X, Y, Z> ret = new SubstatementContext<>(this, def, ref, argument);
-        substatements = substatements.put(offset, ret);
-        def.onStatementAdded(ret);
-        return ret;
+    // Exists only due to memory optimization
+    final boolean fullyDefined() {
+        return fullyDefined;
     }
 
-    private StatementContextBase<?, ?, ?> createImplicitParent(final int offset,
-            final StatementSupport<?, ?, ?> implicitParent, final StatementSourceReference ref, final String argument) {
-        final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implicitParent);
-        return createSubstatement(offset, def, ImplicitSubstatement.of(ref), argument);
-    }
-
-    public void appendImplicitStatement(final StatementSupport<?, ?, ?> statementToAdd) {
-        createSubstatement(substatements.capacity(), new StatementDefinitionContext<>(statementToAdd),
-                ImplicitSubstatement.of(getStatementSourceReference()), null);
-    }
-
-    /**
-     * Lookup substatement by its offset in this statement.
-     *
-     * @param offset Substatement offset
-     * @return Substatement, or null if substatement does not exist.
-     */
-    final StatementContextBase<?, ?, ?> lookupSubstatement(final int offset) {
-        return substatements.get(offset);
-    }
-
+    // Exists only due to memory optimization, should live in AbstractResumedStatement
     final void setFullyDefined() {
-        this.fullyDefined = true;
-    }
-
-    final void resizeSubstatements(final int expectedSize) {
-        substatements = substatements.ensureCapacity(expectedSize);
-    }
-
-    final void walkChildren(final ModelProcessingPhase phase) {
-        checkState(fullyDefined);
-        substatements.values().forEach(stmt -> {
-            stmt.walkChildren(phase);
-            stmt.endDeclared(phase);
-        });
+        fullyDefined = true;
     }
 
     @Override
@@ -542,7 +475,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             }
         }
 
-        for (final StatementContextBase<?, ?, ?> child : substatements.values()) {
+        for (final StatementContextBase<?, ?, ?> child : mutableDeclaredSubstatements()) {
             finished &= child.tryToCompletePhase(phase);
         }
         for (final Mutable<?, ?, ?> child : effective) {
@@ -774,7 +707,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         if (implicitParent.isPresent()) {
             final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implicitParent.get());
-            result = new SubstatementContext(this, def, original.getSourceReference(),
+            result = new SubstatementContext(this, def, original.getStatementSourceReference(),
                 original.rawStatementArgument(), original.getStatementArgument(), type);
 
             final CopyType childCopyType;
@@ -802,21 +735,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return result;
     }
 
-    @Override
-    public @NonNull StatementDefinition getDefinition() {
-        return getPublicDefinition();
-    }
-
-    @Override
-    public @NonNull StatementSourceReference getSourceReference() {
-        return getStatementSourceReference();
-    }
-
-    @Override
-    public boolean isFullyDefined() {
-        return fullyDefined;
-    }
-
     @Beta
     public final boolean hasImplicitParentSupport() {
         return definition.getFactory() instanceof ImplicitParentAwareStatementSupport;
@@ -836,10 +754,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             original.getStatementSourceReference(), original.rawStatementArgument(), original.getStatementArgument(),
             type);
 
-        result.addEffectiveSubstatement(new SubstatementContext<>(original, result));
+        result.addEffectiveSubstatement(original.reparent(result));
         result.setCompletedPhase(original.getCompletedPhase());
         return result;
     }
+
+    abstract StatementContextBase<?, ?, ?> reparent(StatementContextBase<?, ?, ?> result);
 
     /**
      * Config statements are not all that common which means we are performing a recursive search towards the root
@@ -932,14 +852,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     final void copyTo(final StatementContextBase<?, ?, ?> target, final CopyType typeOfCopy,
             @Nullable final QNameModule targetModule) {
-        final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(substatements.size() + effective.size());
+        final Collection<? extends StatementContextBase<?, ?, ?>> declared = mutableDeclaredSubstatements();
+        final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
-        for (final Mutable<?, ?, ?> stmtContext : substatements.values()) {
+        for (final Mutable<?, ?, ?> stmtContext : declared) {
             if (stmtContext.isSupportedByFeatures()) {
                 copySubstatement(stmtContext, target, typeOfCopy, targetModule, buffer);
             }
         }
-
         for (final Mutable<?, ?, ?> stmtContext : effective) {
             copySubstatement(stmtContext, target, typeOfCopy, targetModule, buffer);
         }
