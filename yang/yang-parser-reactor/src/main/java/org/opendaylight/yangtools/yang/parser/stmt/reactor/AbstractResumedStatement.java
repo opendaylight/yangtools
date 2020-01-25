@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -33,30 +35,58 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.Resumed
  */
 abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends StatementContextBase<A, D, E> implements ResumedStatement {
+    private final @NonNull StatementSourceReference statementDeclSource;
+    private final StmtContext<?, ?, ?> originalCtx;
+    private final StmtContext<?, ?, ?> prevCopyCtx;
+    private final String rawArgument;
+
     private StatementMap substatements = StatementMap.empty();
+
+    AbstractResumedStatement(final AbstractResumedStatement<A, D, E> original) {
+        super(original);
+        this.statementDeclSource = original.statementDeclSource;
+        this.rawArgument = original.rawArgument;
+        this.originalCtx = original.getOriginalCtx().orElse(original);
+        this.prevCopyCtx = original;
+        this.substatements = original.substatements;
+    }
 
     AbstractResumedStatement(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
             final String rawArgument) {
-        super(def, ref, rawArgument);
+        super(def);
+        this.statementDeclSource = requireNonNull(ref);
+        this.rawArgument = def.internArgument(rawArgument);
+        this.originalCtx = null;
+        this.prevCopyCtx = null;
     }
 
     AbstractResumedStatement(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
             final String rawArgument, final CopyType copyType) {
-        super(def, ref, rawArgument, copyType);
-    }
-
-    AbstractResumedStatement(final StatementContextBase<A, D, E> original, final CopyType copyType) {
-        super(original, copyType);
-    }
-
-    AbstractResumedStatement(final AbstractResumedStatement<A, D, E> original) {
-        super(original);
-        this.substatements = original.substatements;
+        super(def, CopyHistory.of(copyType, CopyHistory.original()));
+        this.statementDeclSource = requireNonNull(ref);
+        this.rawArgument = rawArgument;
+        this.originalCtx = null;
+        this.prevCopyCtx = null;
     }
 
     @Override
-    public Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements() {
-        return substatements.values();
+    public final Optional<StmtContext<?, ?, ?>> getOriginalCtx() {
+        return Optional.ofNullable(originalCtx);
+    }
+
+    @Override
+    public final Optional<? extends StmtContext<?, ?, ?>> getPreviousCopyCtx() {
+        return Optional.ofNullable(prevCopyCtx);
+    }
+
+    @Override
+    public final StatementSourceReference getStatementSourceReference() {
+        return statementDeclSource;
+    }
+
+    @Override
+    public final String rawStatementArgument() {
+        return rawArgument;
     }
 
     @Override
