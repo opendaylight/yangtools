@@ -67,6 +67,13 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWit
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Core reactor statement implementation of {@link Mutable}.
+ *
+ * @param <A> Argument type
+ * @param <D> Declared Statement representation
+ * @param <E> Effective Statement representation
+ */
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends NamespaceStorageSupport implements Mutable<A, D, E>, ResumedStatement {
     /**
