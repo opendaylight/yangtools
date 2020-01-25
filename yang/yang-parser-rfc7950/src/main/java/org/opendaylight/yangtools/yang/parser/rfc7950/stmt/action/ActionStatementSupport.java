@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.AbstractResumedStatement;
 
 public final class ActionStatementSupport
         extends AbstractQNameStatementSupport<ActionStatement, ActionEffectiveStatement> {
@@ -90,12 +90,14 @@ public final class ActionStatementSupport
     public void onFullDefinitionDeclared(final Mutable<QName, ActionStatement, ActionEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
+        // FIXME: there should be a better way to do this. Append effective statement perhaps?
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
-            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitStatement(InputStatementRFC7950Support.getInstance());
+            ((AbstractResumedStatement<?, ?, ?>) stmt).appendImplicitStatement(
+                InputStatementRFC7950Support.getInstance());
         }
-
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
-            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitStatement(OutputStatementRFC7950Support.getInstance());
+            ((AbstractResumedStatement<?, ?, ?>) stmt).appendImplicitStatement(
+                OutputStatementRFC7950Support.getInstance());
         }
     }
 
