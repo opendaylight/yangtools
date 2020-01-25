@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
@@ -23,7 +24,7 @@ final class StatementContextWriter implements StatementWriter {
     private final ModelProcessingPhase phase;
     private final SourceSpecificContext ctx;
 
-    private StatementContextBase<?, ?, ?> current;
+    private AbstractResumedStatement<?, ?, ?> current;
 
     StatementContextWriter(final SourceSpecificContext ctx, final ModelProcessingPhase phase) {
         this.ctx = requireNonNull(ctx);
@@ -32,12 +33,12 @@ final class StatementContextWriter implements StatementWriter {
 
     @Override
     public Optional<? extends ResumedStatement> resumeStatement(final int childId) {
-        final Optional<StatementContextBase<?, ?, ?>> existing = ctx.lookupDeclaredChild(current, childId);
+        final Optional<AbstractResumedStatement<?, ?, ?>> existing = ctx.lookupDeclaredChild(current, childId);
         existing.ifPresent(this::resumeStatement);
         return existing;
     }
 
-    private void resumeStatement(final StatementContextBase<?, ?, ?> child) {
+    private void resumeStatement(final AbstractResumedStatement<?, ?, ?> child) {
         if (child.isFullyDefined()) {
             child.walkChildren(phase);
             child.endDeclared(phase);
@@ -60,7 +61,7 @@ final class StatementContextWriter implements StatementWriter {
     @Override
     public void startStatement(final int childId, final QName name, final String argument,
             final StatementSourceReference ref) {
-        final Optional<StatementContextBase<?, ?, ?>> existing = ctx.lookupDeclaredChild(current, childId);
+        final Optional<AbstractResumedStatement<?, ?, ?>> existing = ctx.lookupDeclaredChild(current, childId);
         current = existing.isPresent() ? existing.get()
                 :  verifyNotNull(ctx.createDeclaredChild(current, childId, name, argument, ref));
     }
@@ -78,11 +79,20 @@ final class StatementContextWriter implements StatementWriter {
     }
 
     private void exitStatement() {
+        // TODO: AbstractResumedStatement should only ever have AbstractResumedStatement parents, which would:
+        //       - remove the StatementSource check
+        //       - allow endDeclared() to be moved to AbstractResumedStatement
+        //       - remove the need for verify()
         StatementContextBase<?, ?, ?> parentContext = current.getParentContext();
         while (parentContext != null && StatementSource.CONTEXT == parentContext.getStatementSource()) {
             parentContext.endDeclared(phase);
             parentContext = parentContext.getParentContext();
         }
-        current = parentContext;
+        if (parentContext != null) {
+            verify(parentContext instanceof AbstractResumedStatement, "Unexpected parent context %s", parentContext);
+            current = (AbstractResumedStatement<?, ?, ?>) parentContext;
+        } else {
+            current = null;
+        }
     }
 }
