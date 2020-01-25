@@ -382,11 +382,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // YANG example: RPC/action statements always have 'input' and 'output' defined
     @Beta
     public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> @NonNull Mutable<X, Y, Z>
-            appendImplicitSubstatement(final StatementSupport<X, Y, Z> support, final String rawArgument) {
+            appendImplicitSubstatement(final StatementSupport<X, Y, Z> support, final String rawArg) {
         // FIXME: YANGTOOLS-652: This does not need to be a SubstatementContext, in can be a specialized
         //                       StatementContextBase subclass.
         final Mutable<X, Y, Z> ret = new SubstatementContext<>(this, new StatementDefinitionContext<>(support),
-                ImplicitSubstatement.of(getStatementSourceReference()), rawArgument);
+                ImplicitSubstatement.of(getStatementSourceReference()), rawArg);
         support.onStatementAdded(ret);
         addEffectiveSubstatement(ret);
         return ret;
