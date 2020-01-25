@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -18,7 +19,6 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import java.util.ArrayList;
@@ -36,20 +36,29 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -58,7 +67,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
@@ -123,12 +131,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private static final int SET_IGNORE_CONFIG = HAVE_IGNORE_CONFIG | IS_IGNORE_CONFIG | SET_CONFIGURATION;
     private static final int SET_IGNORE_IF_FEATURE = HAVE_IGNORE_IF_FEATURE | IS_IGNORE_IF_FEATURE;
 
-    private final @NonNull StatementDefinitionContext<A, D, E> definition;
-    private final @NonNull StatementSourceReference statementDeclSource;
-    private final StmtContext<?, ?, ?> originalCtx;
-    private final StmtContext<?, ?, ?> prevCopyCtx;
     private final CopyHistory copyHistory;
-    private final String rawArgument;
+    // Note: this field can strictly be derived in InferredStatementContext, but it forms the basis of many of our
+    //       operations, hence we want to keep it close by.
+    private final @NonNull StatementDefinitionContext<A, D, E> definition;
 
     private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = ImmutableMultimap.of();
     private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = ImmutableMultimap.of();
@@ -151,43 +157,23 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     // hence improve memory layout.
     private byte flags;
 
-    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
-            final String rawArgument) {
-        this.definition = requireNonNull(def);
-        this.statementDeclSource = requireNonNull(ref);
-        this.rawArgument = def.internArgument(rawArgument);
-        this.copyHistory = CopyHistory.original();
-        this.originalCtx = null;
-        this.prevCopyCtx = null;
-    }
-
-    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
-        final String rawArgument, final CopyType copyType) {
-        this.definition = requireNonNull(def);
-        this.statementDeclSource = requireNonNull(ref);
-        this.rawArgument = rawArgument;
-        this.copyHistory = CopyHistory.of(copyType, CopyHistory.original());
-        this.originalCtx = null;
-        this.prevCopyCtx = null;
-    }
-
-    StatementContextBase(final StatementContextBase<A, D, E> original, final CopyType copyType) {
-        this.definition = original.definition;
-        this.statementDeclSource = original.statementDeclSource;
-        this.rawArgument = original.rawArgument;
-        this.copyHistory = CopyHistory.of(copyType, original.getCopyHistory());
-        this.originalCtx = original.getOriginalCtx().orElse(original);
-        this.prevCopyCtx = original;
-    }
+    // SchemaPath cache for use with SubstatementContext and InferredStatementContext. This hurts RootStatementContext
+    // a bit in terms of size -- but those are only a few and SchemaPath is on its way out anyway.
+    private volatile SchemaPath schemaPath;
 
     StatementContextBase(final StatementContextBase<A, D, E> original) {
+        this.copyHistory = original.copyHistory;
         this.definition = original.definition;
-        this.statementDeclSource = original.statementDeclSource;
-        this.rawArgument = original.rawArgument;
-        this.copyHistory = original.getCopyHistory();
-        this.originalCtx = original.getOriginalCtx().orElse(original);
-        this.prevCopyCtx = original;
-        this.effective = original.effective;
+    }
+
+    StatementContextBase(final StatementDefinitionContext<A, D, E> def) {
+        this.definition = requireNonNull(def);
+        this.copyHistory = CopyHistory.original();
+    }
+
+    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final CopyHistory copyHistory) {
+        this.definition = requireNonNull(def);
+        this.copyHistory = requireNonNull(copyHistory);
     }
 
     @Override
@@ -262,16 +248,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public Optional<StmtContext<?, ?, ?>> getOriginalCtx() {
-        return Optional.ofNullable(originalCtx);
-    }
-
-    @Override
-    public Optional<? extends StmtContext<?, ?, ?>> getPreviousCopyCtx() {
-        return Optional.ofNullable(prevCopyCtx);
-    }
-
-    @Override
     public ModelProcessingPhase getCompletedPhase() {
         return completedPhase;
     }
@@ -293,27 +269,47 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public abstract RootStatementContext<?, ?, ?> getRoot();
 
     @Override
+    public final @NonNull Registry getBehaviourRegistry() {
+        return getRoot().getBehaviourRegistryImpl();
+    }
+
+    @Override
+    public final YangVersion getRootVersion() {
+        return getRoot().getRootVersionImpl();
+    }
+
+    @Override
+    public final void setRootVersion(final YangVersion version) {
+        getRoot().setRootVersionImpl(version);
+    }
+
+    @Override
+    public final void addMutableStmtToSeal(final MutableStatement mutableStatement) {
+        getRoot().addMutableStmtToSealImpl(mutableStatement);
+    }
+
+    @Override
+    public final void addRequiredSource(final SourceIdentifier dependency) {
+        getRoot().addRequiredSourceImpl(dependency);
+    }
+
+    @Override
+    public final void setRootIdentifier(final SourceIdentifier identifier) {
+        getRoot().setRootIdentifierImpl(identifier);
+    }
+
+    @Override
+    public final boolean isEnabledSemanticVersioning() {
+        return getRoot().isEnabledSemanticVersioningImpl();
+    }
+
+    @Override
     public StatementSource getStatementSource() {
-        return statementDeclSource.getStatementSource();
-    }
-
-    @Override
-    public StatementSourceReference getStatementSourceReference() {
-        return statementDeclSource;
-    }
-
-    @Override
-    public final String rawStatementArgument() {
-        return rawArgument;
+        return getStatementSourceReference().getStatementSource();
     }
 
     @Override
     public abstract Collection<? extends StatementContextBase<?, ?, ?>> mutableDeclaredSubstatements();
-
-    @Override
-    public Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements() {
-        return mutableEffectiveSubstatements();
-    }
 
     @Override
     public Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements() {
@@ -468,7 +464,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION
                 || completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         if (declaredInstance == null) {
-            declaredInstance = definition().getFactory().createDeclared(this);
+            declaredInstance = definition.getFactory().createDeclared(this);
         }
         return declaredInstance;
     }
@@ -476,7 +472,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public E buildEffective() {
         if (effectiveInstance == null) {
-            effectiveInstance = definition().getFactory().createEffective(this);
+            effectiveInstance = definition.getFactory().createEffective(this);
         }
         return effectiveInstance;
     }
@@ -565,7 +561,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * Ends declared section of current node.
      */
     void endDeclared(final ModelProcessingPhase phase) {
-        definition().onDeclarationFinished(this, phase);
+        definition.onDeclarationFinished(this, phase);
     }
 
     /**
@@ -579,7 +575,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     protected void checkLocalNamespaceAllowed(final Class<? extends IdentifierNamespace<?, ?>> type) {
-        definition().checkNamespaceAllowed(type);
+        definition.checkNamespaceAllowed(type);
     }
 
     @Override
@@ -661,7 +657,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public StatementDefinition getPublicDefinition() {
-        return definition().getPublicView();
+        return definition.getPublicView();
     }
 
     @Override
@@ -732,14 +728,17 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         checkState(stmt.getCompletedPhase() == ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Attempted to copy statement %s which has completed phase %s", stmt, stmt.getCompletedPhase());
 
-        checkArgument(stmt instanceof SubstatementContext, "Unsupported statement %s", stmt);
+        checkArgument(stmt instanceof StatementContextBase, "Unsupported statement %s", stmt);
+        return childCopyOf((StatementContextBase<X, Y, Z>)stmt, type, targetModule);
+    }
 
-        final SubstatementContext<X, Y, Z> original = (SubstatementContext<X, Y, Z>)stmt;
+    private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
+            final StatementContextBase<X, Y, Z> original, final CopyType type, final QNameModule targetModule) {
         final Optional<StatementSupport<?, ?, ?>> implicitParent = definition.getImplicitParentFor(
             original.getPublicDefinition());
 
-        final SubstatementContext<X, Y, Z> result;
-        final SubstatementContext<X, Y, Z> copy;
+        final StatementContextBase<X, Y, Z> result;
+        final InferredStatementContext<X, Y, Z> copy;
 
         if (implicitParent.isPresent()) {
             final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implicitParent.get());
@@ -760,14 +759,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                     childCopyType = type;
             }
 
-            copy = new SubstatementContext<>(original, result, childCopyType, targetModule);
+            copy = new InferredStatementContext<>(result, original, childCopyType, type, targetModule);
             result.addEffectiveSubstatement(copy);
         } else {
-            result = copy = new SubstatementContext<>(original, this, type, targetModule);
+            result = copy = new InferredStatementContext<>(this, original, type, type, targetModule);
         }
 
-        original.definition().onStatementAdded(copy);
-        original.copyTo(copy, type, targetModule);
+        original.definition.onStatementAdded(copy);
         return result;
     }
 
@@ -856,7 +854,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         if (fl != 0) {
             return fl == SET_IGNORE_CONFIG;
         }
-        if (definition().isIgnoringConfig() || parent.isIgnoringConfig()) {
+        if (definition.isIgnoringConfig() || parent.isIgnoringConfig()) {
             flags |= SET_IGNORE_CONFIG;
             return true;
         }
@@ -877,7 +875,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         if (fl != 0) {
             return fl == SET_IGNORE_IF_FEATURE;
         }
-        if (definition().isIgnoringIfFeatures() || parent.isIgnoringIfFeatures()) {
+        if (definition.isIgnoringIfFeatures() || parent.isIgnoringIfFeatures()) {
             flags |= SET_IGNORE_IF_FEATURE;
             return true;
         }
@@ -886,63 +884,55 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return false;
     }
 
-    final void copyTo(final StatementContextBase<?, ?, ?> target, final CopyType typeOfCopy,
-            @Nullable final QNameModule targetModule) {
-        final Collection<? extends StatementContextBase<?, ?, ?>> declared = mutableDeclaredSubstatements();
-        final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
-
-        for (final Mutable<?, ?, ?> stmtContext : declared) {
-            if (stmtContext.isSupportedByFeatures()) {
-                copySubstatement(stmtContext, target, typeOfCopy, targetModule, buffer);
+    // Exists only to support SubstatementContext/InferredStatementContext
+    final @NonNull Optional<SchemaPath> substatementGetSchemaPath() {
+        SchemaPath local = schemaPath;
+        if (local == null) {
+            synchronized (this) {
+                local = schemaPath;
+                if (local == null) {
+                    local = createSchemaPath(coerceParentContext());
+                    schemaPath = local;
+                }
             }
         }
-        for (final Mutable<?, ?, ?> stmtContext : effective) {
-            copySubstatement(stmtContext, target, typeOfCopy, targetModule, buffer);
-        }
 
-        target.addEffectiveSubstatements(buffer);
+        return Optional.ofNullable(local);
     }
 
-    private void copySubstatement(final Mutable<?, ?, ?> stmtContext,  final Mutable<?, ?, ?> target,
-            final CopyType typeOfCopy, final QNameModule newQNameModule, final Collection<Mutable<?, ?, ?>> buffer) {
-        if (needToCopyByUses(stmtContext)) {
-            final Mutable<?, ?, ?> copy = target.childCopyOf(stmtContext, typeOfCopy, newQNameModule);
-            LOG.debug("Copying substatement {} for {} as {}", stmtContext, this, copy);
-            buffer.add(copy);
-        } else if (isReusedByUses(stmtContext)) {
-            LOG.debug("Reusing substatement {} for {}", stmtContext, this);
-            buffer.add(stmtContext);
-        } else {
-            LOG.debug("Skipping statement {}", stmtContext);
-        }
-    }
+    private SchemaPath createSchemaPath(final Mutable<?, ?, ?> parent) {
+        final Optional<SchemaPath> maybeParentPath = parent.getSchemaPath();
+        verify(maybeParentPath.isPresent(), "Parent %s does not have a SchemaPath", parent);
+        final SchemaPath parentPath = maybeParentPath.get();
 
-    // FIXME: revise this, as it seems to be wrong
-    private static final ImmutableSet<YangStmtMapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
-        YangStmtMapping.DESCRIPTION,
-        YangStmtMapping.REFERENCE,
-        YangStmtMapping.STATUS);
-    private static final ImmutableSet<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(
-        YangStmtMapping.TYPE,
-        YangStmtMapping.TYPEDEF,
-        YangStmtMapping.USES);
-
-    private static boolean needToCopyByUses(final StmtContext<?, ?, ?> stmtContext) {
-        final StatementDefinition def = stmtContext.getPublicDefinition();
-        if (REUSED_DEF_SET.contains(def)) {
-            LOG.debug("Will reuse {} statement {}", def, stmtContext);
-            return false;
+        if (StmtContextUtils.isUnknownStatement(this)) {
+            return parentPath.createChild(getPublicDefinition().getStatementName());
         }
-        if (NOCOPY_FROM_GROUPING_SET.contains(def)) {
-            return !YangStmtMapping.GROUPING.equals(stmtContext.coerceParentContext().getPublicDefinition());
+        final Object argument = getStatementArgument();
+        if (argument instanceof QName) {
+            final QName qname = (QName) argument;
+            if (StmtContextUtils.producesDeclared(this, UsesStatement.class)) {
+                return maybeParentPath.orElse(null);
+            }
+
+            return parentPath.createChild(qname);
+        }
+        if (argument instanceof String) {
+            // FIXME: This may yield illegal argument exceptions
+            final Optional<StmtContext<?, ?, ?>> originalCtx = getOriginalCtx();
+            final QName qname = StmtContextUtils.qnameFromArgument(originalCtx.orElse(this), (String) argument);
+            return parentPath.createChild(qname);
+        }
+        if (argument instanceof SchemaNodeIdentifier
+                && (StmtContextUtils.producesDeclared(this, AugmentStatement.class)
+                        || StmtContextUtils.producesDeclared(this, RefineStatement.class)
+                        || StmtContextUtils.producesDeclared(this, DeviationStatement.class))) {
+
+            return parentPath.createChild(((SchemaNodeIdentifier) argument).getPathFromRoot());
         }
 
-        LOG.debug("Will copy {} statement {}", def, stmtContext);
-        return true;
-    }
-
-    private static boolean isReusedByUses(final StmtContext<?, ?, ?> stmtContext) {
-        return REUSED_DEF_SET.contains(stmtContext.getPublicDefinition());
+        // FIXME: this does not look right
+        return maybeParentPath.orElse(null);
     }
 
     @Override
@@ -951,6 +941,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("definition", definition).add("rawArgument", rawArgument);
+        return toStringHelper.add("definition", definition).add("rawArgument", rawStatementArgument());
     }
 }
