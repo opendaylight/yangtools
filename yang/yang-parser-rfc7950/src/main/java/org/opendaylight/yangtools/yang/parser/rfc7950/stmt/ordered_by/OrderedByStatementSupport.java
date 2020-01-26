@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ordered_by;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
@@ -21,6 +23,13 @@ public final class OrderedByStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.ORDERED_BY).build();
     private static final OrderedByStatementSupport INSTANCE = new OrderedByStatementSupport();
+
+    /*
+     * Ordered-by has low argument cardinality, hence we can reuse them in case declaration does not have any
+     * substatements (which is the usual case).
+     */
+    private static final @NonNull EmptyOrderedByStatement EMPTY_SYSTEM_DECL = new EmptyOrderedByStatement("system");
+    private static final @NonNull EmptyOrderedByStatement EMPTY_USER_DECL = new EmptyOrderedByStatement("user");
 
     private OrderedByStatementSupport() {
         super(YangStmtMapping.ORDERED_BY);
@@ -36,13 +45,38 @@ public final class OrderedByStatementSupport
     }
 
     @Override
-    public OrderedByStatement createDeclared(final StmtContext<String, OrderedByStatement, ?> ctx) {
-        return new OrderedByStatementImpl(ctx);
+    public String internArgument(final String rawArgument) {
+        if ("user".equals(rawArgument)) {
+            return "user";
+        } else if ("system".equals(rawArgument)) {
+            return "system";
+        } else {
+            return rawArgument;
+        }
     }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected OrderedByStatement createDeclared(final StmtContext<String, OrderedByStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularOrderedByStatement(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected OrderedByStatement createEmptyDeclared(final StmtContext<String, OrderedByStatement, ?> ctx) {
+        final String argument = ctx.coerceStatementArgument();
+        switch (argument) {
+            case "system":
+                return EMPTY_SYSTEM_DECL;
+            case "user":
+                return EMPTY_USER_DECL;
+            default:
+                throw new IllegalStateException("Unhandled argument " + argument);
+        }
     }
 
     @Override
@@ -58,16 +92,5 @@ public final class OrderedByStatementSupport
             final StmtContext<String, OrderedByStatement, OrderedByEffectiveStatement> ctx,
             final OrderedByStatement declared) {
         return new EmptyOrderedByEffectiveStatement(declared);
-    }
-
-    @Override
-    public String internArgument(final String rawArgument) {
-        if ("user".equals(rawArgument)) {
-            return "user";
-        } else if ("system".equals(rawArgument)) {
-            return "system";
-        } else {
-            return rawArgument;
-        }
     }
 }

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.prefix;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
@@ -36,13 +37,19 @@ public final class PrefixStatementSupport
     }
 
     @Override
-    public PrefixStatement createDeclared(final StmtContext<String, PrefixStatement,?> ctx) {
-        return new PrefixStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    protected PrefixStatement createDeclared(final StmtContext<String, PrefixStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularPrefixStatement(ctx, substatements);
+    }
+
+    @Override
+    protected PrefixStatement createEmptyDeclared(final StmtContext<String, PrefixStatement, ?> ctx) {
+        return new EmptyPrefixStatement(ctx);
     }
 
     @Override
