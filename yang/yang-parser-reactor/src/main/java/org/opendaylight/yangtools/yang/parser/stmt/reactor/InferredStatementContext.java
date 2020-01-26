@@ -143,15 +143,11 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     // FIXME: This is messy and is probably wrong in some corner case. Even if it is correct, the way how it is correct
     //        relies on hard-coded maps. At the end of the day, the logic needs to be controlled by statement's
     //        StatementSupport.
-    // FIXME: YANGTOOLS-652: these maps look very much like those in UsesStatementImpl
+    // FIXME: YANGTOOLS-652: this map looks very much like UsesStatementSupport.TOP_REUSED_DEF_SET
     private static final ImmutableSet<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(
         YangStmtMapping.TYPE,
         YangStmtMapping.TYPEDEF,
         YangStmtMapping.USES);
-    private static final ImmutableSet<YangStmtMapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
-        YangStmtMapping.DESCRIPTION,
-        YangStmtMapping.REFERENCE,
-        YangStmtMapping.STATUS);
 
     private void copySubstatement(final Mutable<?, ?, ?> substatement, final Collection<Mutable<?, ?, ?>> buffer) {
         final StatementDefinition def = substatement.getPublicDefinition();
@@ -162,22 +158,8 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
             buffer.add(substatement);
             return;
         }
-        // FIXME: YANGTOOLS-652: formerly known as "needToCopyByUses" (note inverted check, though)
-        if (NOCOPY_FROM_GROUPING_SET.contains(def)) {
-            // This is to say: if parent of source context is a grouping, ignore this statement.
-            if (YangStmtMapping.GROUPING.equals(substatement.coerceParentContext().getPublicDefinition())) {
-                LOG.debug("Skipping grouping statement {}", substatement);
-                return;
-            }
-        }
 
-        // FIXME: YANGTOOLS-694: we are forcing a copy here, hence even statements not affected by parent, copyType
-        //                       or targetModule (and don't forget its substatements!). This really should be a callout
-        //                       to StatementSupport. Note if that callout is allowed to return an Optional, it can
-        //                       take care at least of the 'grouping from uses' case above.
-        final Mutable<?, ?, ?> copy = childCopyOf(substatement, childCopyType, targetModule);
-        LOG.debug("Copying substatement {} for {} as {}", substatement, this, copy);
-        buffer.add(copy);
+        substatement.copyAsChildOf(this, childCopyType, targetModule).ifPresent(buffer::add);
     }
 
     // Statement copy mess ends here
