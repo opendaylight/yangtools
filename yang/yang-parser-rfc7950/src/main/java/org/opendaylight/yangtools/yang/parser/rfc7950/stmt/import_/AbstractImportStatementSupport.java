@@ -99,4 +99,9 @@ abstract class AbstractImportStatementSupport
             RevisionImport.onLinkageDeclared(stmt);
         }
     }
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
 }
