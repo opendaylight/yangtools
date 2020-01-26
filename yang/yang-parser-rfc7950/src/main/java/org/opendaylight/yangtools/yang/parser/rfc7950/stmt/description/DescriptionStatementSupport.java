@@ -49,6 +49,11 @@ public final class DescriptionStatementSupport
     }
 
     @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
+
+    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }

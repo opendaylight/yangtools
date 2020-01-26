@@ -124,4 +124,9 @@ public final class OrderedByStatementSupport
         // Declared instance was non-empty, which can happen with extensions
         return new EmptyOrderedByEffectiveStatement(declared);
     }
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
 }

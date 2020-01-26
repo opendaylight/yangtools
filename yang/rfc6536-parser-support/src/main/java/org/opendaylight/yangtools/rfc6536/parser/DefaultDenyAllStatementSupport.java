@@ -85,4 +85,9 @@ public final class DefaultDenyAllStatementSupport
     protected SubstatementValidator getSubstatementValidator() {
         return validator;
     }
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
 }
