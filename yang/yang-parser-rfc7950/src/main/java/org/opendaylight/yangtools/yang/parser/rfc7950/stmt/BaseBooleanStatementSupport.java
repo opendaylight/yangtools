@@ -32,7 +32,7 @@ public abstract class BaseBooleanStatementSupport<D extends DeclaredStatement<Bo
 
     protected BaseBooleanStatementSupport(final StatementDefinition publicDefinition,
             final E emptyEffectiveFalse, final E emptyEffectiveTrue) {
-        super(publicDefinition);
+        super(publicDefinition, CopyPolicy.CONTEXT_INDEPENDENT);
         this.emptyEffectiveFalse = requireNonNull(emptyEffectiveFalse);
         this.emptyEffectiveTrue = requireNonNull(emptyEffectiveTrue);
         emptyDeclaredFalse = requireNonNull(emptyEffectiveFalse.getDeclared());
