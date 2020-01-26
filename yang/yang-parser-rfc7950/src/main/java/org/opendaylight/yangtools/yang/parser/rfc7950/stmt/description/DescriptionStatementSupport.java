@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.description;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -36,13 +37,19 @@ public final class DescriptionStatementSupport
     }
 
     @Override
-    public DescriptionStatement createDeclared(final StmtContext<String, DescriptionStatement, ?> ctx) {
-        return new DescriptionStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    protected DescriptionStatement createDeclared(final StmtContext<String, DescriptionStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularDescriptionStatement(ctx, substatements);
+    }
+
+    @Override
+    protected DescriptionStatement createEmptyDeclared(final StmtContext<String, DescriptionStatement, ?> ctx) {
+        return new EmptyDescriptionStatement(ctx);
     }
 
     @Override

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.reference;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
@@ -37,13 +38,19 @@ public final class ReferenceStatementSupport
     }
 
     @Override
-    public ReferenceStatement createDeclared(final StmtContext<String, ReferenceStatement, ?> ctx) {
-        return new ReferenceStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    protected ReferenceStatement createDeclared(final StmtContext<String, ReferenceStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularReferenceStatement(ctx, substatements);
+    }
+
+    @Override
+    protected ReferenceStatement createEmptyDeclared(final StmtContext<String, ReferenceStatement, ?> ctx) {
+        return new EmptyReferenceStatement(ctx);
     }
 
     @Override
