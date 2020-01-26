@@ -23,9 +23,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * reasonably interned and it dominates the {@link EffectiveStatement} implementation. Typical examples include
  * {@code position} and {@code value} statements, which typically do not have substatements and are based on simple
  * types.
+ *
+ * <p>
+ * Note: use of this base class implies context-independence.
  */
 public abstract class BaseInternedStatementSupport<A, D extends DeclaredStatement<A>,
-        E extends EffectiveStatement<A, D>> extends BaseStatementSupport<A, D, E> {
+        E extends EffectiveStatement<A, D>> extends BaseContextIndependentStatementSupport<A, D, E> {
     private final LoadingCache<A, D> declaredCache = CacheBuilder.newBuilder().weakValues()
             .build(new CacheLoader<A, D>() {
                 @Override
