@@ -37,7 +37,7 @@ public final class LengthStatementSupport
     private static final LengthStatementSupport INSTANCE = new LengthStatementSupport();
 
     private LengthStatementSupport() {
-        super(YangStmtMapping.LENGTH);
+        super(YangStmtMapping.LENGTH, true);
     }
 
     public static LengthStatementSupport getInstance() {

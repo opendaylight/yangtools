@@ -22,7 +22,7 @@ public final class MinElementsStatementSupport
     private static final MinElementsStatementSupport INSTANCE = new MinElementsStatementSupport();
 
     private MinElementsStatementSupport() {
-        super(YangStmtMapping.MIN_ELEMENTS);
+        super(YangStmtMapping.MIN_ELEMENTS, true);
     }
 
     public static MinElementsStatementSupport getInstance() {

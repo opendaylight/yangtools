@@ -24,7 +24,7 @@ public final class RevisionDateStatementSupport
     private static final RevisionDateStatementSupport INSTANCE = new RevisionDateStatementSupport();
 
     private RevisionDateStatementSupport() {
-        super(YangStmtMapping.REVISION_DATE);
+        super(YangStmtMapping.REVISION_DATE, true);
     }
 
     public static RevisionDateStatementSupport getInstance() {

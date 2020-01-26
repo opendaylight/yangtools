@@ -50,7 +50,7 @@ public final class StatusStatementSupport
             new EmptyStatusEffectiveStatement(EMPTY_OBSOLETE_DECL);
 
     private StatusStatementSupport() {
-        super(YangStmtMapping.STATUS);
+        super(YangStmtMapping.STATUS, true);
     }
 
     public static StatusStatementSupport getInstance() {

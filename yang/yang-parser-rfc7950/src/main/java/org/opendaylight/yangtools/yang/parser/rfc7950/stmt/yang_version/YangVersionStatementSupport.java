@@ -38,7 +38,7 @@ public final class YangVersionStatementSupport
             new EmptyYangVersionEffectiveStatement(EMPTY_VER1_1_DECL);
 
     private YangVersionStatementSupport() {
-        super(YangStmtMapping.YANG_VERSION);
+        super(YangStmtMapping.YANG_VERSION, true);
     }
 
     public static YangVersionStatementSupport getInstance() {

@@ -27,6 +27,11 @@ public abstract class AbstractVoidStatementSupport<D extends DeclaredStatement<V
         super(publicDefinition);
     }
 
+    protected AbstractVoidStatementSupport(final StatementDefinition publicDefinition,
+            final boolean contextIndependent ) {
+        super(publicDefinition, contextIndependent);
+    }
+
     @Override
     public final Void parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return null;
