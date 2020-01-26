@@ -22,6 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public abstract class BaseStringStatementSupport<D extends DeclaredStatement<String>,
         E extends EffectiveStatement<String, D>> extends BaseStatementSupport<String, D, E> {
     protected BaseStringStatementSupport(final StatementDefinition publicDefinition) {
-        super(publicDefinition);
+        super(publicDefinition, true);
     }
 }
