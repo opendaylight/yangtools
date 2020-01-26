@@ -54,4 +54,9 @@ public final class PositionStatementSupport
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
 }

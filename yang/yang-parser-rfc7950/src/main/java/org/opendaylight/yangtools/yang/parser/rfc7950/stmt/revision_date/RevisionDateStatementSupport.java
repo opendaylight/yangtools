@@ -56,4 +56,9 @@ public final class RevisionDateStatementSupport
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
 }
