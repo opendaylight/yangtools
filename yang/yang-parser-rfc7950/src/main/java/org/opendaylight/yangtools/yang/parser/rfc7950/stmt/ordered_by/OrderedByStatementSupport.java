@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ordered_by;
 
 import com.google.common.collect.ImmutableList;
-import java.util.EnumMap;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -26,19 +26,18 @@ public final class OrderedByStatementSupport
             SubstatementValidator.builder(YangStmtMapping.ORDERED_BY).build();
     private static final OrderedByStatementSupport INSTANCE = new OrderedByStatementSupport();
 
-    /**
+    /*
      * Ordered-by has low argument cardinality, hence we can reuse them in case declaration does not have any
      * substatements (which is the usual case).
      */
-    private static final EnumMap<Ordering, EmptyOrderedByStatement> DECLARED_INSTANCES;
-
-    static {
-        final EnumMap<Ordering, EmptyOrderedByStatement> m = new EnumMap<>(Ordering.class);
-        for (Ordering argument : Ordering.values()) {
-            m.put(argument, new EmptyOrderedByStatement(argument));
-        }
-        DECLARED_INSTANCES = m;
-    }
+    private static final @NonNull EmptyOrderedByStatement EMPTY_SYSTEM_DECL =
+            new EmptyOrderedByStatement(Ordering.SYSTEM);
+    private static final @NonNull EmptyOrderedByStatement EMPTY_USER_DECL =
+            new EmptyOrderedByStatement(Ordering.USER);
+    private static final @NonNull EmptyOrderedByEffectiveStatement EMPTY_SYSTEM_EFF =
+            new EmptyOrderedByEffectiveStatement(EMPTY_SYSTEM_DECL);
+    private static final @NonNull EmptyOrderedByEffectiveStatement EMPTY_USER_EFF =
+            new EmptyOrderedByEffectiveStatement(EMPTY_USER_DECL);
 
     private OrderedByStatementSupport() {
         super(YangStmtMapping.ORDERED_BY);
@@ -81,7 +80,15 @@ public final class OrderedByStatementSupport
 
     @Override
     protected OrderedByStatement createEmptyDeclared(final StmtContext<Ordering, OrderedByStatement, ?> ctx) {
-        return DECLARED_INSTANCES.get(ctx.coerceStatementArgument());
+        final Ordering argument = ctx.coerceStatementArgument();
+        switch (argument) {
+            case SYSTEM:
+                return EMPTY_SYSTEM_DECL;
+            case USER:
+                return EMPTY_USER_DECL;
+            default:
+                throw new IllegalStateException("Unhandled argument " + argument);
+        }
     }
 
     @Override
@@ -96,6 +103,25 @@ public final class OrderedByStatementSupport
     protected OrderedByEffectiveStatement createEmptyEffective(
             final StmtContext<Ordering, OrderedByStatement, OrderedByEffectiveStatement> ctx,
             final OrderedByStatement declared) {
+        // Aggressively reuse effective instances which are backed by the corresponding empty declared instance, as this
+        // is the case unless there is a weird extension in use.
+        final Ordering argument = declared.getValue();
+        switch (argument) {
+            case SYSTEM:
+                if (EMPTY_SYSTEM_DECL.equals(declared)) {
+                    return EMPTY_SYSTEM_EFF;
+                }
+                break;
+            case USER:
+                if (EMPTY_USER_DECL.equals(declared)) {
+                    return EMPTY_USER_EFF;
+                }
+                break;
+            default:
+                throw new IllegalStateException("Unhandled argument " + argument);
+        }
+
+        // Declared instance was non-empty, which can happen with extensions
         return new EmptyOrderedByEffectiveStatement(declared);
     }
 }
