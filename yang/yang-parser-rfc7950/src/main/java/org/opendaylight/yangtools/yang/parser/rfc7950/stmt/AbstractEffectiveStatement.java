@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
@@ -43,6 +45,11 @@ public abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<
     public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
         final Optional<? extends Map<K, V>> ret = getNamespaceContents(requireNonNull(namespace));
         return ret.isPresent() ? ret.get() : ImmutableMap.of();
+    }
+
+    @Override
+    public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+        return ImmutableList.of();
     }
 
     /**

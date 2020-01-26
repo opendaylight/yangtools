@@ -7,17 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.prefix;
 
-import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 
 final class EmptyPrefixEffectiveStatement extends AbstractPrefixEffectiveStatement {
     EmptyPrefixEffectiveStatement(final PrefixStatement declared) {
         super(declared);
-    }
-
-    @Override
-    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return ImmutableList.of();
     }
 }
