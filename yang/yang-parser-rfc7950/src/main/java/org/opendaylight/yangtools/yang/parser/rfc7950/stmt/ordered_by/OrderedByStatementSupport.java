@@ -30,6 +30,10 @@ public final class OrderedByStatementSupport
      */
     private static final @NonNull EmptyOrderedByStatement EMPTY_SYSTEM_DECL = new EmptyOrderedByStatement("system");
     private static final @NonNull EmptyOrderedByStatement EMPTY_USER_DECL = new EmptyOrderedByStatement("user");
+    private static final @NonNull EmptyOrderedByEffectiveStatement EMPTY_SYSTEM_EFF =
+            new EmptyOrderedByEffectiveStatement(EMPTY_SYSTEM_DECL);
+    private static final @NonNull EmptyOrderedByEffectiveStatement EMPTY_USER_EFF =
+            new EmptyOrderedByEffectiveStatement(EMPTY_USER_DECL);
 
     private OrderedByStatementSupport() {
         super(YangStmtMapping.ORDERED_BY);
@@ -91,6 +95,25 @@ public final class OrderedByStatementSupport
     protected OrderedByEffectiveStatement createEmptyEffective(
             final StmtContext<String, OrderedByStatement, OrderedByEffectiveStatement> ctx,
             final OrderedByStatement declared) {
+        // Aggressively reuse effective instances which are backed by the corresponding empty declared instance, as this
+        // is the case unless there is a weird extension in use.
+        final String argument = declared.getValue();
+        switch (argument) {
+            case "system":
+                if (EMPTY_SYSTEM_DECL.equals(declared)) {
+                    return EMPTY_SYSTEM_EFF;
+                }
+                break;
+            case "user":
+                if (EMPTY_USER_DECL.equals(declared)) {
+                    return EMPTY_USER_EFF;
+                }
+                break;
+            default:
+                throw new IllegalStateException("Unhandled argument " + argument);
+        }
+
+        // Declared instance was non-empty, which can happen with extensions
         return new EmptyOrderedByEffectiveStatement(declared);
     }
 }
