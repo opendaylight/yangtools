@@ -98,4 +98,9 @@ public final class OrderedByStatementSupport
             final OrderedByStatement declared) {
         return new EmptyOrderedByEffectiveStatement(declared);
     }
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
 }

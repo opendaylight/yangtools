@@ -54,4 +54,9 @@ public final class YinElementStatementSupport
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
 }
