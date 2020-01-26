@@ -143,4 +143,9 @@ public final class StatusStatementSupport
             return new EmptyStatusEffectiveStatement(declared);
         }
     }
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
 }

@@ -52,6 +52,11 @@ public final class MaxElementsStatementSupport
     }
 
     @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
+
+    @Override
     public String internArgument(final String rawArgument) {
         return "unbounded".equals(rawArgument) ? "unbounded" : rawArgument;
     }

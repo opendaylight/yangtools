@@ -52,4 +52,9 @@ abstract class AbstractPatternStatementSupport
             final StmtContext<PatternConstraint, PatternStatement, PatternEffectiveStatement> ctx) {
         return new PatternEffectiveStatementImpl(ctx);
     }
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
 }

@@ -66,4 +66,9 @@ public final class UnitsStatementSupport
             final UnitsStatement declared) {
         return new EmptyUnitsEffectiveStatement(declared);
     }
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
 }
