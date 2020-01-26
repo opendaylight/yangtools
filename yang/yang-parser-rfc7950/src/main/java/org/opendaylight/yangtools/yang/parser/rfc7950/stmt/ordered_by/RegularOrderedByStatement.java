@@ -18,11 +18,11 @@ final class RegularOrderedByStatement extends AbstractOrderedByStatement {
     RegularOrderedByStatement(final Ordering argument,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(argument);
-        this.substatements = maskSubstatements(substatements);
+        this.substatements = maskList(substatements);
     }
 
     @Override
     public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
-        return unmaskSubstatements(substatements);
+        return unmaskList(substatements);
     }
 }

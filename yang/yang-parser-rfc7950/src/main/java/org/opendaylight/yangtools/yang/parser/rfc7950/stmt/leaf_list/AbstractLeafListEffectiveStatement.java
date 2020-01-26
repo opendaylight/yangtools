@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -37,7 +36,6 @@ abstract class AbstractLeafListEffectiveStatement
         implements LeafListEffectiveStatement, LeafListSchemaNode, DerivableSchemaNode,
             UserOrderedMixin<QName, LeafListStatement>, DataSchemaNodeMixin<QName, LeafListStatement>,
             MustConstraintMixin<QName, LeafListStatement> {
-    // Variable: either a single substatement or an ImmutableList
     private final @NonNull Object substatements;
     private final @NonNull SchemaPath path;
     private final @NonNull TypeDefinition<?> type;
@@ -46,7 +44,7 @@ abstract class AbstractLeafListEffectiveStatement
     AbstractLeafListEffectiveStatement(final LeafListStatement declared, final SchemaPath path, final int flags,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
-        this.substatements = substatements.size() == 1 ? substatements.get(0) : substatements;
+        this.substatements = maskList(substatements);
         this.path = requireNonNull(path);
         this.flags = flags;
         // TODO: lazy instantiation?
@@ -54,13 +52,8 @@ abstract class AbstractLeafListEffectiveStatement
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        if (substatements instanceof ImmutableList) {
-            return (ImmutableList<? extends EffectiveStatement<?, ?>>) substatements;
-        }
-        verify(substatements instanceof EffectiveStatement, "Unexpected substatement %s", substatements);
-        return ImmutableList.of((EffectiveStatement<?, ?>) substatements);
+        return unmaskList(substatements);
     }
 
     @Override

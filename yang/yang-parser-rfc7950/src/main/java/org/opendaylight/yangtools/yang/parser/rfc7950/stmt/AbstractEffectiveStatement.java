@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
  */
 @Beta
 public abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<A>>
-        implements EffectiveStatement<A, D> {
+        extends AbstractModelStatement<A> implements EffectiveStatement<A, D> {
     @Override
     public final <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends V> get(final Class<N> namespace,
             final K identifier) {
@@ -62,5 +62,19 @@ public abstract class AbstractEffectiveStatement<A, D extends DeclaredStatement<
     protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
             final @NonNull Class<N> namespace) {
         return Optional.empty();
+    }
+
+    /**
+     * Utility method for recovering singleton lists squashed by {@link #maskList(ImmutableList)}.
+     *
+     * @param masked list to unmask
+     * @return Unmasked list
+     * @throws NullPointerException if masked is null
+     * @throws ClassCastException if masked object does not match EffectiveStatement
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    protected static final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> unmaskList(
+            final @NonNull Object masked) {
+        return (ImmutableList) unmaskList(masked, EffectiveStatement.class);
     }
 }
