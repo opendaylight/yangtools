@@ -26,7 +26,7 @@ public final class MinElementsStatementSupport
     private static final MinElementsStatementSupport INSTANCE = new MinElementsStatementSupport();
 
     private MinElementsStatementSupport() {
-        super(YangStmtMapping.MIN_ELEMENTS);
+        super(YangStmtMapping.MIN_ELEMENTS, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static MinElementsStatementSupport getInstance() {
