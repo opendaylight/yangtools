@@ -147,13 +147,13 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      *
      * @param stmt Context of statement to be copied statement.
      * @param parent Parent statement context
-     * @param type Type of copy being performed
+     * @param copyType Type of copy being performed
      * @param targetModule Target module, if present
      * @return Policy that needs to be applied to the copy operation of this statement.
      */
     // FIXME: YANGTOOLS-694: clarify targetModule semantics (does null mean 'same as declared'?)
     default @NonNull CopyPolicy applyCopyPolicy(final Mutable<?, ?, ?> stmt, final Mutable<?, ?, ?> parent,
-            final CopyType type, @Nullable final QNameModule targetModule) {
+            final CopyType copyType, @Nullable final QNameModule targetModule) {
         // Most of statement supports will just want to copy the statement
         // FIXME: YANGTOOLS-694: that is not strictly true. Subclasses of this should indicate if they are themselves
         //                       copy-sensitive:
