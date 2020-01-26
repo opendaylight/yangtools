@@ -7,17 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 
-import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 
 final class EmptyLocalKeyEffectiveStatement extends AbstractKeyEffectiveStatement.Local {
     EmptyLocalKeyEffectiveStatement(final KeyStatement declared) {
         super(declared);
-    }
-
-    @Override
-    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return ImmutableList.of();
     }
 }

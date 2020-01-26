@@ -7,17 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_app_tag;
 
-import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 
 final class EmptyErrorAppTagEffectiveStatement extends AbstractErrorAppTagEffectiveStatement {
     EmptyErrorAppTagEffectiveStatement(final ErrorAppTagStatement declared) {
         super(declared);
-    }
-
-    @Override
-    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return ImmutableList.of();
     }
 }
