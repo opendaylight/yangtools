@@ -106,4 +106,9 @@ public final class IfFeatureStatementSupport
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
 }
