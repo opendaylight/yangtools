@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
@@ -289,6 +290,10 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         default Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type) {
             return childCopyOf(stmt, type, null);
         }
+
+        @Beta
+        @NonNull Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(Mutable<?, ?, ?> parent, CopyType type,
+                @Nullable QNameModule targetModule);
 
         @Override
         default Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements() {
