@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * implementations.
  */
 @Beta
-public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<A> {
+public abstract class AbstractDeclaredStatement<A> extends AbstractModelStatement<A> implements DeclaredStatement<A> {
     protected AbstractDeclaredStatement() {
     }
 
@@ -37,35 +37,17 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
     }
 
     /**
-     * Utility method for squashing singleton lists into single objects. This is a CPU/mem trade-off, which we are
-     * usually willing to make: for the cost of an instanceof check we can save one object and re-create it when needed.
-     * The inverse operation is #unmaskSubstatements(Object)}.
+     * Utility method for recovering singleton lists squashed by {@link #maskList(ImmutableList)}.
      *
-     * @param substatements substatements to mask
-     * @return Masked substatements
-     * @throws NullPointerException if substatements is null
-     */
-    protected static final @NonNull Object maskSubstatements(
-            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
-        // Note: ImmutableList guarantees non-null content
-        return substatements.size() == 1 ? substatements.get(0) : substatements;
-    }
-
-    /**
-     * Utility method for recovering singleton lists squashed by {@link #maskSubstatements(ImmutableList)}.
-     *
-     * @param masked substatements to unmask
-     * @return List of substatements
+     * @param masked list to unmask
+     * @return Unmasked list
      * @throws NullPointerException if masked is null
-     * @throws ClassCastException if masked object was not produced by {@link #maskSubstatements(ImmutableList)}
+     * @throws ClassCastException if masked object does not match DeclaredStatement
      */
     @SuppressWarnings("unchecked")
-    protected static final @NonNull ImmutableList<? extends DeclaredStatement<?>> unmaskSubstatements(
+    protected static final @NonNull ImmutableList<? extends DeclaredStatement<?>> unmaskList(
             final @NonNull Object masked) {
-        return masked instanceof ImmutableList ? (ImmutableList<? extends DeclaredStatement<?>>) masked
-                // Yes, this is ugly code, which could use an explicit verify, that would just change the what sort
-                // of exception we throw. ClassCastException is as good as VerifyException.
-                : ImmutableList.of((DeclaredStatement<?>) masked);
+        return (ImmutableList<? extends DeclaredStatement<?>>) unmaskList(masked, DeclaredStatement.class);
     }
 
     public abstract static class WithRawArgument<A> extends AbstractDeclaredStatement<A> {

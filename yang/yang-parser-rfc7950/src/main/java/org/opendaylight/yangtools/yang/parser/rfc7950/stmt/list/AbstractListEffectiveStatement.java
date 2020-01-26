@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -47,10 +46,8 @@ abstract class AbstractListEffectiveStatement
             AugmentationTargetMixin<QName, ListStatement>, NotificationNodeContainerMixin<QName, ListStatement>,
             ActionNodeContainerMixin<QName, ListStatement>, MustConstraintMixin<QName, ListStatement> {
     private final int flags;
-    // Variable: either a single substatement or an ImmutableList
     private final @NonNull Object substatements;
     private final @NonNull SchemaPath path;
-    // Variable: either a single QName or an ImmutableList
     private final @NonNull Object keyDefinition;
 
     AbstractListEffectiveStatement(final ListStatement declared, final SchemaPath path, final int flags,
@@ -62,16 +59,15 @@ abstract class AbstractListEffectiveStatement
         EffectiveStmtUtils.checkUniqueTypedefs(ctx, substatements);
         EffectiveStmtUtils.checkUniqueUses(ctx, substatements);
 
-        this.substatements = substatements.size() == 1 ? substatements.get(0) : substatements;
+        this.substatements = maskList(substatements);
         this.path = requireNonNull(path);
-        this.keyDefinition = keyDefinition.size() == 1 ? keyDefinition.get(0) : keyDefinition;
+        this.keyDefinition = maskList(keyDefinition);
         this.flags = flags;
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public final ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return (ImmutableList) listFrom(substatements, EffectiveStatement.class);
+        return unmaskList(substatements);
     }
 
     @Override
@@ -96,7 +92,7 @@ abstract class AbstractListEffectiveStatement
 
     @Override
     public final List<QName> getKeyDefinition() {
-        return listFrom(keyDefinition, QName.class);
+        return unmaskList(keyDefinition, QName.class);
     }
 
     @Override
@@ -115,14 +111,5 @@ abstract class AbstractListEffectiveStatement
     @Override
     public final String toString() {
         return "list " + getQName().getLocalName();
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> @NonNull ImmutableList<T> listFrom(final Object obj, final Class<T> type) {
-        if (obj instanceof ImmutableList) {
-            return (ImmutableList<T>) obj;
-        }
-        verify(type.isInstance(obj), "Unexpected list value %s", obj);
-        return ImmutableList.of(type.cast(obj));
     }
 }

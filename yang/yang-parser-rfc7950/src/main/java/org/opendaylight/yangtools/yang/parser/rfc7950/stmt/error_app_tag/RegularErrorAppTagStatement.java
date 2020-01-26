@@ -19,11 +19,11 @@ final class RegularErrorAppTagStatement extends AbstractErrorAppTagStatement {
     RegularErrorAppTagStatement(final StmtContext<String, ?, ?> context,
             final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(context);
-        this.substatements = maskSubstatements(substatements);
+        this.substatements = maskList(substatements);
     }
 
     @Override
     public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
-        return unmaskSubstatements(substatements);
+        return unmaskList(substatements);
     }
 }

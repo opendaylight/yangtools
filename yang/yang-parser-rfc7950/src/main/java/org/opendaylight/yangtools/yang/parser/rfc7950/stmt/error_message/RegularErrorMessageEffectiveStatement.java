@@ -7,24 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_message;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 
 final class RegularErrorMessageEffectiveStatement extends AbstractErrorMessageEffectiveStatement {
-    private final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
+    private final @NonNull Object substatements;
 
     RegularErrorMessageEffectiveStatement(final ErrorMessageStatement declared,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared);
-        this.substatements = requireNonNull(substatements);
+        this.substatements = maskList(substatements);
     }
 
     @Override
     public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return substatements;
+        return unmaskList(substatements);
     }
 }
