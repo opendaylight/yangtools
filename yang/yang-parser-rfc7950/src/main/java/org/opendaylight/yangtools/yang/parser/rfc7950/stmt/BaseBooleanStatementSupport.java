@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  */
 @Beta
 public abstract class BaseBooleanStatementSupport<D extends DeclaredStatement<Boolean>,
-        E extends EffectiveStatement<Boolean, D>> extends BaseStatementSupport<Boolean, D, E> {
+        E extends EffectiveStatement<Boolean, D>> extends BaseContextIndependentStatementSupport<Boolean, D, E> {
     private final @NonNull E emptyEffectiveFalse;
     private final @NonNull E emptyEffectiveTrue;
     private final @NonNull D emptyDeclaredFalse;
