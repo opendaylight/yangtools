@@ -22,7 +22,7 @@ public final class MaxElementsStatementSupport
     private static final MaxElementsStatementSupport INSTANCE = new MaxElementsStatementSupport();
 
     private MaxElementsStatementSupport() {
-        super(YangStmtMapping.MAX_ELEMENTS);
+        super(YangStmtMapping.MAX_ELEMENTS, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     public static MaxElementsStatementSupport getInstance() {
