@@ -15,13 +15,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement.Ordering;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseContextIndependentStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class OrderedByStatementSupport
-        extends BaseStatementSupport<Ordering, OrderedByStatement, OrderedByEffectiveStatement> {
+        extends BaseContextIndependentStatementSupport<Ordering, OrderedByStatement, OrderedByEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.ORDERED_BY).build();
     private static final OrderedByStatementSupport INSTANCE = new OrderedByStatementSupport();
