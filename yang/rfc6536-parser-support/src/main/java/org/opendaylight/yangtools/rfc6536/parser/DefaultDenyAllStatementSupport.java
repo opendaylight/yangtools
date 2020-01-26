@@ -62,7 +62,7 @@ public final class DefaultDenyAllStatementSupport
     private final SubstatementValidator validator;
 
     private DefaultDenyAllStatementSupport(final StatementDefinition definition) {
-        super(definition);
+        super(definition, true);
         this.validator = SubstatementValidator.builder(definition).build();
     }
 
