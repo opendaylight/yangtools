@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.container;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -61,20 +60,15 @@ final class ContainerEffectiveStatementImpl
         EffectiveStmtUtils.checkUniqueTypedefs(ctx, substatements);
         EffectiveStmtUtils.checkUniqueUses(ctx, substatements);
 
-        this.substatements = substatements.size() == 1 ? substatements.get(0) : substatements;
+        this.substatements = maskList(substatements);
         this.path = requireNonNull(path);
         this.original = original;
         this.flags = flags;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        if (substatements instanceof ImmutableList) {
-            return (ImmutableList<? extends EffectiveStatement<?, ?>>) substatements;
-        }
-        verify(substatements instanceof EffectiveStatement, "Unexpected substatement %s", substatements);
-        return ImmutableList.of((EffectiveStatement<?, ?>) substatements);
+        return unmaskList(substatements);
     }
 
     @Override
