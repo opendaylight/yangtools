@@ -88,8 +88,8 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     }
 
     @Override
-    public CopyPolicy applyCopyPolicy(final Mutable<?, ?, ?> stmt,
-            final Mutable<?, ?, ?> parent, final CopyType type, final QNameModule targetModule) {
-        return delegate().applyCopyPolicy(stmt, parent, type, targetModule);
+    public CopyPolicy applyCopyPolicy(final Mutable<?, ?, ?> stmt, final Mutable<?, ?, ?> parent,
+            final CopyType copyType, final QNameModule targetModule) {
+        return delegate().applyCopyPolicy(stmt, parent, copyType, targetModule);
     }
 }
