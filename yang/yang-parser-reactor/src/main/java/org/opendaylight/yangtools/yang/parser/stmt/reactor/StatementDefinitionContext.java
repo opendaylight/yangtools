@@ -125,12 +125,12 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         return potential;
     }
 
-    boolean hasArgumentSpecificSubDefinitions() {
-        return support.hasArgumentSpecificSupports();
+    final StatementSupport<A, D, E> support() {
+        return support;
     }
 
-    String internArgument(final String rawArgument) {
-        return support.internArgument(rawArgument);
+    boolean hasArgumentSpecificSubDefinitions() {
+        return support.hasArgumentSpecificSupports();
     }
 
     StatementDefinitionContext<?, ?, ?> getAsUnknownStatementDefinition(
@@ -151,13 +151,5 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
             unknownStmtDefsOfYangStmts.put(yangStmtDef, ret);
         }
         return ret;
-    }
-
-    boolean isIgnoringIfFeatures() {
-        return support.isIgnoringIfFeatures();
-    }
-
-    boolean isIgnoringConfig() {
-        return support.isIgnoringConfig();
     }
 }
