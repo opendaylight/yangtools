@@ -55,7 +55,7 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
             final String rawArgument) {
         super(def);
         this.statementDeclSource = requireNonNull(ref);
-        this.rawArgument = def.internArgument(rawArgument);
+        this.rawArgument = def.support().internArgument(rawArgument);
         this.originalCtx = null;
         this.prevCopyCtx = null;
     }
