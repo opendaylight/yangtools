@@ -7,19 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 final class EmptyForeignKeyEffectiveStatement extends AbstractKeyEffectiveStatement.Foreign {
     EmptyForeignKeyEffectiveStatement(final KeyStatement declared, final Collection<SchemaNodeIdentifier> argument) {
         super(declared, argument);
-    }
-
-    @Override
-    public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return ImmutableList.of();
     }
 }
