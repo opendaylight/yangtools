@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract class AbstractImportStatementSupport
         extends AbstractStatementSupport<String, ImportStatement, ImportEffectiveStatement> {
     AbstractImportStatementSupport() {
-        super(YangStmtMapping.IMPORT);
+        super(YangStmtMapping.IMPORT, CopyPolicy.CONTEXT_INDEPENDENT);
     }
 
     @Override
