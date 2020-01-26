@@ -12,16 +12,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
-/**
- * Specialization of {@link BaseStatementSupport} for String statement arguments.
- *
- * @param <D> Declared Statement representation
- * @param <E> Effective Statement representation
- */
 @Beta
-public abstract class BaseStringStatementSupport<D extends DeclaredStatement<String>,
-        E extends EffectiveStatement<String, D>> extends BaseContextIndependentStatementSupport<String, D, E> {
-    protected BaseStringStatementSupport(final StatementDefinition publicDefinition) {
+public abstract class BaseContextIndependentStatementSupport<A, D extends DeclaredStatement<A>,
+        E extends EffectiveStatement<A, D>> extends BaseStatementSupport<A, D, E> {
+
+    protected BaseContextIndependentStatementSupport(final StatementDefinition publicDefinition) {
         super(publicDefinition);
+    }
+
+    @Override
+    protected final boolean isContextIndependent() {
+        return true;
     }
 }

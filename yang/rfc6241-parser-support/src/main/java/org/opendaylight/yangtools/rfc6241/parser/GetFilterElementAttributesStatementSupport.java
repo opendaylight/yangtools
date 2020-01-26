@@ -93,15 +93,20 @@ public final class GetFilterElementAttributesStatementSupport
     }
 
     @Override
+    public void onFullDefinitionDeclared(final Mutable<Void, GetFilterElementAttributesStatement,
+            GetFilterElementAttributesEffectiveStatement> stmt) {
+        super.onFullDefinitionDeclared(stmt);
+        stmt.setIsSupportedToBuildEffective(computeSupported(stmt));
+    }
+
+    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return validator;
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<Void, GetFilterElementAttributesStatement,
-            GetFilterElementAttributesEffectiveStatement> stmt) {
-        super.onFullDefinitionDeclared(stmt);
-        stmt.setIsSupportedToBuildEffective(computeSupported(stmt));
+    protected boolean isContextIndependent() {
+        return true;
     }
 
     private static boolean computeSupported(final StmtContext<?, ?, ?> stmt) {
