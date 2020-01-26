@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_message;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
@@ -36,13 +37,19 @@ public final class ErrorMessageStatementSupport
     }
 
     @Override
-    public ErrorMessageStatement createDeclared(final StmtContext<String, ErrorMessageStatement, ?> ctx) {
-        return new ErrorMessageStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    protected ErrorMessageStatement createDeclared(final StmtContext<String, ErrorMessageStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularErrorMessageStatement(ctx, substatements);
+    }
+
+    @Override
+    protected ErrorMessageStatement createEmptyDeclared(final StmtContext<String, ErrorMessageStatement, ?> ctx) {
+        return new EmptyErrorMessageStatement(ctx);
     }
 
     @Override

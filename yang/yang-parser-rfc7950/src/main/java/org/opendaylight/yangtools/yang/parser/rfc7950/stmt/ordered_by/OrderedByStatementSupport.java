@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ordered_by;
 
 import com.google.common.collect.ImmutableList;
+import java.util.EnumMap;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
@@ -23,6 +25,20 @@ public final class OrderedByStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.ORDERED_BY).build();
     private static final OrderedByStatementSupport INSTANCE = new OrderedByStatementSupport();
+
+    /**
+     * Ordered-by has low argument cardinality, hence we can reuse them in case declaration does not have any
+     * substatements (which is the usual case).
+     */
+    private static final EnumMap<Ordering, EmptyOrderedByStatement> DECLARED_INSTANCES;
+
+    static {
+        final EnumMap<Ordering, EmptyOrderedByStatement> m = new EnumMap<>(Ordering.class);
+        for (Ordering argument : Ordering.values()) {
+            m.put(argument, new EmptyOrderedByStatement(argument));
+        }
+        DECLARED_INSTANCES = m;
+    }
 
     private OrderedByStatementSupport() {
         super(YangStmtMapping.ORDERED_BY);
@@ -42,13 +58,30 @@ public final class OrderedByStatementSupport
     }
 
     @Override
-    public OrderedByStatement createDeclared(final StmtContext<Ordering, OrderedByStatement, ?> ctx) {
-        return new OrderedByStatementImpl(ctx);
+    public String internArgument(final String rawArgument) {
+        if ("user".equals(rawArgument)) {
+            return "user";
+        } else if ("system".equals(rawArgument)) {
+            return "system";
+        } else {
+            return rawArgument;
+        }
     }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected OrderedByStatement createDeclared(final StmtContext<Ordering, OrderedByStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularOrderedByStatement(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected OrderedByStatement createEmptyDeclared(final StmtContext<Ordering, OrderedByStatement, ?> ctx) {
+        return DECLARED_INSTANCES.get(ctx.coerceStatementArgument());
     }
 
     @Override
@@ -64,16 +97,5 @@ public final class OrderedByStatementSupport
             final StmtContext<Ordering, OrderedByStatement, OrderedByEffectiveStatement> ctx,
             final OrderedByStatement declared) {
         return new EmptyOrderedByEffectiveStatement(declared);
-    }
-
-    @Override
-    public String internArgument(final String rawArgument) {
-        if ("user".equals(rawArgument)) {
-            return "user";
-        } else if ("system".equals(rawArgument)) {
-            return "system";
-        } else {
-            return rawArgument;
-        }
     }
 }

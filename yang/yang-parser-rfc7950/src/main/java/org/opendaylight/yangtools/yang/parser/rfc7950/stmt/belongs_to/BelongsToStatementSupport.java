@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
@@ -52,11 +53,6 @@ public final class BelongsToStatementSupport
     }
 
     @Override
-    public BelongsToStatement createDeclared(final StmtContext<String, BelongsToStatement, ?> ctx) {
-        return new BelongsToStatementImpl(ctx);
-    }
-
-    @Override
     public void onPreLinkageDeclared(final Mutable<String, BelongsToStatement, BelongsToEffectiveStatement> ctx) {
         ctx.addRequiredSource(getSourceIdentifier(ctx));
     }
@@ -89,6 +85,17 @@ public final class BelongsToStatementSupport
                 }
             }
         });
+    }
+
+    @Override
+    protected BelongsToStatement createDeclared(final StmtContext<String, BelongsToStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularBelongsToStatement(ctx, substatements);
+    }
+
+    @Override
+    protected BelongsToStatement createEmptyDeclared(final StmtContext<String, BelongsToStatement, ?> ctx) {
+        return new EmptyBelongsToStatement(ctx);
     }
 
     @Override

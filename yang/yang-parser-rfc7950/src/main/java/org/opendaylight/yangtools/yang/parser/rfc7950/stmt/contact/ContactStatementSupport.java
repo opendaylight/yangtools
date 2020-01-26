@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.contact;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
@@ -36,13 +37,19 @@ public final class ContactStatementSupport
     }
 
     @Override
-    public ContactStatement createDeclared(final StmtContext<String, ContactStatement, ?> ctx) {
-        return new ContactStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    protected ContactStatement createDeclared(final StmtContext<String, ContactStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularContactStatement(ctx, substatements);
+    }
+
+    @Override
+    protected ContactStatement createEmptyDeclared(final StmtContext<String, ContactStatement, ?> ctx) {
+        return new EmptyContactStatement(ctx);
     }
 
     @Override
