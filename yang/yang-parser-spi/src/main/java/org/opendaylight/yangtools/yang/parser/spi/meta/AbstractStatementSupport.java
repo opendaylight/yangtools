@@ -10,11 +10,14 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 /**
  * Class providing necessary support for processing a YANG statement. This class is intended to be subclassed
@@ -97,16 +100,29 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
 
     @Override
     public boolean hasArgumentSpecificSupports() {
-        // Most of statement supports don't have any argument specific
-        // supports, so return 'false'.
+        // Most of statement supports don't have any argument specific supports, so return 'false'.
         return false;
     }
 
     @Override
     public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
-        // Most of statement supports don't have any argument specific
-        // supports, so return null.
+        // Most of statement supports don't have any argument specific supports, so return null.
         return null;
+    }
+
+    @Override
+    public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> stmt,
+            final Mutable<?, ?, ?> parent, final CopyType copyType, final QNameModule targetModule) {
+        // Most of statement supports will just want to copy the statement
+        // FIXME: YANGTOOLS-694: that is not strictly true. Subclasses of this should indicate if they are themselves
+        //                       copy-sensitive:
+        //                       1) if they are not and cannot be targeted by inference, and all their current
+        //                          substatements are also non-sensitive, we want to return the same context.
+        //                       2) if they are not and their current substatements are sensitive, we want to copy
+        //                          as a lazily-instantiated interceptor to let it deal with substatements when needed
+        //                          (YANGTOOLS-1067 prerequisite)
+        //                       3) otherwise perform this eager copy
+        return Optional.of(parent.childCopyOf(stmt, copyType, targetModule));
     }
 
     /**

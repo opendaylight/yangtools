@@ -756,12 +756,24 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
+    public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> parent, final CopyType type,
+            final QNameModule targetModule) {
+        checkEffectiveModelCompleted(this);
+        return definition.support().copyAsChildOf(this, parent, type, targetModule);
+    }
+
+    @Override
     public final Mutable<?, ?, ?> childCopyOf(final StmtContext<?, ?, ?> stmt, final CopyType type,
             final QNameModule targetModule) {
-        checkState(stmt.getCompletedPhase() == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Attempted to copy statement %s which has completed phase %s", stmt, stmt.getCompletedPhase());
+        checkEffectiveModelCompleted(stmt);
         checkArgument(stmt instanceof StatementContextBase, "Unsupported statement %s", stmt);
         return childCopyOf((StatementContextBase<?, ?, ?>) stmt, type, targetModule);
+    }
+
+    private static void checkEffectiveModelCompleted(final StmtContext<?, ?, ?> stmt) {
+        final ModelProcessingPhase phase = stmt.getCompletedPhase();
+        checkState(phase == ModelProcessingPhase.EFFECTIVE_MODEL,
+                "Attempted to copy statement %s which has completed phase %s", stmt, phase);
     }
 
     private <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
@@ -886,7 +898,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         if (fl != 0) {
             return fl == SET_IGNORE_CONFIG;
         }
-        if (definition.isIgnoringConfig() || parent.isIgnoringConfig()) {
+        if (definition.support().isIgnoringConfig() || parent.isIgnoringConfig()) {
             flags |= SET_IGNORE_CONFIG;
             return true;
         }
@@ -907,7 +919,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         if (fl != 0) {
             return fl == SET_IGNORE_IF_FEATURE;
         }
-        if (definition.isIgnoringIfFeatures() || parent.isIgnoringIfFeatures()) {
+        if (definition.support().isIgnoringIfFeatures() || parent.isIgnoringIfFeatures()) {
             flags |= SET_IGNORE_IF_FEATURE;
             return true;
         }
