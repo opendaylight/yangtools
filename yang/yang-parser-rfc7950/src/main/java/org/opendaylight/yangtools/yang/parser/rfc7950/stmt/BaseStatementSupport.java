@@ -36,6 +36,10 @@ public abstract class BaseStatementSupport<A, D extends DeclaredStatement<A>,
         super(publicDefinition);
     }
 
+    protected BaseStatementSupport(final StatementDefinition publicDefinition, final boolean contextIndependent) {
+        super(publicDefinition, contextIndependent);
+    }
+
     @Override
     public final D createDeclared(final StmtContext<A, D, ?> ctx) {
         final ImmutableList<? extends DeclaredStatement<?>> substatements = ctx.declaredSubstatements().stream()

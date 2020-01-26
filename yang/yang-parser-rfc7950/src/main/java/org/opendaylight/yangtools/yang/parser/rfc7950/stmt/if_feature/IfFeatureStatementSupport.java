@@ -44,7 +44,7 @@ public final class IfFeatureStatementSupport
     private static final IfFeatureStatementSupport INSTANCE = new IfFeatureStatementSupport();
 
     private IfFeatureStatementSupport() {
-        super(YangStmtMapping.IF_FEATURE);
+        super(YangStmtMapping.IF_FEATURE, true);
     }
 
     public static IfFeatureStatementSupport getInstance() {

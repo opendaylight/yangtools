@@ -40,7 +40,7 @@ public final class OrderedByStatementSupport
             new EmptyOrderedByEffectiveStatement(EMPTY_USER_DECL);
 
     private OrderedByStatementSupport() {
-        super(YangStmtMapping.ORDERED_BY);
+        super(YangStmtMapping.ORDERED_BY, true);
     }
 
     public static OrderedByStatementSupport getInstance() {

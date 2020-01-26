@@ -25,7 +25,7 @@ abstract class AbstractPatternStatementSupport
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPatternStatementSupport.class);
 
     AbstractPatternStatementSupport() {
-        super(YangStmtMapping.PATTERN);
+        super(YangStmtMapping.PATTERN, true);
     }
 
     @Override
