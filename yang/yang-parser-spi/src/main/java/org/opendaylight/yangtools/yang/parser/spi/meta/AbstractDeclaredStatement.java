@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
@@ -33,12 +32,11 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
         argument = context.getStatementArgument();
         source = context.getStatementSource();
         definition = context.getPublicDefinition();
-        /*
-         * Perform an explicit copy, because Collections2.transform() is lazily transformed and retains pointer to
-         * original collection, which may contains references to mutable context.
-         */
-        substatements = ImmutableList.copyOf(Collections2.transform(context.declaredSubstatements(),
-            StmtContext::buildDeclared));
+
+        // Eagerly-instantiated so as not to reference inference concepts (and mutable context
+        substatements = context.declaredSubstatements().stream()
+                .map(StmtContext::buildDeclared)
+                .collect(ImmutableList.toImmutableList());
     }
 
     @Override

@@ -7,12 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.description;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.ImmutableList;
+import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class DescriptionStatementImpl extends AbstractDeclaredStatement<String> implements DescriptionStatement {
-    DescriptionStatementImpl(final StmtContext<String, DescriptionStatement, ?> context) {
+final class DescriptionStatementImpl extends AbstractDescriptionStatement {
+    private final @NonNull ImmutableList<? extends DeclaredStatement<?>> substatements;
+
+    DescriptionStatementImpl(final StmtContext<String, DescriptionStatement, ?> context,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
         super(context);
+        this.substatements = requireNonNull(substatements);
+    }
+
+    @Override
+    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
+        return substatements;
     }
 }
