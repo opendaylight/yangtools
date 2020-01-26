@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
 
+import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
@@ -18,7 +19,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractGroupingStatementSupport
+/**
+ * Base behavior shared between RFC6020 and RFC7950 {@code grouping} statements.
+ */
+@Beta
+public abstract class AbstractGroupingStatementSupport
         extends AbstractQNameStatementSupport<GroupingStatement, GroupingEffectiveStatement> {
 
     AbstractGroupingStatementSupport() {
@@ -65,6 +70,11 @@ abstract class AbstractGroupingStatementSupport
                 parent.addContext(GroupingNamespace.class, stmt.coerceStatementArgument(), stmt);
             }
         }
+    }
+
+    public static boolean isChildOfGrouping(final StmtContext<?, ?, ?> stmt) {
+        final StmtContext<?, ?, ?> parent = stmt.getParentContext();
+        return parent != null && parent.getPublicDefinition() == YangStmtMapping.GROUPING;
     }
 
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
