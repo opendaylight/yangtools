@@ -47,6 +47,17 @@ public final class OrderedByStatementSupport
     }
 
     @Override
+    public String internArgument(final String rawArgument) {
+        if ("user".equals(rawArgument)) {
+            return "user";
+        } else if ("system".equals(rawArgument)) {
+            return "system";
+        } else {
+            return rawArgument;
+        }
+    }
+
+    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
@@ -67,13 +78,7 @@ public final class OrderedByStatementSupport
     }
 
     @Override
-    public String internArgument(final String rawArgument) {
-        if ("user".equals(rawArgument)) {
-            return "user";
-        } else if ("system".equals(rawArgument)) {
-            return "system";
-        } else {
-            return rawArgument;
-        }
+    protected boolean isContextIndependent() {
+        return true;
     }
 }
