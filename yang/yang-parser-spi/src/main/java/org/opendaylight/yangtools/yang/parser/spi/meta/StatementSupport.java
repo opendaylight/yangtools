@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
@@ -32,7 +33,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  */
 public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends StatementDefinition, StatementFactory<A, D, E> {
-
     /**
      * Returns public statement definition, which will be present in built statements.
      *
@@ -57,11 +57,8 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     /**
      * Adapts the argument value to match a new module.
      *
-     * @param ctx
-     *            Context, which may be used to access source-specific
-     *            namespaces required for parsing.
-     * @param targetModule
-     *            Target module, may not be null.
+     * @param ctx Context, which may be used to access source-specific namespaces required for parsing.
+     * @param targetModule Target module, may not be null.
      * @return Adapted argument value. The default implementation returns original value stored in context.
      */
     default A adaptArgumentValue(final StmtContext<A, D, E> ctx, final QNameModule targetModule) {
@@ -74,8 +71,7 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * accessible via {@link StmtContext#getParentContext()}. One such use is populating the parent's namespaces to
      * allow it to locate this child statement.
      *
-     * @param stmt
-     *            Context of added statement. No substatements are available.
+     * @param stmt Context of added statement. No substatements are available.
      */
     void onStatementAdded(StmtContext.Mutable<A, D, E> stmt);
 
@@ -87,8 +83,7 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * Implementation may use method to perform actions on this event or register modification action using
      * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
      *
-     * @param stmt
-     *            Context of added statement.
+     * @param stmt Context of added statement.
      */
     void onPreLinkageDeclared(StmtContext.Mutable<A, D, E> stmt);
 
@@ -100,10 +95,8 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * Implementation may use method to perform actions on this event or register modification action using
      * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
      *
-     * @param stmt
-     *            Context of added statement.
-     * @throws SourceException
-     *             when an inconsistency is detected.
+     * @param stmt Context of added statement.
+     * @throws SourceException when an inconsistency is detected.
      */
     void onLinkageDeclared(StmtContext.Mutable<A, D, E> stmt);
 
@@ -115,11 +108,8 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * Implementation may use method to perform actions on this event or register modification action using
      * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
      *
-     * @param stmt
-     *            Context of added statement. Argument and statement parent is
-     *            accessible.
-     * @throws SourceException
-     *             when an inconsistency is detected.
+     * @param stmt Context of added statement. Argument and statement parent is accessible.
+     * @throws SourceException when an inconsistency is detected.
      */
     void onStatementDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt);
 
@@ -131,11 +121,8 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * Implementation may use method to perform actions on this event or register modification action using
      * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
      *
-     * @param stmt
-     *            Context of added statement. Argument and statement parent is
-     *            accessible.
-     * @throws SourceException
-     *             when an inconsistency is detected.
+     * @param stmt Context of added statement. Argument and statement parent is accessible.
+     * @throws SourceException when an inconsistency is detected.
      */
     void onFullDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt);
 
@@ -148,17 +135,34 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * If this support has argument specific supports, the method returns support specific for given argument
      * (e.g. type statement support need to be specialized based on its argument), otherwise returns null.
      *
-     * @param argument
-     *            argument of statement
+     * @param argument argument of statement
      * @return statement support specific for supplied argument or null
      */
     @Nullable StatementSupport<?, ?, ?> getSupportSpecificForArgument(String argument);
 
     /**
+     * Create an optional copy of specified statement as a substatement of parent.
+     *
+     * <p>
+     * Note that while it may be tempting to return the same context, this is not safe in general case. It is only safe
+     * if the entire subtree is unaffected by changes to parent/namespace/history. This includes the semantics of this
+     * statement (it cannot be a target of any inference effects) as well as any substatements -- an extension statement
+     * is allowed pretty much anywhere and if its semantics are context-dependent, a simple instance reuse will not
+     * work.
+     *
+     * @param stmt Context of statement to be copied statement.
+     * @param parent Parent statement context
+     * @param type Type of copy being performed
+     * @param targetModule Target module, if present
+     * @return Empty if the statement should be ignored, or present with an instance that should be copied into parent.
+     */
+    @NonNull Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(Mutable<?, ?, ?> stmt, Mutable<?, ?, ?> parent,
+            CopyType type, @Nullable QNameModule targetModule);
+
+    /**
      * Given a raw string representation of an argument, try to use a shared representation.
      *
-     * @param rawArgument
-     *            Argument string
+     * @param rawArgument Argument string
      * @return A potentially-shard instance
      */
     default String internArgument(final String rawArgument) {
@@ -168,10 +172,9 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     /**
      * Returns unknown statement form of a regular YANG statement supplied as a parameter to the method.
      *
-     * @param yangStmtDef
-     *            statement definition of a regular yang statement
-     * @return Optional of unknown statement form of a regular yang statement or
-     *         Optional.empty() if it is not supported by this statement support
+     * @param yangStmtDef statement definition of a regular YANG statement
+     * @return Optional of unknown statement form of a regular YANG statement or empty() if it is not supported by this
+     *         statement support
      */
     default Optional<StatementSupport<?, ?, ?>> getUnknownStatementDefinitionOf(final StatementDefinition yangStmtDef) {
         return Optional.empty();
