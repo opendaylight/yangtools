@@ -91,6 +91,11 @@ public final class LengthStatementSupport
         return SUBSTATEMENT_VALIDATOR;
     }
 
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
+
     private static Number parseIntegerConstraintValue(final StmtContext<?, ?, ?> ctx, final String value) {
         if ("max".equals(value)) {
             return UnresolvedNumber.max();
