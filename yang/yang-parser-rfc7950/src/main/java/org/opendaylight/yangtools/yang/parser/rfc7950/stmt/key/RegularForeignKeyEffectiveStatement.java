@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
@@ -17,16 +15,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
 final class RegularForeignKeyEffectiveStatement extends AbstractKeyEffectiveStatement.Foreign {
-    private final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
+    private final @NonNull Object substatements;
 
     RegularForeignKeyEffectiveStatement(final KeyStatement declared, final Collection<SchemaNodeIdentifier> argument,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         super(declared, argument);
-        this.substatements = requireNonNull(substatements);
+        this.substatements = maskList(substatements);
     }
 
     @Override
     public ImmutableList<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        return substatements;
+        return unmaskList(substatements);
     }
 }
