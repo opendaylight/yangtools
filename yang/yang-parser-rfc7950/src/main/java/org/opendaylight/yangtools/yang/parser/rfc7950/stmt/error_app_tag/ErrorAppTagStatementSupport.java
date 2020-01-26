@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_app_tag;
 
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
@@ -36,13 +37,19 @@ public final class ErrorAppTagStatementSupport
     }
 
     @Override
-    public ErrorAppTagStatement createDeclared(final StmtContext<String, ErrorAppTagStatement, ?> ctx) {
-        return new ErrorAppTagStatementImpl(ctx);
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     @Override
-    protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+    protected ErrorAppTagStatement createDeclared(final StmtContext<String, ErrorAppTagStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularErrorAppTagStatement(ctx, substatements);
+    }
+
+    @Override
+    protected ErrorAppTagStatement createEmptyDeclared(final StmtContext<String, ErrorAppTagStatement, ?> ctx) {
+        return new EmptyErrorAppTagStatement(ctx);
     }
 
     @Override
