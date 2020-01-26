@@ -109,7 +109,7 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         return toStringHelper.add("statement", getStatementName());
     }
 
-    @NonNull StatementDefinitionContext<?, ?, ?> getSubDefinitionSpecificForArgument(final String argument) {
+    final @NonNull StatementDefinitionContext<?, ?, ?> getSubDefinitionSpecificForArgument(final String argument) {
         if (!hasArgumentSpecificSubDefinitions()) {
             return this;
         }
@@ -125,15 +125,15 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         return potential;
     }
 
-    boolean hasArgumentSpecificSubDefinitions() {
+    final StatementSupport<A, D, E> support() {
+        return support;
+    }
+
+    final boolean hasArgumentSpecificSubDefinitions() {
         return support.hasArgumentSpecificSupports();
     }
 
-    String internArgument(final String rawArgument) {
-        return support.internArgument(rawArgument);
-    }
-
-    StatementDefinitionContext<?, ?, ?> getAsUnknownStatementDefinition(
+    final StatementDefinitionContext<?, ?, ?> getAsUnknownStatementDefinition(
             final StatementDefinitionContext<?, ?, ?> yangStmtDef) {
         if (unknownStmtDefsOfYangStmts != null) {
             final StatementDefinitionContext<?, ?, ?> existing = unknownStmtDefsOfYangStmts.get(yangStmtDef);
@@ -151,13 +151,5 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
             unknownStmtDefsOfYangStmts.put(yangStmtDef, ret);
         }
         return ret;
-    }
-
-    boolean isIgnoringIfFeatures() {
-        return support.isIgnoringIfFeatures();
-    }
-
-    boolean isIgnoringConfig() {
-        return support.isIgnoringConfig();
     }
 }
