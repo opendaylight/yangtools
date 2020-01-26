@@ -48,7 +48,7 @@ public final class FractionDigitsStatementSupport
     }
 
     private FractionDigitsStatementSupport() {
-        super(YangStmtMapping.FRACTION_DIGITS);
+        super(YangStmtMapping.FRACTION_DIGITS, true);
     }
 
     public static FractionDigitsStatementSupport getInstance() {
