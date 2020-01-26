@@ -10,11 +10,14 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 /**
  * Class providing necessary support for processing a YANG statement. This class is intended to be subclassed
@@ -28,15 +31,28 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
         implements StatementDefinition, StatementFactory<A, D, E>, StatementSupport<A, D, E> {
 
     private final @NonNull StatementDefinition type;
+    private final @NonNull CopyPolicy copyPolicy;
+
+    @Beta
+    protected AbstractStatementSupport(final StatementDefinition publicDefinition, final CopyPolicy copyPolicy) {
+        this.type = requireNonNull(publicDefinition);
+        this.copyPolicy = requireNonNull(copyPolicy);
+        checkArgument(publicDefinition != this);
+    }
 
     protected AbstractStatementSupport(final StatementDefinition publicDefinition) {
-        this.type = requireNonNull(publicDefinition);
-        checkArgument(publicDefinition != this);
+        this(publicDefinition, CopyPolicy.DECLARED_COPY);
     }
 
     @Override
     public final StatementDefinition getPublicView() {
         return type;
+    }
+
+    @Override
+    public CopyPolicy applyCopyPolicy(final Mutable<?, ?, ?> stmt, final Mutable<?, ?, ?> parent,
+            final CopyType type, final QNameModule targetModule) {
+        return copyPolicy;
     }
 
     @Override
