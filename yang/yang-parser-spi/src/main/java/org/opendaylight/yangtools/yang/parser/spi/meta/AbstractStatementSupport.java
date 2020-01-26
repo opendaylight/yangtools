@@ -113,16 +113,32 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     @Override
     public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> stmt,
             final Mutable<?, ?, ?> parent, final CopyType copyType, final QNameModule targetModule) {
-        // Most of statement supports will just want to copy the statement
-        // FIXME: YANGTOOLS-694: that is not strictly true. Subclasses of this should indicate if they are themselves
-        //                       copy-sensitive:
-        //                       1) if they are not and cannot be targeted by inference, and all their current
-        //                          substatements are also non-sensitive, we want to return the same context.
-        //                       2) if they are not and their current substatements are sensitive, we want to copy
-        //                          as a lazily-instantiated interceptor to let it deal with substatements when needed
-        //                          (YANGTOOLS-1067 prerequisite)
-        //                       3) otherwise perform this eager copy
+        // FIXME: YANGTOOLS-694: filter out all context-independent substatements
+        if (isContextIndependent() && stmt.allSubstatementsStream().findAny().isEmpty()) {
+            // This statement is context-independent and has no substatements -- hence it can be freely shared.
+            return Optional.of(stmt);
+        }
+
+        // FIXME: YANGTOOLS-694: this is still to eager, we really want to copy as a lazily-instantiated context,
+        //                       so that we can support building an effective statement without copying anything --
+        //                       we will typically end up not being inferred against. In that case, this slim contenxt
+        //                       should end up dealing with differences at buildContext() time. This is a YANGTOOLS-1067
+        //                       prerequisite (which will deal with what can and cannot be shared across instances).
         return Optional.of(parent.childCopyOf(stmt, copyType, targetModule));
+    }
+
+    /**
+     * This statement is context-independent. This means its effective model is defined at the place of definition and
+     * cannot change.
+     *
+     * <p>
+     * Default implementation errs of the safe side by returning false.
+     *
+     * @return True if this statement's effective view is independent of the context where it is used and cannot be
+     *         further modified by inference.
+     */
+    protected boolean isContextIndependent() {
+        return false;
     }
 
     /**

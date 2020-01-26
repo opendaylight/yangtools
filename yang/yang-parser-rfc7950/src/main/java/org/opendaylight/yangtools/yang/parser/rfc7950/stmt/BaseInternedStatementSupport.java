@@ -65,4 +65,11 @@ public abstract class BaseInternedStatementSupport<A, D extends DeclaredStatemen
     protected abstract @NonNull D createEmptyDeclared(@NonNull A argument);
 
     protected abstract @NonNull E createEmptyEffective(@NonNull D declared);
+
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
+
 }

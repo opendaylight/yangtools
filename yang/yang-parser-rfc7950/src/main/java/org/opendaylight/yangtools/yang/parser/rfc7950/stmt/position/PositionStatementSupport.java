@@ -70,4 +70,9 @@ public final class PositionStatementSupport
             final PositionStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return new RegularPositionEffectiveStatement(declared, substatements);
     }
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
 }
