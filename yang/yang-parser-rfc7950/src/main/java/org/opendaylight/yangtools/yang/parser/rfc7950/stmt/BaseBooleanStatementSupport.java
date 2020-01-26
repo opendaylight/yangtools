@@ -65,5 +65,10 @@ public abstract class BaseBooleanStatementSupport<D extends DeclaredStatement<Bo
         }
     }
 
+    @Override
+    protected final boolean isContextIndependent() {
+        return true;
+    }
+
     protected abstract @NonNull E createEmptyEffective(@NonNull D declared);
 }

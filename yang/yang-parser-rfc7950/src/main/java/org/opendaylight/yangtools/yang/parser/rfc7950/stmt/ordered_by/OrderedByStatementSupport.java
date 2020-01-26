@@ -114,4 +114,9 @@ public final class OrderedByStatementSupport
             return new EmptyOrderedByEffectiveStatement(declared);
         }
     }
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
 }
