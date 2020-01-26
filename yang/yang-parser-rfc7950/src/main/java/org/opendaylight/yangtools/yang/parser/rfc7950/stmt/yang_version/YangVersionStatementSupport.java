@@ -59,4 +59,9 @@ public final class YangVersionStatementSupport
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
+
+    @Override
+    protected boolean isContextIndependent() {
+        return true;
+    }
 }
