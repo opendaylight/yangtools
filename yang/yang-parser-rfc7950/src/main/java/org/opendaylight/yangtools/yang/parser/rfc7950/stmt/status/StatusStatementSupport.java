@@ -7,12 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.status;
 
+import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping.AbstractGroupingStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -68,6 +73,13 @@ public final class StatusStatementSupport
         } else {
             return rawArgument;
         }
+    }
+
+    @Override
+    public Optional<? extends Mutable<?, ?, ?>> copyAsChildOf(final Mutable<?, ?, ?> stmt,
+            final Mutable<?, ?, ?> parent, final CopyType type, final QNameModule targetModule) {
+        return AbstractGroupingStatementSupport.isChildOfGrouping(stmt) ? Optional.empty()
+                : super.copyAsChildOf(stmt, parent, type, targetModule);
     }
 
     @Override
