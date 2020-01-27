@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
@@ -46,8 +47,8 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
         super(original);
         this.statementDeclSource = original.statementDeclSource;
         this.rawArgument = original.rawArgument;
-        this.originalCtx = original.getOriginalCtx().orElse(original);
-        this.prevCopyCtx = original;
+        this.originalCtx = original.originalCtx;
+        this.prevCopyCtx = original.prevCopyCtx;
         this.substatements = original.substatements;
     }
 
@@ -107,6 +108,11 @@ abstract class AbstractResumedStatement<A, D extends DeclaredStatement<A>, E ext
     @Override
     public boolean isFullyDefined() {
         return fullyDefined();
+    }
+
+    @Override
+    final D buildDeclared(final @NonNull StatementFactory<A, D, E> statementFactory) {
+        return originalCtx != null ? (D) originalCtx.buildDeclared() : super.buildDeclared(statementFactory);
     }
 
     /**

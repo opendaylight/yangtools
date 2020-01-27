@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.slf4j.Logger;
@@ -107,6 +108,11 @@ final class InferredStatementContext<A, D extends DeclaredStatement<A>, E extend
     @Override
     public Optional<? extends StmtContext<?, ?, ?>> getPreviousCopyCtx() {
         return Optional.of(prototype);
+    }
+
+    @Override
+    D buildDeclared(final @NonNull StatementFactory<A, D, E> statementFactory) {
+        return prototype.buildDeclared();
     }
 
     @Override
