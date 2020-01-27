@@ -1,0 +1,62 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ifmpostrunk-type {
+  belongs-to huawei-ifmpostrunk {
+    prefix ifmpostrunk;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "the ifmpostrunk type submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  typedef ifmpostrunkAbstractState {
+    type enumeration {
+      enum "Up" {
+        description
+          "The interface is in Up state.";
+      }
+      enum "Down" {
+        description
+          "The interface is in Down state.";
+      }
+    }
+    description
+      "Pos Trunk Abstract State";
+  }
+  typedef ifmpostrunkMemActiveState {
+    type enumeration {
+      enum "invalid" {
+        description
+          "Invalid.";
+      }
+      enum "Active" {
+        description
+          "The interface is in Active state.";
+      }
+      enum "InActive" {
+        description
+          "The interface is in InActive state.";
+      }
+    }
+    description
+      "Pos Trunk Member Active State";
+  }
+}

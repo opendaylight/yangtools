@@ -1,0 +1,633 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-rtp-type {
+  belongs-to huawei-rtp {
+    prefix rtp;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "route policy type.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef rtpMatchMode {
+    type enumeration {
+      enum "permit" {
+        description
+          "Matching mode of filters.";
+      }
+      enum "deny" {
+        description
+          "Matching mode of filters.";
+      }
+    }
+    description
+      "match mode";
+  }
+  typedef rtpApplyCostChoice {
+    type enumeration {
+      enum "Add" {
+        description
+          "Add the configured route cost and the original cost.";
+      }
+      enum "Sub" {
+        description
+          "Subtract the configured route cost from the original cost.";
+      }
+      enum "Replace" {
+        description
+          "Replace the original route cost with the configured route cost.";
+      }
+      enum "Inherit" {
+        description
+          "Inherit the original route cost.";
+      }
+    }
+    description
+      "cost choice";
+  }
+  typedef rtpCostType {
+    type enumeration {
+      enum "external" {
+        description
+          "Cost type of an IS-IS external route.";
+      }
+      enum "internal" {
+        description
+          "Cost type of an IS-IS internal route.";
+      }
+      enum "type_1" {
+        description
+          "Type-1 external route of OSPF.";
+      }
+      enum "type_2" {
+        description
+          "Type-2 external route of OSPF.";
+      }
+      enum "internal_inc_ibgp" {
+        description
+          "internal_inc_ibgp:";
+      }
+    }
+    description
+      "cost type";
+  }
+  typedef rtpRouteType {
+    type enumeration {
+      enum "OspfStubArea" {
+        description
+          "Import a route to the NSSA area of OSPF.";
+      }
+      enum "OspfBackbone" {
+        description
+          "Import a route to the backbone area of OSPF.";
+      }
+      enum "IsisLevel1" {
+        description
+          "Import a route to the level-1 area of IS-IS.";
+      }
+      enum "IsisLevel2" {
+        description
+          "Import a route to the level-2 area of IS-IS.";
+      }
+      enum "IsisLevel12" {
+        description
+          "Import routes to the level-1 and level-2 areas of IS-IS.";
+      }
+    }
+    description
+      "route type";
+  }
+  typedef rtpOriginType {
+    type enumeration {
+      enum "egp" {
+        description
+          "BGP routing information comes from the EGP route.";
+      }
+      enum "igp" {
+        description
+          "BGP routing information comes from the IGP route.";
+      }
+      enum "incomplete" {
+        description
+          "The source of BGP routing information is unknown.";
+      }
+    }
+    description
+      "origin type";
+  }
+  typedef rtpCmntyFilterType {
+    type enumeration {
+      enum "basic" {
+        description
+          "The current community attribute filter is a basic community attribute filter.";
+      }
+      enum "advanced" {
+        description
+          "The current community attribute filter is an advanced community attribute filter.";
+      }
+    }
+    description
+      "community filter type";
+  }
+  typedef rtpApplyQosChoice {
+    type enumeration {
+      enum "QosID" {
+        description
+          "Set a local ID.";
+      }
+      enum "Behavior" {
+        description
+          "Set traffic behavior.";
+      }
+      enum "IpPrecedence" {
+        description
+          "Set an IP precedence value.";
+      }
+      enum "IpPrecedenceAndQosID" {
+        description
+          "Set IP precedence value and local ID.";
+      }
+    }
+    description
+      "Qos choice";
+  }
+  typedef rtpMchRtType {
+    type enumeration {
+      enum "external1" {
+        description
+          "Type-1 external route of OSPF.";
+      }
+      enum "external2" {
+        description
+          "Type-2 external route of OSPF.";
+      }
+      enum "internal" {
+        description
+          "OSPF internal route, including inter-area routes and intra-area routes of OSPF.";
+      }
+      enum "isisLevel1" {
+        description
+          "Level-1 route of IS-IS.";
+      }
+      enum "isisLevel2" {
+        description
+          "Level-2 route of IS-IS.";
+      }
+      enum "nssaExternal1" {
+        description
+          "NSSA type-1 external route of OSPF.";
+      }
+      enum "nssaExternal2" {
+        description
+          "NSSA type-2 external route of OSPF.";
+      }
+      enum "ibgp" {
+        description
+          "ibgp:";
+      }
+      enum "ebgp" {
+        description
+          "ebgp:";
+      }
+    }
+    description
+      "match route type";
+  }
+  typedef rtpWellKnownCmnty {
+    type enumeration {
+      enum "internet" {
+        description
+          "internet:";
+      }
+      enum "no_advertise" {
+        description
+          "no-advertise:";
+      }
+      enum "no_export" {
+        description
+          "no-export:";
+      }
+      enum "no_export_subconfed" {
+        description
+          "no-export-subconfed:";
+      }
+      enum "none" {
+        description
+          "none:";
+      }
+    }
+    description
+      "wellKnown community";
+  }
+  typedef rtpMatchType {
+    type enumeration {
+      enum "invalid" {
+        description
+          "invalid:";
+      }
+      enum "matchDestPF" {
+        description
+          "matchDestPF:";
+      }
+      enum "matchDestPF6" {
+        description
+          "matchDestPF6:";
+      }
+      enum "matchSrcPF" {
+        description
+          "matchSrcPF:";
+      }
+      enum "matchSrcPF6" {
+        description
+          "matchSrcPF6:";
+      }
+      enum "matchNHopPF" {
+        description
+          "matchNHopPF:";
+      }
+      enum "matchNHopPF6" {
+        description
+          "matchNHopPF6:";
+      }
+      enum "matchDestAcl" {
+        description
+          "matchDestAcl:";
+      }
+      enum "matchSrcAcl" {
+        description
+          "matchSrcAcl:";
+      }
+      enum "matchNHopAcl" {
+        description
+          "matchNHopAcl:";
+      }
+      enum "matchAPF" {
+        description
+          "matchAPF:";
+      }
+      enum "matchCF" {
+        description
+          "matchCF:";
+      }
+      enum "matchECF" {
+        description
+          "matchECF:";
+      }
+      enum "matchRDF" {
+        description
+          "matchRDF:";
+      }
+      enum "matchCost" {
+        description
+          "matchCost:";
+      }
+      enum "matchTag" {
+        description
+          "matchTag:";
+      }
+      enum "matchRtType" {
+        description
+          "matchRtType:";
+      }
+      enum "matchLabel" {
+        description
+          "matchLabel:";
+      }
+      enum "matchECLSoo" {
+        description
+          "matchECLSoo:";
+      }
+      enum "matchDestAcl6" {
+        description
+          "matchDestAcl6:";
+      }
+      enum "matchSrcAcl6" {
+        description
+          "matchSrcAcl6:";
+      }
+      enum "matchNHopAcl6" {
+        description
+          "matchNHopAcl6:";
+      }
+      enum "matchProtocol" {
+        description
+          "matchProtocol:";
+      }
+    }
+    description
+      "match type";
+  }
+  typedef rtpTnlSelMchType {
+    type enumeration {
+      enum "matchNHopPF" {
+        description
+          "Match IPv4 next hops by an IPv4 prefix.";
+      }
+      enum "matchNHopAcl" {
+        description
+          "Match IPv4 next hops by an ACL.";
+      }
+    }
+    description
+      "tunnel selector type";
+  }
+  typedef rtpApplyType {
+    type enumeration {
+      enum "invalid" {
+        description
+          "invalid:";
+      }
+      enum "applyCFDel" {
+        description
+          "applyCFDel:";
+      }
+      enum "applyCost" {
+        description
+          "applyCost:";
+      }
+      enum "applyTag" {
+        description
+          "applyTag:";
+      }
+      enum "applyLabel" {
+        description
+          "applyLabel:";
+      }
+      enum "applyAsPath" {
+        description
+          "applyAsPath:";
+      }
+      enum "applyCmnty" {
+        description
+          "applyCmnty:";
+      }
+      enum "applyCostType" {
+        description
+          "applyCostType:";
+      }
+      enum "applyLclPref" {
+        description
+          "applyLclPref:";
+      }
+      enum "applyPref" {
+        description
+          "applyPref:";
+      }
+      enum "applyTrafIdx" {
+        description
+          "applyTrafIdx:";
+      }
+      enum "applyPrefVal" {
+        description
+          "applyPrefVal:";
+      }
+      enum "applyNHop4" {
+        description
+          "applyNHop4:";
+      }
+      enum "applyNHop6" {
+        description
+          "applyNHop6:";
+      }
+      enum "applyRtType" {
+        description
+          "applyRtType:";
+      }
+      enum "applyExtCmnty" {
+        description
+          "applyExtCmnty:";
+      }
+      enum "applyOrigin" {
+        description
+          "applyOrigin:";
+      }
+      enum "applyQosId" {
+        description
+          "applyQosId:";
+      }
+      enum "applyBehavior" {
+        description
+          "applyBehavior:";
+      }
+      enum "applyIpPrecedence" {
+        description
+          "applyIpPrecedence:";
+      }
+      enum "applyDamp" {
+        description
+          "applyDamp:";
+      }
+      enum "applyExtCmntySoo" {
+        description
+          "applyExtCmntySoo:";
+      }
+      enum "applyPriority" {
+        description
+          "applyPriority:";
+      }
+    }
+    description
+      "apply type";
+  }
+  typedef rtpRTPFilterTypes {
+    type enumeration {
+      enum "invalid" {
+        description
+          "invalid:";
+      }
+      enum "prefixFilter" {
+        description
+          "prefixFilter:";
+      }
+      enum "prefix6Filter" {
+        description
+          "prefix6Filter:";
+      }
+      enum "asPathFilter" {
+        description
+          "asPathFilter:";
+      }
+      enum "cmntyFilter" {
+        description
+          "cmntyFilter:";
+      }
+      enum "extCmntyFilter" {
+        description
+          "extCmntyFilter:";
+      }
+      enum "rdFilter" {
+        description
+          "rdFilter:";
+      }
+      enum "aclFilter" {
+        description
+          "aclFilter:";
+      }
+      enum "extCmntySooList" {
+        description
+          "extCmntySooList:";
+      }
+    }
+    description
+      "rtp filter type";
+  }
+  typedef rtpAdditiveChoice {
+    type enumeration {
+      enum "delete" {
+        description
+          "Delete all the original attributes.";
+      }
+      enum "replace" {
+        description
+          "Replace the original attribute with the newly configured one.";
+      }
+      enum "additive" {
+        description
+          "Add the newly configured attribute to the original ones.";
+      }
+      enum "delSpecial" {
+        description
+          "Delete the specified attribute.";
+      }
+    }
+    description
+      "additive choice";
+  }
+  typedef rtpExtCmntyFilterType {
+    type enumeration {
+      enum "basic" {
+        description
+          "The current extended community attribute filter is a basic extended community attribute filter.";
+      }
+      enum "advanced" {
+        description
+          "The current extended community attribute filter is an advanced extended community attribute filter.";
+      }
+    }
+    description
+      "extcommunity filter type";
+  }
+  typedef rtpMchASValidate {
+    type enumeration {
+      enum "valid" {
+        description
+          "Valid.";
+      }
+      enum "invalid" {
+        description
+          "Invalid.";
+      }
+      enum "notFound" {
+        description
+          "Not-found.";
+      }
+    }
+    description
+      "match as state";
+  }
+  typedef rtpMatchProtocolType {
+    type enumeration {
+      enum "Direct" {
+        description
+          "Direct.";
+      }
+      enum "OSPF" {
+        description
+          "Open Shortest Path First.";
+      }
+      enum "ISIS" {
+        description
+          "Intermediate System-to-Intermediate System.";
+      }
+      enum "Static" {
+        description
+          "Static.";
+      }
+      enum "RIP" {
+        description
+          "Routing Information Protocol.";
+      }
+      enum "BGP" {
+        description
+          "Border Gateway Protocol.";
+      }
+      enum "OSPFV3" {
+        description
+          "OSPFv3.";
+      }
+      enum "RIPNG" {
+        description
+          "Routing Information Protocol next generation.";
+      }
+      enum "UNR" {
+        description
+          "UNR protocol.";
+      }
+    }
+    description
+      "match protocol type";
+  }
+  typedef rtpMchFilterType {
+    type enumeration {
+      enum "matchAcl" {
+        description
+          "Match groupaddress by ACL filter ";
+      }
+      enum "matchPrefix" {
+        description
+          "Match groupaddress by ip-prefix filter ";
+      }
+    }
+    description
+      "match filter type";
+  }
+  typedef rtpApplyAigpChoice {
+    type enumeration {
+      enum "config" {
+        description
+          "Set Aigp Value";
+      }
+      enum "inheritCost" {
+        description
+          "Set Aigp Value Inherit Cost";
+      }
+    }
+    description
+      "aigp choice";
+  }
+  typedef rtpApplyLocalPrefChoice {
+    type enumeration {
+      enum "Replace" {
+        description
+          "Replace the original route local priority with the configured route local priority.";
+      }
+      enum "Add" {
+        description
+          "Add the configured route local priority and the original local priority.";
+      }
+      enum "Sub" {
+        description
+          "Subtract the configured route local priority from the original local priority.";
+      }
+    }
+    description
+      "localpreference choice";
+  }
+}

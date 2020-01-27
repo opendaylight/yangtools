@@ -1,0 +1,83 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-hwtacacs-type {
+  belongs-to huawei-hwtacacs {
+    prefix hwtacacs;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "The type definition of hwtacacs";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef hwtacacsSrvState {
+    type enumeration {
+      enum "Up" {
+        description
+          "The server is active.";
+      }
+      enum "Down" {
+        description
+          "The server is inactive.";
+      }
+    }
+    description
+      "The type of hwtacacs server state";
+  }
+  typedef hwtacacsSrvType {
+    type enumeration {
+      enum "Authentication" {
+        description
+          "The server is an authentication server.";
+      }
+      enum "Authorization" {
+        description
+          "The server is an authorization server.";
+      }
+      enum "Accounting" {
+        description
+          "The server is an accounting server.";
+      }
+      enum "Common" {
+        description
+          "The server is a common server.";
+      }
+    }
+    description
+      "The type of hwtacacs server";
+  }
+  typedef hwtacacsDomainInclude {
+    type enumeration {
+      enum "NO" {
+        description
+          "User name excludes domain.";
+      }
+      enum "YES" {
+        description
+          "User name includes domain.";
+      }
+      enum "Original" {
+        description
+          "User name same as user input.";
+      }
+    }
+    description
+      "The type of domain mode";
+  }
+}

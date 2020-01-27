@@ -1,0 +1,106 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifmima {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-ifmima";
+  prefix ifmima;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ifmima-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Logical interface that bundles multiple physical ATM interfaces.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+
+  container ifmima {
+    description
+      "Logical interface that bundles multiple physical ATM interfaces.";
+    container imaIfs {
+      description
+        "List of IMA-group interfaces.";
+      list imaIf {
+        key "ifName";
+        description
+          "Logical interface that bundles multiple physical ATM interfaces.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "IMA-group interface name.";
+        }
+        leaf minActive {
+          type uint32 {
+            range "1..32";
+          }
+          default "1";
+          description
+            "Minimum number of active links in an IMA-group interface.";
+          ext:allowDelete "true";
+        }
+        leaf frameLen {
+          type ifmimaFrameLenType;
+          default "frameLength32";
+          description
+            "IMA-group frame length.";
+          ext:allowDelete "true";
+        }
+        leaf imaDiffDelay {
+          type uint32 {
+            range "25..120";
+          }
+          default "25";
+          description
+            "IMA-group differential delay(millisecond).";
+          ext:allowDelete "true";
+        }
+        leaf imaClockMode {
+          type ifmimaClockMode;
+          default "ctc";
+          description
+            "IMA-group clock mode.";
+          ext:allowDelete "true";
+        }
+        container imaMembers {
+          description
+            "List of member interfaces in an IMA-group interface.";
+          list imaMember {
+            key "memberIfName";
+            max-elements "32";
+            description
+              "Member interfaces in an IMA-group interface.";
+            leaf memberIfName {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+              }
+              description
+                "The name of a ima-group member interface.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

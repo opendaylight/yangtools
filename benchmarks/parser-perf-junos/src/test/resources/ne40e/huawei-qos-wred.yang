@@ -1,0 +1,259 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-qos-wred {
+  belongs-to huawei-qos {
+    prefix qos;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-qos-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "QoS_wred submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping qos_wred_type {
+    description
+      "";
+    container qosWreds {
+      description
+        "WRED list.";
+      list qosWred {
+        key "wredName";
+        max-elements  "8";
+        description
+          "WRED.";
+        leaf wredName {
+          type qosPolicyName {
+            length "1..31";
+          }
+          description
+            "WRED name.";
+        }
+        leaf queueDepthPct {
+          type uint32 {
+            range "1..100";
+          }
+          description
+            "WRED queue depth percent.";
+          ext:allowDelete "true";
+        }
+        container qosWredColors {
+          description
+            "List of WRED colors.";
+          list qosWredColor {
+            key "color";
+            max-elements  "3";
+            description
+              "FLOW WRED Color. ";
+            leaf color {
+              type qosColor;
+              description
+                "Color.";
+            }
+            leaf lowLimitPct {
+              type uint8 {
+                range "0..100";
+              }
+              mandatory true;
+              description
+                "Low Limit Percentage.";
+            }
+            leaf highLimitPct {
+              type uint8 {
+                range "0..100";
+              }
+              mandatory true;
+              description
+                "High Limit Percentage.";
+            }
+            leaf discardPct {
+              type uint8 {
+                range "1..100";
+              }
+              mandatory true;
+              description
+                "Discarding Percentage.";
+            }
+          }
+        }
+      }
+    }
+    container qosPortWreds {
+      description
+        "Port WRED List.";
+      list qosPortWred {
+        key "wredName";
+        max-elements  "7";
+        description
+          "Port WRED.";
+        leaf wredName {
+          type qosPolicyName {
+            length "1..31";
+          }
+          description
+            "Port WRED name.";
+        }
+        leaf queueDepth {
+          type uint32 {
+            range "8..4294967295";
+          }
+          description
+            "QUEUE DEPTH.";
+          ext:allowDelete "true";
+        }
+        container qosWredColors {
+          description
+            "List of WRED colors.";
+          list qosWredColor {
+            key "color";
+            max-elements  "3";
+            description
+              "FLOW WRED Color. ";
+            leaf color {
+              type qosColor;
+              description
+                "Color.";
+            }
+            leaf lowLimitPct {
+              type uint8 {
+                range "0..100";
+              }
+              mandatory true;
+              description
+                "Low Limit Percentage.";
+            }
+            leaf highLimitPct {
+              type uint8 {
+                range "0..100";
+              }
+              must "(../highLimitPct>=../lowLimitPct*1)";
+              mandatory true;
+              description
+                "High Limit Percentage.";
+            }
+            leaf discardPct {
+              type uint8 {
+                range "1..100";
+              }
+              mandatory true;
+              description
+                "Discarding Percentage.";
+            }
+          }
+        }
+      }
+    }
+    container qosWredQueues {
+      description
+        "List of the queues applying WRED.";
+      list qosWredQueue {
+        key "serviceClass speedType";
+        max-elements  "8";
+        description
+          "Queue applying WRED.";
+        leaf serviceClass {
+          type qosSrvClass;
+          description
+            "Class of service.";
+        }
+        leaf speedType {
+          type qosSpeedType;
+          description
+            "Speed type. The available options are high-speed and low-speed.";
+        }
+        leaf wredName {
+          type leafref {
+            path "/qos/qosWred/qosWreds/qosWred/wredName";
+          }
+          mandatory true;
+          description
+            "WRED name.";
+        }
+      }
+    }
+    container qosFlowWreds {
+      description
+        "FLOW WRED List.";
+      list qosFlowWred {
+        key "flowWredName";
+        max-elements  "511";
+        description
+          "FLOW WRED.";
+        leaf flowWredName {
+          type qosPolicyName {
+            length "1..31";
+          }
+          description
+            "FLOW WRED Name.";
+        }
+        leaf queueDepth {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Queue Depth.";
+          ext:allowDelete "true";
+        }
+        container qosWredColors {
+          description
+            "FLOW WRED Color List.";
+          list qosWredColor {
+            key "color";
+            max-elements  "3";
+            description
+              "FLOW WRED Color. ";
+            leaf color {
+              type qosColor;
+              description
+                "Color.";
+            }
+            leaf lowLimitPct {
+              type uint8 {
+                range "0..100";
+              }
+              mandatory true;
+              description
+                "Low Limit Percentage.";
+            }
+            leaf highLimitPct {
+              type uint8 {
+                range "0..100";
+              }
+              must "(../highLimitPct>=../lowLimitPct*1)";
+              mandatory true;
+              description
+                "High Limit Percentage.";
+            }
+            leaf discardPct {
+              type uint8 {
+                range "1..100";
+              }
+              mandatory true;
+              description
+                "Discarding Percentage.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,121 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-aaa-lam-type {
+  belongs-to huawei-aaa {
+    prefix aaa;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of lam type submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef lamSshAuthType {
+    type enumeration {
+      enum "-" {
+        description
+          "";
+      }
+      enum "password" {
+        description
+          "";
+      }
+      enum "rsa" {
+        description
+          "";
+      }
+      enum "all" {
+        description
+          "";
+      }
+      enum "password_rsa" {
+        description
+          "";
+      }
+    }
+    description
+      "";
+  }
+  typedef lamEncryptType {
+    type enumeration {
+      enum "none" {
+        description
+          "";
+      }
+      enum "md5" {
+        description
+          "";
+      }
+      enum "sha_1" {
+        description
+          "";
+      }
+    }
+    description
+      "";
+  }
+  typedef userStateType {
+    type enumeration {
+      enum "block" {
+        description
+          "Blocked state.";
+      }
+      enum "active" {
+        description
+          "Activated state.";
+      }
+    }
+    description
+      "";
+  }
+  typedef lamWeekDayType {
+    type enumeration {
+      enum "sun" {
+        description
+          "Sunday";
+      }
+      enum "mon" {
+        description
+          "Monday";
+      }
+      enum "tue" {
+        description
+          "Tuesday";
+      }
+      enum "wed" {
+        description
+          "Wednesday";
+      }
+      enum "thu" {
+        description
+          "Thursday";
+      }
+      enum "fri" {
+        description
+          "Friday";
+      }
+      enum "sat" {
+        description
+          "Saturday";
+      }
+    }
+    description
+      "";
+  }
+}

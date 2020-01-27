@@ -1,0 +1,65 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-acl-action {
+  belongs-to huawei-acl {
+    prefix acl;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  include huawei-acl-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "ACL action.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc aclResetCount {
+    description
+      "Reset the ACL matching count.";
+    input {
+      leaf aclNumOrName {
+        type pub-type:aclNumOrName;
+        mandatory true;
+        description
+          "ACL number or name. An ACL number ranges from 1000 to 5999 or 10000 to 10999. An ACL name must start with a letter, spaces not supported. ";
+      }
+    }
+  }
+  rpc aclResetAll {
+    description
+      "Reset all the ACL matching count.";
+  }
+  rpc acl6ResetCount {
+    description
+      "Reset the ACL6 matching count.";
+    input {
+      leaf aclNumOrName {
+        type acl6NumOrName;
+        mandatory true;
+        description
+          "ACL6 number or name. An ACL6 number ranges from 1000 to 3999. An ACL name must start with a letter, spaces not supported.";
+      }
+    }
+  }
+  rpc acl6ResetAll {
+    description
+      "Reset all the ACL6 matching count.";
+  }
+}

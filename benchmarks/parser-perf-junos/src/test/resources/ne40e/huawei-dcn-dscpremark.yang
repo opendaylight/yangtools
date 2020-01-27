@@ -1,0 +1,51 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-dcn-dscpremark {
+  belongs-to huawei-dcn {
+    prefix dcn;
+  }
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "DCN DSCP remark";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping dcn_DscpRemarks_type {
+    description
+      "";
+    list dcnDscpRemark {
+      key "ifName";
+      description
+        "Transparent transmission of the priority configured on the outbound interface.";
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+      leaf dscpPriTransparent {
+        type boolean;
+        description
+          "Transparent transmission of the priority.";
+      }
+    }
+  }
+}

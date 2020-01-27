@@ -1,0 +1,87 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-aaa-lam-action {
+  belongs-to huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-aaa-lam-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of lam action submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc reactivateUser {
+    description
+      "";
+    input {
+      leaf userName {
+        type string {
+          length "1..253";
+        }
+        mandatory true;
+        description
+          "Name of local user to be reactivated, it is not case sensitive. ";
+      }
+    }
+  }
+  rpc changeMyPassword {
+    description
+      "";
+    input {
+      leaf oldPassword {
+        type pub-type:oneInputPasswordExtend;
+        mandatory true;
+        description
+          "The old password of the local user.";
+      }
+      leaf newPassword {
+        type pub-type:passwordExtend;
+        mandatory true;
+        description
+          "New password to set.";
+      }
+    }
+  }
+  rpc changeMyIdleTimeout {
+    description
+      "";
+    input {
+      leaf idleTimeout {
+        type uint64 {
+          range "5..60";
+        }
+        mandatory true;
+        description
+          "The idle timeout of the local user, the minimum value is 5(minutes), 0 means never timeout.";
+        ext:value-replace {
+          ext:item  "0" {
+            ext:meaning "never";
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,184 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-rsa {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-rsa";
+  prefix rsa;
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-rsa-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "RSA";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container rsa {
+    description
+      "RSA";
+    container rsaLocalKeys {
+      description
+        "local key table";
+      container rsaLocalKey {
+        description
+          "local key code.";
+        leaf keySize {
+          type uint32 {
+            range "2048";
+          }
+          description
+            "key size";
+        }
+        leaf hostKeyName {
+          type string {
+            length "0..264";
+          }
+          config false;
+          description
+            "Hostkey name";
+        }
+        leaf hostKeyCode {
+          type string {
+            length "0..1024";
+          }
+          config false;
+          description
+            "Hostkey code";
+        }
+        leaf hostKeySSH1 {
+          type string {
+            length "0..1024";
+          }
+          config false;
+          description
+            "Hostkey code in SSH1 format";
+        }
+        leaf hostKeyPEM {
+          type string {
+            length "0..512";
+          }
+          config false;
+          description
+            "Hostkey code in PEM format";
+        }
+        leaf hostKeyOpenSSH {
+          type string {
+            length "0..512";
+          }
+          config false;
+          description
+            "Hostkey code in OpenSSH format";
+        }
+        leaf serverKeyName {
+          type string {
+            length "0..264";
+          }
+          config false;
+          description
+            "server key name";
+        }
+        leaf serverKeyCode {
+          type string {
+            length "0..1024";
+          }
+          config false;
+          description
+            "server key code";
+        }
+      }
+    }
+    container rsaPeerKeys {
+      description
+        "peer key table";
+      list rsaPeerKey {
+        key "keyName";
+        description
+          "peer key code.";
+        leaf keyName {
+          type string {
+            length "1..30";
+          }
+          description
+            "key name";
+        }
+        leaf keyCode {
+          type string {
+            length "1..1024";
+          }
+          mandatory true;
+          description
+            "key code";
+        }
+        leaf encodeInType {
+          type rsaEncodeInType;
+          mandatory true;
+          description
+            "encode type";
+        }
+      }
+    }
+    container rsaKeyPairCfgs {
+      description
+        "rsa keypair tabel";
+      list rsaKeyPairCfg {
+        key "keyPairLabel";
+        max-elements  "20";
+        description
+          "rsa keypair";
+        leaf keyPairLabel {
+          type string {
+            length "1..35";
+            pattern '[a-zA-Z0-9_]*';
+          }
+          description
+            "Keypair Label Name : It only contains underscores (_), case-insensitive letters and digits";
+        }
+        leaf keySize {
+          type uint32 {
+            range "2048";
+          }
+          mandatory true;
+          description
+            "Size of Keypair";
+        }
+        leaf hostKeyCode {
+          type string {
+            length "0..2048";
+          }
+          config false;
+          description
+            "Hostkey code";
+        }
+      }
+    }
+    container rsaGlobalCfg {
+      description
+        "Global Configuration ";
+      leaf maxKeyPair {
+        type int32 {
+          range "1..20";
+        }
+        default "20";
+        description
+          "Maximum keypair value";
+        ext:allowDelete "true";
+      }
+    }
+  }
+}

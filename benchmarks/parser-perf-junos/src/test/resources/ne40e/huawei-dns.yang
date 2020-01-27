@@ -1,0 +1,464 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-dns {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-dns";
+  prefix dns;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-dns-action;
+  include huawei-dns-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "DNS management.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container dns {
+    description
+      "DNS management.";
+    container dnsGlobalCfgs {
+      description
+        "Dns Service Enable.";
+      container dnsGlobalCfg {
+        description
+          "To determine whether to enable dns.";
+        leaf dnsEnable {
+          type dnsFlag;
+          default "false";
+          description
+            "Dns enable flag.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container dnsSrcIps {
+      description
+        "List of Ipv4 Source Server.";
+      list dnsSrcIp {
+        key "vrfName sourceIpv4Addr";
+        description
+          "Ipv4 Source Server.";
+        leaf vrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          description
+            "VPN name.";
+        }
+        leaf sourceIpv4Addr {
+          type inet:ipv4-address-no-zone;
+          description
+            "IPv4 address of source server.";
+        }
+      }
+    }
+    container dnsSrcIpv6s {
+      description
+        "List of Ipv6 Source Server.";
+      list dnsSrcIpv6 {
+        key "vrfName sourceIpv6Addr";
+        description
+          "Ipv6 Source Server.";
+        leaf vrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          description
+            "VPN name.";
+        }
+        leaf sourceIpv6Addr {
+          type inet:ipv6-address-no-zone;
+          description
+            "IPv6 address of source server.";
+        }
+      }
+    }
+    container dnsDomains {
+      description
+        "List of domain.";
+      list dnsDomain {
+        key "vrfName domain";
+        description
+          "Domain name.";
+        leaf vrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          description
+            "VPN name.";
+        }
+        leaf domain {
+          type string {
+            length "1..63";
+          }
+          description
+            "Domain.";
+        }
+      }
+    }
+    container dnsIpv4Hosts {
+      description
+        "List of IPv4 host.";
+      list dnsIpv4Host {
+        key "vrfName host";
+        description
+          "IPv4 host.";
+        leaf vrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          description
+            "VPN name.";
+        }
+        leaf host {
+          type string {
+            length "1..255";
+          }
+          description
+            "host name.";
+        }
+        leaf ipv4Addr {
+          type inet:ipv4-address-no-zone;
+          mandatory true;
+          description
+            "Address of IPv4 host.";
+        }
+      }
+    }
+    container dnsIpv6Hosts {
+      description
+        "List of IPv6 host.";
+      list dnsIpv6Host {
+        key "vrfName host ipv6Addr";
+        description
+          "IPv6 host.";
+        leaf vrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          description
+            "VPN name.";
+        }
+        leaf host {
+          type string {
+            length "1..255";
+          }
+          description
+            "host name.";
+        }
+        leaf ipv6Addr {
+          type inet:ipv6-address-no-zone;
+          description
+            "Address of IPv6 host.";
+        }
+      }
+    }
+    container dnsIpv4Servers {
+      description
+        "List of dns IPv4 server.";
+      list dnsIpv4Server {
+        key "vrfName seqNo ipv4Addr";
+        description
+          "Dns IPv4 server.";
+        leaf vrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          description
+            "VPN name.";
+        }
+        leaf seqNo {
+          type uint32;
+          description
+            "Sequence Number.";
+        }
+        leaf ipv4Addr {
+          type inet:ipv4-address-no-zone;
+          description
+            "Address of IPv4 server.";
+        }
+      }
+    }
+    container dnsIpv6Servers {
+      description
+        "List of dns IPv6 server.";
+      list dnsIpv6Server {
+        key "vrfName seqNo ipv6Addr";
+        description
+          "Dns IPv6 server.";
+        leaf vrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          description
+            "VPN name.";
+        }
+        leaf seqNo {
+          type uint32;
+          description
+            "Sequence Number.";
+        }
+        leaf ipv6Addr {
+          type inet:ipv6-address-no-zone;
+          description
+            "Address of IPv6 server.";
+        }
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Interface Name.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container dnsTimeouts {
+      description
+        "Specifies the amount of time to wait for a response to a DNS query. If the ip domain timeout command is not configured, system will wait 3 seconds for a response to a DNS query.";
+      container dnsTimeout {
+        description
+          "The amount of time to wait for a response to a DNS query.";
+        leaf intervalTime {
+          type uint32 {
+            range "1..10";
+          }
+          units second;
+          default "5";
+          description
+            "The amount of time to wait for a response to a DNS query(s).";
+        }
+      }
+    }
+    container dnsTryNumbers {
+      description
+        "Specifies the number of times to retry sending DNS queries.If the ip domain retry command is not configured, system will retry DNS queries twice.";
+      container dnsTryNumber {
+        description
+          "Specifies the number of times to retry sending DNS queries.";
+        leaf tryNumber {
+          type uint32 {
+            range "1..3";
+          }
+          default "2";
+          description
+            "Specifies the number of times to retry sending DNS queries.";
+        }
+      }
+    }
+    container dnsDynamicIpv4Hosts {
+      config false;
+      description
+        "List of DNS IPv4 dynamic query.";
+      list dnsDynamicIpv4Host {
+        key "vrfName host ipv4Addr queryType";
+        config false;
+        description
+          "Dynamic query of dns IPv4.";
+        leaf vrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          config false;
+          description
+            "VPN name.";
+        }
+        leaf host {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Dynamical domain.";
+        }
+        leaf ipv4Addr {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "IPv4 address.";
+        }
+        leaf ttl {
+          type uint32;
+          config false;
+          description
+            "TTL.";
+        }
+        leaf alias {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Alias.";
+        }
+        leaf queryType {
+          type dnsQueryType;
+          config false;
+          description
+            "Query Type.";
+        }
+      }
+    }
+    container dnsDynamicIpv6Hosts {
+      config false;
+      description
+        "List of DNS IPv6 dynamic query.";
+      list dnsDynamicIpv6Host {
+        key "vrfName host ipv6Addr queryType";
+        config false;
+        description
+          "Dynamic query of dns IPv6.";
+        leaf vrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          config false;
+          description
+            "VPN name.";
+        }
+        leaf host {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Dynamical domain.";
+        }
+        leaf ipv6Addr {
+          type inet:ipv6-address-no-zone;
+          config false;
+          description
+            "IPv6 address.";
+        }
+        leaf ttl {
+          type uint32;
+          config false;
+          description
+            "TTL.";
+        }
+        leaf alias {
+          type string {
+            length "1..255";
+          }
+          config false;
+          description
+            "Alias.";
+        }
+        leaf queryType {
+          type dnsQueryType;
+          config false;
+          description
+            "Query Type.";
+        }
+      }
+    }
+    container dnsPktStats {
+      config false;
+      description
+        "Querying for the statistics on DNS packets.";
+      list dnsPktStat {
+        config false;
+        description
+          "Querying for the statistics on DNS packets.";
+        leaf inputTotal {
+          type uint32;
+          config false;
+          description
+            "Total count of received packets.";
+        }
+        leaf outputTotal {
+          type uint32;
+          config false;
+          description
+            "Total count of sent packets.";
+        }
+        leaf discarded {
+          type uint32;
+          config false;
+          description
+            "Count of discarded packets.";
+        }
+        leaf rrA {
+          type uint32;
+          config false;
+          description
+            "Count of received 'A' resource record types.";
+        }
+        leaf rrAaaa {
+          type uint32;
+          config false;
+          description
+            "Count of received 'AAAA' resource record types.";
+        }
+        leaf rrCname {
+          type uint32;
+          config false;
+          description
+            "Count of received 'CNAME' resource record types.";
+        }
+        leaf rrPtr {
+          type uint32;
+          config false;
+          description
+            "Count of received 'PTR' resource record types.";
+        }
+        leaf rrUnknown {
+          type uint32;
+          config false;
+          description
+            "Count of received unkown resource record types";
+        }
+        leaf standard {
+          type uint32;
+          config false;
+          description
+            "Count of sent standard query packets.";
+        }
+        leaf questionA {
+          type uint32;
+          config false;
+          description
+            "Count of sent 'A' query types.";
+        }
+        leaf questionAaaa {
+          type uint32;
+          config false;
+          description
+            "Count of sent 'AAAA' query types.";
+        }
+        leaf questionPtr {
+          type uint32;
+          config false;
+          description
+            "Count of sent 'PTR' query types.";
+        }
+      }
+    }
+  }
+}

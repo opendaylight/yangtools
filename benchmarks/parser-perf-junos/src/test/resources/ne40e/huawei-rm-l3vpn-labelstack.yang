@@ -1,0 +1,79 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-rm-l3vpn-labelstack {
+  belongs-to huawei-rm {
+    prefix rm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Label stack information.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping l3vpn_labelStacks_type {
+    description
+      "";
+    list labelStackInfo {
+      key "level";
+      config false;
+      description
+        "Label stack information.";
+      leaf labelStack {
+        type uint32 {
+          range "1..4294967295";
+        }
+        config false;
+        description
+          "Label stack.";
+      }
+      leaf level {
+        type uint32 {
+          range "1..4294967295";
+        }
+        config false;
+        description
+          "Level.";
+      }
+      leaf type {
+        type string {
+          length "0..50";
+        }
+        config false;
+        description
+          "Label Type.";
+      }
+      leaf label {
+        type string {
+          length "0..15";
+        }
+        config false;
+        description
+          "Label.";
+      }
+      leaf outInterface {
+        type pub-type:ifName;
+        config false;
+        description
+          "Outbound interface name.";
+      }
+    }
+  }
+}

@@ -1,0 +1,540 @@
+submodule huawei-ipsec-ike-action {
+  belongs-to huawei-ipsec {
+    prefix ipsec;
+  }
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ipsec-ike-type;
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "submodule ipsec-ike-action";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference "Huawei private.";
+  }
+
+  rpc ike-ikeResetMsgStatsOneSlot {
+    description
+      "Reset Msg Statistics per slot";
+    input {
+      leaf slotId {
+        type string {
+          length "1..31";
+        }
+        mandatory true;
+        description
+          "Slot Number";
+      }
+      leaf subSlotType {
+        type ikeSubSlotType;
+        description
+          "Security unit type";
+        ext:allowDelete "true";
+      }
+      leaf subSlotId {
+        type uint16 {
+          range "0..1";
+        }
+        description
+          "Security unit ID";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ike-ikeResetMsgStatsAllSlots {
+    description
+      "Reset Msg Statistics all slots";
+  }
+  rpc ike-ikeiResetAllStatsOneSlot {
+    description
+      "Reset All Statistics per slot";
+    input {
+      leaf slotId {
+        type string {
+          length "1..31";
+        }
+        mandatory true;
+        description
+          "Slot Number";
+      }
+      leaf subSlotType {
+        type ikeSubSlotType;
+        description
+          "Security unit type";
+        ext:allowDelete "true";
+      }
+      leaf subSlotId {
+        type uint16 {
+          range "0..1";
+        }
+        description
+          "Security unit ID";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ike-ikeResetAllStatsAllSlots {
+    description
+      "Reset All Statistics all slots";
+  }
+  rpc ike-ikeResetSaAll {
+    description
+      "Reset IKE SA all";
+    input {
+      leaf speed {
+        type uint32 {
+          range "1..200";
+        }
+        description
+          "Speed of reset, the unit is per second";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ike-ikeResetSa {
+    description
+      "Reset IKE SA by Connection Id";
+    input {
+      leaf connectionId {
+        type uint32 {
+          range "1..65535";
+        }
+        mandatory true;
+        description
+          "Connection Id";
+      }
+      leaf slotId {
+        type string {
+          length "1..31";
+        }
+        description
+          "Slot Number";
+        ext:allowDelete "true";
+      }
+      leaf subSlotType {
+        type ikeSubSlotType;
+        description
+          "Security unit type";
+        ext:allowDelete "true";
+      }
+      leaf subSlotId {
+        type uint16 {
+          range "0..1";
+        }
+        description
+          "Security unit ID";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ike-ikeResetSaBySlot {
+    description
+      "Reset IKE SA by slot";
+    input {
+      leaf slotId {
+        type string {
+          length "1..31";
+        }
+        mandatory true;
+        description
+          "Slot Number";
+      }
+      leaf subSlotType {
+        type ikeSubSlotType;
+        description
+          "Security unit type";
+        ext:allowDelete "true";
+      }
+      leaf subSlotId {
+        type uint16 {
+          range "0..1";
+        }
+        description
+          "Security unit ID";
+        ext:allowDelete "true";
+      }
+      leaf speed {
+        type uint32 {
+          range "1..200";
+        }
+        description
+          "Speed of reset, the unit is per second";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ike-ikeResetSaByRem {
+    description
+      "Reset IKE SA by Remote Address";
+    input {
+      leaf remAddr {
+        type inet:ipv4-address-no-zone;
+        mandatory true;
+        description
+          "Remote Address";
+      }
+      leaf slotId {
+        type string {
+          length "1..31";
+        }
+        description
+          "Slot Number";
+        ext:allowDelete "true";
+      }
+      leaf subSlotType {
+        type ikeSubSlotType;
+        description
+          "Security unit type";
+        ext:allowDelete "true";
+      }
+      leaf subSlotId {
+        type uint16 {
+          range "0..1";
+        }
+        description
+          "Security unit ID";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ike-ikeipsecResetIpsecSaAll {
+    description
+      "Reset IKE IPSec SA all";
+    input {
+      leaf speed {
+        type uint32 {
+          range "1..200";
+        }
+        description
+          "Speed of reset, the unit is per second";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ike-ikeipsecResetIpsecSaAllBySlot {
+    description
+      "Reset IKE IPSec SA Base on slot";
+    input {
+      leaf slotNumber {
+        type string {
+          length "1..31";
+        }
+        mandatory true;
+        description
+          "Slot";
+      }
+      leaf subSlotType {
+        type ikeSubSlotType;
+        description
+          "Security unit type";
+        ext:allowDelete "true";
+      }
+      leaf subSlotId {
+        type uint16 {
+          range "0..1";
+        }
+        description
+          "Security unit ID";
+        ext:allowDelete "true";
+      }
+      leaf speed {
+        type uint32 {
+          range "1..200";
+        }
+        description
+          "Speed of reset, the unit is per second";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ike-ikeipsecResetIpsecSaAh {
+    description
+      "Reset IKE IPSec SA base on AH";
+    input {
+      leaf ipAddress {
+        type inet:ipv4-address-no-zone;
+        mandatory true;
+        description
+          "IP address";
+      }
+      leaf ahSpi {
+        type uint32 {
+          range "256..4294967295";
+        }
+        mandatory true;
+        description
+          "AH SPI";
+      }
+      leaf slotNumber {
+        type string {
+          length "1..31";
+        }
+        description
+          "Slot";
+        ext:allowDelete "true";
+      }
+      leaf subSlotType {
+        type ikeSubSlotType;
+        description
+          "Security unit type";
+        ext:allowDelete "true";
+      }
+      leaf subSlotId {
+        type uint16 {
+          range "0..1";
+        }
+        description
+          "Security unit ID";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ike-ikeipsecResetIpsecSaEsp {
+    description
+      "Reset IKE IPSec SA base on ESP";
+    input {
+      leaf ipAddress {
+        type inet:ipv4-address-no-zone;
+        mandatory true;
+        description
+          "IP address";
+      }
+      leaf espSpi {
+        type uint32 {
+          range "256..4294967295";
+        }
+        mandatory true;
+        description
+          "ESP SPI";
+      }
+      leaf slotNumber {
+        type string {
+          length "1..31";
+        }
+        description
+          "Slot";
+        ext:allowDelete "true";
+      }
+      leaf subSlotType {
+        type ikeSubSlotType;
+        description
+          "Security unit type";
+        ext:allowDelete "true";
+      }
+      leaf subSlotId {
+        type uint16 {
+          range "0..1";
+        }
+        description
+          "Security unit ID";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ike-ikeipsecResetIpsecSaRemoteAddr {
+    description
+      "Reset IKE IPSec SA base on remote address";
+    input {
+      leaf remoteAddress {
+        type inet:ipv4-address-no-zone;
+        mandatory true;
+        description
+          "Remote address";
+      }
+      leaf slotNumber {
+        type string {
+          length "1..31";
+        }
+        description
+          "Slot";
+        ext:allowDelete "true";
+      }
+      leaf subSlotType {
+        type ikeSubSlotType;
+        description
+          "Security unit type";
+        ext:allowDelete "true";
+      }
+      leaf subSlotId {
+        type uint16 {
+          range "0..1";
+        }
+        description
+          "Security unit ID";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ike-ikeipsecResetIpsecSaPol {
+    description
+      "Reset IKE IPSec SA base on policy";
+    input {
+      leaf policyName {
+        type string {
+          length "1..15";
+        }
+        mandatory true;
+        description
+          "Policy name";
+      }
+      leaf slotNumber {
+        type string {
+          length "1..31";
+        }
+        description
+          "Slot";
+        ext:allowDelete "true";
+      }
+      leaf subSlotType {
+        type ikeSubSlotType;
+        description
+          "Security unit type";
+        ext:allowDelete "true";
+      }
+      leaf subSlotId {
+        type uint16 {
+          range "0..1";
+        }
+        description
+          "Security unit ID";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ike-ikeipsecResetIpsecSaPolseq {
+    description
+      "Reset IKE IPSec SA base on policy sequence";
+    input {
+      leaf policyName {
+        type string {
+          length "1..15";
+        }
+        mandatory true;
+        description
+          "Policy name";
+      }
+      leaf sequenceNumber {
+        type uint16 {
+          range "1..10000";
+        }
+        mandatory true;
+        description
+          "Sequence number";
+      }
+      leaf slotNumber {
+        type string {
+          length "1..31";
+        }
+        description
+          "Slot";
+        ext:allowDelete "true";
+      }
+      leaf subSlotType {
+        type ikeSubSlotType;
+        description
+          "Security unit type";
+        ext:allowDelete "true";
+      }
+      leaf subSlotId {
+        type uint16 {
+          range "0..1";
+        }
+        description
+          "Security unit ID";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ike-ikeResetIpsecSaExpStats {
+    description
+      "Reset IKE IPSec sa-expire statistics";
+  }
+  rpc ike-ikeResetIpsecSaExpStatsBySlot {
+    description
+      "Reset IKE IPSec sa-expire statistics base on slot";
+    input {
+      leaf slotNumber {
+        type string {
+          length "1..31";
+        }
+        mandatory true;
+        description
+          "Slot Number";
+      }
+      leaf subSlotType {
+        type ikeSubSlotType;
+        description
+          "Security unit type";
+        ext:allowDelete "true";
+      }
+      leaf subSlotId {
+        type uint16 {
+          range "0..1";
+        }
+        description
+          "Security unit ID";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc ike-ikeMovSingleSa {
+    description
+      "Move single sa";
+    input {
+      leaf peerIp {
+        type inet:ipv4-address-no-zone;
+        mandatory true;
+        description
+          "Remote address";
+      }
+      leaf peerPort {
+        type uint32 {
+          range "1..65535";
+        }
+        description
+          "The port number of IPSec policy";
+        ext:allowDelete "true";
+      }
+      leaf vpnName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Name of VPN instance";
+        ext:allowDelete "true";
+      }
+      leaf localIp {
+        type inet:ipv4-address-no-zone;
+        description
+          "Local address";
+        ext:allowDelete "true";
+      }
+      leaf targetLocation {
+        type uint32 {
+          range "1..255";
+        }
+        mandatory true;
+        description
+          "The target location";
+      }
+    }
+  }
+}

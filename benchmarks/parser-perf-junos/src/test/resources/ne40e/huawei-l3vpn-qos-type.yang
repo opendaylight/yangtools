@@ -1,0 +1,54 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-l3vpn-qos-type {
+  belongs-to huawei-l3vpn {
+    prefix l3vpn;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "the submodule of l3vpn:l3vpn_qos_type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef qosL3vpnDirectionType {
+    type enumeration {
+      enum "inbound" {
+        description
+          "Inbound.";
+      }
+    }
+    description
+      "the type of qosL3vpnDirection";
+  }
+  typedef qosL3vpnPolicyName {
+    type string {
+      length "1..31";
+    }
+    description
+      "now qosPolicyName is like string";
+  }
+  typedef qosL3vpnSlotPath {
+    type string {
+      length "1..127";
+      pattern '^(c[cl]c\d+/)?\d+$';
+    }
+    description
+      "slotPath is like 3, clc1/3 or ccc1/3";
+  }
+}

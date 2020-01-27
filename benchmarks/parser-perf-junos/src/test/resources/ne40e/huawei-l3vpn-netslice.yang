@@ -1,0 +1,53 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-l3vpn-netslice {
+  belongs-to huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-l3vpn-l3vpncomm-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "the submodule of l3vpn:l3vpn_netslice";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping l3vpn_l3vpncomm_netslice_type {
+    description
+      "l3vpn netslice configure";
+    leaf sliceInstanceId {
+      type uint32 {
+        range "1..8";
+      }
+      description
+        "L3VPN NetSlice Instance ID";
+      ext:allowDelete "true";
+    }
+    leaf sliceInstanceDescr {
+      type string {
+        length "1..63";
+      }
+      config false;
+      description
+        "L3VPN NetSlice Instance Desc";
+    }
+  }
+}

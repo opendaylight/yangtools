@@ -1,0 +1,83 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ifmima-type {
+  belongs-to huawei-ifmima {
+    prefix ifmima;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "type of ifmima";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+
+  typedef ifmatmInterfaceType {
+    type enumeration {
+      enum "uni" {
+        description
+          "ATM interface type UNI.";
+      }
+      enum "nni" {
+        description
+          "ATM interface type NNI.";
+      }
+    }
+    description
+      "type of ifmatm interface";
+  }
+
+  typedef ifmimaFrameLenType {
+    type enumeration {
+      enum "frameLength32" {
+        description
+          "IMA-group frame length 32.";
+      }
+      enum "frameLength64" {
+        description
+          "IMA-group frame length 64.";
+      }
+      enum "frameLength128" {
+        description
+          "IMA-group frame length 128.";
+      }
+      enum "frameLength256" {
+        description
+          "IMA-group frame length 256.";
+      }
+    }
+    description
+      "type of ifmima frame length";
+  }
+
+  typedef ifmimaClockMode {
+    type enumeration {
+      enum "ctc" {
+        description
+          "IMA-group common transmit clock mode.";
+      }
+      enum "itc" {
+        description
+          "IMA-group independent transmit clock mode.";
+      }
+    }
+    description
+      "type of ifmima clock mode";
+  }
+}

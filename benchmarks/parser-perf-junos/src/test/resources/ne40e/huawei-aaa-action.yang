@@ -1,0 +1,76 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-aaa-action {
+  belongs-to huawei-aaa {
+    prefix aaa;
+  }
+  include huawei-aaa-type;
+  include huawei-aaa-lam-action;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of aaa action submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc cutUserByDomain {
+    description
+      "Cut all access users by specified domain name.";
+    input {
+      leaf domainName {
+        type string {
+          length "1..64";
+        }
+        mandatory true;
+        description
+          "Name of a domain.";
+      }
+    }
+  }
+  rpc cutUserByUserId {
+    description
+      "Cut all access users by specified range of user id.";
+    input {
+      leaf beginUserId {
+        type uint32;
+        mandatory true;
+        description
+          "Begin userid of users to be cut.";
+      }
+      leaf endUserId {
+        type uint32;
+        description
+          "End userId of the users to be cut.";
+      }
+    }
+  }
+  rpc cutUserByUserName {
+    description
+      "Cut all access users by specified user name.";
+    input {
+      leaf userName {
+        type string {
+          length "1..253";
+        }
+        mandatory true;
+        description
+          "Name of a alive user to be cut, it is not case sensitive.";
+      }
+    }
+  }
+}

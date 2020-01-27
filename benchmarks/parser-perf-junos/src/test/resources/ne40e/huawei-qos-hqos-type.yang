@@ -1,0 +1,309 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-qos-hqos-type {
+  belongs-to huawei-qos {
+    prefix qos;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "QoS_hqos_type submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef directionType {
+    type enumeration {
+      enum "inbound" {
+        description
+          "inbound:";
+      }
+      enum "outbound" {
+        description
+          "outbound:";
+      }
+    }
+    description
+      "inbound/outbound";
+  }
+  typedef hqosIdentifyType {
+    type enumeration {
+      enum "none" {
+        description
+          "None.";
+      }
+      enum "option82" {
+        description
+          "Option82.";
+      }
+      enum "access-line-id" {
+        description
+          "Access-line-id.";
+      }
+      enum "pe-vid" {
+        description
+          "Pe Vlan Id.";
+      }
+      enum "ce-vid" {
+        description
+          "Ce Vlan Id.";
+      }
+      enum "pe-ce-vid" {
+        description
+          "Pe-Ce Vlan Id.";
+      }
+      enum "vlan-id" {
+        description
+          "Vlan.";
+      }
+    }
+    description
+      "none/option82/access-line-id/pe-vid/ce-vid/pe-ce-vid/vlan-id";
+  }
+  typedef hqosAnyOtherType {
+    type enumeration {
+      enum "user-vlan" {
+        description
+          "User-vlan.";
+      }
+      enum "qinq" {
+        description
+          "Qinq.";
+      }
+      enum "not-config" {
+        description
+          "NOT CONFIG.";
+      }
+    }
+    description
+      "user-vlan/qinq/not-config";
+  }
+  typedef hqosQueueScheduleMode {
+    type enumeration {
+      enum "pq" {
+        description
+          "Priority Queue.";
+      }
+      enum "wfq" {
+        description
+          "Weighted Fair Queuing.";
+      }
+      enum "lpq" {
+        description
+          "Low priority queuing.";
+      }
+    }
+    description
+      "pq/wfq/lpq";
+  }
+  typedef hqosCarType {
+    type enumeration {
+      enum "car" {
+        description
+          "CAR action.";
+      }
+      enum "broadcast" {
+        description
+          "Broadcast Suppression.";
+      }
+      enum "multicast" {
+        description
+          "Multicast Suppression.";
+      }
+      enum "unknow_unicast" {
+        description
+          "Unknown Unicast Suppression.";
+      }
+      enum "l2_forward" {
+        description
+          "car_L2 forward parameter.";
+      }
+      enum "l3_forward" {
+        description
+          "car_L3 forward parameter.";
+      }
+      enum "bum" {
+        description
+          "BUM Suppression";
+      }
+      enum "bu" {
+        description
+          "BU Suppression";
+      }
+    }
+    description
+      "car/broadcast/multicast/unknow_unicast/l2_forward/l3_forward/bum/bu";
+  }
+  typedef hqosProAppType {
+    type enumeration {
+      enum "interface" {
+        description
+          "Interface.";
+      }
+      enum "vlan" {
+        description
+          "Vlan.";
+      }
+      enum "pe" {
+        description
+          "Pe.";
+      }
+    }
+    description
+      "interface/vlan/pe";
+  }
+  typedef hqosDirectionType {
+    type enumeration {
+      enum "inbound" {
+        description
+          "Inbound.";
+      }
+      enum "outbound" {
+        description
+          "Outbound.";
+      }
+      enum "all" {
+        description
+          "all.";
+      }
+    }
+    description
+      "inbound/outbound/all";
+  }
+  typedef hqosAccessType {
+    type enumeration {
+      enum "l2" {
+        description
+          "L2.";
+      }
+      enum "l3" {
+        description
+          "L3.";
+      }
+    }
+    description
+      "l2/l3";
+  }
+  typedef eachVlanType {
+    type enumeration {
+      enum "enable" {
+        description
+          "enable";
+      }
+    }
+    description
+      "enable";
+  }
+  typedef hqosModeType {
+    type enumeration {
+      enum "none" {
+        description
+          "Disable.";
+      }
+      enum "template" {
+        description
+          "Enable.";
+      }
+    }
+    description
+      "none/outbound";
+  }
+  typedef hqosQueueLowLatency {
+    type enumeration {
+      enum "disable" {
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        description
+          "Enable.";
+      }
+    }
+    description
+      "disable/enable";
+  }
+  typedef hqosQueueLowJitter {
+    type enumeration {
+      enum "disable" {
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        description
+          "Enable.";
+      }
+    }
+    description
+      "disable/enable";
+  }
+  typedef hqosAdjustOnCardType {
+    type enumeration {
+      enum "disable" {
+        description
+          "Disable.";
+      }
+      enum "enable" {
+        description
+          "Enable.";
+      }
+    }
+    description
+      "disable/enable";
+  }
+  typedef qosProfileName {
+    type string {
+      length "1..63";
+    }
+    description
+      "now qosProfileName is like string";
+  }
+  typedef hqosPriorityScheduleMode {
+    type enumeration {
+      enum "pq" {
+        description
+          "Priority Queue.";
+      }
+      enum "wfq" {
+        description
+          "Weighted Fair Queuing.";
+      }
+    }
+    description
+      "pq/wfq";
+  }
+  typedef hqosShapIdType {
+    type enumeration {
+      enum "1" {
+        description
+          "shapId Config";
+      }
+      enum "notConfig" {
+        description
+          "notConfig";
+      }
+    }
+    description
+      "ShapId";
+  }
+  typedef qosPortQtempName {
+    type string {
+      length "1..31";
+    }
+    description
+      "now qosPortQtempName is like string";
+  }
+}

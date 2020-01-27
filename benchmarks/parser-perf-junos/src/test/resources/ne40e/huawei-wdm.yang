@@ -1,0 +1,459 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-wdm {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-wdm";
+  prefix wdm;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-wdm-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Configuration of WDM port.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container wdm {
+    description
+      "Configuration of WDM port.";
+    container wdmPorts {
+      description
+        "WDM port.";
+      list wdmPort {
+        key "ifName";
+        description
+          "WDM port.";
+        leaf ifName {
+          type pub-type:ifName;
+          description
+            "Name of interface.";
+        }
+        leaf ethIfName {
+          type pub-type:ifName;
+          config false;
+          description
+            "Name of ethernet interface.";
+        }
+        leaf fecMode {
+          type wdmOtnFecModeType;
+          description
+            "FEC mode.";
+          ext:allowDelete "true";
+        }
+        leaf rxOtuTti {
+          type string {
+            length "0..64";
+          }
+          config false;
+          description
+            "Receive OTU TTI configuration.";
+        }
+        leaf rxOduPmTti {
+          type string {
+            length "0..64";
+          }
+          config false;
+          description
+            "Receive tcmtti6 configuration.";
+        }
+        leaf txOtuTti {
+          type string {
+            length "0..64";
+          }
+          default "NA";
+          description
+            "Send OTU TTI configuration.";
+        }
+        leaf txOduPmTti {
+          type string {
+            length "0..64";
+          }
+          default "NA";
+          description
+            "Send tcmtti6 configuration.";
+        }
+        leaf otuTtiExpt {
+          type string {
+            length "0..64";
+          }
+          default "NA";
+          description
+            "Expected OTU tti value.";
+        }
+        leaf oduPmTtiExpt {
+          type string {
+            length "0..64";
+          }
+          default "NA";
+          description
+            "Expected ODU-pm tti value.";
+        }
+        leaf otuSdThreshold {
+          type uint32 {
+            range "6..9";
+          }
+          description
+            "Threshold of OTU SD alarm.";
+          ext:allowDelete "true";
+        }
+        leaf otuSfThreshold {
+          when "not(../ifName)";
+          type uint32 {
+            range "5..7";
+          }
+          description
+            "Threshold of OTU SF alarm.";
+          ext:allowDelete "true";
+        }
+        leaf mapPath {
+          when "../ifName";
+          type wdmMapPathType;
+          must "not(../ifName) or (../ifName and (../mapPath='opu2-standard' or ../mapPath='opu2-non-standard' or ../mapPath='opu2e') )";
+          default "opu2-standard";
+          description
+            "The mapping path.";
+          ext:allowDelete "true";
+        }
+        leaf span {
+          type uint32 {
+            range "0..50";
+          }
+          default "1";
+          description
+            "Optical span.";
+          ext:allowDelete "true";
+        }
+        leaf osnr {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "Optical Signal-to-noise ratio.";
+        }
+        leaf smBei {
+          type uint64;
+          config false;
+          description
+            "smBei error.";
+        }
+        leaf pmBei {
+          type uint64;
+          config false;
+          description
+            "pmBei error.";
+        }
+        leaf smBip {
+          type uint64;
+          config false;
+          description
+            "smBip error.";
+        }
+        leaf pmBip {
+          type uint64;
+          config false;
+          description
+            "pmBip error.";
+        }
+        leaf fec0bitStatistics {
+          type uint64;
+          config false;
+          description
+            "FEC 0bit error.";
+        }
+        leaf fec1bitStatistics {
+          type uint64;
+          config false;
+          description
+            "FEC 1bit error.";
+        }
+        leaf fec0And1TypeStatistics {
+          type uint64;
+          config false;
+          description
+            "FEC 0bit and 1bit error.";
+        }
+        leaf fecSymbolErrStatistics {
+          type uint64;
+          config false;
+          description
+            "FEC symbol error.";
+        }
+        leaf fecUncorrectErrStatistics {
+          type uint64;
+          config false;
+          description
+            "FEC uncorrected error.";
+        }
+        leaf preFecBERCoefficient {
+          type uint32;
+          config false;
+          description
+            "PreFecBERCoefficient.";
+        }
+        leaf preFecBERPower {
+          type uint32;
+          config false;
+          description
+            "PreFecBERPower.";
+        }
+        leaf postFecBERCoefficient {
+          type uint32;
+          config false;
+          description
+            "AfterFecBERCoefficient.";
+        }
+        leaf postFecBERPower {
+          type uint32;
+          config false;
+          description
+            "AfterFecBERPower.";
+        }
+        container otnPortAlarmInfo {
+          description
+            "OTN port alarm information.";
+          leaf preFecAlmThrCoefficient {
+            type uint32 {
+              range "1..9";
+            }
+            default "1";
+            description
+              "PreFecAlmThrCoefficient.";
+            ext:allowDelete "true";
+          }
+          leaf preFecAlmThrPower {
+            type uint32 {
+              range "1..7";
+            }
+            default "6";
+            description
+              "PreFecAlmThrPower.";
+            ext:allowDelete "true";
+          }
+          leaf preFecAlmInterval {
+            type uint32 {
+              range "1..10";
+            }
+            default "3";
+            description
+              "PreFecAlmInterval.";
+            ext:allowDelete "true";
+          }
+          leaf preFecRsumThrCoefficient {
+            type uint32 {
+              range "1..9";
+            }
+            default "1";
+            description
+              "PreFecRsumThrCoefficient.";
+            ext:allowDelete "true";
+          }
+          leaf preFecRsumThrPower {
+            type uint32 {
+              range "1..8";
+            }
+            default "7";
+            description
+              "PreFecRsumThrPower.";
+            ext:allowDelete "true";
+          }
+          leaf preFecRsumInterval {
+            type uint32 {
+              range "10..100";
+            }
+            default "30";
+            description
+              "PreFecRsumInterval.";
+            ext:allowDelete "true";
+          }
+        }
+        container transAlarmInfo {
+          description
+            "TAD Alarm Information.";
+          leaf dampSuppress {
+            type uint32 {
+              range "2..19999";
+            }
+            default "2000";
+            description
+              "TAD Alarm Damp Suppress Value.";
+            ext:allowDelete "true";
+          }
+          leaf dampReuse {
+            type uint32 {
+              range "1..19998";
+            }
+            default "750";
+            description
+              "TAD Alarm Reuse Value.";
+            ext:allowDelete "true";
+          }
+          leaf dampCeiling {
+            type uint32 {
+              range "1001..20000";
+            }
+            default "6000";
+            description
+              "TAD Alarm Ceiling Value.";
+            ext:allowDelete "true";
+          }
+          leaf dampDecayOk {
+            type uint32 {
+              range "500..10000";
+            }
+            units ms;
+            default "1000";
+            description
+              "TAD Alarm OK Half Decay Value.";
+            ext:allowDelete "true";
+          }
+          leaf dampDecayNg {
+            type uint32 {
+              range "500..10000";
+            }
+            units ms;
+            default "1000";
+            description
+              "TAD Alarm NG Half Decay Value.";
+            ext:allowDelete "true";
+          }
+          leaf holdoffTimer {
+            type uint32 {
+              range "20..10000";
+            }
+            units ms;
+            default "50";
+            description
+              "TAD Hold Down Time.";
+            ext:allowDelete "true";
+          }
+          leaf holdupTimer {
+            type uint32 {
+              range "200..3600000";
+            }
+            units ms;
+            default "300";
+            description
+              "TAD Hold Up Time.";
+            ext:allowDelete "true";
+          }
+          leaf almLastresettime {
+            type yang:date-and-time;
+            config false;
+            description
+              "TAD Last Reset Time.";
+          }
+          leaf filterFunction {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "TAD Alarm Filter Function.";
+          }
+          leaf dampingFunction {
+            type boolean;
+            default "false";
+            config false;
+            description
+              "TAD Alarm Damping Function.";
+          }
+          container transAlarmIfDowns {
+            description
+              "TAD Alarm Status Information.";
+            list transAlarmIfDown {
+              key "alarmType";
+              description
+                "TAD Alarm Status Information.";
+              leaf alarmType {
+                type wdmTransAlarmType;
+                description
+                  "TAD Alarm Type.";
+              }
+              leaf ifDown {
+                type boolean;
+                default "false";
+                description
+                  "TAD Alarm If down.";
+                ext:allowDelete "true";
+              }
+              leaf alarmStatus {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "TAD Alarm True Or False.";
+              }
+              leaf isInFiltering {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "TAD Alarm Is In Filtering.";
+              }
+              leaf isInSuppressing {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "TAD Alarm Is In Suppressing.";
+              }
+              leaf isInAging {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "TAD Alarm Is In Aging.";
+              }
+              leaf flappingCount {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                config false;
+                description
+                  "TAD Alarm Flapping Count.";
+              }
+              leaf suppressingCount {
+                type uint32 {
+                  range "0..4294967295";
+                }
+                config false;
+                description
+                  "TAD Alarm Suppressing Count.";
+              }
+              leaf figureOfMerit {
+                type string {
+                  length "0..16";
+                }
+                config false;
+                description
+                  "TAD Alarm Figure Of Merit.";
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

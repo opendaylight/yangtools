@@ -1,0 +1,90 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ifmcpostrunk-type {
+  belongs-to huawei-ifmcpostrunk {
+    prefix ifmcpostrunk;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "the ifmcpostrunk type submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  typedef ifmcpostrunkAbstractState {
+    type enumeration {
+      enum "Up" {
+        description
+          "The interface is in Up state.";
+      }
+      enum "Down" {
+        description
+          "The interface is in Down state.";
+      }
+    }
+    description
+      "Cpos Trunk Abstract State";
+  }
+  typedef ifmcpostrunkMemActiveState {
+    type enumeration {
+      enum "invalid" {
+        description
+          "Invalid.";
+      }
+      enum "Active" {
+        description
+          "The interface is in Active state.";
+      }
+      enum "InActive" {
+        description
+          "The interface is in InActive state.";
+      }
+    }
+    description
+      "Cpos Trunk Member Active State";
+  }
+  typedef ifmcpostrunkchannelMode {
+    type enumeration {
+      enum "VC4" {
+        description
+          "VC4";
+      }
+      enum "VC12" {
+        description
+          "VC12";
+      }
+    }
+    description
+      "Cpos Trunk Channel Mode";
+  }
+  typedef ifmcpostrunkE1T1InfoWorkModeType {
+    type enumeration {
+      enum "framed" {
+        description
+          "framed.";
+      }
+      enum "unframed" {
+        description
+          "unframed.";
+      }
+    }
+    description
+      "E1 T1 Work Mode Type";
+  }
+}

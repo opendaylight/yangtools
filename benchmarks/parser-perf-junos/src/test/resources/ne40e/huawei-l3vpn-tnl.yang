@@ -1,0 +1,78 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-l3vpn-tnl {
+  belongs-to huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  include huawei-l3vpn-l3vpncomm-type;
+  include huawei-l3vpn-tnl-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "the submodule of l3vpn:l3vpn_tnl";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping l3vpn_vrfTnlInfos_type {
+    description
+      "";
+    list tunnelInfo {
+      key "tunnelVrfName tunnelId tunnelType tunnelName nexthop";
+      config false;
+      description
+        "A tunnel in the VPN instance tunnel infos table.";
+      leaf tunnelVrfName {
+        type string {
+          length "0..31";
+        }
+        config false;
+        description
+          "VPN instance name. It uniquely identifies a VPN instance. The name is a string of case-sensitive characters.";
+      }
+      leaf tunnelId {
+        type uint32;
+        config false;
+        description
+          "The tunnel id in the VPN instance tunnel infos table.";
+      }
+      leaf tunnelType {
+        type uint8;
+        config false;
+        description
+          "The tunnel type in the VPN instance tunnel infos table.";
+      }
+      leaf tunnelName {
+        type string {
+          length "0..256";
+        }
+        config false;
+        description
+          "About TE tunnel, the tunnel name is the tunnel interface name, etc: 'Tunnel1/0/0'; about LDP tunnel, the tunnel name is 'LDP LSP'.";
+      }
+      leaf nexthop {
+        type inet:ip-address-no-zone;
+        config false;
+        description
+          "The next hop address used by this tunnel.";
+      }
+    }
+  }
+}

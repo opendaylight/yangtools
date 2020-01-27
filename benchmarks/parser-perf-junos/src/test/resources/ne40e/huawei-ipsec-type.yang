@@ -1,0 +1,191 @@
+submodule huawei-ipsec-type {
+  belongs-to huawei-ipsec {
+    prefix ipsec;
+  }
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "submodule ipsec-type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference "Huawei private.";
+  }
+
+  typedef ipsecProtocolType {
+    type enumeration {
+      enum "ah" {
+        description
+          "AH";
+      }
+      enum "esp" {
+        description
+          "ESP";
+      }
+      enum "ah-esp" {
+        description
+          "AH-ESP";
+      }
+    }
+    description
+      "type of ipsec protocol";
+  }
+
+  typedef ipsecAhAuthAlgoType {
+    type enumeration {
+      enum "md5" {
+        description
+          "md5 (This authentication algorithm is insecure. SHA2-256 is recommended.)";
+      }
+      enum "sha1" {
+        description
+          "sha1 (This authentication algorithm is insecure. SHA2-256 is recommended.)";
+      }
+      enum "sha2-256" {
+        description
+          "sha2-256";
+      }
+      enum "sha2-384" {
+        description
+          "sha2-384";
+      }
+      enum "sha2-512" {
+        description
+          "sha2-512";
+      }
+      enum "sm3" {
+        description
+          "sm3";
+      }
+      enum "unconfigure" {
+        description
+          "unconfigure";
+      }
+    }
+    description
+      "type of ipsec ah authentication algorithm";
+  }
+
+  typedef ipsecEspAuthAlgoType {
+    type enumeration {
+      enum "md5" {
+        description
+          "md5 (This authentication algorithm is insecure. SHA2-256 is recommended.)";
+      }
+      enum "sha1" {
+        description
+          "sha1 (This authentication algorithm is insecure. SHA2-256 is recommended.)";
+      }
+      enum "sha2-256" {
+        description
+          "sha2-256";
+      }
+      enum "sha2-384" {
+        description
+          "sha2-384";
+      }
+      enum "sha2-512" {
+        description
+          "sha2-512";
+      }
+      enum "sm3" {
+        description
+          "sm3";
+      }
+      enum "null" {
+        description
+          "null";
+      }
+      enum "unconfigure" {
+        description
+          "unconfigure";
+      }
+    }
+    description
+      "type of ipsec esp authentication algorithm";
+  }
+
+  typedef ipsecEncrAlgoType {
+    type enumeration {
+      enum "des" {
+        description
+          "des (This encryption algorithm is insecure. AES-256 is recommended.)";
+      }
+      enum "3des" {
+        description
+          "3des (This encryption algorithm is insecure. AES-256 is recommended.)";
+      }
+      enum "aes-128" {
+        description
+          "aes-128";
+      }
+      enum "aes-192" {
+        description
+          "aes-192";
+      }
+      enum "aes-256" {
+        description
+          "aes-256";
+      }
+      enum "sm4" {
+        description
+          "sm4";
+      }
+      enum "null" {
+        description
+          "null";
+      }
+      enum "unconfigure" {
+        description
+          "unconfigure";
+      }
+    }
+    description
+      "type of ipsec encryption algorithm";
+  }
+
+  typedef ipsecEncapModeType {
+    type enumeration {
+      enum "tunnel" {
+        description
+          "Tunnel";
+      }
+      enum "transport" {
+        description
+          "Transport";
+      }
+    }
+    description
+      "type of ipsec encap mode";
+  }
+
+  typedef ipsecSubSlotType {
+    type enumeration {
+      enum "onboard" {
+        description
+          "On-board Engine";
+      }
+      enum "engine" {
+        description
+          "VSUF Engine";
+      }
+      enum "card" {
+        description
+          "VSUF Card";
+      }
+    }
+    description
+      "type of ipsec sub slot";
+  }
+}

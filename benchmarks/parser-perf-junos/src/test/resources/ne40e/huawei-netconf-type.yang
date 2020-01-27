@@ -1,0 +1,139 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-netconf-type {
+  belongs-to huawei-netconf {
+    prefix netconf;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Netconf type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef netconfNcaCapability {
+    type enumeration {
+      enum "Base" {
+        description
+          "Base Capability.";
+      }
+      enum "Writable-Running" {
+        description
+          "Writable-Running capability.";
+      }
+      enum "Candidate" {
+        description
+          "Candidate Configuration capability.";
+      }
+      enum "Distinct Startup" {
+        description
+          "Distinct Startup capability.";
+      }
+      enum "Rollback on Error" {
+        description
+          "Rollback on Error capability.";
+      }
+      enum "Sync" {
+        description
+          "Synchronization capability.";
+      }
+      enum "Exchange" {
+        description
+          "Exchange capability.";
+      }
+      enum "Active" {
+        description
+          "Active capability.";
+      }
+      enum "Action" {
+        description
+          "Action capability.";
+      }
+      enum "Update" {
+        description
+          "Update capability.";
+      }
+      enum "Commit-Description" {
+        description
+          "Commit-Description capability.";
+      }
+      enum "Confirmed Commit" {
+        description
+          "Confirmed Commit capability";
+      }
+      enum "Execute CLI" {
+        description
+          "Execute CLI capability";
+      }
+      enum "Discard Commit" {
+        description
+          "Discard Commit capability";
+      }
+      enum "Notification" {
+        description
+          "Notification capability";
+      }
+      enum "Interleave" {
+        description
+          "Interleave capability";
+      }
+      enum "Sync-config" {
+        description
+          "Synchronize configuration capability";
+      }
+    }
+    description
+      "Netconf NCA capability";
+  }
+  typedef netconfCapabilityScope {
+    type enumeration {
+      enum "public" {
+        description
+          "Public capability defined in NETCONF standard.";
+      }
+      enum "private" {
+        description
+          "Private capability defined in HUAWEI.";
+      }
+    }
+    description
+      "Netconf capability scope";
+  }
+  typedef netconfCapabilityVersion {
+    type enumeration {
+      enum "1.0" {
+        description
+          "Capability version 1.0";
+      }
+      enum "1.1" {
+        description
+          "Capability version 1.1";
+      }
+      enum "1.2" {
+        description
+          "Capability version 1.2";
+      }
+      enum "1.3" {
+        description
+          "Capability version 1.3";
+      }
+    }
+    description
+      "Netconf capability version";
+  }
+}

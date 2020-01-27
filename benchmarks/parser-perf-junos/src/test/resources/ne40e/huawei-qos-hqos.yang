@@ -1,0 +1,2397 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-qos-hqos {
+  belongs-to huawei-qos {
+    prefix qos;
+  }
+  import huawei-devm {
+    prefix devm;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-timerange {
+    prefix timerange;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-qos-hqos-type;
+  include huawei-qos-type;
+  include huawei-qos-wred;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "QoS_hqos submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping qos_hqos_type {
+    description
+      "";
+    container hqosFlowQueues {
+      description
+        "Flow queue list.";
+      list hqosFlowQueue {
+        key "flowQueueName";
+        max-elements  "2048";
+        description
+          "Flow queue,to bind the eight FQ parameters.";
+        leaf flowQueueName {
+          type qosPolicyName {
+            length "1..31";
+          }
+          description
+            "Flow queue name.";
+        }
+        leaf prioritymodefq {
+          type qosPolicypriorityType;
+          mandatory true;
+          description
+            "Flow queue priority mode.";
+        }
+        container hqosQueues {
+          description
+            "Flow queue list.";
+          list hqosQueue {
+            when "not(../../prioritymodefq='is4cos' or ../../prioritymodefq='ispriority') or ../../prioritymodefq='notpriority'";
+            key "serviceClass";
+            max-elements  "8";
+            description
+              "Flow queue.";
+            leaf serviceClass {
+              type qosSrvClass;
+              description
+                "Priority.";
+            }
+            leaf queueScheduleMode {
+              type hqosQueueScheduleMode;
+              description
+                "Scheduling strategy of flow queue.";
+              ext:allowDelete "true";
+            }
+            leaf weight {
+              type uint8 {
+                range "1..100";
+              }
+              must "not(../queueScheduleMode!='wfq') or (../queueScheduleMode!='wfq' and not(../weight))";
+              description
+                "Weight of WFQ scheduling strategy.";
+              ext:allowDelete "true";
+            }
+            leaf shaping {
+              type uint32 {
+                range "8..4294967294";
+              }
+              description
+                "Rate of shaping.";
+              ext:allowDelete "true";
+            }
+            leaf shapingPercentage {
+              when "not(../shaping)";
+              type uint8 {
+                range "0..100";
+              }
+              description
+                "Percentage of shaping.";
+              ext:allowDelete "true";
+            }
+            leaf car {
+              type uint32 {
+                range "8..4294967294";
+              }
+              description
+                "Rate of car.";
+              ext:allowDelete "true";
+            }
+            leaf carPercentage {
+              when "not(../car)";
+              type uint8 {
+                range "0..100";
+              }
+              description
+                "Percentage of car.";
+              ext:allowDelete "true";
+            }
+            leaf pbs {
+              type uint32 {
+                range "1..4194304";
+              }
+              must "not(../shaping=4294967295)";
+              description
+                "Peak burst size (unit: byte).";
+              ext:allowDelete "true";
+            }
+            leaf wredName {
+              type leafref {
+                path "/qos/qosWred/qosFlowWreds/qosFlowWred/flowWredName";
+              }
+              description
+                "WRED name.";
+              ext:allowDelete "true";
+            }
+            leaf lowlatency {
+              type hqosQueueLowLatency;
+              default "disable";
+              description
+                "Low Latency.";
+              ext:allowDelete "true";
+            }
+            leaf lowjitter {
+              type hqosQueueLowJitter;
+              default "disable";
+              description
+                "Low Jitter.";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container hqosShareShapes {
+          description
+            "Share-Shaping List.";
+          container hqosShareShape {
+            when "not(../../prioritymodefq='is4cos' or ../../prioritymodefq='ispriority') or ../../prioritymodefq='notpriority'";
+            description
+              "Share-Shaping.";
+            leaf be {
+              type qosBEType;
+              default "false";
+              description
+                "BE.";
+              ext:allowDelete "true";
+            }
+            leaf af1 {
+              type qosAF1Type;
+              default "false";
+              description
+                "AF1.";
+              ext:allowDelete "true";
+            }
+            leaf af2 {
+              type qosAF2Type;
+              default "false";
+              description
+                "AF2.";
+              ext:allowDelete "true";
+            }
+            leaf af3 {
+              type qosAF3Type;
+              default "false";
+              description
+                "AF3.";
+              ext:allowDelete "true";
+            }
+            leaf af4 {
+              type qosAF4Type;
+              default "false";
+              description
+                "AF4.";
+              ext:allowDelete "true";
+            }
+            leaf ef {
+              type qosEFType;
+              default "false";
+              description
+                "EF.";
+              ext:allowDelete "true";
+            }
+            leaf cs6 {
+              type qosCS6Type;
+              default "false";
+              description
+                "CS6.";
+              ext:allowDelete "true";
+            }
+            leaf cs7 {
+              type qosCS7Type;
+              default "false";
+              description
+                "CS7.";
+              ext:allowDelete "true";
+            }
+            leaf queueScheduleMode {
+              type hqosQueueScheduleMode;
+              description
+                "Scheduling strategy of flow queue.";
+              ext:allowDelete "true";
+            }
+            leaf weight {
+              type uint8 {
+                range "1..100";
+              }
+              must "not(../queueScheduleMode!='wfq') or (../queueScheduleMode!='wfq' and not(../weight))";
+              description
+                "Weight of WFQ scheduling strategy.";
+              ext:allowDelete "true";
+            }
+            leaf shareShapingPir {
+              type uint32 {
+                range "1..4294967294";
+              }
+              mandatory true;
+              description
+                "Rate of shaping.";
+            }
+            leaf pbs {
+              type uint32 {
+                range "1..4194304";
+              }
+              description
+                "Peak burst size (unit: byte).";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container hqosRdmDscrds {
+          description
+            "FQ Random Discard List.";
+          list hqosRdmDscrd {
+            when "not(../../prioritymodefq='is4cos' or ../../prioritymodefq='ispriority') or ../../prioritymodefq='notpriority'";
+            key "serviceClass";
+            max-elements  "8";
+            description
+              "FQ Random Discard.";
+            leaf serviceClass {
+              type qosSrvClass;
+              description
+                "Class of service.";
+            }
+            leaf rdmDscrd {
+              type string {
+                length "1..3";
+              }
+              mandatory true;
+              description
+                "Random discard percentage-value between 0.1 to 5 and the accuracy is 0.1.";
+            }
+          }
+        }
+        container hqosPriorityScheduleModes {
+          description
+            "Flow queue priority mode schedule.";
+          list hqosPriorityScheduleMode {
+            when "not(../../prioritymodefq='is4cos' or ../../prioritymodefq='notpriority') or ../../prioritymodefq='ispriority'";
+            key "priority";
+            max-elements  "8";
+            description
+              "Flow Queue Priority Mode Schedule List.";
+            leaf priority {
+              type uint32 {
+                range "0..3";
+              }
+              description
+                "priorityvlaue.";
+            }
+            leaf queueScheduleMode {
+              type hqosPriorityScheduleMode;
+              description
+                "Schedule Mode.";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container hqosQueuePrioritys {
+          description
+            "Flow queue priority list.";
+          list hqosQueuePriority {
+            when "not(../../prioritymodefq='is4cos' or ../../prioritymodefq='notpriority') or ../../prioritymodefq='ispriority'";
+            key "serviceClass";
+            max-elements  "8";
+            description
+              "Flow queue priority.";
+            leaf serviceClass {
+              type qosSrvClass;
+              description
+                "Priority.";
+            }
+            leaf priority {
+              type uint32 {
+                range "0..3";
+              }
+              description
+                "priorityvlaue.";
+              ext:allowDelete "true";
+            }
+            leaf weight {
+              type uint8 {
+                range "1..100";
+              }
+              description
+                "Weight of scheduling strategy.";
+              ext:allowDelete "true";
+            }
+            leaf shaping {
+              type uint32 {
+                range "8..4294967294";
+              }
+              description
+                "Rate of shaping.";
+              ext:allowDelete "true";
+            }
+            leaf shapingPercentage {
+              when "not(../shaping)";
+              type uint8 {
+                range "0..100";
+              }
+              description
+                "Percentage of shaping.";
+              ext:allowDelete "true";
+            }
+            leaf wredName {
+              type leafref {
+                path "/qos/qosWred/qosFlowWreds/qosFlowWred/flowWredName";
+              }
+              description
+                "WRED name.";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container hqosQueue4coss {
+          description
+            "Flow queue 4Cosmode list.";
+          list hqosQueue4cos {
+            when "not(../../prioritymodefq='ispriority' or ../../prioritymodefq='notpriority') or ../../prioritymodefq='is4cos'";
+            key "cosValue";
+            max-elements  "8";
+            description
+              "Flow queue 4Cosmode.";
+            leaf cosValue {
+              type qoscosval;
+              description
+                "CosValue.";
+            }
+            leaf queueScheduleMode {
+              type hqosQueueScheduleMode;
+              description
+                "QueueScheduleMode.";
+              ext:allowDelete "true";
+            }
+            leaf weight {
+              type uint8 {
+                range "1..100";
+              }
+              must "not(../queueScheduleMode!='wfq') or (../queueScheduleMode!='wfq' and not(../weight))";
+              description
+                "Weight of scheduling strategy.";
+              ext:allowDelete "true";
+            }
+            leaf shaping {
+              type uint32 {
+                range "8..4294967294";
+              }
+              description
+                "Rate of shaping.";
+              ext:allowDelete "true";
+            }
+            leaf shapingPercentage {
+              when "not(../shaping)";
+              type uint8 {
+                range "0..100";
+              }
+              description
+                "Percentage of shaping.";
+              ext:allowDelete "true";
+            }
+            leaf pbs {
+              type uint32 {
+                range "1..4194304";
+              }
+              description
+                "PBS.";
+              ext:allowDelete "true";
+            }
+            leaf wredName {
+              type qosPolicyName {
+                length "1..31";
+              }
+              description
+                "WRED name.";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container hqosShareShapeRdms {
+          description
+            "Share-Shaping Random Discard List.";
+          container hqosShareShapeRdm {
+            when "not(../../prioritymodefq='is4cos' or ../../prioritymodefq='ispriority') or ../../prioritymodefq='notpriority'";
+            description
+              "Share-Shaping Random Discard.";
+            leaf be {
+              type qosBEType;
+              default "false";
+              description
+                "BE.";
+              ext:allowDelete "true";
+            }
+            leaf af1 {
+              type qosAF1Type;
+              default "false";
+              description
+                "AF1.";
+              ext:allowDelete "true";
+            }
+            leaf af2 {
+              type qosAF2Type;
+              default "false";
+              description
+                "AF2.";
+              ext:allowDelete "true";
+            }
+            leaf af3 {
+              type qosAF3Type;
+              default "false";
+              description
+                "AF3.";
+              ext:allowDelete "true";
+            }
+            leaf af4 {
+              type qosAF4Type;
+              default "false";
+              description
+                "AF4.";
+              ext:allowDelete "true";
+            }
+            leaf ef {
+              type qosEFType;
+              default "false";
+              description
+                "EF.";
+              ext:allowDelete "true";
+            }
+            leaf cs6 {
+              type qosCS6Type;
+              default "false";
+              description
+                "CS6.";
+              ext:allowDelete "true";
+            }
+            leaf cs7 {
+              type qosCS7Type;
+              default "false";
+              description
+                "CS7.";
+              ext:allowDelete "true";
+            }
+            leaf rdmDscrd {
+              type string {
+                length "1..3";
+              }
+              mandatory true;
+              description
+                "Random discard percentage-value between 0.1 to 5 and the accuracy is 0.1.";
+            }
+          }
+        }
+        container hqosPriorityShareShapings {
+          description
+            "Priority Share-Shaping List.";
+          list hqosPriorityShareShaping {
+            when "not(../../prioritymodefq='is4cos' or ../../prioritymodefq='notpriority') or ../../prioritymodefq='ispriority'";
+            key "shapId";
+            max-elements  "2";
+            description
+              "Priority Share-Shaping.";
+            leaf shapId {
+              type hqosShapIdType;
+              description
+                "shapId";
+            }
+            leaf be {
+              type qosBEType;
+              default "false";
+              description
+                "BE.";
+              ext:allowDelete "true";
+            }
+            leaf af1 {
+              type qosAF1Type;
+              default "false";
+              description
+                "AF1.";
+              ext:allowDelete "true";
+            }
+            leaf af2 {
+              type qosAF2Type;
+              default "false";
+              description
+                "AF2.";
+              ext:allowDelete "true";
+            }
+            leaf af3 {
+              type qosAF3Type;
+              default "false";
+              description
+                "AF3.";
+              ext:allowDelete "true";
+            }
+            leaf af4 {
+              type qosAF4Type;
+              default "false";
+              description
+                "AF4.";
+              ext:allowDelete "true";
+            }
+            leaf ef {
+              type qosEFType;
+              default "false";
+              description
+                "EF.";
+              ext:allowDelete "true";
+            }
+            leaf cs6 {
+              type qosCS6Type;
+              default "false";
+              description
+                "CS6.";
+              ext:allowDelete "true";
+            }
+            leaf cs7 {
+              type qosCS7Type;
+              default "false";
+              description
+                "CS7.";
+              ext:allowDelete "true";
+            }
+            leaf queueScheduleMode {
+              type hqosPriorityScheduleMode;
+              description
+                "Scheduling strategy of flow queue.";
+              ext:allowDelete "true";
+            }
+            leaf weight {
+              type uint8 {
+                range "1..100";
+              }
+              description
+                "Weight scheduling strategy.";
+              ext:allowDelete "true";
+            }
+            leaf shareShapingPir {
+              type uint32 {
+                range "1..4294967294";
+              }
+              mandatory true;
+              description
+                "Rate of shaping.";
+            }
+            leaf pbs {
+              type uint32 {
+                range "1..4194304";
+              }
+              description
+                "Peak burst size (unit: byte).";
+              ext:allowDelete "true";
+            }
+          }
+        }
+      }
+    }
+    container hqosProfiles {
+      description
+        "Qos Profile List.";
+      list hqosProfile {
+        key "profileName";
+        max-elements  "4095";
+        description
+          "Qos profile.";
+        leaf profileName {
+          type qosProfileName {
+            length "1..63";
+          }
+          description
+            "Name of qos profile.";
+        }
+        leaf timeRange {
+          type qosTimeRangeType;
+          default "nottimerange";
+          description
+            "Time Range.";
+        }
+        container hqosUserQueues {
+          description
+            "User queue list.";
+          list hqosUserQueue {
+            must "not(not(cirPercent) and not(cir))";
+            key "direction";
+            max-elements  "2";
+            description
+              "User queue.";
+            leaf direction {
+              type hqosDirectionType;
+              description
+                "Direction. ";
+            }
+            leaf cir {
+              type uint32 {
+                range "0..4294967294";
+              }
+              description
+                "Committed information rate (unit: Kbit/s).";
+              ext:allowDelete "true";
+            }
+            leaf cirPercent {
+              when "not(../cir)";
+              type uint8 {
+                range "0..100";
+              }
+              description
+                "cirPercent.";
+              ext:allowDelete "true";
+            }
+            leaf cbs {
+              type uint32 {
+                range "1..4194304";
+              }
+              description
+                "Committed burst size (unit: Byte).";
+              ext:allowDelete "true";
+            }
+            leaf pir {
+              type uint32 {
+                range "0..4294967294";
+              }
+              must "(../pir>=../cir*1)";
+              description
+                "Peak information rate (unit: Kbit/s).";
+              ext:allowDelete "true";
+            }
+            leaf pirPercent {
+              when "not(../cir)";
+              type uint8 {
+                range "0..100";
+              }
+              must "(../pirPercent>=../cirPercent*1)";
+              description
+                "pirPercent.";
+              ext:allowDelete "true";
+            }
+            leaf priorityLevelID {
+              when "../pir";
+              type qosPriorityLevelType;
+              default "low";
+              description
+                "PIR priority.";
+              ext:allowDelete "true";
+            }
+            leaf pbs {
+              type uint32 {
+                range "1..4194304";
+              }
+              must "(../pbs>=../cbs*1)";
+              description
+                "Peak burst size (unit: Byte).";
+              ext:allowDelete "true";
+            }
+            leaf flowQueueName {
+              type leafref {
+                path "/qos/hqos/hqosFlowQueues/hqosFlowQueue/flowQueueName";
+              }
+              description
+                "Flow queue.";
+              ext:allowDelete "true";
+            }
+            leaf flowMappingName {
+              type leafref {
+                path "/qos/hqos/hqosFlowMappings/hqosFlowMapping/flowMappingName";
+              }
+              description
+                "Flow Mapping";
+              ext:allowDelete "true";
+            }
+            leaf gqName {
+              type leafref {
+                path "/qos/hqos/hqosUserGroupQueues/hqosUserGroupQueue/gqName";
+              }
+              description
+                "Group Queue";
+              ext:allowDelete "true";
+            }
+            leaf templateName {
+              type leafref {
+                path "/qos/hqos/hqosServiceTemplates/hqosServiceTemplate/templateName";
+              }
+              description
+                "Service Template";
+              ext:allowDelete "true";
+            }
+            leaf adjustOnCard {
+              when "../templateName";
+              type hqosAdjustOnCardType;
+              default "disable";
+              description
+                "AdjustOnCardflag.";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container hqosSQWeights {
+          description
+            "SQ Weight List.";
+          list hqosSQWeight {
+            when "not(../../timeRange='istimerange')";
+            key "direction";
+            max-elements  "2";
+            description
+              "SQ Weight.";
+            leaf direction {
+              type hqosDirectionType;
+              description
+                "Direction. ";
+            }
+            leaf weight {
+              type uint8 {
+                range "1..63";
+              }
+              mandatory true;
+              description
+                "SQ Weight.";
+            }
+          }
+        }
+        container hqosProCars {
+          description
+            "List of CAR actions.";
+          list hqosProCar {
+            when "not(../../timeRange='istimerange')";
+            key "carType direction";
+            description
+              "CAR action.";
+            leaf carType {
+              type hqosCarType;
+              description
+                "Type of a CAR action.";
+            }
+            leaf direction {
+              type hqosDirectionType;
+              description
+                "Direction. ";
+            }
+            leaf cir {
+              type uint32 {
+                range "0..4294967295";
+              }
+              mandatory true;
+              description
+                "Committed information rate (unit: Kbit/s).";
+            }
+            leaf pir {
+              when "../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu'";
+              type uint32 {
+                range "0..4294967295";
+              }
+              description
+                "Peak information rate (unit: Kbit/s).";
+              ext:allowDelete "true";
+            }
+            leaf cbs {
+              type uint32 {
+                range "0..4294967295";
+              }
+              description
+                "Committed burst size (unit: Byte).";
+              ext:allowDelete "true";
+            }
+            leaf pbs {
+              when "../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu'";
+              type uint32 {
+                range "0..4294967295";
+              }
+              description
+                "Peak burst size (unit: Byte).";
+              ext:allowDelete "true";
+            }
+            leaf greenAction {
+              when "../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu'";
+              type qosCarRedActionType;
+              description
+                "Action performed to the green packets. ";
+              ext:allowDelete "true";
+            }
+            leaf greenServiceClass {
+              when "not(../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu' and ../greenAction='discard') or ../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu' and ../greenAction='pass' or ../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu'";
+              type qosServiceClass;
+              must "((../greenServiceClass='be' or ../greenServiceClass='af1' or ../greenServiceClass='af2' or ../greenServiceClass='af3' or ../greenServiceClass='af4' or ../greenServiceClass='ef' or ../greenServiceClass='cs6' or ../greenServiceClass='cs7') )";
+              description
+                "Service class marked to the green packets. ";
+              ext:allowDelete "true";
+            }
+            leaf greenColor {
+              when "not(../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu' and ../greenAction='discard') or ../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu' and ../greenAction='pass' or ../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu'";
+              type qosColor;
+              description
+                "Color marked to the green packets. ";
+              ext:allowDelete "true";
+            }
+            leaf yellowAction {
+              when "../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu'";
+              type qosCarRedActionType;
+              description
+                "Action performed to the yellow packets.";
+              ext:allowDelete "true";
+            }
+            leaf yellowServiceClass {
+              when "not(../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu' and ../yellowAction='discard') or ../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu' and ../yellowAction='pass' or ../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu'";
+              type qosServiceClass;
+              must "((../yellowServiceClass='be' or ../yellowServiceClass='af1' or ../yellowServiceClass='af2' or ../yellowServiceClass='af3' or ../yellowServiceClass='af4' or ../yellowServiceClass='ef' or ../yellowServiceClass='cs6' or ../yellowServiceClass='cs7') )";
+              description
+                "Service class marked to the yellow packets. ";
+              ext:allowDelete "true";
+            }
+            leaf yellowColor {
+              when "not(../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu' and ../yellowAction='discard') or ../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu' and ../yellowAction='pass' or ../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu'";
+              type qosColor;
+              description
+                "Color marked to the yellow packets. ";
+              ext:allowDelete "true";
+            }
+            leaf redAction {
+              when "../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu'";
+              type qosCarRedActionType;
+              description
+                "Action performed to the red packets. ";
+              ext:allowDelete "true";
+            }
+            leaf redServiceClass {
+              when "not(../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu' and ../redAction='discard') or ../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu' and ../redAction='pass' or ../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu'";
+              type qosServiceClass;
+              must "((../redServiceClass='be' or ../redServiceClass='af1' or ../redServiceClass='af2' or ../redServiceClass='af3' or ../redServiceClass='af4' or ../redServiceClass='ef' or ../redServiceClass='cs6' or ../redServiceClass='cs7') )";
+              description
+                "Service class marked to the red packets. ";
+              ext:allowDelete "true";
+            }
+            leaf redColor {
+              when "not(../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu' and ../redAction='discard') or ../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu' and ../redAction='pass' or ../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu'";
+              type qosColor;
+              description
+                "Color marked to the red packets.";
+              ext:allowDelete "true";
+            }
+            leaf colorAware {
+              when "../carType!='broadcast' and ../carType!='multicast' and ../carType!='unknow_unicast' and ../carType!='bum' and ../carType!='bu'";
+              type boolean;
+              default "false";
+              description
+                "Color Aware.";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container hqosMplsHqoss {
+          description
+            "Vpn QOS list.";
+          container hqosMplsHqos {
+            when "not(../../timeRange='istimerange')";
+            description
+              "Vpn QOS.";
+            leaf flowQueueName {
+              type leafref {
+                path "/qos/hqos/hqosFlowQueues/hqosFlowQueue/flowQueueName";
+              }
+              mandatory true;
+              description
+                "Flow queue.";
+            }
+            leaf flowMappingName {
+              type leafref {
+                path "/qos/hqos/hqosFlowMappings/hqosFlowMapping/flowMappingName";
+              }
+              description
+                "Flow Mapping";
+              ext:allowDelete "true";
+            }
+            leaf gqName {
+              type leafref {
+                path "/qos/hqos/hqosUserGroupQueues/hqosUserGroupQueue/gqName";
+              }
+              description
+                "Group Queue";
+              ext:allowDelete "true";
+            }
+            leaf templateName {
+              type leafref {
+                path "/qos/hqos/hqosServiceTemplates/hqosServiceTemplate/templateName";
+              }
+              description
+                "Service Template";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container hqosUserQueueTimeRanges {
+          description
+            "User queue Time Range list.";
+          list hqosUserQueueTimeRange {
+            when "not(../../timeRange='nottimerange')";
+            key "direction timeRangeName";
+            max-elements  "3";
+            description
+              "User queue Time Range.";
+            leaf direction {
+              type hqosDirectionType;
+              description
+                "Direction. ";
+            }
+            leaf cir {
+              type uint32 {
+                range "0..4294967294";
+              }
+              mandatory true;
+              description
+                "Committed information rate (unit: Kbit/s).";
+            }
+            leaf cbs {
+              type uint32 {
+                range "1..4194304";
+              }
+              description
+                "Committed burst size (unit: Byte).";
+              ext:allowDelete "true";
+            }
+            leaf pir {
+              type uint32 {
+                range "0..4294967294";
+              }
+              must "(../pir>=../cir*1)";
+              description
+                "Peak information rate (unit: Kbit/s).";
+              ext:allowDelete "true";
+            }
+            leaf priorityLevelID {
+              when "../pir";
+              type qosPriorityLevelType;
+              default "low";
+              description
+                "PIR priority.";
+              ext:allowDelete "true";
+            }
+            leaf pbs {
+              type uint32 {
+                range "1..4194304";
+              }
+              must "(../pbs>=../cbs*1)";
+              description
+                "Peak burst size (unit: Byte).";
+              ext:allowDelete "true";
+            }
+            leaf flowQueueName {
+              type leafref {
+                path "/qos/hqos/hqosFlowQueues/hqosFlowQueue/flowQueueName";
+              }
+              description
+                "Flow queue.";
+              ext:allowDelete "true";
+            }
+            leaf flowMappingName {
+              type leafref {
+                path "/qos/hqos/hqosFlowMappings/hqosFlowMapping/flowMappingName";
+              }
+              description
+                "Flow Mapping";
+              ext:allowDelete "true";
+            }
+            leaf gqName {
+              type leafref {
+                path "/qos/hqos/hqosUserGroupQueues/hqosUserGroupQueue/gqName";
+              }
+              description
+                "Group Queue";
+              ext:allowDelete "true";
+            }
+            leaf templateName {
+              type leafref {
+                path "/qos/hqos/hqosServiceTemplates/hqosServiceTemplate/templateName";
+              }
+              description
+                "Service Template";
+              ext:allowDelete "true";
+            }
+            leaf adjustOnCard {
+              when "../templateName";
+              type hqosAdjustOnCardType;
+              default "disable";
+              description
+                "AdjustOnCardflag.";
+              ext:allowDelete "true";
+            }
+            leaf timeRangeName {
+              type leafref {
+                path "/timerange:timerange/timerange:timeRangeInstances/timerange:timeRangeInstance/timerange:timeRangeName";
+              }
+              description
+                "Time Range.";
+            }
+          }
+        }
+        container hqosProTmpDescs {
+          description
+            "SQ Pro Temp Desc List.";
+          container hqosProTmpDesc {
+            description
+              "SQ Pro Temp Desc.";
+            leaf descriptioninfo {
+              type string {
+                length "1..63";
+              }
+              description
+                "info.";
+              ext:allowDelete "true";
+            }
+          }
+        }
+      }
+    }
+    container hqosFlowMappings {
+      description
+        "Flow Mapping List.";
+      list hqosFlowMapping {
+        key "flowMappingName";
+        max-elements  "15";
+        description
+          "Flow Mapping.";
+        leaf flowMappingName {
+          type qosPolicyName {
+            length "1..31";
+          }
+          description
+            "Flow Mapping Name.";
+        }
+        container hqosFMParams {
+          description
+            "Flow Mapping Param List.";
+          list hqosFMParam {
+            key "fqServiceClass";
+            max-elements  "1024";
+            description
+              "Flow Mapping Param.";
+            leaf fqServiceClass {
+              type qosSrvClass;
+              description
+                "FQ ServiceClass.";
+            }
+            leaf cqServiceClass {
+              type qosSrvClass;
+              mandatory true;
+              description
+                "CQ ServiceClass.";
+            }
+          }
+        }
+      }
+    }
+    container hqosFourFlowMappings {
+      description
+        "Four-Flow Mapping List.";
+      list hqosFourFlowMapping {
+        key "fourflowMappingName";
+        max-elements  "15";
+        description
+          "Four-Flow Mapping.";
+        leaf fourflowMappingName {
+          type qosPolicyName {
+            length "1..31";
+          }
+          description
+            "Four-Flow Mapping Name.";
+        }
+        container hqosFourFMParams {
+          description
+            "Four-Flow Mapping Param List.";
+          list hqosFourFMParam {
+            key "fqosServiceClass";
+            max-elements  "1024";
+            description
+              "Four-Flow Mapping Param.";
+            leaf fqosServiceClass {
+              type qosSrvClass;
+              description
+                "FQ ServiceClass.";
+            }
+            leaf ffqosServiceClass {
+              type qosfourfqServiceClass;
+              mandatory true;
+              description
+                "FFQ ServiceClass.";
+            }
+          }
+        }
+      }
+    }
+    container hqosServiceTemplates {
+      description
+        "Service Template List.";
+      list hqosServiceTemplate {
+        key "templateName";
+        max-elements  "256";
+        description
+          "Service Template.";
+        leaf templateName {
+          type qosPolicyName {
+            length "1..31";
+          }
+          description
+            "Service Template Name.";
+        }
+        leaf slotID {
+          type leafref {
+            path "/devm:devm/devm:lpuBoards/devm:lpuBoard/devm:position";
+          }
+          description
+            "Slot ID.";
+          ext:allowDelete "true";
+        }
+        container hqosSrvLengths {
+          description
+            "Network Header Length List.";
+          list hqosSrvLength {
+            key "direction";
+            max-elements  "2";
+            description
+              "Network Header Length.";
+            leaf direction {
+              type qosDirectionType;
+              description
+                "Direction. ";
+            }
+            leaf value {
+              type int32 {
+                range "-63..63";
+              }
+              mandatory true;
+              description
+                "Network Header Length Value.";
+            }
+          }
+        }
+      }
+    }
+    container hqosUserGroupQueues {
+      description
+        "Group Queue List.";
+      list hqosUserGroupQueue {
+        key "gqName";
+        max-elements  "8191";
+        description
+          "Group Queue.";
+        leaf gqName {
+          type qosPolicyName {
+            length "1..31";
+          }
+          description
+            "Group Queue Name.";
+        }
+        leaf prioritymodegq {
+          type qosPolicypriorityType;
+          mandatory true;
+          description
+            "Group Queue Priority Mode.";
+        }
+        container hqosGQShapings {
+          description
+            "Group Queue Shaping List.";
+          list hqosGQShaping {
+            when "not(../../prioritymodegq='ispriority')";
+            key "direction";
+            max-elements  "1024";
+            description
+              "Group Queue Shaping.";
+            leaf direction {
+              type qosDirectionType;
+              description
+                "Direction. ";
+            }
+            leaf pir {
+              type uint32 {
+                range "66..4294967294";
+              }
+              mandatory true;
+              description
+                "Peak information rate (unit: Kbit/s).";
+            }
+            leaf pbs {
+              type uint32 {
+                range "64..2097152";
+              }
+              description
+                "Peak burst size (unit: Byte).";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container hqosGQModes {
+          description
+            "User-group-queue Mode List";
+          container hqosGQMode {
+            when "not(../../prioritymodegq='ispriority')";
+            description
+              "User-group-queue Mode ";
+            leaf mode {
+              type hqosModeType;
+              mandatory true;
+              description
+                "User-group-queue Mode ";
+            }
+          }
+        }
+        container hqosGQStats {
+          config false;
+          description
+            "GQ Stats.";
+          list hqosGQStat {
+            config false;
+            description
+              "GQ Stat.";
+            leaf direction {
+              type qosDirectionType;
+              config false;
+              description
+                "Direction. ";
+            }
+            leaf serviceClass {
+              type qosServiceClass;
+              config false;
+              description
+                "Class of service.";
+            }
+            leaf passPackets {
+              type uint64;
+              config false;
+              description
+                "Number of passed packets.";
+            }
+            leaf passBytes {
+              type uint64;
+              config false;
+              description
+                "Number of passed bytes.";
+            }
+            leaf passPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets passed during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf passByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes passed during the latest 30 seconds (unit: bit/s).";
+            }
+            leaf dropPackets {
+              type uint64;
+              config false;
+              description
+                "Number of dropped packets.";
+            }
+            leaf dropBytes {
+              type uint64;
+              config false;
+              description
+                "Number of dropped bytes.";
+            }
+            leaf dropPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets dropped during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf dropByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes dropped during the latest 30 seconds (unit: bit/s).";
+            }
+            leaf groupName {
+              type qosPolicyName {
+                length "1..31";
+              }
+              config false;
+              description
+                "Group Name.";
+            }
+            leaf slotIdPath {
+              type qosSlotPath {
+                length "1..32";
+                pattern '^(c[cl]c\d+/)?\d+$';
+              }
+              config false;
+              description
+                "Slot ID.";
+            }
+          }
+        }
+        container hqosGQCirPirs {
+          description
+            "GQ Cir Pir List.";
+          list hqosGQCirPir {
+            when "../../prioritymodegq='notpriority'";
+            key "direction";
+            description
+              "GQ Cir Pir.";
+            leaf direction {
+              type qosDirectionTypeOut;
+              description
+                "Direction. ";
+            }
+            leaf cir {
+              type uint32 {
+                range "66..4294967294";
+              }
+              mandatory true;
+              description
+                "Committed information rate (unit: Kbps).";
+            }
+            leaf cbs {
+              type uint32 {
+                range "64..2097152";
+              }
+              description
+                "Committed burst size (unit: byte).";
+              ext:allowDelete "true";
+            }
+            leaf pir {
+              type uint32 {
+                range "66..4294967294";
+              }
+              must "(../pir>=../cir*1)";
+              description
+                "Peak information rate (unit: Kbps).";
+              ext:allowDelete "true";
+            }
+            leaf pbs {
+              type uint32 {
+                range "64..2097152";
+              }
+              must "(../pbs>=../cbs*1)";
+              description
+                "Peak burst size (unit: byte).";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container hqosWeights {
+          description
+            "weights";
+          list hqosWeight {
+            when "not(../../prioritymodegq='ispriority')";
+            key "direction";
+            description
+              "weight";
+            leaf direction {
+              type qosDirectionTypeOut;
+              description
+                "direction";
+            }
+            leaf weight {
+              type uint8 {
+                range "1..63";
+              }
+              mandatory true;
+              description
+                "value";
+            }
+          }
+        }
+        container hqosGQShapingpriortys {
+          description
+            "Group Queue Priority List.";
+          list hqosGQShapingpriorty {
+            when "not(../../prioritymodegq='notpriority')";
+            key "priority direction";
+            max-elements  "1024";
+            description
+              "Group Queue Priority.";
+            leaf priority {
+              type hqospriorityType;
+              description
+                "Priority. ";
+            }
+            leaf direction {
+              type qosDirectionTypeOut;
+              description
+                "Direction. ";
+            }
+            leaf pir {
+              type uint32 {
+                range "66..4294967294";
+              }
+              mandatory true;
+              description
+                "Peak information rate (unit: Kbit/s).";
+            }
+            leaf pbs {
+              type uint32 {
+                range "64..2097152";
+              }
+              default "524288";
+              description
+                "Peak burst size (unit: Byte).";
+              ext:allowDelete "true";
+            }
+          }
+        }
+      }
+    }
+    container hqosProfileApplys {
+      description
+        "Qos-profile application list.";
+      list hqosProfileApply {
+        key "ifName profileName direction proAppType ceBeginVlanID ceEndVlanID appPeVlan identifyType";
+        description
+          "Qos-profile application list.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Name of an interface.";
+        }
+        leaf profileName {
+          type leafref {
+            path "/qos/hqos/hqosProfiles/hqosProfile/profileName";
+          }
+          description
+            "Name of Qos Profile.";
+        }
+        leaf direction {
+          type qosDirectionType;
+          description
+            "Direction of Qos Profile.";
+        }
+        leaf proAppType {
+          type hqosProAppType;
+          description
+            "Profile Apply Type.";
+        }
+        leaf groupName {
+          type qosPolicyName {
+            length "1..31";
+          }
+          description
+            "The name of user queue group.";
+          ext:allowDelete "true";
+        }
+        leaf ceBeginVlanID {
+          type uint32 {
+            range "0..4094";
+          }
+          description
+            "Ce Begin Vlan ID.";
+        }
+        leaf ceEndVlanID {
+          type uint32 {
+            range "0..4094";
+          }
+          description
+            "Ce End VlanID.";
+        }
+        leaf appPeVlan {
+          type uint32 {
+            range "0..4094";
+          }
+          description
+            "App Pe Vlan.";
+        }
+        leaf identifyType {
+          type qosIdentifyType;
+          description
+            "Identify Type.";
+        }
+        container hqosProfileStats {
+          config false;
+          description
+            "Statistics list of user queue on interfaces.";
+          list hqosProfileStat {
+            key "serviceClass vlanId pevId";
+            config false;
+            description
+              "Statistics of user queue on interfaces.";
+            leaf serviceClass {
+              type HqosServiceClass;
+              config false;
+              description
+                "Class of service.";
+            }
+            leaf vlanId {
+              type uint32;
+              config false;
+              description
+                "Vlan ID.";
+            }
+            leaf pevId {
+              type uint32;
+              config false;
+              description
+                "Pe-vid ID.";
+            }
+            leaf passPackets {
+              type uint64;
+              config false;
+              description
+                "Number of passed packets.";
+            }
+            leaf passBytes {
+              type uint64;
+              config false;
+              description
+                "Number of passed bytes.";
+            }
+            leaf passPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets passed during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf passByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes passed during the latest 30 seconds (unit: bit/s).";
+            }
+            leaf dropPackets {
+              type uint64;
+              config false;
+              description
+                "Number of dropped packets.";
+            }
+            leaf dropBytes {
+              type uint64;
+              config false;
+              description
+                "Number of dropped bytes.";
+            }
+            leaf dropPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets dropped during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf dropByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes dropped during the latest 30 seconds (unit: bit/s).";
+            }
+            leaf rdmDcrdPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets random dropped during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf rdmDcrdByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes random dropped during the latest 30 seconds (unit: bit/s).";
+            }
+            leaf rdmDcrdPackets {
+              type uint64;
+              config false;
+              description
+                "Number of random dropped packets.";
+            }
+            leaf rdmDcrdBytes {
+              type uint64;
+              config false;
+              description
+                "Number of random dropped bytes.";
+            }
+            leaf timeStampIn {
+              type yang:date-and-time;
+              config false;
+              description
+                "Time of last packet received or sent.";
+            }
+            leaf bufTotal {
+              type uint32;
+              config false;
+              description
+                "Size of buffer(kbytes).";
+            }
+            leaf bufUsed {
+              type uint32;
+              config false;
+              description
+                "Size of used buffer(kbytes).";
+            }
+          }
+        }
+        container hqosGqStats {
+          config false;
+          description
+            "Statistics list of user group queue on interfaces.";
+          list hqosGqStat {
+            key "serviceClass vlanId pevId";
+            config false;
+            description
+              "Statistics of user group queue on interfaces.";
+            leaf serviceClass {
+              type HqosServiceClass;
+              config false;
+              description
+                "Class of service.";
+            }
+            leaf vlanId {
+              type uint32;
+              config false;
+              description
+                "Vlan ID.";
+            }
+            leaf pevId {
+              type uint32;
+              config false;
+              description
+                "Pe-vid ID.";
+            }
+            leaf passPackets {
+              type uint64;
+              config false;
+              description
+                "Number of passed packets.";
+            }
+            leaf passBytes {
+              type uint64;
+              config false;
+              description
+                "Number of passed bytes.";
+            }
+            leaf passPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets passed during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf passByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes passed during the latest 30 seconds (unit: bit/s).";
+            }
+            leaf dropPackets {
+              type uint64;
+              config false;
+              description
+                "Number of dropped packets.";
+            }
+            leaf dropBytes {
+              type uint64;
+              config false;
+              description
+                "Number of dropped bytes.";
+            }
+            leaf dropPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets dropped during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf dropByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes dropped during the latest 30 seconds (unit: bit/s).";
+            }
+          }
+        }
+        container hqosProfileCarStats {
+          config false;
+          description
+            "Statistics list of car on interfaces.";
+          list hqosProfileCarStat {
+            key "carType peVlanId vlanId";
+            config false;
+            description
+              "Statistics of car on interfaces.";
+            leaf carType {
+              type hqosCarType;
+              config false;
+              description
+                "Car type.";
+            }
+            leaf peVlanId {
+              type uint32;
+              config false;
+              description
+                "Pe vlan ID.";
+            }
+            leaf vlanId {
+              type uint32;
+              config false;
+              description
+                "Vlan ID.";
+            }
+            leaf passPackets {
+              type uint64;
+              config false;
+              description
+                "Number of passed packets.";
+            }
+            leaf passBytes {
+              type uint64;
+              config false;
+              description
+                "Number of passed bytes.";
+            }
+            leaf passPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets passed during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf passByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes passed during the latest 30 seconds (unit: bit/s).";
+            }
+            leaf dropPackets {
+              type uint64;
+              config false;
+              description
+                "Number of dropped packets.";
+            }
+            leaf dropBytes {
+              type uint64;
+              config false;
+              description
+                "Number of dropped bytes.";
+            }
+            leaf dropPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets dropped during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf dropByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes dropped during the latest 30 seconds (unit: bit/s).";
+            }
+          }
+        }
+        container hqosShareShapeStats {
+          config false;
+          description
+            "Share-Shaping list of car on interfaces.";
+          list hqosShareShapeStat {
+            key "peVlanId vlanId";
+            config false;
+            description
+              "Statistics of Share-Shaping on interfaces.";
+            leaf peVlanId {
+              type uint32;
+              config false;
+              description
+                "Pe vlan ID.";
+            }
+            leaf vlanId {
+              type uint32;
+              config false;
+              description
+                "Vlan ID.";
+            }
+            leaf passPackets {
+              type uint64;
+              config false;
+              description
+                "Number of passed packets.";
+            }
+            leaf passBytes {
+              type uint64;
+              config false;
+              description
+                "Number of passed bytes.";
+            }
+            leaf passPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets passed during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf passByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes passed during the latest 30 seconds (unit: bit/s).";
+            }
+            leaf dropPackets {
+              type uint64;
+              config false;
+              description
+                "Number of dropped packets.";
+            }
+            leaf dropBytes {
+              type uint64;
+              config false;
+              description
+                "Number of dropped bytes.";
+            }
+            leaf dropPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets dropped during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf dropByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes dropped during the latest 30 seconds (unit: bit/s).";
+            }
+          }
+        }
+      }
+    }
+    container hqosIFUserQueues {
+      description
+        "IF User Queue List.";
+      list hqosIFUserQueue {
+        key "ifName direction";
+        max-elements  "2";
+        description
+          "IF User Queue.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "IfName.";
+        }
+        leaf direction {
+          type qosDirectionType;
+          description
+            "Direction. ";
+        }
+        leaf cir {
+          type uint32;
+          mandatory true;
+          description
+            "Committed information rate (unit: Kbit/s).";
+        }
+        leaf pir {
+          type uint32;
+          must "(../pir>=../cir*1)";
+          description
+            "Peak information rate (unit: Kbit/s).";
+          ext:allowDelete "true";
+        }
+        leaf flowQueueName {
+          type leafref {
+            path "/qos/hqos/hqosFlowQueues/hqosFlowQueue/flowQueueName";
+          }
+          description
+            "Flow queue.";
+          ext:allowDelete "true";
+        }
+        leaf flowMappingName {
+          type leafref {
+            path "/qos/hqos/hqosFlowMappings/hqosFlowMapping/flowMappingName";
+          }
+          description
+            "Flow Mapping.";
+          ext:allowDelete "true";
+        }
+        leaf gqName {
+          type leafref {
+            path "/qos/hqos/hqosUserGroupQueues/hqosUserGroupQueue/gqName";
+          }
+          description
+            "Group Queue.";
+          ext:allowDelete "true";
+        }
+        leaf templateName {
+          type leafref {
+            path "/qos/hqos/hqosServiceTemplates/hqosServiceTemplate/templateName";
+          }
+          description
+            "Service Template.";
+          ext:allowDelete "true";
+        }
+        container hqosIFUserQueueStats {
+          config false;
+          description
+            "Statistics list of interface user queue.";
+          list hqosIFUserQueueStat {
+            config false;
+            description
+              "Statistics of interface user queue.";
+            leaf serviceClass {
+              type HqosServiceClass;
+              config false;
+              description
+                "Class of service.";
+            }
+            leaf passPackets {
+              type uint64;
+              config false;
+              description
+                "Number of passed packets.";
+            }
+            leaf passBytes {
+              type uint64;
+              config false;
+              description
+                "Number of passed bytes.";
+            }
+            leaf passPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets passed during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf passByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes passed during the latest 30 seconds (unit: bit/s).";
+            }
+            leaf dropPackets {
+              type uint64;
+              config false;
+              description
+                "Number of dropped packets.";
+            }
+            leaf dropBytes {
+              type uint64;
+              config false;
+              description
+                "Number of dropped bytes.";
+            }
+            leaf dropPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets dropped during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf dropByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes dropped during the latest 30 seconds (unit: bit/s).";
+            }
+          }
+        }
+      }
+    }
+    container hqosPortQTemps {
+      description
+        "port-queue template";
+      list hqosPortQTemp {
+        key "portQTempName";
+        description
+          "port-queue template";
+        leaf portQTempName {
+          type qosPolicyName {
+            length "1..31";
+          }
+          description
+            "port-queue template name";
+        }
+        container hqosPortQParas {
+          description
+            "port-queue template para";
+          list hqosPortQPara {
+            key "serviceClass";
+            description
+              "port-queue template para";
+            leaf serviceClass {
+              type qosServiceClass;
+              description
+                "serviceClass.";
+            }
+            leaf queueScheduleMode {
+              type hqosQueueScheduleMode;
+              description
+                "queueScheduleMode.";
+              ext:allowDelete "true";
+            }
+            leaf weight {
+              type uint8 {
+                range "1..100";
+              }
+              must "not(../queueScheduleMode!='wfq') or (../queueScheduleMode!='wfq' and not(../weight))";
+              description
+                "Weight of WFQ scheduling strategy.";
+              ext:allowDelete "true";
+            }
+            leaf shaping {
+              type uint32 {
+                range "0..4294967294";
+              }
+              description
+                "shaping.";
+              ext:allowDelete "true";
+            }
+            leaf shapingPercentage {
+              when "not(../shaping)";
+              type uint8 {
+                range "0..100";
+              }
+              description
+                "shapingPercentage.";
+              ext:allowDelete "true";
+            }
+            leaf pbs {
+              type uint32 {
+                range "1..65535";
+              }
+              description
+                "Peak burst size (unit: byte).";
+              ext:allowDelete "true";
+            }
+            leaf wredName {
+              type leafref {
+                path "/qos/qosWred/qosPortWreds/qosPortWred/wredName";
+              }
+              description
+                "WRED name.";
+              ext:allowDelete "true";
+            }
+            leaf lowlatency {
+              type hqosQueueLowLatency;
+              default "disable";
+              description
+                "Low Latency.";
+              ext:allowDelete "true";
+            }
+          }
+        }
+      }
+    }
+    container hqosVNIQOSProAppNodes {
+      description
+        "Qos Profile List.";
+      list hqosVNIQOSProAppNode {
+        key "vniId profileName direction";
+        description
+          "Qos Profile List.";
+        leaf vniId {
+          type uint32 {
+                range "1..16777215";
+              }
+          description
+            "vniId.";
+        }
+        leaf profileName {
+          type leafref {
+            path "/qos/hqos/hqosProfiles/hqosProfile/profileName";
+          }
+          description
+            "profileName.";
+        }
+        leaf direction {
+          type qosDirectionType;
+          description
+            "direction.";
+        }
+        container hqosProfileVniStats {
+          config false;
+          description
+            "Statistics list of user queue on interfaces.";
+          list hqosProfileVniStat {
+            key "serviceClass vlanId pevId";
+            config false;
+            description
+              "Statistics of user queue on interfaces.";
+            leaf serviceClass {
+              type HqosServiceClass;
+              config false;
+              description
+                "Class of service.";
+            }
+            leaf vlanId {
+              type uint32;
+              config false;
+              description
+                "vlanId.";
+            }
+            leaf pevId {
+              type uint32;
+              config false;
+              description
+                "pevId.";
+            }
+            leaf passPackets {
+              type uint64;
+              config false;
+              description
+                "Number of passed packets.";
+            }
+            leaf passBytes {
+              type uint64;
+              config false;
+              description
+                "Number of passed bytes.";
+            }
+            leaf passPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets passed during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf passByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes passed during the latest 30 seconds (unit: bit/s).";
+            }
+            leaf dropPackets {
+              type uint64;
+              config false;
+              description
+                "Number of dropped packets.";
+            }
+            leaf dropBytes {
+              type uint64;
+              config false;
+              description
+                "Number of dropped bytes.";
+            }
+            leaf dropPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets dropped during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf dropByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes dropped during the latest 30 seconds (unit: bit/s).";
+            }
+            leaf rdmDcrdPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets random dropped during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf rdmDcrdByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes random dropped during the latest 30 seconds (unit: bit/s).";
+            }
+            leaf rdmDcrdPackets {
+              type uint64;
+              config false;
+              description
+                "Number of random dropped packets.";
+            }
+            leaf rdmDcrdBytes {
+              type uint64;
+              config false;
+              description
+                "Number of random dropped bytes.";
+            }
+            leaf timeStampIn {
+              type yang:date-and-time;
+              config false;
+              description
+                "Time of last packet received or sent.";
+            }
+            leaf bufTotal {
+              type uint32;
+              config false;
+              description
+                "Size of buffer(kbytes).";
+            }
+            leaf bufUsed {
+              type uint32;
+              config false;
+              description
+                "Size of used buffer(kbytes).";
+            }
+          }
+        }
+        container hqosProfileVniCarStats {
+          config false;
+          description
+            "Statistics list of car on interfaces.";
+          list hqosProfileVniCarStat {
+            key "carType peVlanId vlanId";
+            config false;
+            description
+              "Statistics of car on interfaces.";
+            leaf carType {
+              type hqosCarType;
+              config false;
+              description
+                "Car type.";
+            }
+            leaf peVlanId {
+              type uint32;
+              config false;
+              description
+                "PevlanID.";
+            }
+            leaf vlanId {
+              type uint32;
+              config false;
+              description
+                "VlanID.";
+            }
+            leaf passPackets {
+              type uint64;
+              config false;
+              description
+                "Number of passed packets.";
+            }
+            leaf passBytes {
+              type uint64;
+              config false;
+              description
+                "Number of passed bytes.";
+            }
+            leaf passPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets passed during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf passByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes passed during the latest 30 seconds (unit: bit/s).";
+            }
+            leaf dropPackets {
+              type uint64;
+              config false;
+              description
+                "Number of dropped packets.";
+            }
+            leaf dropBytes {
+              type uint64;
+              config false;
+              description
+                "Number of dropped bytes.";
+            }
+            leaf dropPktRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the packets dropped during the latest 30 seconds (unit: packet/s).";
+            }
+            leaf dropByteRate {
+              type uint64;
+              config false;
+              description
+                "Rate of the bytes dropped during the latest 30 seconds (unit: bit/s).";
+            }
+          }
+        }
+      }
+    }
+    container hqosPortQTempApplys {
+      description
+        "port-queue template";
+      list hqosPortQTempApply {
+        key "ifName portQTempName";
+        description
+          "port-queue template";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "interface name";
+        }
+        leaf portQTempName {
+          type leafref {
+            path "/qos/hqos/hqosPortQTemps/hqosPortQTemp/portQTempName";
+          }
+          description
+            "port-queue template name";
+        }
+      }
+    }
+  }
+  grouping qos_qOSProBasInsCfgNodes_type {
+    description
+      "";
+    list qOSProBasInsCfgNode {
+      key "profileName direction anyOtherType ceBeginVlanID ceEndVlanID appPeVlan identifyType";
+      description
+        "qOSProBasInsCfgNode";
+      leaf profileName {
+        type leafref {
+          path "/qos/hqos/hqosProfiles/hqosProfile/profileName";
+        }
+        description
+          "profileName";
+      }
+      leaf direction {
+        type hqosDirectionType;
+        description
+          "direction";
+      }
+      leaf anyOtherType {
+        type hqosAnyOtherType;
+        description
+          "anyOtherType";
+      }
+      leaf ceBeginVlanID {
+        type uint32 {
+          range "0..4094";
+        }
+        description
+          "ceBeginVlanID";
+      }
+      leaf ceEndVlanID {
+        type uint32 {
+          range "0..4094";
+        }
+        description
+          "ceEndVlanID";
+      }
+      leaf appPeVlan {
+        type uint32 {
+          range "0..4094";
+        }
+        description
+          "appPeVlan";
+      }
+      leaf identifyType {
+        type hqosIdentifyType;
+        description
+          "identifyType";
+      }
+      leaf groupName {
+        type qosPolicyName {
+          length "1..31";
+        }
+        description
+          "groupName";
+        ext:allowDelete "true";
+      }
+      leaf sessionLmtNum {
+        type uint32 {
+          range "1..256";
+        }
+        description
+          "sessionLmtNum";
+        ext:allowDelete "true";
+      }
+    }
+  }
+}

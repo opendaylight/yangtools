@@ -1,0 +1,93 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-mcastbase {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-mcastbase";
+  prefix mcastbase;
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  include huawei-mcastbase-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Multicast basic service package.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  container mcastbase {
+    description
+      "Multicast basic service package.";
+    container mcastAfsEnables {
+      description
+        "List of instances enabled with multicast.";
+      list mcastAfsEnable {
+        key "vrfName addressFamily";
+        description
+          "Instances enabled with multicast.";
+        leaf vrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          description
+            "VPN instance.";
+        }
+        leaf addressFamily {
+          type rmbaseAfType;
+          description
+            "Address family, which determines whether an address belongs to IPv4 or IPv6.";
+        }
+        
+        container mcastAfsBoundarys {
+          description
+            "List of multicast boundaries.";
+          list mcastAfsBoundary {
+            key "ifName groupAddr groupMaskLength";
+            description
+              "Multicast boundaries.";
+            leaf ifName {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+              }
+              description
+                "Name of an interface.";
+            }
+            leaf groupAddr {
+              type inet:ip-address-no-zone;
+              description
+                "Indicate a multicast group address. In IPv4, the value ranges from 239.0.0.0 to 239.255.255.255, in dotted decimal notation. In IPv6, the value is in hexadecimal notation and in the format of FFxx:xxxx:xxxx::xxxx.";
+            }
+            leaf groupMaskLength {
+              type uint32 {
+                range "4..128";
+              }
+              description
+                "Specify the mask length of a multicast group address. In IPv4, the value ranges from 4 to 32. In IPv6, the value ranges from 8 to 128.";
+            }
+          }
+        }
+      }        
+    }
+  }
+}

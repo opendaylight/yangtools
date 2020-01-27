@@ -1,0 +1,189 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-mcastbase-type {
+  belongs-to huawei-mcastbase {
+    prefix mcastbase;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "multicast base type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  typedef mcastafsbaseMRouteProtocol {
+    type enumeration {
+      enum "others" {
+        description
+          "Other protocol types.";
+      }
+      enum "pimsm" {
+        description
+          "Protocol Independent Multicast-Sparse Mode (PIM-SM) .";
+      }
+      enum "gmp" {
+        description
+          "Internet Group Management Protocol (IGMP) or Multicast Listener Discovery (MLD) .";
+      }
+    }
+    description
+      "Multicast Protocol Type";
+  }
+
+  typedef mcastafsbaseRouteProtocol {
+    type enumeration {
+      enum "others" {
+        description
+          "Other protocol types.";
+      }
+      enum "local" {
+        description
+          "Local interface.";
+      }
+      enum "netmgmt" {
+        description
+          "Static route.";
+      }
+      enum "rip" {
+        description
+          "The routing protocol is Routing Information Protocol (RIP).";
+      }
+      enum "isis" {
+        description
+          "The routing protocol is Intermediate System to Intermediate System (IS-IS).";
+      }
+      enum "ospf" {
+        description
+          "The routing protocol is Open Shortest Path First (OSPF).";
+      }
+      enum "bgp" {
+        description
+          "The routing protocol is Border Gateway Protocol (BGP).";
+      }
+    }
+    description
+      "Route Protocol Type";
+  }
+
+  typedef mcastafsbaseRtType {
+    type enumeration {
+      enum "unicast" {
+        description
+          "The routing protocol is a unicast protocol.";
+      }
+      enum "multicast" {
+        description
+          "The routing protocol is a multicast protocol.";
+      }
+    }
+    description
+      "Route Type";
+  }
+
+  typedef mcastafsbaseNxtHopeState {
+    type enumeration {
+      enum "pruned" {
+        description
+          "The outbound interface's state machine is in the pruned state. ";
+      }
+      enum "forwarding" {
+        description
+          "The outbound interface's state machine is in the forwarding state. ";
+      }
+    }
+    description
+      "Next Hope State Type";
+  }
+
+  typedef rmbaseAfType {
+    type enumeration {
+      enum "ipv4unicast" {
+        description
+          "IPv4 unicast.";
+      }
+      enum "ipv6unicast" {
+        description
+          "IPv6 unicast.";
+      }
+    }
+    description
+      "Address Family";
+  }
+
+  typedef mcastafsbaseLoadSplit {
+    type enumeration {
+      enum "None" {
+        description
+          "Disable load splitting for multicast routes.";
+      }
+      enum "Source" {
+        description
+          "Specify the multicast source-based load splitting mode. This mode applies to a scenario in which multiple sources provide services for one group.";
+      }
+      enum "Group" {
+        description
+          "Specify the multicast group-based multicast load splitting mode. This mode applies to a scenario in which one source provides services for multiple groups.";
+      }
+      enum "SourceGroup" {
+        description
+          "Specify the multicast source- and group-based load splitting mode. This mode applies to a scenario in which multiple sources provide services for multiple groups.\n";
+      }
+      enum "Balance" {
+        description
+          "Specify the stable-preferred load splitting. This mode enables a device to automatically adjust and balance entries on equal-cost routes when equal-cost routes are added or deleted, when multicast routing entries are deleted, or when load splitting weights are changed on interfaces. This mode applies to a scenario in which hosts frequently join or leave groups and automatic load splitting adjustment is required.";
+      }
+      enum "Balanceucmp" {
+        description
+          "Specify the  balance-ucmp load splitting.";
+      }
+    }
+    description
+      "Load Splitting Type";
+  }
+
+  typedef mcastLimitType {
+    type enumeration {
+      enum "pimsmStarGroup" {
+        description
+          "PIM-SM(*, g)";
+      }
+      enum "pimsmSourceGroup" {
+        description
+          "PIM-SM(s, g)";
+      }
+    }
+    description
+      "Limit Type";
+  }
+
+  typedef localFwdMode {
+    type enumeration {
+      enum "default" {
+        description
+          "The master replicates a multicast flow for each AP interface on which multicast receivers exist.";
+      }
+      enum "P2MP" {
+        description
+          "The master replicates a multicast flow for each AP in P2MP mode, and then each AP replicates the multicast flow for each interface.";
+      }
+    }
+    description
+      "multicast flow mode";
+  }
+}

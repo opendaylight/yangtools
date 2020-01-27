@@ -1,0 +1,118 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ifm-fr {
+  belongs-to huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ifm-fr-type;
+  include huawei-ifm-pppbase;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "submodule fr";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  grouping ifm_frConfig_type {
+    description
+      "";
+    leaf lmiType {
+      type cfgLmiType;
+      default "q933a";
+      description
+        "LMI type.";
+    }
+    leaf ifType {
+      type cfgRole;
+      default "dte";
+      description
+        "FR role.";
+    }
+    leaf n391dte {
+      type uint32 {
+        range "1..255";
+      }
+      default "6";
+      description
+        "FR n391Dte.";
+      ext:allowDelete "true";
+    }
+    leaf n392dce {
+      type uint64 {
+        range "1..10";
+      }
+      default "3";
+      description
+        "FR n392Dce.";
+    }
+    leaf n392dte {
+      type uint64 {
+        range "1..10";
+      }
+      default "4";
+      description
+        "FR n392Dte.";
+    }
+    leaf n393dce {
+      type uint64 {
+        range "1..10";
+      }
+      default "4";
+      description
+        "FR n393Dce.";
+    }
+    leaf n393dte {
+      type uint32 {
+        range "1..10";
+      }
+      default "4";
+      description
+        "FR n393Dte.";
+    }
+    leaf t392dce {
+      type uint64 {
+        range "5..30";
+      }
+      default "15";
+      description
+        "FR t392Dce.";
+      ext:allowDelete "true";
+    }
+    container dlcis {
+      description
+        "FR DLCI.";
+      leaf dlci {
+        type uint32 {
+          range "16..1007";
+        }
+        description
+          "FR DLCI.";
+        ext:allowDelete "true";
+      }
+    }
+    container ifLink {
+      description
+        "FR polling interval. The value is expressed in seconds.";
+      uses ifm:ifm_pppbase_ifLink_type;
+    }
+  }
+}

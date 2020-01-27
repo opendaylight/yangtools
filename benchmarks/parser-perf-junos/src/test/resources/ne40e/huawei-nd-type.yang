@@ -1,0 +1,229 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-nd-type {
+  belongs-to huawei-nd {
+    prefix nd;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of submodule nd_type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef ndFlag {
+    type enumeration {
+      enum "false" {
+        description
+          "NO.";
+      }
+      enum "true" {
+        description
+          "YES.";
+      }
+    }
+    description
+      "description of ndFlag";
+  }
+  typedef aFlag {
+    type enumeration {
+      enum "on" {
+        description
+          "NO.";
+      }
+      enum "off" {
+        description
+          "YES.";
+      }
+    }
+    description
+      "description of aFlag";
+  }
+  typedef oFlag {
+    type enumeration {
+      enum "on" {
+        description
+          "NO.";
+      }
+      enum "off" {
+        description
+          "YES.";
+      }
+    }
+    description
+      "description of oFlag";
+  }
+  typedef ndNgbState {
+    type enumeration {
+      enum "INCMP" {
+        description
+          "incmp.";
+      }
+      enum "REACH" {
+        description
+          "reach.";
+      }
+      enum "STALE" {
+        description
+          "Stale.";
+      }
+      enum "DELAY" {
+        description
+          "delay.";
+      }
+      enum "PROBE" {
+        description
+          "probe.";
+      }
+    }
+    description
+      "description of ndNgbState";
+  }
+  typedef ndIntfType {
+    type enumeration {
+      enum "COMMON" {
+        description
+          "Common interface except vlan interface,DOT1Q terminal sub-interface and QINQ terminal sub-interface.";
+      }
+      enum "VLANIF" {
+        description
+          "Vlan Interface.";
+      }
+      enum "DOT1Q" {
+        description
+          "DOT1Q terminal sub-interface.";
+      }
+      enum "QINQ" {
+        description
+          "QINQ terminal sub-interface.";
+      }
+      enum "VBDIF" {
+        description
+          "Vbdif Interface.";
+      }
+    }
+    description
+      "description of ndIntfType";
+  }
+  typedef ndPacketStatType {
+    type enumeration {
+      enum "RECVTOTAL" {
+        description
+          "Total number of received ND packets.";
+      }
+      enum "RECVSECURED" {
+        description
+          "Total number of received SEND packets.";
+      }
+      enum "RECVUNSECNOCGA" {
+        description
+          "Total number of received unsecured packets without CGA option.";
+      }
+      enum "RECVUNSECNORSA" {
+        description
+          "Total number of received unsecured packets without RSA option.";
+      }
+      enum "RECVUNSECKEYLENMISMATCH" {
+        description
+          "Total number of received unsecured packets with mismatch key length.";
+      }
+      enum "RECVUNSECOTHERS" {
+        description
+          "Total number of other received unsecured packets.";
+      }
+      enum "SENTTOTAL" {
+        description
+          "Total number of sent ND packets.";
+      }
+      enum "SENTABORTED" {
+        description
+          "Total number of packets dropped before sending.";
+      }
+      enum "DROPNONONCE" {
+        description
+          "Total number of received packets but dropped because of no Nonce option. ";
+      }
+      enum "DROPNOTS" {
+        description
+          "Total number of received packets but dropped because of no Timestamp option. ";
+      }
+      enum "DROPCGAVERIFYFAIL" {
+        description
+          "Total number of received packets but dropped because of failed CGA option authentication. ";
+      }
+      enum "DROPRSAVERIFYFAIL" {
+        description
+          "Total number of received packets but dropped because of failed RSA Signature option authentication. ";
+      }
+      enum "DROPNONCEVERIFYFAIL" {
+        description
+          "Total number of received packets but dropped because of failed Nonce option authentication. ";
+      }
+      enum "DROPTSVERIFYFAIL" {
+        description
+          "Total number of received packets but dropped because of failed Timestamp option authentication. ";
+      }
+      enum "DROPRATELIMIT" {
+        description
+          "Total number of packets dropped because the calculated rate of RSA Signature generation and authentication exceeds the upper limit.";
+      }
+      enum "DROPFULLYSECUREDMODE" {
+        description
+          "Total number of received unsecured packets but dropped because of strict mode.";
+      }
+      enum "DROPPROXYPACKET" {
+        description
+          "Total number of received SEND packets but dropped because the ND proxy is enabled.";
+      }
+    }
+    description
+      "description of ndPacketStatType";
+  }
+  typedef ndRoutePreference {
+    type enumeration {
+      enum "MEDIUM" {
+        description
+          "Preference medium";
+      }
+      enum "HIGH" {
+        description
+          "Preference high";
+      }
+      enum "LOW" {
+        description
+          "Preference low";
+      }
+    }
+    description
+      "description of ndRoutePreference";
+  }
+  typedef ndAddrTypeE {
+    type enumeration {
+      enum "VXLAN-NVO3" {
+        description
+          "IPv4 VXLAN type.";
+      }
+      enum "VXLAN6-NVO3" {
+        description
+          "IPv6 VXLAN type.";
+      }
+    }
+    description
+      "";
+  }
+}

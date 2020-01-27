@@ -1,0 +1,665 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ethernet-action {
+  belongs-to huawei-ethernet {
+    prefix ethernet;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ethernet-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description FOR submodule";
+  revision 2017-03-23 {
+	description
+	"Functions supported by the schema are added to the YANG file.";
+	reference
+	"Huawei private.";
+	}
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference    "Huawei private.";
+  }
+  rpc createDot1qFlow {
+    description
+      "Enable Dot1q VLAN tag termination on a sub-interface.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Name of a sub-interface. For example, Ethernet 0/1/0.1. ";
+      }
+      leaf vlanIdBgn {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start VLAN ID in the user packet.";
+      }
+      leaf vlanIdEnd {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End VLAN ID in the user packet.";
+        ext:allowDelete "true";
+      }
+      leaf groupId {
+        type uint8 {
+          range "1..16";
+        }
+        description
+          "Specified VLAN group ID.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc deleteDot1qFlow {
+    description
+      "Disable Dot1q VLAN tag termination on a sub-interface.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Name of a sub-interface. For example, Ethernet 0/1/0.1. ";
+      }
+      leaf vlanIdBgn {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start VLAN ID in the user packet.";
+      }
+      leaf vlanIdEnd {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End VLAN ID in the user packet.";
+        ext:allowDelete "true";
+      }
+      leaf groupId {
+        type uint8 {
+          range "1..16";
+        }
+        description
+          "Specified VLAN group ID.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc createQinqFlow {
+    description
+      "Enable QinQ VLAN tag termination on a sub-interface.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Name of a sub-interface. For example, Ethernet 0/1/0.1. ";
+      }
+      leaf peVlanIdBgn {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start outer VLAN ID.";
+      }
+      leaf peVlanIdEnd {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End outer VLAN ID.";
+        ext:allowDelete "true";
+      }
+      leaf ceVlanIdBgn {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start inner VLAN ID.";
+      }
+      leaf ceVlanIdEnd {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End inner VLAN ID.";
+        ext:allowDelete "true";
+      }
+      leaf groupId {
+        type uint8 {
+          range "1..16";
+        }
+        description
+          "Specified VLAN group ID.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc createQinQAnyFlow {
+    description
+      "Enable QinQ Any VLAN tag termination on a sub-interface.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Name of a sub-interface. For example, Ethernet 0/1/0.1. ";
+      }
+      leaf peVlanIdBgn {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start outer VLAN ID.";
+      }
+      leaf peVlanIdEnd {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End outer VLAN ID.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc deleteQinqFlow {
+    description
+      "Disable QinQ VLAN tag termination on a sub-interface.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Name of a sub-interface. For example, Ethernet 0/1/0.1. ";
+      }
+      leaf peVlanIdBgn {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start outer VLAN ID.";
+      }
+      leaf peVlanIdEnd {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End outer VLAN ID.";
+        ext:allowDelete "true";
+      }
+      leaf ceVlanIdBgn {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start inner VLAN ID.";
+      }
+      leaf ceVlanIdEnd {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End inner VLAN ID.";
+        ext:allowDelete "true";
+      }
+      leaf groupId {
+        type uint8 {
+          range "1..16";
+        }
+        description
+          "Specified VLAN group ID.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc createL2StackExt {
+    description
+      "Create VLAN stacking.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Interface name.";
+      }
+      leaf l2StackType {
+        type l2StackType;
+        mandatory true;
+        description
+          "VLAN stacking type.";
+      }
+      leaf stackVidBgn {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start VLAN ID in the tag of each received packet before VLAN stacking is performed.";
+      }
+      leaf stackVidEnd {
+        type uint32 {
+          range "1..4094";
+        }
+        description
+          "End VLAN ID in the tag of each received packet before VLAN stacking is performed.";
+        ext:allowDelete "true";
+      }
+      leaf stackingVid {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "VLAN ID in the outer VLAN tag after VLAN stacking is performed.";
+      }
+      leaf remark8021p {
+        type uint8 {
+          range "0..7";
+        }
+        description
+          "Specify the 802.1p priority in the outer VLAN tag after VLAN mapping is performed.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc deleteL2StackExt {
+    description
+      "Delete VLAN stacking.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Interface name.";
+      }
+      leaf l2StackType {
+        type l2StackType;
+        mandatory true;
+        description
+          "VLAN stacking type.";
+      }
+      leaf stackVidBgn {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start VLAN ID in the tag of each received packet before VLAN stacking is performed.";
+      }
+      leaf stackVidEnd {
+        type uint32 {
+          range "1..4094";
+        }
+        description
+          "End VLAN ID in the tag of each received packet before VLAN stacking is performed.";
+        ext:allowDelete "true";
+      }
+      leaf stackingVid {
+        type uint32 {
+          range "1..4094";
+        }
+        description
+          "VLAN ID in the outer VLAN tag after VLAN stacking is performed.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc createL2MapExt {
+    description
+      "Create VLAN mapping.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Interface name.";
+      }
+      leaf l2MapType {
+        type l2MapType;
+        mandatory true;
+        description
+          "VLAN mapping type.";
+      }
+      leaf mapVid {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "VLAN ID in the outer VLAN tag before VLAN mapping is performed.";
+      }
+      leaf mapInnerVid {
+        type uint32 {
+          range "1..4094";
+        }
+        description
+          "VLAN ID in the inner VLAN tag before VLAN mapping is performed.";
+        ext:allowDelete "true";
+      }
+      leaf mappingVid {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "VLAN ID in the VLAN tag after VLAN mapping is performed.";
+      }
+      leaf remark8021p {
+        type uint8 {
+          range "0..7";
+        }
+        description
+          "Specify the 802.1p priority in the VLAN tag after VLAN mapping is performed.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc deleteL2MapExt {
+    description
+      "Delete VLAN mapping.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Interface name.";
+      }
+      leaf l2MapType {
+        type l2MapType;
+        mandatory true;
+        description
+          "VLAN mapping type.";
+      }
+      leaf mapVid {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "VLAN ID in the outer VLAN tag before VLAN mapping is performed.";
+      }
+      leaf mapInnerVid {
+        type uint32 {
+          range "1..4094";
+        }
+        description
+          "VLAN ID in the inner VLAN tag before VLAN mapping is performed.";
+        ext:allowDelete "true";
+      }
+      leaf mappingVid {
+        type uint32 {
+          range "1..4094";
+        }
+        description
+          "VLAN ID in the VLAN tag after VLAN mapping is performed.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc actMdifyPeVlan {
+    description
+      "Modify SVLAN.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Interface name.";
+      }
+      leaf oldPevlan {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Old SVLAN.";
+      }
+      leaf newPevlan {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "New SVLAN.";
+      }
+    }
+  }
+  rpc createQinqUserVlan {
+    description
+      "Create User-Vlan QinQ";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+      leaf peVlanIdBgn {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start outer VLAN ID.";
+      }
+      leaf peVlanIdEnd {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "End outer VLAN ID.";
+      }
+      leaf ceVlanIdBgn {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start inner VLAN ID.";
+      }
+      leaf ceVlanIdEnd {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "End inner VLAN ID.";
+      }
+    }
+  }
+  rpc deleteQinqUserVlan {
+    description
+      "Delete User-Vlan QinQ";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+      leaf peVlanIdBgn {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start outer VLAN ID.";
+      }
+      leaf peVlanIdEnd {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "End outer VLAN ID.";
+      }
+      leaf ceVlanIdBgn {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start inner VLAN ID.";
+      }
+      leaf ceVlanIdEnd {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "End inner VLAN ID.";
+      }
+    }
+  }
+  rpc createDot1qUserVlan {
+    description
+      "Create User-Vlan Dot1q";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+      leaf vlanIdBgn {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start VLAN ID.";
+      }
+      leaf vlanIdEnd {
+        type uint16;
+        mandatory true;
+        description
+          "End VLAN ID.";
+      }
+    }
+  }
+  rpc deleteDot1qUserVlan {
+    description
+      "Delete User-Vlan Dot1q";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+      leaf vlanIdBgn {
+        type uint16 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start VLAN ID.";
+      }
+      leaf vlanIdEnd {
+        type uint16;
+        mandatory true;
+        description
+          "End VLAN ID.";
+      }
+    }
+  }
+  rpc createDot1qUserVlanAny {
+    description
+      "Create User-Vlan Any-Other";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+    }
+  }
+  rpc deleteDot1qUserVlanAny {
+    description
+      "Delete User-Vlan Any-Other";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+    }
+  }
+  rpc deleteQinqAnyFlow {
+    description
+      "Disable QinQ Any VLAN tag termination on a sub-interface.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        mandatory true;
+        description
+          "Name of a sub-interface. For example, Ethernet 0/1/0.1. ";
+      }
+      leaf peVlanIdBgn {
+        type uint32 {
+          range "1..4094";
+        }
+        mandatory true;
+        description
+          "Start outer VLAN ID.";
+      }
+      leaf peVlanIdEnd {
+        type uint16 {
+          range "1..4094";
+        }
+        description
+          "End outer VLAN ID.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc resetVlanAcSuppressionStat {
+    description
+      "Reset AC suppression.";
+    input {
+      leaf interfaceName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+      leaf vlanId {
+        type ethernetVlanId;
+        mandatory true;
+        description
+          "VlanId.";
+      }
+    }
+  }
+  rpc resetEthAcSuppressionStat {
+    description
+      "Reset AC suppression.";
+    input {
+      leaf interfaceName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+    }
+  }
+}

@@ -1,0 +1,362 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-syslog-type {
+  belongs-to huawei-syslog {
+    prefix syslog;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "The type definition of syslog";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef imLogHostFacility {
+    type enumeration {
+      enum "local0" {
+        description
+          "Log server local 0.";
+      }
+      enum "local1" {
+        description
+          "Log server local 1.";
+      }
+      enum "local2" {
+        description
+          "Log server local 2.";
+      }
+      enum "local3" {
+        description
+          "Log server local 3.";
+      }
+      enum "local4" {
+        description
+          "Log server local 4.";
+      }
+      enum "local5" {
+        description
+          "Log server local 5.";
+      }
+      enum "local6" {
+        description
+          "Log server local 6.";
+      }
+      enum "local7" {
+        description
+          "Log server local 7.";
+      }
+    }
+    description
+      "The type of log host facility";
+  }
+  typedef imLogLevel {
+    type enumeration {
+      enum "emergencies" {
+        description
+          "The log host level is emergencies.";
+      }
+      enum "alert" {
+        description
+          "The log host level is alert.";
+      }
+      enum "critical" {
+        description
+          "The log host level is critical.";
+      }
+      enum "error" {
+        description
+          "The log host level is error.";
+      }
+      enum "warning" {
+        description
+          "The log host level is warning.";
+      }
+      enum "notification" {
+        description
+          "The log host level is notification.";
+      }
+      enum "informational" {
+        description
+          "The log host level is informational.";
+      }
+      enum "debugging" {
+        description
+          "The log host level is debugging.";
+      }
+    }
+    description
+      "The type of log level";
+  }
+  typedef imInfoType {
+    type enumeration {
+      enum "eventLog" {
+        description
+          "The event log.";
+      }
+      enum "operLog" {
+        description
+          "The operation log.";
+      }
+      enum "alarmLog" {
+        description
+          "The alarm log.";
+      }
+      enum "diagLog" {
+        description
+          "The diagnose log.";
+      }
+      enum "notificationLog" {
+        description
+          "The notification Log.";
+      }
+    }
+    description
+      "The log type";
+  }
+  typedef imAddrFamilyType {
+    type enumeration {
+      enum "ipv4" {
+        description
+          "The address type is IPv4.";
+      }
+      enum "ipv6" {
+        description
+          "The address type is IPv6.";
+      }
+    }
+    description
+      "The type of IP address";
+  }
+  typedef imTimeStamp {
+    type enumeration {
+      enum "DATE_BOOT" {
+        description
+          "Time elapsed since the system started. It is a relative time period. ";
+      }
+      enum "DATE_SECOND" {
+        description
+          "Date format with second precision.
+";
+      }
+      enum "DATE_TENTHSECOND" {
+        description
+          "Date format with tenth-second precision.
+";
+      }
+      enum "DATE_MILLISECOND" {
+        description
+          "Date format with millisecond precision.
+";
+      }
+      enum "SHORTDATE_SECOND" {
+        description
+          "Short date format second precision.
+";
+      }
+      enum "SHORTDATE_TENTHSECOND" {
+        description
+          "Short date format with tenth-second precision.
+";
+      }
+      enum "SHORTDATE_MILLISECOND" {
+        description
+          "Short date format with millisecond precision.
+";
+      }
+      enum "FORMATDATE_SECOND" {
+        description
+          "Format date format with second precision.
+";
+      }
+      enum "FORMATDATE_TENTHSECOND" {
+        description
+          "Format date format with tenth-second precision.
+";
+      }
+      enum "FORMATDATE_MILLISECOND" {
+        description
+          "Format date format with millisecond precision.
+";
+      }
+    }
+    description
+      "The type of time stamp";
+  }
+  typedef imTimeStampFormat {
+    type enumeration {
+      enum "UTC" {
+        description
+          "UTC format.";
+      }
+      enum "localtime" {
+        description
+          "Local time format.";
+      }
+    }
+    description
+      "The time stamp format";
+  }
+  typedef imVersionFormat {
+    type enumeration {
+      enum "rfc3164" {
+        description
+          "RFC3164.";
+      }
+      enum "rfc5424" {
+        description
+          "RFC5424.";
+      }
+    }
+    description
+      "The version format";
+  }
+  typedef imOperResult {
+    type enumeration {
+      enum "success" {
+        description
+          "The operation is successful.";
+      }
+      enum "failed" {
+        description
+          "The operation fails.";
+      }
+      enum "executed" {
+        description
+          "The operation is executed.";
+      }
+      enum "unknown" {
+        description
+          "The operation result is unknown.";
+      }
+    }
+    description
+      "The operation result";
+  }
+  typedef imTerminalType {
+    type enumeration {
+      enum "Console" {
+        description
+          "Console access.";
+      }
+      enum "AUX" {
+        description
+          "Aux access.";
+      }
+      enum "Telnet" {
+        description
+          "Telnet access.";
+      }
+      enum "SSH" {
+        description
+          "SSH access.";
+      }
+      enum "MODEM" {
+        description
+          "Modem access.";
+      }
+      enum "FTP" {
+        description
+          "FTP access.";
+      }
+      enum "SWITCHLR" {
+        description
+          "SWITCHLR access.";
+      }
+      enum "SNMP" {
+        description
+          "SNMP access.";
+      }
+      enum "OPS" {
+        description
+          "OPS access.";
+      }
+      enum "EMS" {
+        description
+          "EMS access.";
+      }
+      enum "TM" {
+        description
+          "TM access.";
+      }
+      enum "LCT" {
+        description
+          "LCT access.";
+      }
+      enum "TL1" {
+        description
+          "TL1 access.";
+      }
+      enum "**" {
+        description
+          "Default access type.";
+      }
+    }
+    description
+      "The terminal type";
+  }
+  typedef imLogType {
+    type enumeration {
+      enum "log" {
+        description
+          "Log logfile.";
+      }
+      enum "security" {
+        description
+          "Security logfile.";
+      }
+      enum "operation" {
+        description
+          "Operation logfile.";
+      }
+      enum "debug" {
+        description
+          "debug logfile.";
+      }
+    }
+    description
+      "The type of log";
+  }
+  typedef reportChannelType {
+    type enumeration {
+      enum "IETF" {
+        description
+          "Using an IETF channel to send alarm.";
+      }
+      enum "ITUT" {
+        description
+          "Using an ITU-T channel to send alarm.";
+      }
+    }
+    description
+      "The type of report channel";
+  }
+  typedef imTransportModeType {
+    type enumeration {
+      enum "udp" {
+        description
+          "UDP transport mode.";
+      }
+      enum "tcp" {
+        description
+          "TCP transport mode.";
+      }
+    }
+    description
+      "The type of transport mode";
+  }
+}

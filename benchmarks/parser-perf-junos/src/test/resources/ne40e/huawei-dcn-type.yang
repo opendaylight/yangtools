@@ -1,0 +1,404 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-dcn-type {
+  belongs-to huawei-dcn {
+    prefix dcn;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "DCN type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef dcn_Domain_Type {
+    type enumeration {
+      enum "Manage" {
+        description
+          "Administrative domain.";
+      }
+      enum "Service" {
+        description
+          "Service domain.";
+      }
+    }
+    description
+      "Enable/Disable";
+  }
+
+  typedef dcn_LanAccess_Type {
+    type enumeration {
+      enum "Enable" {
+        description
+          "Enable.";
+      }
+      enum "Disable" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Enable/Disable";
+  }
+
+  typedef dcn_AutoReport_Type {
+    type enumeration {
+      enum "Enable" {
+        description
+          "Enable.";
+      }
+      enum "Disable" {
+        description
+          "Disable.";
+      }
+    }
+    description
+      "Enable/Disable";
+  }
+
+  typedef dcn_Connect_Type {
+    type enumeration {
+      enum "SSL" {
+        description
+          "Security SSL.";
+      }
+      enum "NORMAL" {
+        description
+          "Common.";
+      }
+      enum "ALL" {
+        description
+          "All.";
+      }
+    }
+    description
+      "SSL/NORMAL/ALL";
+  }
+
+  typedef dcn_Packet_Type {
+    type enumeration {
+      enum "VLAN" {
+        description
+          "VLAN.";
+      }
+      enum "DSCP" {
+        description
+          "DSCP.";
+      }
+    }
+    description
+      "VLAN/DSCP";
+  }
+
+  typedef dcn_PriorityApply_Type {
+    type enumeration {
+      enum "ALL" {
+        description
+          "All.";
+      }
+    }
+    description
+      "ALL";
+  }
+
+  typedef dcn_protocol_Type {
+    type enumeration {
+      enum "0" {
+        description
+          "IP";
+      }
+    }
+    description
+      "IP";
+  }
+
+  typedef dcn_PktPriority_Type {
+    type enumeration {
+      enum "BE" {
+        description
+          "BE.";
+      }
+      enum "AF1" {
+        description
+          "AF1.";
+      }
+      enum "AF2" {
+        description
+          "AF2.";
+      }
+      enum "AF3" {
+        description
+          "AF3.";
+      }
+      enum "AF4" {
+        description
+          "AF4.";
+      }
+      enum "EF" {
+        description
+          "EF.";
+      }
+      enum "CS6" {
+        description
+          "CS6.";
+      }
+      enum "NONE" {
+        description
+          "NONE.";
+      }
+    }
+    description
+      "BE/AF1/AF2/AF3/AF4/EF/CS6/NONE";
+  }
+
+  typedef dcn_DataPktPriority_Type {
+    type enumeration {
+      enum "BE" {
+        description
+          "BE.";
+      }
+      enum "AF1" {
+        description
+          "AF1.";
+      }
+      enum "AF2" {
+        description
+          "AF2.";
+      }
+      enum "AF3" {
+        description
+          "AF3.";
+      }
+      enum "AF4" {
+        description
+          "AF4.";
+      }
+      enum "EF" {
+        description
+          "EF.";
+      }
+      enum "CS6" {
+        description
+          "CS6.";
+      }
+    }
+    description
+      "BE/AF1/AF2/AF3/AF4/EF/CS6";
+  }
+
+  typedef ifPhyType {
+    type enumeration {
+      enum "Ethernet" {
+        description
+          "Ethernet interface.";
+      }
+      enum "GigabitEthernet" {
+        description
+          "GigabitEthernet interface.";
+      }
+      enum "Pos" {
+        description
+          "POS interface.";
+      }
+      enum "100GE" {
+        description
+          "100 GigabitEthernet interface.";
+      }
+      enum "40GE" {
+        description
+          "40 GigabitEthernet interface.";
+      }
+      enum "10GE" {
+        description
+          "10 GigabitEthernet interface.";
+      }
+      enum "GEBrief" {
+        description
+          "GigabitEthernet interface.";
+      }
+      enum "Cpos" {
+        description
+          "CPOS controller.";
+      }
+      enum "E1" {
+        description
+          "E1 controller.";
+      }
+      enum "Serial" {
+        description
+          "Serial interface.";
+      }
+      enum "Vp" {
+        description
+          "Vp controller.";
+      }
+      enum "TrunkSerial" {
+        description
+          "TrunkSerial interface.";
+      }
+      enum "PosTrunk" {
+        description
+          "PosTrunk interface.";
+      }
+      enum "XGE" {
+        description
+          "XGigabitEthernet interface.";
+      }
+      enum "200GE" {
+        description
+          "200 GigabitEthernet interface.";
+      }
+      enum "FlexE" {
+        description
+          "Flex Ethernet interface.";
+      }
+    }
+    description
+      "Ethernet/GigabitEthernet/Pos/100GE/40GE/10GE/GEBrief/Cpos/E1/Serial/Vp/TrunkSerial/XGE/200GE/FlexE";
+  }
+
+  typedef dcnIfBandwidth {
+    type enumeration {
+      enum "0" {
+        description
+          "No limit";
+      }
+      enum "512" {
+        description
+          "512 Kbit/s.";
+      }
+      enum "1024" {
+        description
+          "1 Mbit/s.";
+      }
+      enum "2048" {
+        description
+          "2 Mbit/s.";
+      }
+      enum "5120" {
+        description
+          "5 Mbit/s.";
+      }
+      enum "10240" {
+        description
+          "10 Mbit/s.";
+      }
+    }
+    description
+      "0/512/1024/2048/5120/10240";
+  }
+
+  typedef dcn_Status_Type {
+    type enumeration {
+      enum "Enable" {
+        description
+          "Enable:";
+      }
+      enum "Disable" {
+        description
+          "Disable:";
+      }
+    }
+    description
+      "Enable/Disable";
+  }
+
+  typedef neLoginModeType {
+    type enumeration {
+      enum "Unknown" {
+        description
+          "Unknown.";
+      }
+      enum "IP" {
+        description
+          "IP mode.";
+      }
+      enum "Transmission" {
+        description
+          "Transmission mode.";
+      }
+    }
+    description
+      "Unknown/IP/Transmission";
+  }
+
+  typedef dcnIntfAuthenMode {
+    type enumeration {
+      enum "none" {
+        description
+          "To cancel authentication.";
+      }
+      enum "null" {
+        description
+          "To cancel authentication.";
+      }
+      enum "hmac-sha256" {
+        description
+          "hmac-sha256 cipher text authentication mode.";
+      }
+      enum "md5" {
+        description
+          "MD5 cipher text authentication mode.";
+      }
+      enum "hmac-md5" {
+        description
+          "HMAC-MD5 cipher text authentication mode.";
+      }
+      enum "simple" {
+        description
+          "Simple authentication mode.";
+      }
+    }
+    description
+      "none/null/hmac-sha256/md5/hmac-md5/simple";
+  }
+
+  typedef dcn_sslMode_Type {
+    type enumeration {
+      enum "single" {
+        description
+          "Single.";
+      }
+      enum "dual" {
+        description
+          "Dual.";
+      }
+    }
+    description
+      "Single/Dual";
+  }
+
+  typedef dcnPnpStateType {
+    type enumeration {
+      enum "Init" {
+        description
+          "Init.";
+      }
+      enum "Start" {
+        description
+          "Start.";
+      }
+      enum "Finish" {
+        description
+          "Finish.";
+      }
+    }
+    description
+      "Init/Start/Finish";
+  }
+}

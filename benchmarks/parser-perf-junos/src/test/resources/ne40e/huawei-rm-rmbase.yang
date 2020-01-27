@@ -1,0 +1,1309 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-rm-rmbase {
+  belongs-to huawei-rm {
+    prefix rm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-rm-rmbase-type;
+  include huawei-rm-l3vpn-labelstack;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Basic service package of routing management.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping rm_rmbase_rmbase_type {
+    description
+      "";
+    container relayTunnel {
+      description
+        "Iteration Tunnel.";
+      leaf relayEnable {
+        type boolean;
+        default "false";
+        description
+          "Enable iterated tunnel. This function is valid for all routes by default. If an IP prefix list is configured, this function is valid for only the routes that match the IP prefix list; if a tunnel policy is configured, routes are iterated based on the tunnel policy.";
+        ext:allowDelete "true";
+      }
+      leaf prefixName {
+        type string {
+          length "1..169";
+        }
+        must "not(../relayEnable='false') or (../relayEnable='false' and not(../prefixName))";
+        description
+          "Name of an IPv4 prefix list. The name is a character string, spaces not supported.";
+        ext:allowDelete "true";
+      }
+      leaf tnlPolicyName {
+        type string {
+          length "1..39";
+        }
+        must "not(../relayEnable='false') or (../relayEnable='false' and not(../tnlPolicyName))";
+        description
+          "Name of a tunnel policy. The value is a string of 1 to 19 case-sensitive characters, spaces not supported.";
+        ext:allowDelete "true";
+      }
+    }
+    container rmGlobalSite {
+      description
+        "Global RM information";
+      leaf ipv4RelayLabel {
+        type boolean;
+        default "false";
+        description
+          "";
+        ext:allowDelete "true";
+      }
+      leaf ipv6RelayLabel {
+        type boolean;
+        default "false";
+        description
+          "";
+        ext:allowDelete "true";
+      }
+    }
+    container vpnv4statisticss {
+      config false;
+      description
+        "All IPv4 VPN Instance route statistics";
+      list vpnv4statistics {
+        key "protocolId";
+        config false;
+        description
+          "All IPv4 VPN Instance route statistics";
+        leaf protocolId {
+          type rmbaseStatisticType;
+          config false;
+          description
+            "Protocol index.";
+        }
+        leaf totalNum {
+          type uint32;
+          config false;
+          description
+            "Number of routes in the routing table.";
+        }
+        leaf activeNum {
+          type uint32;
+          config false;
+          description
+            "Number of active routes in the routing table.";
+        }
+        leaf addedNum {
+          type uint32;
+          config false;
+          description
+            "Number of active and inactive routes added to the routing table.";
+        }
+        leaf deletedNum {
+          type uint32;
+          config false;
+          description
+            "Number of routes deleted from the routing table.";
+        }
+        leaf freedNum {
+          type uint32;
+          config false;
+          description
+            "Number of routes that are permanently released from the routing table.";
+        }
+      }
+    }
+    container vpnv6statisticss {
+      config false;
+      description
+        "All IPv6 VPN Instance route statistics";
+      list vpnv6statistics {
+        key "protocolId";
+        config false;
+        description
+          "All IPv6 VPN Instance route statistics";
+        leaf protocolId {
+          type rmbaseStatisticType;
+          config false;
+          description
+            "Protocol index.";
+        }
+        leaf totalNum {
+          type uint32;
+          config false;
+          description
+            "Number of routes in the routing table.";
+        }
+        leaf activeNum {
+          type uint32;
+          config false;
+          description
+            "Number of active routes in the routing table.";
+        }
+        leaf addedNum {
+          type uint32;
+          config false;
+          description
+            "Number of active and inactive routes added to the routing table.";
+        }
+        leaf deletedNum {
+          type uint32;
+          config false;
+          description
+            "Number of routes deleted from the routing table.";
+        }
+        leaf freedNum {
+          type uint32;
+          config false;
+          description
+            "Number of routes that are permanently released from the routing table.";
+        }
+      }
+    }
+    container uniAfs {
+      description
+        "List of address families.";
+      list uniAf {
+        key "vrfName afType";
+        description
+          "Address family. The address families of a VPN instance are classified into IPv4 address families and IPv6 address families.";
+        leaf vrfName {
+          type pub-type:vrfName;
+          description
+            "VPN instance name.";
+        }
+        leaf afType {
+          type commodelAfType;
+          description
+            "Set an address family.";
+        }
+        leaf frrEnable {
+          type boolean;
+          default "false";
+          description
+            "Enable FRR. In the case where primary and secondary links are created between different protocols, if the primary link is faulty, services can be quickly switched to the secondary link.";
+        }
+        leaf routeLimitNum {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Maximum number of prefixes supported by a VPN instance. The value ranges from 1 to 4294967295.";
+          ext:allowDelete "true";
+        }
+        leaf simplyAlert {
+          type boolean;
+          must "not(not(../routeLimitNum)) or (not(../routeLimitNum) and ../simplyAlert='false')";
+          default "false";
+          description
+            "When the number of VPN route prefixes exceeds the specified number, subsequent VPN routes can still be added to the routing table of the VPN instance and the system only generates an alarm. After the total number of VPN route prefixes and public network route prefixes reaches the limit on the total number of unicast routes specified in the license, the subsequent VPN routes are discarded.";
+        }
+        leaf alertPercent {
+          type uint32 {
+            range "1..100";
+          }
+          units %;
+          must "(../simplyAlert='true' and not(../alertPercent)) or (not(../routeLimitNum) and not(../alertPercent)) or not(../simplyAlert='true' or not(../routeLimitNum))";
+          description
+            "Percentage of the maximum number of route prefixes. The value is an integer ranging from 1 to 100. When the maximum number of route prefixes in a VPN instance reaches the value obtained through the formula (number * alert-percent)/100, the system generates an alarm. In this case, subsequent VPN routes can still be added to the routing table of the VPN instance. After the number of route prefixes reaches the specified number, the subsequent routes are discarded.";
+          ext:allowDelete "true";
+        }
+        leaf routeUnChanged {
+          type boolean;
+          must "not(not(../alertPercent)) or (not(../alertPercent) and ../routeUnChanged='false')";
+          default "false";
+          description
+            "When the alert-percent parameter is specified and the number of routes in the routing table reaches the upper limit and then a smaller upper limit is specified, there are the following results: If route-unchanged is specified, the routes in the routing table remain unchanged; if route-unchanged is not specified, all routes in the routing table are deleted, and routes are re-added. By default, route-unchanged is not specified. ";
+        }
+        container topologys {
+          description
+            "Topology list.";
+          list topology {
+            when "not(../../vrfName!='_public_')";
+            key "topologyName";
+            max-elements 32;
+            description
+              "Network structure. On a physical network, different logical topologies can be planned for various services.";
+            leaf topologyName {
+              type string {
+                length "1..31";
+              }
+              description
+                "Topology name.";
+            }
+            container rmStatisticss {
+              config false;
+              description
+                "Base route statistics list.";
+              list rmStatistics {
+                key "protocolId";
+                config false;
+                description
+                  "Base route statistics.";
+                leaf protocolId {
+                  type rmbaseStatisticType;
+                  config false;
+                  description
+                    "Protocol index.";
+                }
+                leaf totalNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes in the routing table.";
+                }
+                leaf activeNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of active routes in the routing table.";
+                }
+                leaf addedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of active and inactive routes added to the routing table.";
+                }
+                leaf deletedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes deleted from the routing table.";
+                }
+                leaf freedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes that are permanently released from the routing table.";
+                }
+              }
+            }
+            container routes {
+              config false;
+              description
+                "Base route list.";
+              list route {
+                key "prefix maskLength protocolId ifName processId directNexthop";
+                config false;
+                description
+                  "Base route of a router.";
+                leaf prefix {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Destination IP address.";
+                }
+                leaf maskLength {
+                  type uint32 {
+                    range "0..128";
+                  }
+                  config false;
+                  description
+                    "Mask length of an IP address.";
+                }
+                leaf protocolId {
+                  type commodelProtocolType;
+                  config false;
+                  description
+                    "Protocol type.";
+                }
+                leaf preference {
+                  type uint32 {
+                    range "0..255";
+                  }
+                  config false;
+                  description
+                    "Priority of a route. During route selection, the route with the highest priority is selected.";
+                }
+                leaf cost {
+                  type uint32 {
+                    range "0..65535";
+                  }
+                  config false;
+                  description
+                    "Cost.";
+                }
+                leaf flags {
+                  type rmbaseRouteFlag;
+                  config false;
+                  description
+                    "Flag, which can be D, RD, or R.";
+                }
+                leaf nextHop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Next hop.";
+                }
+                leaf ifName {
+                  type pub-type:ifName;
+                  config false;
+                  description
+                    "Outbound interface whose next hop is reachable. If the outbound interface is an interface of a named tunnel, the tunnel name is displayed. If the outbound interface is a dynamic tunnel, such as an LSP, the tunnel type is displayed because dynamic tunnels are nameless.";
+                }
+                leaf relayNexthop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Iteration next hop.";
+                }
+                leaf isActive {
+                  type boolean;
+                  config false;
+                  description
+                    "The route is active.";
+                }
+                leaf processId {
+                  type uint32;
+                  config false;
+                  description
+                    "Process ID.";
+                }
+                leaf tag {
+                  type uint32 {
+                    range "0..65535";
+                  }
+                  config false;
+                  description
+                    "Route tag.";
+                }
+                leaf priority {
+                  type rmbaseRoutePriority;
+                  config false;
+                  description
+                    "Route convergence priority, which can be low, medium, high, or critical. ";
+                }
+                leaf label {
+                  type uint32;
+                  config false;
+                  description
+                    "Label that is used for traffic forwarding along a tunnel.";
+                }
+                leaf qosId {
+                  type pub-type:hexBinary;
+                  config false;
+                  description
+                    "QoS information.";
+                }
+                leaf indirectID {
+                  type pub-type:hexBinary;
+                  config false;
+                  description
+                    "IID index of a route.";
+                }
+                leaf state {
+                  type rmbaseRouteState;
+                  config false;
+                  description
+                    "Route states. The following route states are supported:
+Active: Indicates that a route is activated. Invalid: Indicates that a route is invalid. Inactive: Indicates that a route is inactive.
+No advertise: Indicates that route advertisement is prohibited. 
+Advertise: Indicates that a route can be advertised. 
+Relied: Indicates that a route can be iterated to the next hop or the outbound interface, or iterated to a tunnel. 
+Stale: Indicates that routes with this tag are used in GR.";
+                }
+                leaf frrType {
+                  type frrType;
+                  config false;
+                  description
+                    "FRR type.";
+                }
+                leaf neighbour {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Neighbor.";
+                }
+                leaf age {
+                  type string {
+                    length "0..20";
+                  }
+                  config false;
+                  description
+                    "Keepalive time.";
+                }
+                leaf directNexthop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Direct next hop.";
+                }
+                leaf instance {
+                  type string {
+                    length "0..31";
+                  }
+                  config false;
+                  description
+                    "";
+                }
+                container labelStackInfos {
+                  config false;
+                  description
+                    "Label stack information.";
+                  uses rm:l3vpn_labelStacks_type;
+                }
+              }
+            }
+            container rmLocalmtStatisticss {
+              config false;
+              description
+                "Local MT route statistics list.";
+              list rmLocalmtStatistics {
+                key "protocolId";
+                config false;
+                description
+                  "Local MT route statistics.";
+                leaf protocolId {
+                  type rmbaseStatisticType;
+                  config false;
+                  description
+                    "Protocol index.";
+                }
+                leaf totalNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes in the routing table.";
+                }
+                leaf activeNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of active routes in the routing table.";
+                }
+                leaf addedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of active and inactive routes added to the routing table.";
+                }
+                leaf deletedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes deleted from the routing table.";
+                }
+                leaf freedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes that are permanently released from the routing table.";
+                }
+              }
+            }
+            container localmtroutes {
+              config false;
+              description
+                "Local MT route list.";
+              list localmtroute {
+                key "prefix maskLength protocolId ifName processId directNexthop";
+                config false;
+                description
+                  "Local MT route of a router.";
+                leaf prefix {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Destination IP address.";
+                }
+                leaf maskLength {
+                  type uint32 {
+                    range "0..128";
+                  }
+                  config false;
+                  description
+                    "Mask length of an IP address.";
+                }
+                leaf protocolId {
+                  type commodelProtocolType;
+                  config false;
+                  description
+                    "Protocol index.";
+                }
+                leaf preference {
+                  type uint32 {
+                    range "0..255";
+                  }
+                  config false;
+                  description
+                    "Priority of a route. During route selection, the route with the highest priority is selected.";
+                }
+                leaf cost {
+                  type uint32 {
+                    range "0..65535";
+                  }
+                  config false;
+                  description
+                    "Cost.";
+                }
+                leaf flags {
+                  type rmbaseRouteFlag;
+                  config false;
+                  description
+                    "Flag, which can be D, RD, or R.";
+                }
+                leaf nextHop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Next hop.";
+                }
+                leaf ifName {
+                  type pub-type:ifName;
+                  config false;
+                  description
+                    "Outbound interface whose next hop is reachable. If the outbound interface is an interface of a named tunnel, the tunnel name is displayed. If the outbound interface is a dynamic tunnel, such as an LSP, the tunnel type is displayed because dynamic tunnels are nameless.";
+                }
+                leaf relayNexthop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Iteration next hop.";
+                }
+                leaf isActive {
+                  type boolean;
+                  config false;
+                  description
+                    "The route is active.";
+                }
+                leaf processId {
+                  type uint32;
+                  config false;
+                  description
+                    "Process ID.";
+                }
+                leaf tag {
+                  type uint32 {
+                    range "0..65535";
+                  }
+                  config false;
+                  description
+                    "Route tag.";
+                }
+                leaf priority {
+                  type rmbaseRoutePriority;
+                  config false;
+                  description
+                    "Route convergence priority, which can be low, medium, high, or critical. ";
+                }
+                leaf label {
+                  type uint32;
+                  config false;
+                  description
+                    "Label that is used for traffic forwarding along a tunnel.";
+                }
+                leaf qosId {
+                  type pub-type:hexBinary;
+                  config false;
+                  description
+                    "QoS information.";
+                }
+                leaf indirectID {
+                  type pub-type:hexBinary;
+                  config false;
+                  description
+                    "IID index of a route.";
+                }
+                leaf state {
+                  type rmbaseRouteState;
+                  config false;
+                  description
+                    "Route states. The following route states are supported:
+Active: Indicates that a route is activated. Invalid: Indicates that a route is invalid. Inactive: Indicates that a route is inactive. No advertise: Indicates that route advertisement is prohibited. 
+Advertise: Indicates that a route can be advertised. 
+Relied: Indicates that a route can be iterated to the next hop or the outbound interface, or iterated to a tunnel. 
+Stale: Indicates that routes with this tag are used in GR.";
+                }
+                leaf frrType {
+                  type frrType;
+                  config false;
+                  description
+                    "FRR type.";
+                }
+                leaf neighbour {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Neighbor.";
+                }
+                leaf age {
+                  type string {
+                    length "0..20";
+                  }
+                  config false;
+                  description
+                    "Keepalive time.";
+                }
+                leaf directNexthop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Direct next hop.";
+                }
+              }
+            }
+            container rmMbgpStatisticss {
+              config false;
+              description
+                "MBGP route statistics list.";
+              list rmMbgpStatistics {
+                key "protocolId";
+                config false;
+                description
+                  "MBGP route statistics.";
+                leaf protocolId {
+                  type rmbaseStatisticType;
+                  config false;
+                  description
+                    "Protocol index.";
+                }
+                leaf totalNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes in the routing table.";
+                }
+                leaf activeNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of active routes in the routing table.";
+                }
+                leaf addedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of active and inactive routes added to the routing table.";
+                }
+                leaf deletedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes deleted from the routing table.";
+                }
+                leaf freedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes that are permanently released from the routing table.";
+                }
+              }
+            }
+            container mbgproutes {
+              config false;
+              description
+                "Multicast BGP route list.";
+              list mbgproute {
+                key "prefix maskLength protocolId ifName processId directNexthop";
+                config false;
+                description
+                  "Multicast BGP route of a router.";
+                leaf prefix {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Destination IP address.";
+                }
+                leaf maskLength {
+                  type uint32 {
+                    range "0..128";
+                  }
+                  config false;
+                  description
+                    "Mask length of an IP address.";
+                }
+                leaf protocolId {
+                  type commodelProtocolType;
+                  config false;
+                  description
+                    "Protocol index.";
+                }
+                leaf preference {
+                  type uint32 {
+                    range "0..255";
+                  }
+                  config false;
+                  description
+                    "Priority of a route. During route selection, the route with the highest priority is selected.";
+                }
+                leaf cost {
+                  type uint32 {
+                    range "0..65535";
+                  }
+                  config false;
+                  description
+                    "Cost.";
+                }
+                leaf flags {
+                  type rmbaseRouteFlag;
+                  config false;
+                  description
+                    "Flag, which can be D, RD, or R.";
+                }
+                leaf nextHop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Next hop.";
+                }
+                leaf ifName {
+                  type pub-type:ifName;
+                  config false;
+                  description
+                    "Outbound interface whose next hop is reachable. If the outbound interface is an interface of a named tunnel, the tunnel name is displayed. If the outbound interface is a dynamic tunnel, such as an LSP, the tunnel type is displayed because dynamic tunnels are nameless.";
+                }
+                leaf relayNexthop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Iteration next hop.";
+                }
+                leaf isActive {
+                  type boolean;
+                  config false;
+                  description
+                    "The route is active.";
+                }
+                leaf processId {
+                  type uint32;
+                  config false;
+                  description
+                    "Process ID.";
+                }
+                leaf tag {
+                  type uint32 {
+                    range "0..65535";
+                  }
+                  config false;
+                  description
+                    "Route tag.";
+                }
+                leaf priority {
+                  type rmbaseRoutePriority;
+                  config false;
+                  description
+                    "Route convergence priority, which can be low, medium, high, or critical. ";
+                }
+                leaf label {
+                  type uint32;
+                  config false;
+                  description
+                    "Label that is used for traffic forwarding along a tunnel.";
+                }
+                leaf qosId {
+                  type pub-type:hexBinary;
+                  config false;
+                  description
+                    "QoS information.";
+                }
+                leaf indirectID {
+                  type pub-type:hexBinary;
+                  config false;
+                  description
+                    "IID index of a route.";
+                }
+                leaf state {
+                  type rmbaseRouteState;
+                  config false;
+                  description
+                    "Route states. The following route states are supported:
+Active: Indicates that a route is activated. Invalid: Indicates that a route is invalid. Inactive: Indicates that a route is inactive. No advertise: Indicates that route advertisement is prohibited. 
+Advertise: Indicates that a route can be advertised. 
+Relied: Indicates that a route can be iterated to the next hop or the outbound interface, or iterated to a tunnel. 
+Stale: Indicates that routes with this tag are used in GR.";
+                }
+                leaf frrType {
+                  type frrType;
+                  config false;
+                  description
+                    "FRR type.";
+                }
+                leaf neighbour {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Neighbor.";
+                }
+                leaf age {
+                  type string {
+                    length "0..20";
+                  }
+                  config false;
+                  description
+                    "Keepalive time.";
+                }
+                leaf directNexthop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Direct next hop.";
+                }
+              }
+            }
+            container rmMsrStatisticss {
+              config false;
+              description
+                "MSR route statistics list.";
+              list rmMsrStatistics {
+                key "protocolId";
+                config false;
+                description
+                  "MSR route statistics.";
+                leaf protocolId {
+                  type rmbaseStatisticType2;
+                  config false;
+                  description
+                    "Protocol index.";
+                }
+                leaf totalNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes in the routing table.";
+                }
+                leaf activeNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of active routes in the routing table.";
+                }
+                leaf addedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of active and inactive routes added to the routing table.";
+                }
+                leaf deletedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes deleted from the routing table.";
+                }
+                leaf freedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes that are permanently released from the routing table.";
+                }
+              }
+            }
+            container msrroutes {
+              config false;
+              description
+                "Multicast static route list.";
+              list msrroute {
+                key "prefix maskLength protocolId ifName processId directNexthop";
+                config false;
+                description
+                  "Multicast static route of a router.";
+                leaf prefix {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Destination IP address.";
+                }
+                leaf maskLength {
+                  type uint32 {
+                    range "0..128";
+                  }
+                  config false;
+                  description
+                    "Mask length of an IP address.";
+                }
+                leaf protocolId {
+                  type commodelProtocolType2;
+                  config false;
+                  description
+                    "Protocol index.";
+                }
+                leaf preference {
+                  type uint32 {
+                    range "0..255";
+                  }
+                  config false;
+                  description
+                    "Priority of a route. During route selection, the route with the highest priority is selected.";
+                }
+                leaf cost {
+                  type uint32 {
+                    range "0..65535";
+                  }
+                  config false;
+                  description
+                    "Cost.";
+                }
+                leaf flags {
+                  type rmbaseRouteFlag;
+                  config false;
+                  description
+                    "Flag, which can be D, RD, or R.";
+                }
+                leaf nextHop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Next hop.";
+                }
+                leaf ifName {
+                  type pub-type:ifName;
+                  config false;
+                  description
+                    "Outbound interface whose next hop is reachable. If the outbound interface is an interface of a named tunnel, the tunnel name is displayed. If the outbound interface is a dynamic tunnel, such as an LSP, the tunnel type is displayed because dynamic tunnels are nameless.";
+                }
+                leaf relayNexthop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Iteration next hop.";
+                }
+                leaf isActive {
+                  type boolean;
+                  config false;
+                  description
+                    "The route is active.";
+                }
+                leaf processId {
+                  type uint32;
+                  config false;
+                  description
+                    "Process ID.";
+                }
+                leaf tag {
+                  type uint32 {
+                    range "0..65535";
+                  }
+                  config false;
+                  description
+                    "Route tag.";
+                }
+                leaf priority {
+                  type rmbaseRoutePriority;
+                  config false;
+                  description
+                    "Route convergence priority, which can be low, medium, high, or critical. ";
+                }
+                leaf label {
+                  type uint32;
+                  config false;
+                  description
+                    "Label that is used for traffic forwarding along a tunnel.";
+                }
+                leaf qosId {
+                  type pub-type:hexBinary;
+                  config false;
+                  description
+                    "QoS information.";
+                }
+                leaf indirectID {
+                  type pub-type:hexBinary;
+                  config false;
+                  description
+                    "IID index of a route.";
+                }
+                leaf state {
+                  type rmbaseRouteState;
+                  config false;
+                  description
+                    "Route states. The following route states are supported:
+Active: Indicates that a route is activated. Invalid: Indicates that a route is invalid. Inactive: Indicates that a route is inactive. No advertise: Indicates that route advertisement is prohibited. 
+Advertise: Indicates that a route can be advertised. 
+Relied: Indicates that a route can be iterated to the next hop or the outbound interface, or iterated to a tunnel. 
+Stale: Indicates that routes with this tag are used in GR.";
+                }
+                leaf frrType {
+                  type frrType;
+                  config false;
+                  description
+                    "FRR type.";
+                }
+                leaf neighbour {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Neighbor.";
+                }
+                leaf age {
+                  type string {
+                    length "0..20";
+                  }
+                  config false;
+                  description
+                    "Keepalive time.";
+                }
+                leaf directNexthop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Direct next hop.";
+                }
+              }
+            }
+            container rmFlowspecStatisticss {
+              config false;
+              description
+                "Flowspec route statistics list.";
+              list rmFlowspecStatistics {
+                key "protocolId";
+                config false;
+                description
+                  "Flowspec route statistics.";
+                leaf protocolId {
+                  type rmbaseStatisticType;
+                  config false;
+                  description
+                    "Protocol index.";
+                }
+                leaf totalNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes in the routing table.";
+                }
+                leaf activeNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of active routes in the routing table.";
+                }
+                leaf addedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of active and inactive routes added to the routing table.";
+                }
+                leaf deletedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes deleted from the routing table.";
+                }
+                leaf freedNum {
+                  type uint32;
+                  config false;
+                  description
+                    "Number of routes that are permanently released from the routing table.";
+                }
+              }
+            }
+            container flowspecroutes {
+              config false;
+              description
+                "Flowspec static route list.";
+              list flowspecroute {
+                key "prefix maskLength protocolId ifName processId directNexthop";
+                config false;
+                description
+                  "Flowspec static route of a router.";
+                leaf prefix {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Destination IP address.";
+                }
+                leaf maskLength {
+                  type uint32 {
+                    range "0..128";
+                  }
+                  config false;
+                  description
+                    "Mask length of an IP address.";
+                }
+                leaf protocolId {
+                  type commodelProtocolType;
+                  config false;
+                  description
+                    "Protocol index.";
+                }
+                leaf preference {
+                  type uint32 {
+                    range "0..255";
+                  }
+                  config false;
+                  description
+                    "Priority of a route. During route selection, the route with the highest priority is selected.";
+                }
+                leaf cost {
+                  type uint32 {
+                    range "0..65535";
+                  }
+                  config false;
+                  description
+                    "Cost.";
+                }
+                leaf flags {
+                  type rmbaseRouteFlag;
+                  config false;
+                  description
+                    "Flag, which can be D, RD, or R.";
+                }
+                leaf nextHop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Next hop.";
+                }
+                leaf ifName {
+                  type pub-type:ifName;
+                  config false;
+                  description
+                    "Outbound interface whose next hop is reachable. If the outbound interface is an interface of a named tunnel, the tunnel name is displayed. If the outbound interface is a dynamic tunnel, such as an LSP, the tunnel type is displayed because dynamic tunnels are nameless.";
+                }
+                leaf relayNexthop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Iteration next hop.";
+                }
+                leaf isActive {
+                  type boolean;
+                  config false;
+                  description
+                    "The route is active.";
+                }
+                leaf processId {
+                  type uint32;
+                  config false;
+                  description
+                    "Process ID.";
+                }
+                leaf tag {
+                  type uint32 {
+                    range "0..65535";
+                  }
+                  config false;
+                  description
+                    "Route tag.";
+                }
+                leaf priority {
+                  type rmbaseRoutePriority;
+                  config false;
+                  description
+                    "Route convergence priority, which can be low, medium, high, or critical. ";
+                }
+                leaf label {
+                  type uint32;
+                  config false;
+                  description
+                    "Label that is used for traffic forwarding along a tunnel.";
+                }
+                leaf qosId {
+                  type pub-type:hexBinary;
+                  config false;
+                  description
+                    "QoS information.";
+                }
+                leaf indirectID {
+                  type pub-type:hexBinary;
+                  config false;
+                  description
+                    "IID index of a route.";
+                }
+                leaf state {
+                  type rmbaseRouteState;
+                  config false;
+                  description
+                    "Route states. The following route states are supported:
+Active: Indicates that a route is activated. Invalid: Indicates that a route is invalid. Inactive: Indicates that a route is inactive. No advertise: Indicates that route advertisement is prohibited. 
+Advertise: Indicates that a route can be advertised. 
+Relied: Indicates that a route can be iterated to the next hop or the outbound interface, or iterated to a tunnel. 
+Stale: Indicates that routes with this tag are used in GR.";
+                }
+                leaf frrType {
+                  type frrType;
+                  config false;
+                  description
+                    "FRR type.";
+                }
+                leaf neighbour {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Neighbor.";
+                }
+                leaf age {
+                  type string {
+                    length "0..20";
+                  }
+                  config false;
+                  description
+                    "Keepalive time.";
+                }
+                leaf directNexthop {
+                  type inet:ip-address-no-zone;
+                  config false;
+                  description
+                    "Direct next hop.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    container ipv4Threshold {
+      description
+        "Set IPv4 prefix thresholds.";
+      leaf upperPercent {
+        type uint8 {
+          range "1..100";
+        }
+        units %;
+        default "80";
+        description
+          "Set the upper limit percent of the IPv4 prefix threshold, and the default value is 80.";
+      }
+      leaf lowerPercent {
+        type uint8 {
+          range "1..100";
+        }
+        units %;
+        default "70";
+        description
+          "Set the lower limit percent of the IPv4 prefix threshold, and the default value is 70.";
+      }
+    }
+    container ipv6Threshold {
+      description
+        "Set IPv6 prefix thresholds.";
+      leaf upperPercent {
+        type uint8 {
+          range "1..100";
+        }
+        units %;
+        default "80";
+        description
+          "Set the upper limit percent of the IPv6 prefix threshold, and the default value is 80.";
+      }
+      leaf lowerPercent {
+        type uint8 {
+          range "1..100";
+        }
+        units %;
+        default "70";
+        description
+          "Set the lower limit percent of the IPv6 prefix threshold, and the default value is 70.";
+      }
+    }
+  }
+}

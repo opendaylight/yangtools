@@ -1,0 +1,160 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-l3vpn-mpls-type {
+  belongs-to huawei-l3vpn {
+    prefix l3vpn;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "the submodule of l3vpn:l3vpn_mpls_type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef l3vpnIngPipeMode {
+    type enumeration {
+      enum "pipe" {
+        description
+          "Pipe mode.";
+      }
+      enum "shortPipe" {
+        description
+          "Short pipe mode.";
+      }
+      enum "uniform" {
+        description
+          "Uniform pipe mode.";
+      }
+    }
+    description
+      "the mode of the l3vpnIngPipe";
+  }
+  typedef l3vpnEgPipeMode {
+    type enumeration {
+      enum "pipe" {
+        description
+          "Pipe mode.";
+      }
+      enum "shortPipe" {
+        description
+          "Short pipe mode.";
+      }
+      enum "uniform" {
+        description
+          "Uniform pipe mode.";
+      }
+    }
+    description
+      "the mode of the l3vpnEgPipe";
+  }
+  typedef l3vpnPipeMode {
+    type enumeration {
+      enum "pipe" {
+        description
+          "Pipe mode.";
+      }
+      enum "shortPipe" {
+        description
+          "Short pipe mode.";
+      }
+      enum "uniform" {
+        description
+          "Uniform pipe mode.";
+      }
+    }
+    description
+      "the mode of the l3vpn Pipe";
+  }
+  typedef l3vpnTtlMode {
+    type enumeration {
+      enum "pipe" {
+        description
+          "Pipe mode.";
+      }
+      enum "uniform" {
+        description
+          "Uniform pipe mode.";
+      }
+    }
+    description
+      "the mode of the l3vpn tunnel";
+  }
+  typedef l3vpnDsName {
+    type string {
+      length "1..31";
+    }
+    description
+      "now l3vpnDsName is like string";
+  }
+  typedef l3vpnServiceClass {
+    type enumeration {
+      enum "be" {
+        description
+          "be service-class.";
+      }
+      enum "af1" {
+        description
+          "af1 service-class.";
+      }
+      enum "af2" {
+        description
+          "af2 service-class.";
+      }
+      enum "af3" {
+        description
+          "af3 service-class.";
+      }
+      enum "af4" {
+        description
+          "af4 service-class.";
+      }
+      enum "ef" {
+        description
+          "ef service-class.";
+      }
+      enum "cs6" {
+        description
+          "cs6 service-class.";
+      }
+      enum "cs7" {
+        description
+          "cs7 service-class.";
+      }
+    }
+    description
+      "the service class of l3vpn";
+  }
+  typedef l3vpnColor {
+    type enumeration {
+      enum "green" {
+        description
+          "Green.";
+      }
+      enum "yellow" {
+        description
+          "Yellow.";
+      }
+      enum "red" {
+        description
+          "Red.";
+      }
+    }
+    description
+      "the color of l3vpn";
+  }
+}

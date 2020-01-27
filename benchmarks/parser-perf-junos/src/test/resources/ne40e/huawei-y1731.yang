@@ -1,0 +1,2082 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-y1731 {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-y1731";
+  prefix y1731;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-l2tpv3 {
+    prefix l2tpv3;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-y1731-action;
+  include huawei-y1731-type;
+  include huawei-y1731-dtools;
+  include huawei-y1731-dtools-action;
+  include huawei-y1731-dtools-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Y.1731 is developed by ITU-T for operations, administration and maintenance (OAM) of Ethernet, which providing fault management and performance management solutions for Ethernet.";
+	
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference "Huawei private.";
+  }
+
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference      "Huawei private.";
+  }
+  container y1731 {
+    description
+      "Y.1731 is developed by ITU-T for operations, administration and maintenance (OAM) of Ethernet, which providing fault management and performance management solutions for Ethernet.";
+    container globalAttribute {
+      description
+        "Global Y.1731 attribute.";
+      leaf cfmVersion {
+        type cfmVersion;
+        default "standard";
+        description
+          "Version of Y.1731, which can be standard or draft7. The default Y.1731 version is standard.";
+      }
+      leaf globalEnable {
+        when "not(../cfmVersion='draft7')";
+        type boolean;
+        default "false";
+        description
+          "Enable Y.1731. By default, Y.1731 is disabled.";
+      }
+      leaf macAddressModel {
+        type mpAddressModel;
+        must "not(../globalEnable='true')";
+        default "bridge";
+        description
+          "MAC model of Y.1731, which can be bridge or individual. The default Y.1731 MAC model is bridge. ";
+      }
+      leaf pmModeEnable {
+        type boolean;
+        default "false";
+        description
+          "Whether Y.1731 PM is enabled. By default, PM mode is disabled.";
+      }
+      leaf portIdTlvType {
+        when "not(../cfmVersion='draft7')";
+        type portIdTlvType;
+        default "interface-name";
+        description
+          "Set the type of port ID TLV in MAC Trace packet.";
+      }
+      leaf idleTestIdCount {
+        type uint16;
+        default "1";
+        description
+          "Set the number of idle Test ID for query.";
+      }
+      leaf clearMacVlan {
+        when "../globalEnable='true'";
+        type pub-type:VLAN_RANGE {
+          length "0..4094";
+        }
+        description
+          "Configure the VLAN ID of clear MAC address.";
+        ext:allowDelete "true";
+      }
+    }
+    container idleTestIds {
+      config false;
+      description
+        "List of all idle test IDs.";
+      list idleTestId {
+        key "testId";
+        config false;
+        description
+          "Idle test ID.";
+        leaf testId {
+          type uint32 {
+            range "1..4294967295";
+          }
+          config false;
+          description
+            "Idle ID of a test instance.";
+        }
+      }
+    }
+    container mds {
+      description
+        "Configure the list of all maintenance domains.";
+      list md {
+        key "mdName";
+        description
+          "Configure a maintenance domain.";
+        leaf mdName {
+          type string {
+            length "1..43";
+            pattern '[^\?]*';
+          }
+          description
+            "Configure the name of a maintenance domain (MD).";
+        }
+        leaf mdLevel {
+          type uint8 {
+            range "0..7";
+          }
+          must "not(../mdName)";
+          default "0";
+          description
+            "Configure the level of the maintenance domain. The default level is 0.";
+        }
+        leaf mdFormat {
+          type mdFormat;
+          must "not(../mdName)";
+          default "charString";
+          description
+            "Configure the format of the maintenance domain name. By default, the format is a string. If the format is MAC-address, the format name must be in form of H-H-H:U<0-65535>, for example, 0001-0001-0001:1.";
+          ext:allowDelete "true";
+        }
+        leaf mdFormatName {
+          when "../mdFormat and ../mdFormat!='none'";
+          type string {
+            length "1..43";
+            pattern '[^\?]*';
+          }
+          must "not(../mdName)";
+          description
+            "Configure the name of the maintenance domain which will be formatted. By default, it is the same as the name of the maintenance domain.
+
+";
+          ext:allowDelete "true";
+        }
+        leaf mipCreateType {
+          type mipCreateType;
+          default "none";
+          description
+            "Configure the MIP create type of maintenance domain. The default value is none.";
+          ext:allowDelete "true";
+        }
+        leaf senderTLVType {
+          type senderTLVType;
+          default "defer";
+          description
+            "Configure the sender ID TLV Type of the default maintenance domain. The default value is defer.";
+          ext:allowDelete "true";
+        }
+        leaf mdIndex {
+          type uint32 {
+            range "1..4294967295";
+          }
+          config false;
+          description
+            "Index of a maintenance domain, which is automatically created.";
+        }
+        container mas {
+          description
+            "Configure the list of all maintenance associations.";
+          list ma {
+            key "maName";
+            description
+              "Configure a maintenance association.";
+            leaf maName {
+              type string {
+                length "1..43";
+                pattern '[^\?]*';
+              }
+              description
+                "Configure the name of a maintenance association (MA).";
+            }
+            leaf maMapType {
+              type mapType;
+              default "no-bind";
+              description
+                "Configure the type of a maintenance association's service. By default, the type is Null.";
+              ext:support-filter "true";
+            }
+            leaf maMapL2TPCCCName {
+              when "not(../maMapType='bind-bgp-pw' or ../maMapType='bind-ccc' or ../maMapType='bind-l2tpv3-pw' or ../maMapType='bind-l2vc' or ../maMapType='bind-vlan' or ../maMapType='bind-vsi' or ../maMapType='no-bind') or ../maMapType='bind-l2tpv3-ccc'";
+              type string {
+                length "1..31";
+              }
+              description
+                "Configures the L2TPV3 Local Connection Name that associated with the maintenance association.";
+              ext:allowDelete "true";
+            }
+            leaf maMapTnlName {
+              when "not(../maMapType='bind-bgp-pw' or ../maMapType='bind-ccc' or ../maMapType='bind-l2tpv3-ccc' or ../maMapType='bind-l2vc' or ../maMapType='bind-vlan' or ../maMapType='bind-vsi' or ../maMapType='no-bind') or ../maMapType='bind-l2tpv3-pw'";
+              type leafref {
+                path "/l2tpv3:l2tpv3/l2tpv3:l2tpv3PWInstances/l2tpv3:l2tpv3PWInstance/l2tpv3:pwName";
+              }
+              description
+                "Configures the L2TPV3 Tunnel Name that associated with the maintenance association.";
+              ext:allowDelete "true";
+            }
+            leaf maMapVlanId {
+              when "not(../maMapType='bind-bgp-pw' or ../maMapType='bind-ccc' or ../maMapType='bind-l2tpv3-ccc' or ../maMapType='bind-l2tpv3-pw' or ../maMapType='bind-l2vc' or ../maMapType='bind-vsi' or ../maMapType='no-bind') or ../maMapType='bind-vlan'";
+              type uint16 {
+                range "1..4094";
+              }
+              description
+                "Configure the VLAN ID associated with the maintenance association.";
+              ext:allowDelete "true";
+            }
+            leaf maPktPriority {
+              type uint8 {
+                range "0..7";
+              }
+              default "7";
+              description
+                "Configure the priority of the packet which is sent in the maintenance association. The default priority is 7.";
+              ext:allowDelete "true";
+            }
+            leaf maCcmInterval {
+              type ccmInterval;
+              default "interval1s";
+              description
+                "Configure the interval at which CCMs are sent in a maintenance association. The default interval is 1s.";
+            }
+            leaf maFormat {
+              type maFormat;
+              must "not(../maName)";
+              default "string";
+              description
+                "Configure the format of the maintenance association's name. The default format is String.";
+              ext:allowDelete "true";
+            }
+            leaf maFormatName {
+              when "not(not(../maFormat) and ../maName)";
+              type string {
+                length "1..43";
+                pattern '[^\?]*';
+              }
+              must "not(../maName)";
+              description
+                "Configure the name of the maintenance association (MA) which will be formatted. By default, as the same with the name of the MA. The length of MA format description is [1,13] when the format is ICC-based, and [1,43] when it is string.
+
+";
+              ext:allowDelete "true";
+            }
+            leaf alarmOccurTime {
+              type uint16 {
+                range "0..30000";
+              }
+              default "2500";
+              description
+                "Configure the delay for reporting an alarm, the value is expressed in milliseconds. The default delay is 2500ms.";
+              ext:allowDelete "true";
+            }
+            leaf alarmFinishTime {
+              type uint16 {
+                range "0..30000";
+              }
+              default "10000";
+              description
+                "Configure the delay for clearing an alarm, the value is expressed in milliseconds. The default value is 10000ms.";
+              ext:allowDelete "true";
+            }
+            leaf activeTime {
+              type uint16 {
+                range "0..600";
+              }
+              default "0";
+              description
+                "Configure the time to activate an RMEP, the value is expressed in seconds. The default value is 0s.";
+              ext:allowDelete "true";
+            }
+            leaf interfaceTLV {
+              type boolean;
+              default "false";
+              description
+                "Whether the interface status TLV is enabled in CCM. The default value is disabled.";
+            }
+            leaf senderIdTLV {
+              type boolean;
+              default "false";
+              description
+                "Whether the sender ID TLV is enabled in CCM. The default value is disabled.";
+            }
+            leaf portStatusTLV {
+              type boolean;
+              default "false";
+              description
+                "Whether the port status TLV is enabled in CCM. The default value is disabled.";
+            }
+            leaf oneWayThresholdVal {
+              when "not(../maMapType='bind-bgp-pw' or ../maMapType='bind-ccc' or ../maMapType='bind-l2tpv3-ccc' or ../maMapType='bind-l2tpv3-pw' or ../maMapType='bind-l2vc' or ../maMapType='bind-vsi' or ../maMapType='no-bind') or ../maMapType='bind-vlan'";
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Configure the threshold of one-way delay measurement, the value is expressed in microseconds.";
+              ext:allowDelete "true";
+            }
+            leaf twoWayThresholdVal {
+              when "not(../maMapType='bind-bgp-pw' or ../maMapType='bind-ccc' or ../maMapType='bind-l2tpv3-ccc' or ../maMapType='bind-l2tpv3-pw' or ../maMapType='bind-l2vc' or ../maMapType='bind-vsi' or ../maMapType='no-bind') or ../maMapType='bind-vlan'";
+              type uint32 {
+                range "1..4294967295";
+              }
+              description
+                "Configure the threshold of two-way delay measurement, the value is expressed in microseconds.";
+              ext:allowDelete "true";
+            }
+            leaf maIndex {
+              type uint32 {
+                range "1..4294967295";
+              }
+              config false;
+              description
+                "Index of maintenance association, which is automatically created.";
+            }
+            leaf mipCreateType {
+              type maMipCreateType;
+              default "defer";
+              description
+                "Configures the MIP create type of maintenance association. default is defer.";
+            }
+            leaf unexpectedMepAlarm {
+              type boolean;
+              default "false";
+              description
+                "Whether the unexpectedMep alarm is enabled. The default value is disabled.";
+            }
+            container meps {
+              description
+                "Configure the list of all MEPs.";
+              list mep {
+                key "mepId";
+                description
+                  "Configure a MEP point.";
+                leaf mepId {
+                  type uint16 {
+                    range "1..8191";
+                  }
+                  description
+                    "Configure a MEP ID.";
+                }
+                leaf mepType {
+                  type mepType;
+                  must "not(../mepId!=0)";
+                  default "interface";
+                  description
+                    "Configure a MEP type.";
+                }
+                leaf mepIfName {
+                  when "not(../mepType='pw' or ../mepType='vlan') or ../mepType='interface'";
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+                  }
+                  must "not(../mepId!=0)";
+                  mandatory true;
+                  description
+                    "Configure a MEP interface.";
+                }
+                leaf mepPeVlan {
+                  when "not(../mepType='pw' or ../mepType='vlan') or ../mepType='interface'";
+                  type uint16 {
+                    range "1..4094";
+                  }
+                  must "not(../mepDot1qVlan or ../mepId!=0)";
+                  description
+                    "Configure the PE VLAN of a MEP.";
+                  ext:allowDelete "true";
+                }
+                leaf mepCeVlan {
+                  when "not(../mepType='pw' or ../mepType='vlan') or ../mepType='interface'";
+                  type uint16 {
+                    range "1..4094";
+                  }
+                  must "not(../mepDot1qVlan or ../mepId!=0)";
+                  description
+                    "Configure the CE VLAN of a MEP.";
+                  ext:allowDelete "true";
+                }
+                leaf mepDot1qVlan {
+                  when "not(../mepType='pw' or ../mepType='vlan') or ../mepType='interface'";
+                  type uint16 {
+                    range "1..4094";
+                  }
+                  must "not(../mepId!=0 or ../mepPeVlan) and not(../mepCeVlan)";
+                  description
+                    "Configure the dot1q VLAN of a MEP.";
+                  ext:allowDelete "true";
+                }
+                leaf peerIp {
+                  when "not(../mepType='interface' or ../mepType='vlan') or ../mepType='pw'";
+                  type inet:ipv4-address-no-zone;
+                  must "not(../mepId!=0)";
+                  description
+                    "Configure the IP of peer end.";
+                  ext:allowDelete "true";
+                }
+                leaf vcId {
+                  when "not(../mepType='interface' or ../mepType='vlan') or ../mepType='pw'";
+                  type uint32 {
+                    range "1..4294967295";
+                  }
+                  must "not(../mepId!=0)";
+                  description
+                    "Configure the ID of VC.";
+                  ext:allowDelete "true";
+                }
+                leaf mepDirection {
+                  when "not(../mepType='vlan') or ../mepType='interface' or ../mepType='pw'";
+                  type mepDirection;
+                  must "not(../mepId!=0)";
+                  default "inward";
+                  description
+                    "Configure the direction of a MEP.";
+                }
+                leaf measurePoint {
+                  when "not(../mepType='pw' or ../mepType='vlan') or ../mepType='interface'";
+                  type measurePoint;
+                  description
+                    "Configure the measure point of a MEP.";
+                  ext:allowDelete "true";
+                }
+                leaf ccSendEnabled {
+                  when "not(../mepType='pw') or ../mepType='interface' or ../mepType='vlan'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Whether CCMs can be sent.";
+                  ext:allowDelete "true";
+                }
+                leaf mepMAC {
+                  type pub-type:macAddress {
+                    length "0..255";
+                  }
+                  must "not(../mepId!=0 or ../mepType='interface' or ../mepType='vlan')";
+                  description
+                    "MAC address of a MEP.";
+                }
+                leaf rdiAlarmDisabled {
+                  when "../mepType='vlan'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Configure the control flag of suppressing RDI alarm. The default value is disabled.";
+                  ext:allowDelete "true";
+                }
+                leaf aisAlarmDisabled {
+                  when "../mepType='vlan'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Configure the control flag of suppressing AIS alarm. The default value is disabled.";
+                  ext:allowDelete "true";
+                }
+                leaf alarmStatus {
+                  type alarmType;
+                  config false;
+                  description
+                    "Alarm status of a MEP.";
+                }
+                leaf asymmetric {
+                  type boolean;
+                  mandatory true;
+                  description
+                    "Configure the asymmetric mode.";
+                }
+                leaf remoteVlan {
+                  when "not(../asymmetric='false')";
+                  type uint16 {
+                    range "1..4094";
+                  }
+                  description
+                    "Configure the remote VLAN.";
+                  ext:allowDelete "true";
+                }
+                leaf lckEnabled {
+                  when "not(../mepType='pw' or ../mepType='vlan') or ../mepType='interface'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Whether the lock function is enabled. The default value is disabled.";
+                  ext:allowDelete "true";
+                }
+                leaf lckLevel {
+                  when "not(../lckEnabled='false' or ../mepType='pw' or ../mepType='vlan')";
+                  type uint8 {
+                    range "0..7";
+                  }
+                  mandatory true;
+                  description
+                    "Configure the LCK message level.";
+                }
+                leaf clearArp {
+                  when "not(../mepType='pw' or ../mepType='vlan') or ../../../maMapType='bind-vlan' and ../mepDirection='outward' or ../mepType='interface'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Configure the enable flag of clear ARP. The default value is disabled.";
+                  ext:allowDelete "true";
+                }
+                leaf aisLFEnable {
+                  type boolean;
+                  default "false";
+                  description
+                    "Configures the enable flag of ais link-fault.";
+                  ext:allowDelete "true";
+                }
+                leaf aisLFInterval {
+                  when "not(../aisLFEnable!='true')";
+                  type aisInterval;
+                  default "interval1s";
+                  description
+                    "Configure the interval at which AIS packets are sent.";
+                  ext:allowDelete "true";
+                }
+                leaf twoDmPktSize {
+                  type uint16 {
+                    range "64..1518";
+                  }
+                  description
+                    "Configures the size of the two way delay packet.";
+                  ext:allowDelete "true";
+                }
+                leaf testEnable {
+                  when "not(../mepType='pw' or ../mepType='vlan') or ../mepType='interface'";
+                  type boolean;
+                  default "false";
+                  description
+                    "Configures the enable flag of test. The default value is disabled.";
+                  ext:allowDelete "true";
+                }
+                leaf ethCsfEnable {
+                  type boolean;
+                  default "false";
+                  description
+                    "Configures the enable flag of ETH-CSF.";
+                  ext:allowDelete "true";
+                }
+                leaf ethCsfInterval {
+                  when "not(../ethCsfEnable!='true')";
+                  type ethCsfInterval;
+                  default "interval1s";
+                  description
+                    "Configure the interval at which ETH-CSF packets are sent.";
+                  ext:allowDelete "true";
+                }
+                leaf ethBnRecvEnable {
+                  type boolean;
+                  default "false";
+                  description
+                    "ETN-BN receive enable.The default value is disabled.";
+                  ext:allowDelete "true";
+                }
+                leaf minBw {
+                  when "not(../ethBnRecvEnable='false')";
+                  type uint8 {
+                    range "1..4";
+                  }
+                  default "1";
+                  description
+                    "The min-bandwidth,the value is expressed in mbps,default is 1 (mbps).";
+                  ext:allowDelete "true";
+                }
+                leaf ethBnRecv {
+                  type uint32;
+                  config false;
+                  description
+                    "The current bandwidth received by the MEP (mbps).";
+                }
+                leaf ethBnMode {
+                  when "not(../ethBnRecvEnable='false')";
+                  type ethBnMode;
+                  default "port";
+                  description
+                    "ETH-BN mode.";
+                  ext:allowDelete "true";
+                }
+                leaf extAsymMode {
+                  when "not(../asymmetric='false')";
+                  type boolean;
+                  default "false";
+                  description
+                    "Configure the asymmetric ext-mode.";
+                  ext:allowDelete "true";
+                }
+                leaf portLinkEnable {
+                  type boolean;
+                  default "false";
+                  description
+                    "Port linkage enable status, the default value is disabled.";
+                  ext:allowDelete "true";
+                }
+                leaf portLinkHoldoff {
+                  when "not(../portLinkEnable='false')";
+                  type uint8 {
+                    range "0..100";
+                  }
+                  default "0";
+                  description
+                    "Port linkage holdoff time, the unit is 100 milliseconds, the default value is 0.";
+                  ext:allowDelete "true";
+                }
+                leaf portLinkWtr {
+                  when "not(../portLinkEnable='false')";
+                  type uint16 {
+                    range "0..600";
+                  }
+                  default "0";
+                  description
+                    "Port linkage wait to restore (WTR) time, the unit is seconds, the default value is 0.";
+                  ext:allowDelete "true";
+                }
+                container aisMep {
+                  when "not(../mepType='pw' or ../mepType='vlan') or ../mepType='interface'";
+                  description
+                    "Configure the AIS of MEPs. ";
+                  leaf vid {
+                    type pub-type:VLAN_RANGE {
+                      length "0..4094";
+                    }
+                    description
+                      "VLAN ID of AIS.";
+                    ext:allowDelete "true";
+                  }
+                  container aisVlans {
+                    when "../../mepType='interface'";
+                    description
+                      "Configure the list of AIS VLAN.";
+                    list aisVlan {
+                      key "peVid";
+                      description
+                        "Configure the instance of AIS VLAN.";
+                      leaf peVid {
+                        type uint16 {
+                          range "1..4094";
+                        }
+                        description
+                          "Configure the PE VLAN of AIS.";
+                        ext:allowDelete "true";
+                      }
+                      leaf ceVid {
+                        type pub-type:VLAN_RANGE {
+                          length "0..4094";
+                        }
+                        mandatory true;
+                        description
+                          "Configure the CE VLAN of AIS.";
+                      }
+                    }
+                  }
+                  leaf aisEnable {
+                    type boolean;
+                    default "false";
+                    description
+                      "Whether AIS is enabled. The default value is disabled.";
+                    ext:allowDelete "true";
+                  }
+                  leaf aisInterval {
+                    when "not(../aisEnable!='true')";
+                    type aisInterval;
+                    default "interval1s";
+                    description
+                      "Configure the interval at which AIS packets are sent.The default interval is 1s.";
+                  }
+                  leaf aisLevel {
+                    when "not(../aisEnable!='true')";
+                    type uint8 {
+                      range "0..7";
+                    }
+                    default "0";
+                    description
+                      "Configure the level of AIS packets.";
+                  }
+                }
+                container delayThresholds {
+                  description
+                    "Configure the threshold list of delay measurement.";
+                  list delayThreshold {
+                    when "not(../../mepType='pw' or ../../mepType='vlan') or ../../mepType='interface'";
+                    key "delayType priority";
+                    description
+                      "Configure the threshold of delay measurement.";
+                    leaf delayType {
+                      type delayType;
+                      description
+                        "Configure the type of delay measurement.";
+                    }
+                    leaf priority {
+                      type priority;
+                      description
+                        "Configure the priority of delay measurement.";
+                    }
+                    leaf upperLimit {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      description
+                        "Configure the upper limit of delay threshold.";
+                      ext:allowDelete "true";
+                    }
+                    leaf lowerLimit {
+                      type uint32 {
+                        range "0..4294967295";
+                      }
+                      description
+                        "Configure the lower limit of delay threshold.";
+                      ext:allowDelete "true";
+                    }
+                  }
+                }
+                container lossThresholds {
+                  description
+                    "Configure the threshold list of loss measurement.";
+                  list lossThreshold {
+                    when "not(../../mepType='pw' or ../../mepType='vlan') or ../../mepType='interface'";
+                    key "lossType priority";
+                    description
+                      "Configure the threshold of loss measurement.";
+                    leaf lossType {
+                      type lossType;
+                      description
+                        "Configure the type of loss measurement.";
+                    }
+                    leaf priority {
+                      type priority;
+                      description
+                        "Configure the priority of loss measurement.";
+                    }
+                    leaf upperLimit {
+                      type string {
+                        length "1..8";
+                        pattern '[0-1]{0,1}[0-9]{0,1}[0-9]{0,1}(\.[0-9]{1,4})?';
+                      }
+                      description
+                        "Configure the upper limit of loss threshold.";
+                      ext:allowDelete "true";
+                    }
+                    leaf lowerLimit {
+                      type string {
+                        length "1..8";
+                        pattern '[0-1]{0,1}[0-9]{0,1}[0-9]{0,1}(\.[0-9]{1,4})?';
+                      }
+                      description
+                        "Configure the lower limit of loss threshold.";
+                      ext:allowDelete "true";
+                    }
+                  }
+                }
+                container ethBnResults {
+                  config false;
+                  description
+                    "List of ETH-BN message.";
+                  list ethBnResult {
+                    key "srcMac portId";
+                    config false;
+                    description
+                      "ETH-BN message.";
+                    leaf srcMac {
+                      type pub-type:macAddress {
+                        length "0..255";
+                      }
+                      config false;
+                      description
+                        "source MAC in ETH-BN message.";
+                    }
+                    leaf portId {
+                      type uint32;
+                      config false;
+                      description
+                        "Port ID in ETH-BN message.";
+                    }
+                    leaf bandWidth {
+                      type uint32;
+                      config false;
+                      description
+                        "Bandwidth in ETH-BN message(mbps).";
+                    }
+                  }
+                }
+              }
+            }
+            container rmeps {
+              description
+                "Configure the list of all remote maintenance points.";
+              list rmep {
+                key "rmepId";
+                description
+                  "Configure a remote maintenance point.";
+                leaf rmepId {
+                  type uint16 {
+                    range "1..8191";
+                  }
+                  description
+                    "Configure the ID of an RMEP.";
+                }
+                leaf ccRecvEnabled {
+                  type boolean;
+                  default "false";
+                  description
+                    "Configure the CC receive enable flag.";
+                  ext:allowDelete "true";
+                }
+                leaf rmepMAC {
+                  type pub-type:macAddress {
+                    length "0..255";
+                  }
+                  must "not(../rmepId!=0)";
+                  description
+                    "Configure the MAC of an RMEP, format: H-H-H.";
+                  ext:allowDelete "true";
+                }
+                leaf cfmStatus {
+                  type cfmStatus;
+                  config false;
+                  description
+                    "Status of an RMEP.";
+                }
+                leaf alarmStatus {
+                  type alarmType;
+                  config false;
+                  description
+                    "Alarm information of an RMEP.";
+                }
+                leaf interfaceTLV {
+                  type interfaceTLVType;
+                  default "none";
+                  config false;
+                  description
+                    "Interface status TLV information of an RMEP.";
+                }
+                leaf portStatusTLV {
+                  type portStatusTLVType;
+                  default "none";
+                  config false;
+                  description
+                    "Port status TLV information of an RMEP.";
+                }
+                leaf triggerIfDownIfName {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+                  }
+                  must "not(../triggerIfLinkDownIfName)";
+                  description
+                    "Interface of trigger if-down by remote MEP.";
+                  ext:allowDelete "true";
+                }
+                leaf triggerIfLinkDownIfName {
+                  type leafref {
+                    path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+                  }
+                  must "not(../triggerIfDownIfName)";
+                  description
+                    "Interface of trigger if-link-down by remote MEP.";
+                  ext:allowDelete "true";
+                }
+              }
+            }
+            container ais {
+              description
+                "Configure the list of all AIS instances.";
+              leaf aisEnable {
+                type boolean;
+                default "false";
+                description
+                  "Whether AIS is enabled. The default value is disabled.";
+                ext:allowDelete "true";
+              }
+              leaf aisInterval {
+                when "not(../aisEnable!='true')";
+                type aisInterval;
+                default "interval1s";
+                description
+                  "Configure the interval at which AIS packets are sent.The default interval is 1s.";
+                ext:allowDelete "true";
+              }
+              leaf aisLevel {
+                when "not(../aisEnable!='true')";
+                type uint8 {
+                  range "0..7";
+                }
+                description
+                  "Configure the level of AIS packets.";
+                ext:allowDelete "true";
+              }
+              leaf suppressAlarmEnable {
+                when "not(../aisEnable!='true')";
+                type boolean;
+                default "false";
+                description
+                  "Configure the control flag of suppressing alarms. The default value is disabled.";
+                ext:allowDelete "true";
+              }
+              leaf isSending {
+                type boolean;
+                default "false";
+                config false;
+                description
+                  "Whether AIS packets can be sent.";
+              }
+              container aisLinkInterfaces {
+                description
+                  "Configure the interface list of AIS.";
+                list aisLinkInterface {
+                  key "aisIfName";
+                  description
+                    "Configure the interface instance of AIS.";
+                  leaf aisIfName {
+                    type leafref {
+                      path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+                    }
+                    description
+                      "Configure the interface name of AIS.";
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    container testInstances {
+      description
+        "Configure the list of all test instances.";
+      list testInstance {
+        key "testId";
+        description
+          "Configure a test instance.";
+        leaf testId {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Configure the ID of a test instance (65536 to 4294967295 is reserved for automatic allocation).";
+        }
+        leaf description {
+          type string {
+            length "1..63";
+            pattern '[^\?]*';
+          }
+          must "not(../testId or ../testId>65535)";
+          description
+            "Configure the description of test instance.";
+          ext:allowDelete "true";
+        }
+        leaf mdName {
+          type leafref {
+            path "/y1731/mds/md/mdName";
+          }
+          must "not(../testId)";
+          mandatory true;
+          description
+            "Configure the name of a maintenance domain (MD).";
+        }
+        leaf maName {
+          type leafref {
+            path "/y1731/mds/md/mas/ma/maName";
+          }
+          must "not(../testId)";
+          mandatory true;
+          description
+            "Configure the name of a maintenance association (MA).";
+        }
+        leaf mepId {
+          type leafref {
+            path "/y1731/mds/md/mas/ma/meps/mep/mepId";
+          }
+          must "not(../testId)";
+          mandatory true;
+          description
+            "Configure a MEP ID.";
+        }
+        leaf rmepId {
+          type leafref {
+            path "/y1731/mds/md/mas/ma/rmeps/rmep/rmepId";
+          }
+          must "not(../rmepMAC or ../testId)";
+          description
+            "Configure an RMEP ID.";
+          ext:allowDelete "true";
+        }
+        leaf rmepMAC {
+          type pub-type:macAddress {
+            length "0..255";
+          }
+          must "not(../rmepId or ../testId)";
+          description
+            "Configure the MAC of an RMEP, format: H-H-H.";
+          ext:allowDelete "true";
+        }
+        leaf priority {
+          type uint8 {
+            range "0..7";
+          }
+          must "not(../peerIp or ../testId)";
+          description
+            "Configure the priority of packets.";
+          ext:allowDelete "true";
+        }
+        leaf peerIp {
+          type inet:ipv4-address-no-zone;
+          must "not(../priority or ../testId)";
+          description
+            "Configure the IP of peer end.";
+          ext:allowDelete "true";
+        }
+        leaf vcId {
+          type uint32 {
+            range "1..4294967295";
+          }
+          must "../peerIp or not(../priority or ../testId)";
+          description
+            "Configure the ID of VC.";
+          ext:allowDelete "true";
+        }
+        container oneWayDmSend {
+          description
+            "Configure a one-way delay measurement send instance.";
+          leaf interval {
+            when "not(../../testId>65535) or ../sendEnabled='true' and ../../testId<=65535";
+            type interval;
+            default "interval1000ms";
+            description
+              "Configure the interval of one-way delay measurement send.";
+          }
+          leaf sendEnabled {
+            when "not(../../testId>65535)";
+            type boolean;
+            default "false";
+            description
+              "Configure the send enable flag of one-way delay measurement.";
+            ext:allowDelete "true";
+          }
+        }
+        container oneWayDmRecv {
+          description
+            "Configure a one-way delay measurement receive instance.";
+          leaf isContinue {
+            when "not(../../testId>65535) or ../receiveEnabled='true' and ../../testId<=65535";
+            type boolean;
+            default "false";
+            description
+              "Configure the flag of one-way delay continue measurement receive.";
+            ext:allowDelete "true";
+          }
+          leaf receiveEnabled {
+            when "not(../../testId>65535)";
+            type boolean;
+            default "false";
+            description
+              "Configure the receive enable flag of one-way delay measurement.";
+            ext:allowDelete "true";
+          }
+        }
+        container twoWayDmSend {
+          description
+            "Configure a two-way delay measurement send instance.";
+          leaf interval {
+            when "not(../../testId>65535) or ../sendEnabled='true' and ../../testId<=65535";
+            type interval;
+            default "interval30000ms";
+            description
+              "Configure the interval of two-way delay measurement send.";
+          }
+          leaf sendEnabled {
+            when "not(../../testId>65535)";
+            type boolean;
+            default "false";
+            description
+              "Configure the send enable flag of two-way delay measurement.";
+            ext:allowDelete "true";
+          }
+        }
+        container twoWayDmRecv {
+          description
+            "Configure a two-way delay measurement receive instance.";
+          leaf receiveEnabled {
+            when "not(../../testId>65535)";
+            type boolean;
+            default "false";
+            description
+              "Configure the receive enable flag of two-way delay measurement.";
+            ext:allowDelete "true";
+          }
+        }
+        container singleLmSend {
+          description
+            "Configure a single-ended loss measurement send instance.";
+          leaf interval {
+            when "not(../../testId>65535) or ../sendEnabled='true' and ../../testId<=65535";
+            type interval;
+            must "not(../../dualLm/enabled='true')";
+            default "interval30000ms";
+            description
+              "Configure the interval of single-ended loss measurement send.";
+          }
+          leaf sendEnabled {
+            when "not(../../testId>65535)";
+            type boolean;
+            must "not(../../dualLm/enabled='true')";
+            default "false";
+            description
+              "Configure the send enable flag of single-ended loss measurement.";
+            ext:allowDelete "true";
+          }
+        }
+        container singleLmRecv {
+          description
+            "Configure a single-ended loss measurement receive instance.";
+          leaf receiveEnabled {
+            when "not(../../testId>65535)";
+            type boolean;
+            must "not(../../dualLm/enabled='true')";
+            default "false";
+            description
+              "Configure the receive enable flag of single-ended loss measurement.";
+            ext:allowDelete "true";
+          }
+        }
+        container dualLm {
+          description
+            "Configure a dual-ended loss measurement instance.";
+          leaf enabled {
+            when "not(../../testId>65535)";
+            type boolean;
+            must "../../singleLmSend/sendEnabled='false' and ../../singleLmRecv/receiveEnabled='false'";
+            default "false";
+            description
+              "Configure the enable flag of dual-ended loss measurement.";
+            ext:allowDelete "true";
+          }
+        }
+        container syntheticLmSend {
+          description
+            "The configuration of single ended synthetic send.";
+          leaf interval {
+            when "../sendEnabled='true'";
+            type onDemondInterval1;
+            default "interval1000ms";
+            description
+              "Configuration interval of single ended synthetic send.";
+          }
+          leaf sendEnabled {
+            type boolean;
+            default "false";
+            description
+              "Configuration enable of single ended synthetic send.";
+            ext:allowDelete "true";
+          }
+          leaf sendCount {
+            when "../sendEnabled='true'";
+            type uint16 {
+              range "1..1000";
+            }
+            default "10";
+            description
+              "Configuration count of single ended synthetic send.The default count is 10.";
+            ext:allowDelete "true";
+          }
+          leaf timeOut {
+            when "../sendEnabled='true'";
+            type uint8 {
+              range "1..10";
+            }
+            default "5";
+            description
+              "Configuration time out value of single ended synthetic send, the value is expressed in seconds. The default value is 5 seconds.";
+            ext:allowDelete "true";
+          }
+        }
+        container syntheticLmRecv {
+          description
+            "The configuration of single ended synthetic receive.";
+          leaf receiveEnabled {
+            type boolean;
+            default "false";
+            description
+              "Configuration enable of single ended synthetic receive.";
+            ext:allowDelete "true";
+          }
+          leaf timeOut {
+            when "../receiveEnabled='true'";
+            type uint16 {
+              range "10..300";
+            }
+            default "300";
+            description
+              "Configuration time out value of single ended synthetic receive, the value is expressed in seconds. The default value is 300 seconds.";
+            ext:allowDelete "true";
+          }
+        }
+        container oneWayDmSendResult {
+          config false;
+          description
+            "Status of one-way delay measurement.";
+          leaf measureMode {
+            type measureMode;
+            default "on-demand";
+            config false;
+            description
+              "Measure mode of one-way delay.";
+          }
+          leaf status {
+            type status;
+            default "finished";
+            config false;
+            description
+              "Status of one-way delay.";
+          }
+        }
+        container twoWayDmResult {
+          config false;
+          description
+            "Status of two-way delay measurement.";
+          leaf measureMode {
+            type measureMode;
+            default "on-demand";
+            config false;
+            description
+              "Measure mode of two-way delay.";
+          }
+          leaf status {
+            type status;
+            default "finished";
+            config false;
+            description
+              "Status of two-way delay.";
+          }
+          container twoWayDmDatas {
+            config false;
+            description
+              "Data list of two-way delay measurement.";
+            list twoWayDmData {
+              key "index";
+              config false;
+              description
+                "Data instance of two-way delay measurement.";
+              leaf index {
+                type uint32;
+                config false;
+                description
+                  "Data index of two-way delay measurement.";
+              }
+              leaf errorInfo {
+                type errorInfo;
+                config false;
+                description
+                  "Error code of two-way delay measurement.";
+              }
+              leaf twoWayDelay {
+                type string {
+                  length "1..24";
+                }
+                config false;
+                description
+                  "Result of two-way delay, the value is expressed in microseconds.";
+              }
+              leaf twoWayJitter {
+                type string {
+                  length "1..24";
+                }
+                config false;
+                description
+                  "Result of two-way jitter, the value is expressed in microseconds.";
+              }
+            }
+          }
+        }
+        container singleLmResult {
+          config false;
+          description
+            "Status of single-ended loss measurement.";
+          leaf measureMode {
+            type measureMode;
+            default "on-demand";
+            config false;
+            description
+              "Measure mode of single-ended loss measurement.";
+          }
+          leaf status {
+            type status;
+            default "finished";
+            config false;
+            description
+              "Status of single-ended loss measurement.";
+          }
+          container singleLmDatas {
+            config false;
+            description
+              "Data list of single-ended loss measurement.";
+            list singleLmData {
+              key "index";
+              config false;
+              description
+                "Data instance of single-ended loss measurement.";
+              leaf index {
+                type uint32;
+                config false;
+                description
+                  "Data index of single-ended loss measurement.";
+              }
+              leaf errorInfo {
+                type errorInfo;
+                config false;
+                description
+                  "Error code of single-ended loss measurement.";
+              }
+              leaf sinLosLCL {
+                type string {
+                  length "1..24";
+                }
+                config false;
+                description
+                  "Number of single-ended locally dropped packets.";
+              }
+              leaf sinLosLCLRat {
+                type string {
+                  length "1..24";
+                }
+                config false;
+                description
+                  "Single-ended local loss ratio.";
+              }
+              leaf sinLosRMT {
+                type string {
+                  length "1..24";
+                }
+                config false;
+                description
+                  "Number of single-ended remotely dropped packets.";
+              }
+              leaf sinLosRMTRat {
+                type string {
+                  length "1..24";
+                }
+                config false;
+                description
+                  "Single-ended remote loss ratio.";
+              }
+            }
+          }
+        }
+        container oneWayDmDatas {
+          config false;
+          description
+            "Data list of one-way delay measurement.";
+          list oneWayDmData {
+            key "index";
+            config false;
+            description
+              "Data instance of one-way delay measurement.";
+            leaf index {
+              type uint32;
+              config false;
+              description
+                "Data index of one-way delay measurement.";
+            }
+            leaf errorInfo {
+              type errorInfo;
+              config false;
+              description
+                "Error code of one-way delay measurement.";
+            }
+            leaf oneWayDelay {
+              type string {
+                length "1..24";
+              }
+              config false;
+              description
+                "One-way delay results, the value is expressed in microseconds.";
+            }
+            leaf oneWayJitter {
+              type string {
+                length "1..24";
+              }
+              config false;
+              description
+                "One-way jitter result, the value is expressed in microseconds.";
+            }
+          }
+        }
+        container dualLmDatas {
+          config false;
+          description
+            "Data list of dual-ended loss measurement.";
+          list dualLmData {
+            key "index";
+            config false;
+            description
+              "Data instance of dual-ended loss measurement.";
+            leaf index {
+              type uint32;
+              config false;
+              description
+                "Data index of dual-ended loss measurement.";
+            }
+            leaf errorInfo {
+              type errorInfo;
+              config false;
+              description
+                "Error code of dual-ended loss measurement.";
+            }
+            leaf dulLosLCL {
+              type string {
+                length "1..24";
+              }
+              config false;
+              description
+                "Number of dual-ended locally dropped packets.";
+            }
+            leaf dulLosLCLRat {
+              type string {
+                length "1..24";
+              }
+              config false;
+              description
+                "Dual-ended local loss ratio.";
+            }
+            leaf dulLosRMT {
+              type string {
+                length "1..24";
+              }
+              config false;
+              description
+                "Number of dual-ended remotely dropped packets.";
+            }
+            leaf dulLosRMTRat {
+              type string {
+                length "1..24";
+              }
+              config false;
+              description
+                "Dual-ended remote loss ratio.";
+            }
+          }
+        }
+        container syntheticLmRlt {
+          config false;
+          description
+            "The result of single ended synthetic.";
+          leaf measureMode {
+            type measureMode;
+            default "on-demand";
+            config false;
+            description
+              "Measure mode of Single-ended synthetic.";
+          }
+          leaf status {
+            type status;
+            default "finished";
+            config false;
+            description
+              "Status of Single-ended synthetic.";
+          }
+          container syntheticLmDatas {
+            config false;
+            description
+              "Datas of Single-ended synthetic.";
+            list syntheticLmData {
+              key "index";
+              config false;
+              description
+                "Data of Single-ended synthetic.";
+              leaf index {
+                type uint32;
+                config false;
+                description
+                  "Index of Single-ended synthetic.";
+              }
+              leaf errorInfo {
+                type errorInfo;
+                config false;
+                description
+                  "Error information of Single-ended synthetic.";
+              }
+              leaf localSendCount {
+                type uint32;
+                config false;
+                description
+                  "Local send count of Single-ended synthetic.";
+              }
+              leaf remoteSendCount {
+                type uint32;
+                config false;
+                description
+                  "Remote send count of Single-ended synthetic.";
+              }
+              leaf localRecvCount {
+                type uint32;
+                config false;
+                description
+                  "Local receive count of Single-ended synthetic.";
+              }
+              leaf unAckCount {
+                type uint32;
+                config false;
+                description
+                  "Unack cout of Single-ended synthetic.";
+              }
+              leaf localLoss {
+                type string {
+                  length "1..24";
+                }
+                config false;
+                description
+                  "Local loss of Single-ended synthetic.";
+              }
+              leaf remoteLoss {
+                type string {
+                  length "1..24";
+                }
+                config false;
+                description
+                  "Remote loss of Single-ended synthetic.";
+              }
+              leaf localLossRatio {
+                type string {
+                  length "1..24";
+                }
+                config false;
+                description
+                  "Local loss ratio of Single-ended synthetic.";
+              }
+              leaf remoteLossRatio {
+                type string {
+                  length "1..24";
+                }
+                config false;
+                description
+                  "Remote loss ratio of Single-ended synthetic.";
+              }
+            }
+          }
+        }
+      }
+    }
+    container y1731Interfaces {
+      description
+        "Configuration list of MIP points.";
+      list y1731Interface {
+        key "ifName";
+        description
+          "Configuration instances of MIP points.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Configure the interface name.";
+        }
+        leaf mipLevel {
+          type uint8 {
+            range "0..7";
+          }
+          default "0";
+          description
+            "Configure the level of a MIP.";
+        }
+        leaf mac {
+          type pub-type:macAddress {
+            length "0..255";
+          }
+          config false;
+          description
+            "MAC address of an interface.";
+        }
+        leaf configType {
+          type configType;
+          config false;
+          description
+            "Configured type of a MIP.";
+        }
+        leaf mdName {
+          type string {
+            length "1..8";
+            pattern '[^\?]*';
+          }
+          mandatory true;
+          description
+            "Configure the name of a maintenance domain (MD).";
+          ext:support-filter "true";
+        }
+        leaf mipId {
+          type uint32 {
+            range "1..8191";
+          }
+          mandatory true;
+          description
+            "Configure the ID of a MIP.";
+        }
+      }
+    }
+    container y1731MeaGrans {
+      description
+        "Configure list of measure granularity of an interface.";
+      list y1731MeaGran {
+        key "ifName";
+        description
+          "Configure the measure granularity of an interface.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Configure the interface name.";
+        }
+        leaf measureGran {
+          type measureGran;
+          default "port-vlan";
+          description
+            "Configure measure granularity of an interface.";
+        }
+      }
+    }
+    container defaultMds {
+      description
+        "Configure the list of the default maintenance domain.";
+      list defaultMd {
+        key "mdLevel";
+        description
+          "Configure the default maintenance domain.";
+        leaf mdLevel {
+          type uint8 {
+            range "0..7";
+          }
+          description
+            "Configure the level of the default maintenance domain. The default level is 7.";
+        }
+        leaf vlan {
+          type pub-type:VLAN_RANGE {
+            length "0..4094";
+          }
+          description
+            "Configure the VLAN of the default maintenance domain.";
+          ext:allowDelete "true";
+        }
+        leaf mipCreateType {
+          type mipCreateType;
+          default "none";
+          description
+            "Configure the MIP create type of the default maintenance domain. The default value is none.";
+          ext:allowDelete "true";
+        }
+        leaf senderTLVType {
+          type senderTLVType;
+          default "defer";
+          description
+            "Configure the sender ID TLV Type of the default maintenance domain. The default value is defer.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container lbResults {
+      config false;
+      description
+        "List of LB test results.";
+      uses y1731:y1731_lbResults_type;
+    }
+    container ltResults {
+      config false;
+      description
+        "LT test result.";
+      uses y1731:y1731_ltResults_type;
+    }
+    container testSendResults {
+      config false;
+      description
+        "Sent test results.";
+      list testSendResult {
+        key "mdName maName mepId";
+        config false;
+        description
+          "List of sent test results.";
+        leaf mdName {
+          type string {
+            length "1..43";
+            pattern '[^\?]*';
+          }
+          config false;
+          description
+            "Name of a maintenance domain.";
+        }
+        leaf maName {
+          type string {
+            length "1..43";
+            pattern '[^\?]*';
+          }
+          config false;
+          description
+            "Name of a maintenance association.";
+        }
+        leaf mepId {
+          type uint16 {
+            range "1..8191";
+          }
+          config false;
+          description
+            "ID of a MEP.";
+        }
+        leaf rmepId {
+          type uint16 {
+            range "1..8191";
+          }
+          config false;
+          mandatory true;
+          description
+            "ID of an RMEP.";
+        }
+        leaf rmepMAC {
+          type pub-type:macAddress {
+            length "0..255";
+          }
+          config false;
+          description
+            "MAC address of an RMEP.";
+        }
+        leaf pktSendNum {
+          type uint64;
+          config false;
+          description
+            "Number of sent test packets.";
+        }
+        leaf isSend {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "State of packet send.";
+        }
+        leaf rateValue {
+          type uint32 {
+            range "1..4294967295";
+          }
+          config false;
+          mandatory true;
+          description
+            "Rate of send.";
+        }
+        leaf priority {
+          type uint32 {
+            range "0..7";
+          }
+          default "7";
+          config false;
+          description
+            "The priority of packet.";
+        }
+        leaf pattern {
+          type tstPattern;
+          default "zero-no-crc";
+          config false;
+          description
+            "The Pattern type.";
+        }
+        leaf packetSize {
+          type uint16 {
+            range "64..1518";
+          }
+          default "64";
+          config false;
+          description
+            "The length of packet to be sent. The default value is 64.";
+        }
+        leaf outOfService {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "State of the Out of service. The defalut value is no.";
+        }
+        leaf lckLevel {
+          type uint8 {
+            range "0..7";
+          }
+          config false;
+          description
+            "The Value of LCK message level.";
+        }
+        leaf timeout {
+          type uint32 {
+            range "1..1800";
+          }
+          default "300";
+          config false;
+          description
+            "The Value of time out.";
+        }
+        leaf sendRate {
+          type uint32 {
+            range "1..1800";
+          }
+          config false;
+          description
+            "Real send rate.";
+        }
+        leaf sendTime {
+          type uint32 {
+            range "1..1800";
+          }
+          config false;
+          description
+            "Real send time.";
+        }
+      }
+    }
+    container testRecvResults {
+      config false;
+      description
+        "Received test results.";
+      list testRecvResult {
+        key "mdName maName mepId sourceMAC";
+        config false;
+        description
+          "List of received test results.";
+        leaf mdName {
+          type string {
+            length "1..43";
+            pattern '[^\?]*';
+          }
+          config false;
+          description
+            "Name of a maintenance domain.";
+        }
+        leaf maName {
+          type string {
+            length "1..43";
+            pattern '[^\?]*';
+          }
+          config false;
+          description
+            "Name of a maintenance association.";
+        }
+        leaf mepId {
+          type uint16 {
+            range "1..8191";
+          }
+          config false;
+          description
+            "ID of a MEP.";
+        }
+        leaf sourceMAC {
+          type pub-type:macAddress {
+            length "0..255";
+          }
+          config false;
+          description
+            "Remote MAC address.";
+        }
+        leaf pktRecvNum {
+          type uint64;
+          config false;
+          description
+            "Receive packets.";
+        }
+        leaf pktRecvTypeErrNum {
+          type uint64;
+          config false;
+          description
+            "Number of received bit error packets.";
+        }
+        leaf pktRecvBitErrNum {
+          type uint64;
+          config false;
+          description
+            "Number of received bit error packets.";
+        }
+        leaf pktRecvSeqErrNum {
+          type uint64;
+          config false;
+          description
+            "Receive Sequence Error packets Number.";
+        }
+        leaf pktRecvCrcErrNum {
+          type uint64;
+          config false;
+          description
+            "Receive CRC Error Packets Number";
+        }
+      }
+    }
+    container twoWayDMResults {
+      config false;
+      description
+        "List of two-way delay measurement results.";
+      list twoWayDMResult {
+        key "testName";
+        config false;
+        description
+          "Two-way delay measurement result.";
+        leaf testName {
+          type string {
+            length "1..31";
+            pattern '[^\?]*';
+          }
+          config false;
+          description
+            "Name of a test case. ";
+        }
+        leaf status {
+          type onDemandStatus;
+          config false;
+          description
+            "Test result status.";
+        }
+        leaf errorType {
+          type onDemandResult;
+          config false;
+          description
+            "Test result error type.";
+        }
+        leaf startTime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Start time.";
+        }
+        leaf stopTime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Stop time.";
+        }
+        container detailDatas {
+          config false;
+          description
+            "Data list of two-way delay measurement.";
+          list detailData {
+            key "index";
+            config false;
+            description
+              "Data instance of two-way delay measurement.";
+            leaf index {
+              type uint32;
+              config false;
+              description
+                "Data index of two-way delay measurement.";
+            }
+            leaf twoWayDelay {
+              type string {
+                length "1..24";
+              }
+              config false;
+              description
+                "Result of two-way delay measurement, the value is expressed in microseconds.";
+            }
+            leaf twoWayJitter {
+              type string {
+                length "1..24";
+              }
+              config false;
+              description
+                "Result of two-way jitter measurement, the value is expressed in microseconds.";
+            }
+          }
+        }
+      }
+    }
+    container singleLMResults {
+      config false;
+      description
+        "Data list of single-ended loss measurement.";
+      list singleLMResult {
+        key "testName";
+        config false;
+        description
+          "Data of single-ended loss measurement.";
+        leaf testName {
+          type string {
+            length "1..31";
+            pattern '[^\?]*';
+          }
+          config false;
+          description
+            "Name of a test case. ";
+        }
+        leaf status {
+          type onDemandStatus;
+          config false;
+          description
+            "Test result status.";
+        }
+        leaf errorType {
+          type onDemandResult;
+          config false;
+          description
+            "Test result error type.";
+        }
+        leaf startTime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Start time.";
+        }
+        leaf stopTime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Stop time.";
+        }
+        container detailDatas {
+          config false;
+          description
+            "Data list of single-ended loss measurement.";
+          list detailData {
+            key "index";
+            config false;
+            description
+              "Data of single-ended loss measurement.";
+            leaf index {
+              type uint32;
+              config false;
+              description
+                "Data index of single-ended loss measurement.";
+            }
+            leaf sinLosLCL {
+              type string {
+                length "1..24";
+              }
+              config false;
+              description
+                "Number of single-ended locally dropped packets.";
+            }
+            leaf sinLosLCLRat {
+              type string {
+                length "1..24";
+              }
+              config false;
+              description
+                "Single-ended local loss ratio.";
+            }
+            leaf sinLosRMT {
+              type string {
+                length "1..24";
+              }
+              config false;
+              description
+                "Number of single-ended remotely dropped packets.";
+            }
+            leaf sinLosRMTRat {
+              type string {
+                length "1..24";
+              }
+              config false;
+              description
+                "Single-ended remote loss ratio.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

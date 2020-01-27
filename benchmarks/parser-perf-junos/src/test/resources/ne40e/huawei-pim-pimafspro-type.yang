@@ -1,0 +1,507 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-pim-pimafspro-type {
+  belongs-to huawei-pim {
+    prefix pim;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "pim type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef pimproInterfaceState {
+    type enumeration {
+      enum "down" {
+        description
+          "The interface status is Down.";
+      }
+      enum "up" {
+        description
+          "The interface status is Up.";
+      }
+      enum "backup" {
+        description
+          "The interface status is Up (hot backup).";
+      }
+    }
+    description
+      "The interface status";
+  }
+
+  typedef pimproPimMode {
+    type enumeration {
+      enum "Sparse" {
+        description
+          "PIM-SM Mode";
+      }
+      enum "Dense" {
+        description
+          "PIM-DM Mode";
+      }
+    }
+    description
+      "Pim Mode";
+  }
+
+  typedef pimproBsrBoundary {
+    type enumeration {
+      enum "None" {
+        description
+          "Disable BSR boundary.";
+      }
+      enum "Both" {
+        description
+          "Enable BSR boundary.";
+      }
+      enum "Incoming" {
+        description
+          "Enable BSR boundary in the inbound direction.";
+      }
+    }
+    description
+      "Whether enable BSR boundary";
+  }
+
+  typedef pimproPimRPPre {
+    type enumeration {
+      enum "NotPrefer" {
+        description
+          "Disable the static RP from being preferred.";
+      }
+      enum "Prefer" {
+        description
+          "Enable the static RP to be preferred.";
+      }
+    }
+    description
+      "Whether enable the static RP to be preferred";
+  }
+
+  typedef pimproPimRPBidir {
+    type string;
+    description
+      "Whether enable BIDIR-PIM on the RP";
+  }
+
+  typedef pimproMsgType {
+    type enumeration {
+      enum "Assert" {
+        description
+          "Assert:Assert";
+      }
+      enum "BSR" {
+        description
+          "BSR:BSR";
+      }
+      enum "CRP" {
+        description
+          "CRP:CRP";
+      }
+      enum "Graft" {
+        description
+          "Graft:Graft";
+      }
+      enum "Graft_ack" {
+        description
+          "Graft-ack:Graft-ack";
+      }
+      enum "Hello" {
+        description
+          "Hello:Hello";
+      }
+      enum "probe" {
+        description
+          "probe:probe";
+      }
+      enum "register" {
+        description
+          "register:register";
+      }
+      enum "register_stop" {
+        description
+          "register-stop:register-stop";
+      }
+      enum "Join_prune" {
+        description
+          "Join-prune:Join-prune";
+      }
+      enum "State_refresh" {
+        description
+          "State-refresh:State-refresh";
+      }
+    }
+    description
+      "pim message type";
+  }
+
+  typedef pimproRpfRouteType {
+    type enumeration {
+      enum "igp" {
+        description
+          "Unicast route.";
+      }
+      enum "migp" {
+        description
+          "Multicast IGP.";
+      }
+      enum "egp" {
+        description
+          "EGP route.";
+      }
+      enum "mbgp" {
+        description
+          "Multicast BGP.";
+      }
+      enum "direct" {
+        description
+          "Direct route.";
+      }
+      enum "unicast" {
+        description
+          "Unicast route.";
+      }
+      enum "multicastStatic" {
+        description
+          "Multicast static route.";
+      }
+    }
+    description
+      "Rpf route type";
+  }
+
+  typedef pimproSGmode {
+    type enumeration {
+      enum "NONE" {
+        description
+          "No protocol.";
+      }
+      enum "ASM" {
+        description
+          "Protocol Independent Multicast-Sparse Mode .";
+      }
+      enum "SSM" {
+        description
+          "Protocol-Independent Multicast Source-specific Multicast.";
+      }
+      enum "OTHER" {
+        description
+          "Other protocols.";
+      }
+    }
+    description
+      "SG mode";
+  }
+
+  typedef pimproSGUpState {
+    type enumeration {
+      enum "NOTJOINED" {
+        description
+          "The upstream state machine is in the NotJoined state.";
+      }
+      enum "JOINED" {
+        description
+          "The upstream state machine is in the Joined state.";
+      }
+    }
+    description
+      "State of the upstream state machine";
+  }
+
+  typedef pimproSGDsState {
+    type enumeration {
+      enum "NOINFO" {
+        description
+          "The state machine is in the No-info state.";
+      }
+      enum "JOINED" {
+        description
+          "The state machine is in the Joined state.";
+      }
+      enum "PRUNEPENDING" {
+        description
+          "The state machine is in the Pruned-Pending state.";
+      }
+    }
+    description
+      "State of the state machine";
+  }
+
+  typedef pimproSGDsLocalMember {
+    type enumeration {
+      enum "TRUE" {
+        description
+          "TRUE:TRUE";
+      }
+      enum "FALSE" {
+        description
+          "FALSE:FALSE";
+      }
+    }
+    description
+      "SG Local Member";
+  }
+
+  typedef pimproAssertState {
+    type enumeration {
+      enum "NOINFO" {
+        description
+          "The state machine is in the No-info state.";
+      }
+      enum "WINNER" {
+        description
+          "The state machine is in the Winner state.";
+      }
+      enum "LOSER" {
+        description
+          "The state machine is in the Loser state.";
+      }
+    }
+    description
+      "State of the assert state machine";
+  }
+
+  typedef pimproDrRegState {
+    type enumeration {
+      enum "NOINFO" {
+        description
+          "The Register state machine is in the NoInfo state.";
+      }
+      enum "JOIN" {
+        description
+          "The Register state machine is in the Joined state.";
+      }
+      enum "JOINPENDING" {
+        description
+          "The Register state machine is in the Pruned state.";
+      }
+      enum "PRUNE" {
+        description
+          "The Register state machine is in the Join-Pending state.";
+      }
+    }
+    description
+      "The Register state machine";
+  }
+
+  typedef pimproSGRptUpState {
+    type enumeration {
+      enum "NOTJOINED" {
+        description
+          "The upstream state machine is in the NotJoined state.";
+      }
+      enum "PRUNED" {
+        description
+          "The upstream state machine is in the Pruned state.";
+      }
+      enum "NOTPRUNED" {
+        description
+          "The upstream state machine is in the NotPruned state.";
+      }
+      enum "MAX" {
+        description
+          "The upstream state machine is in the Invalid state.";
+      }
+    }
+    description
+      "The SG Rpt upstream state machine";
+  }
+
+  typedef pimproSGRptDsState {
+    type enumeration {
+      enum "NOINFO" {
+        description
+          "The state machine is in the No-info state.";
+      }
+      enum "PRUNED" {
+        description
+          "The Register state machine is in the Pruned state.";
+      }
+      enum "PRUNEPENDING" {
+        description
+          "The state machine is in the Pruned-Pending state.";
+      }
+      enum "MAX" {
+        description
+          "The state machine is in the Invalid state.";
+      }
+    }
+    description
+      "The SG Rpt downstream state machine";
+  }
+
+  typedef pimproRPModeType {
+    type enumeration {
+      enum "FIXED" {
+        description
+          "Fixed.";
+      }
+      enum "STATIC" {
+        description
+          "Static.";
+      }
+      enum "CONFIGSSM" {
+        description
+          "Configure SSM.";
+      }
+      enum "BSR" {
+        description
+          "Bootstrap router (BSR).";
+      }
+      enum "AUTORP" {
+        description
+          "Auto-rendezvous point.";
+      }
+      enum "EMBEDDED" {
+        description
+          "Embedded-RP.";
+      }
+      enum "OTHER" {
+        description
+          "Other.";
+      }
+    }
+    description
+      "RP mode type";
+  }
+
+  typedef pimproSGUpPruneState {
+    type enumeration {
+      enum "forwarding" {
+        description
+          "forwarding:forwarding";
+      }
+      enum "ackPending" {
+        description
+          "ackPending:ackPending";
+      }
+      enum "pruned" {
+        description
+          "pruned:pruned";
+      }
+    }
+    description
+      "The SG upstream prune state machine";
+  }
+
+  typedef pimproSGOrigState {
+    type enumeration {
+      enum "notOriginator" {
+        description
+          "notOriginator:notOriginator";
+      }
+      enum "originator" {
+        description
+          "originator:originator";
+      }
+    }
+    description
+      "SG originator state";
+  }
+
+  typedef pimproDrState {
+    type enumeration {
+      enum "NDR" {
+        description
+          "NDR:NDR";
+      }
+      enum "DR" {
+        description
+          "DR:DR";
+      }
+    }
+    description
+      "Wether the router is DR";
+  }
+
+  typedef pimproIncludeReg {
+    type enumeration {
+      enum "NORMAL" {
+        description
+          "NORMAL:NORMAL";
+      }
+      enum "REGISTERIIF" {
+        description
+          "REGISTERIIF:REGISTERIIF";
+      }
+      enum "REGISTEROIF" {
+        description
+          "REGISTEROIF:REGISTEROIF";
+      }
+    }
+    description
+      "Whether include register interface";
+  }
+
+  typedef pimproOifProtoclType {
+    type enumeration {
+      enum "STATIC" {
+        description
+          "STATIC:STATIC";
+      }
+      enum "IGMP" {
+        description
+          "IGMP:IGMP";
+      }
+      enum "MLD" {
+        description
+          "MLD:MLD";
+      }
+      enum "MD" {
+        description
+          "MD:MD";
+      }
+      enum "SSMMAP" {
+        description
+          "SSMMAP:SSMMAP";
+      }
+      enum "SM" {
+        description
+          "SM:SM";
+      }
+      enum "SSM" {
+        description
+          "SSM:SSM";
+      }
+    }
+    description
+      "The out interface protocl type";
+  }
+
+  typedef pimproDfState {
+    type string;
+    description
+      "The state of DF election";
+  }
+
+  typedef pimproIpsecType {
+    type enumeration {
+      enum "forAll" {
+        description
+          "All messages are supported.";
+      }
+      enum "forHello" {
+        description
+          "Only Hello messages are supported.";
+      }
+    }
+    description
+      "The support message type";
+  }
+}

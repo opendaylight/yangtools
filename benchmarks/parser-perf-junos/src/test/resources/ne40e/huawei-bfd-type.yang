@@ -1,0 +1,907 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-bfd-type {
+  belongs-to huawei-bfd {
+    prefix bfd;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "BFD enum type of netconf";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef bfdSmpLinkType {
+    type enumeration {
+      enum "IP" {
+        description
+          "IP.";
+      }
+      enum "LDP_LSP" {
+        description
+          "LDP LSP.";
+      }
+      enum "STATIC_LSP" {
+        description
+          "Static LSP.";
+      }
+      enum "TE_LSP" {
+        description
+          "TE LSP.";
+      }
+      enum "TE_TUNNEL" {
+        description
+          "TE tunnel.";
+      }
+      enum "LDP_TUNNEL" {
+        description
+          "LDP tunnel.";
+      }
+      enum "VLL_PW" {
+        description
+          "VLL pseudo wire.";
+      }
+      enum "VSI_PW" {
+        description
+          "VSI pseudo wire.";
+      }
+      enum "P2MP_TE" {
+        description
+          "P2MP TE.";
+      }
+      enum "BGP_TUNNEL" {
+        description
+          "BGP tunnel.";
+      }
+      enum "P2MP_LDP" {
+        description
+          "P2MP MLDP.";
+      }
+      enum "VXLAN" {
+        description
+          "VXLAN.";
+      }
+      enum "OTHER" {
+        description
+          "Other link types.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdLinkType {
+    type enumeration {
+      enum "IP" {
+        description
+          "IP type.";
+      }
+      enum "LDP_LSP" {
+        description
+          "LDP LSP type.";
+      }
+      enum "TE_LSP" {
+        description
+          "TE LSP type.";
+      }
+      enum "TE_TUNNEL" {
+        description
+          "TE tunnel type.";
+      }
+      enum "VLL_PW" {
+        description
+          "VLL pseudo wire.";
+      }
+      enum "VSI_PW" {
+        description
+          "VSI pseudo wire.";
+      }
+      enum "VXLAN" {
+        description
+          "VXLAN type.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdGlobalCmdType {
+    type enumeration {
+      enum "SET_BFD" {
+        description
+          "SET_BFD:";
+      }
+      enum "SET_DELAY" {
+        description
+          "SET_DELAY:";
+      }
+      enum "MPLS_PASSIVE" {
+        description
+          "MPLS_PASSIVE:";
+      }
+      enum "PING_TIME" {
+        description
+          "PING_TIME:";
+      }
+    }
+    description
+      "The configuration item of global BFD";
+  }
+  typedef bfdSmpCreateType {
+    type enumeration {
+      enum "SESS_STATIC" {
+        description
+          "A BFD session is created in static mode.";
+      }
+      enum "SESS_AUTO" {
+        description
+          "A BFD session is created in static auto-negotiation mode.";
+      }
+      enum "SESS_DYNAMIC" {
+        description
+          "A BFD session is created in dynamic mode and does not support manual creation.";
+      }
+      enum "PASSIVE" {
+        description
+          "A BFD session is created in entirely dynamic mode and does not support manual creation.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdCreateType {
+    type enumeration {
+      enum "SESS_STATIC" {
+        description
+          "A BFD session is created in static mode.";
+      }
+      enum "SESS_AUTO" {
+        description
+          "A BFD session is created in static auto-negotiation mode.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdSmpDispType {
+    type enumeration {
+      enum "ALL" {
+        description
+          "All BFD sessions.";
+      }
+      enum "STATIC" {
+        description
+          "Static BFD session.";
+      }
+      enum "DYNAMIC" {
+        description
+          "Dynamic BFD session.";
+      }
+      enum "PASSIVE" {
+        description
+          "Passive BFD session.";
+      }
+      enum "DISCRIMINATOR" {
+        description
+          "Discriminator-specified BFD session.";
+      }
+      enum "STATIC_AUTO" {
+        description
+          "Static auto-negotiation session.";
+      }
+      enum "PEER_IP" {
+        description
+          "BFD session with the peer IP address specified.";
+      }
+      enum "STATIC_LSP" {
+        description
+          "Static LSP session.";
+      }
+      enum "LDP_LSP" {
+        description
+          "LDP LSP session.";
+      }
+      enum "MPLS_TE" {
+        description
+          "MPLS TE session.";
+      }
+      enum "INTERFACE" {
+        description
+          "BFD session with the specified interface.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdSmpDbgType {
+    type enumeration {
+      enum "EVT" {
+        description
+          "EVT:";
+      }
+      enum "PKT" {
+        description
+          "PKT:";
+      }
+      enum "SOCK" {
+        description
+          "SOCK:";
+      }
+      enum "MSG" {
+        description
+          "MSG:";
+      }
+      enum "ERR" {
+        description
+          "ERR:";
+      }
+      enum "SCM" {
+        description
+          "SCM:";
+      }
+      enum "FSM" {
+        description
+          "FSM:";
+      }
+      enum "HA" {
+        description
+          "HA:";
+      }
+      enum "TMR" {
+        description
+          "TMR:";
+      }
+      enum "PROC" {
+        description
+          "PROC:";
+      }
+      enum "ALL" {
+        description
+          "ALL:";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdSmpDetectMode {
+    type enumeration {
+      enum "ASYNC_WITH_ECHO" {
+        description
+          "Asynchronous mode with the echo function.";
+      }
+      enum "ASYNC_WITHOUT_ECHO" {
+        description
+          "Asynchronous mode without the echo function.";
+      }
+      enum "DEMAND_WITH_ECHO" {
+        description
+          "Demand mode with the echo function.";
+      }
+      enum "DEMAND_WITHOUT_ECHO" {
+        description
+          "Demand mode without the echo function.";
+      }
+      enum "ASYNC_ONE_ARM_ECHO" {
+        description
+          "Asynchronous one-arm echo mode.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdSmpBfdCap {
+    type enumeration {
+      enum "IPV4" {
+        description
+          "IPv4";
+      }
+      enum "IPV6" {
+        description
+          "IPv6";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdSmpBfdState {
+    type enumeration {
+      enum "ADMINDOWN" {
+        description
+          "The session is in the AdminDown state.";
+      }
+      enum "DOWN" {
+        description
+          "The session is in the Down state.";
+      }
+      enum "INIT" {
+        description
+          "The session is in the Initialize state.";
+      }
+      enum "UP" {
+        description
+          "The session is in the Up state.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdSmpBfdDiag {
+    type enumeration {
+      enum "NONE" {
+        description
+          "No diagnosis reason.";
+      }
+      enum "DETECT_DOWN" {
+        description
+          "Detection control times out.";
+      }
+      enum "ECHO_DOWN" {
+        description
+          "Echo detection is Down.";
+      }
+      enum "NEIGHBOR_DOWN" {
+        description
+          "Neighbor advertisement is Down.";
+      }
+      enum "FORWARDING_RESET" {
+        description
+          "The forwarding plane is restarted.";
+      }
+      enum "PATH_DOWN" {
+        description
+          "The path is Down.";
+      }
+      enum "CONCAT_PATH_DOWN" {
+        description
+          "The cascade path is Down.";
+      }
+      enum "ADMIN_DOWN" {
+        description
+          "The session is in the AdminDown state.";
+      }
+      enum "REVERSE_CONCAT_PATH_DOWN" {
+        description
+          "The reverse cascade path is Down.";
+      }
+      enum "RECEIVE_ADMIN_DOWN" {
+        description
+          "The remote session is in the AdminDown state.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdSmpHafState {
+    type enumeration {
+      enum "INIT" {
+        description
+          "The BFD components are in the Initialize state.";
+      }
+      enum "BATCH_BACKUP" {
+        description
+          "The BFD components are backed up in batches.";
+      }
+      enum "AWAIT" {
+        description
+          "The backup BFD components are ready and waiting for the message for switching to the primary components.";
+      }
+      enum "SMOOTH_INSIDE" {
+        description
+          "Internal smoothing data about BFD components.";
+      }
+      enum "SMOOTH_FEI" {
+        description
+          "Smooth data of the BFD components and forwarding plane.";
+      }
+      enum "SMOOTH_FES" {
+        description
+          "Smooth data of the BFD components and forwarding plane.";
+      }
+      enum "SMOOTH_APP" {
+        description
+          "Smooth data of the BFD components and application components such as OSPF and BGP components.";
+      }
+      enum "WORK" {
+        description
+          "The BFD components are working properly.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdSmpOperState {
+    type enumeration {
+      enum "DOWN" {
+        description
+          "The operating status is Down.";
+      }
+      enum "UP" {
+        description
+          "The operating status is Up.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdSmpSessType {
+    type enumeration {
+      enum "SINGLE_HOP_IP" {
+        description
+          "Single-hop session.";
+      }
+      enum "MULTI_HOP_IP" {
+        description
+          "Multi-hop session.";
+      }
+      enum "STATIC_LSP" {
+        description
+          "Static LSP session.";
+      }
+      enum "LDP_LSP" {
+        description
+          "LDP LSP session.";
+      }
+      enum "TE_LSP" {
+        description
+          "TE LSP session.";
+      }
+      enum "TUNNEL" {
+        description
+          "TE tunnel session.";
+      }
+      enum "VLL_PW" {
+        description
+          "VLL PW session.";
+      }
+      enum "VSI_PW" {
+        description
+          "VSI PW session.";
+      }
+      enum "P2MP_TE" {
+        description
+          "P2MP TE session.";
+      }
+      enum "LDP_TNL" {
+        description
+          "LDP tunnel session.";
+      }
+      enum "BGP_TNL" {
+        description
+          "BGP tunnel session.";
+      }
+      enum "P2MP_LDP" {
+        description
+          "P2MP MLDP session.";
+      }
+      enum "VXLAN" {
+        description
+          "VXLAN session.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdSmpLinkFilter {
+    type enumeration {
+      enum "LINK_FILTER_ALL" {
+        description
+          "LINK_FILTER_ALL:";
+      }
+      enum "FOR_IP" {
+        description
+          "FOR_IP:";
+      }
+      enum "FOR_LSP" {
+        description
+          "FOR_LSP:";
+      }
+      enum "FOR_TE" {
+        description
+          "FOR_TE:";
+      }
+      enum "FOR_PW" {
+        description
+          "FOR_PW:";
+      }
+      enum "FOR_VSI_PW" {
+        description
+          "FOR_VSI_PW:";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdSmpCreateLink {
+    type enumeration {
+      enum "S_IP_IF" {
+        description
+          "S_IP_IF:";
+      }
+      enum "S_IP_PEER" {
+        description
+          "S_IP_PEER:";
+      }
+      enum "S_LDP_LSP" {
+        description
+          "S_LDP_LSP:";
+      }
+      enum "S_STA_LSP" {
+        description
+          "S_STA_LSP:";
+      }
+      enum "S_TE_LSP" {
+        description
+          "S_TE_LSP:";
+      }
+      enum "S_TE_TNL" {
+        description
+          "S_TE_TNL:";
+      }
+      enum "S_PW(M)" {
+        description
+          "S_PW(M):";
+      }
+      enum "S_PW(S)" {
+        description
+          "S_PW(S):";
+      }
+      enum "S_VSI_PW" {
+        description
+          "S_VSI_PW:";
+      }
+      enum "D_IP_IF" {
+        description
+          "D_IP_IF:";
+      }
+      enum "D_IP_PEER" {
+        description
+          "D_IP_PEER:";
+      }
+      enum "D_LDP_LSP" {
+        description
+          "D_LDP_LSP:";
+      }
+      enum "D_STA_LSP" {
+        description
+          "D_STA_LSP:";
+      }
+      enum "D_TE_LSP" {
+        description
+          "D_TE_LSP:";
+      }
+      enum "D_TE_TNL" {
+        description
+          "D_TE_TNL:";
+      }
+      enum "D_PW(M)" {
+        description
+          "D_PW(M):";
+      }
+      enum "D_PW(S)" {
+        description
+          "D_PW(S):";
+      }
+      enum "D_VSI_PW" {
+        description
+          "D_VSI_PW:";
+      }
+      enum "S_AUTO_IF" {
+        description
+          "S_AUTO_IF:";
+      }
+      enum "S_AUTO_PEER" {
+        description
+          "S_AUTO_PEER:";
+      }
+      enum "E_Dynamic" {
+        description
+          "E_Dynamic:";
+      }
+      enum "OTHER" {
+        description
+          "OTHER:";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdDeployMode {
+    type enumeration {
+      enum "DISTRIBUTE" {
+        description
+          "BFD sessions are deployed in distributed mode.";
+      }
+      enum "CENTRAL" {
+        description
+          "BFD sessions are deployed in centralized mode.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdbaseNotUpReason {
+    type enumeration {
+      enum "In-negotiation" {
+        description
+          "The BFD session is in negotiation.";
+      }
+      enum "In-negotiation-1" {
+        description
+          "The BFD session is in negotiation.";
+      }
+      enum "Board-selecting-failed" {
+        description
+          "Board selection for a BFD session failed.";
+      }
+      enum "Sess-State-Up" {
+        description
+          "The BFD session has been Up.";
+      }
+      enum "Board-delayup" {
+        description
+          "The BFD session enable delay up.";
+      }
+      enum "Reach-centralized-mode-limit" {
+        description
+          "Reach limit of centralized mode.";
+      }
+      enum "Board-hardbad-macfcs-fault" {
+        description
+          "Board HARD_BAD or MAC_FCS Fault.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdLspRoleType {
+    type enumeration {
+      enum "Primary" {
+        description
+          "Primary LSP.";
+      }
+      enum "Backup" {
+        description
+          "Backup LSP.";
+      }
+      enum "Invalid" {
+        description
+          "Invalid LSP role value.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdPerLinkRole {
+    type enumeration {
+      enum "-" {
+        description
+          "Non-Main-Sub session.";
+      }
+      enum "Bundle_Main" {
+        description
+          "Main session.";
+      }
+      enum "Bundle_Sub" {
+        description
+          "Sub session.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdHopType {
+    type enumeration {
+      enum "-" {
+        description
+          "Non-IP session.";
+      }
+      enum "IP_SINGLE_HOP" {
+        description
+          "Type of an IP single-hop session.";
+      }
+      enum "IP_MULTI_HOP" {
+        description
+          "Type of an IP multi-hop session.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdBundleMode {
+    type enumeration {
+      enum "-" {
+        description
+          "None Bundle session.";
+      }
+      enum "Bundle_Standard" {
+        description
+          "Standard Mode.";
+      }
+      enum "Bundle_Compatible" {
+        description
+          "Compatible Mode.";
+      }
+      enum "Cfg_Remote_Ap" {
+        description
+          "None Bundle session.";
+      }
+      enum "Cfg_From_Master" {
+        description
+          "None Bundle session.";
+      }
+      enum "Bundle_Std_Unshare" {
+        description
+          "Bundle Session of Standard Unshared Mode.";
+      }
+      enum "Bundle_Com_Unshare" {
+        description
+          "Bundle Session of Compatible Unshared Mode.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdMainSubSessType {
+    type enumeration {
+      enum "Link_Bundle" {
+        description
+          "Link Bundle session.";
+      }
+      enum "Perlink" {
+        description
+          "Per-link session.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdTeBackupType {
+    type enumeration {
+      enum "Primary" {
+        description
+          "Primary.";
+      }
+      enum "Backup" {
+        description
+          "Backup.";
+      }
+      enum "-" {
+        description
+          "Invalid.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdPwTtlMode {
+    type enumeration {
+      enum "Default" {
+        description
+          "Default.";
+      }
+      enum "Auto" {
+        description
+          "Auto.";
+      }
+      enum "Config" {
+        description
+          "Config.";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdPisSate {
+    type enumeration {
+      enum "Disable" {
+        description
+          "Disable";
+      }
+      enum "Enable" {
+        description
+          "Enable PIS";
+      }
+      enum "Enable(Sub-If)" {
+        description
+          "Enable(Sub-If)";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdCommonAbility {
+    type enumeration {
+      enum "Disable" {
+        description
+          "Disable";
+      }
+      enum "Enable" {
+        description
+          "Enable";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdPwRole {
+    type enumeration {
+      enum "Master" {
+        description
+          "Master PW";
+      }
+      enum "Secondary" {
+        description
+          "Secondary PW";
+      }
+    }
+    description
+      "";
+  }
+  typedef bfdVpwsNodeType {
+    type enumeration {
+      enum "-" {
+        description
+          "Invalid.";
+      }
+      enum "UPE" {
+        description
+          "UPE";
+      }
+    }
+    description
+      "Node";
+  }
+  typedef sbfdDiscrState {
+    type enumeration {
+      enum "Inactive" {
+        description
+          "Inactive Type";
+      }
+      enum "Active" {
+        description
+          "Active Type";
+      }
+    }
+    description
+      "";
+  }
+  typedef sbfdDiscrConfigType {
+    type enumeration {
+      enum "Integer" {
+        description
+          "Integer Type";
+      }
+      enum "IPv4" {
+        description
+          "IPv4 Type";
+      }
+      enum "IPv6" {
+        description
+          "IPv6 Type";
+      }
+      enum "Dynamic" {
+        description
+          "Dynamic Type";
+      }
+      enum "Interface" {
+        description
+          "Interface Type";
+      }
+    }
+    description
+      "";
+  }
+}

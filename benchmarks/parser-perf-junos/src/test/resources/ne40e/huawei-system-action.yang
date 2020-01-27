@@ -1,0 +1,105 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-system-action {
+  belongs-to huawei-system {
+    prefix system;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-system-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of system action submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc switchLanguage {
+    description
+      "Switch language.";
+    input {
+      leaf languageMode {
+        type systemLanguageE;
+        description
+          "Language mode.";
+      }
+    }
+  }
+  rpc createFileCollectTask {
+    description
+      "Create a file collect task.";
+    input {
+      leaf taskName {
+        type string {
+          length "0..32";
+        }
+        description
+          "Task name, which is a key value. A task must have a unique name. A maximum of 10 tasks of the same type can be configured.";
+      }
+      leaf taskType {
+        type systemFileCollectTaskType;
+        description
+          "Task type, which is an enumerated value. The task type can only be IBMS.";
+      }
+      leaf fileName {
+        type string {
+          length "5..64";
+        }
+        description
+          "File name.";
+      }
+      leaf fileCompressType {
+        type systemFileCompressType;
+        default "zip";
+        description
+          "File compression type.";
+      }
+      leaf paraContent {
+        type string {
+          length "0..2048";
+        }
+        description
+          "Content of parameters. Multiple parameters separated by commas, quotes parameters, both quotes symmetry. For example, 'abc', '-1', or  'VRP V8R6'. For an IBMS task, the parameter is an NE ID.";
+        ext:allowDelete "true";
+      }
+      leaf taskAgingTime {
+        type uint32 {
+          range "1..60";
+        }
+        default "5";
+        description
+          "Aging time (in minutes) of a  task. The default value is 5 minutes.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc deleteFileCollectTask {
+    description
+      "Delete a file collect task.";
+    input {
+      leaf taskName {
+        type string {
+          length "0..32";
+        }
+        description
+          "Task name.";
+      }
+    }
+  }
+}

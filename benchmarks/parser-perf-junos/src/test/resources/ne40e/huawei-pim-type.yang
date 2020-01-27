@@ -1,0 +1,69 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-pim-type {
+  belongs-to huawei-pim {
+    prefix pim;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "pim type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef rmbaseAfType {
+    type enumeration {
+      enum "ipv4unicast" {
+        description
+          "IPv4 unicast address.";
+      }
+      enum "ipv6unicast" {
+        description
+          "IPv6 unicast address.";
+      }
+    }
+    description
+      "Unicast address";
+  }
+  typedef bfdStatus {
+    type enumeration {
+      enum "Admin down" {
+        description
+          "A session is in the administratively Down state because the shutdown command is run in the BFD session view.";
+      }
+      enum "Down" {
+        description
+          "A session is in the Down state not because the shutdown command is run in the BFD session view.";
+      }
+      enum "Init" {
+        description
+          "The local end can communicate with the remote end and wants the session status to be Up.";
+      }
+      enum "UP" {
+        description
+          "The BFD session is set up successfully and detection messages are periodically exchanged.";
+      }
+      enum "BFD session number exceed" {
+        description
+          "The number of BFD session discriminators exceeds the upper limit.";
+      }
+    }
+    description
+      "Status of a PIM BFD session";
+  }
+}

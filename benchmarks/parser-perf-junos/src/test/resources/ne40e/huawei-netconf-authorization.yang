@@ -1,0 +1,217 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-netconf-authorization {
+  belongs-to huawei-netconf {
+    prefix netconf;
+  }
+  import huawei-aaa {
+    prefix aaa;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-netconf-authorization-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Netconf authorization";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping netconf_authorization_type {
+    description
+      "";
+    container statistics {
+      config false;
+      description
+        "NETCONF authorization statistics.";
+      leaf deniedOperations {
+        type uint32;
+        config false;
+        description
+          "Number of denied operations.";
+      }
+      leaf deniedDataWrites {
+        type uint32;
+        config false;
+        description
+          "Number of denied data writes.";
+      }
+    }
+    container taskGroupRules {
+      description
+        "Task Group Rules container";
+      list taskGroupRule {
+        key "taskGroupName ruleName ruleType";
+        max-elements 50;
+        description
+          "Task Group Rule list";
+        leaf taskGroupName {
+          type leafref {
+            path "/aaa:aaa/aaa:taskGroups/aaa:taskGroup/aaa:taskGroupName";
+          }
+          description
+            "Task Group Name";
+        }
+        leaf ruleName {
+          type string {
+            length "1..15";
+          }
+          description
+            "Authorization rule name.";
+        }
+        leaf ruleType {
+          type netconfAuthorizationRuleType;
+          description
+            "Authorization rule type.";
+        }
+        leaf action {
+          type netconfAuthorizationAction;
+          mandatory true;
+          description
+            "Permit or deny action.";
+        }
+        leaf rpcOperName {
+          when "../ruleType='operationRule'";
+          type netconfOperationName;
+          mandatory true;
+          description
+            "Operation rule name.";
+        }
+        leaf dataNodePath {
+          when "../ruleType='datanodeRule'";
+          type string {
+            length "1..255";
+          }
+          mandatory true;
+          description
+            "Data node path.";
+        }
+        leaf read {
+          when "../ruleType='datanodeRule' and ../action='permit'";
+          type netconfAuthorizationAccess;
+          default "disable";
+          description
+            "Read access.";
+        }
+        leaf write {
+          when "../ruleType='datanodeRule' and ../action='permit'";
+          type netconfAuthorizationAccess;
+          default "disable";
+          description
+            "Write access.";
+        }
+        leaf execute {
+          when "../ruleType='datanodeRule' and ../action='permit'";
+          type netconfAuthorizationAccess;
+          default "disable";
+          description
+            "Execute access.";
+        }
+        leaf description {
+          type string {
+            length "1..63";
+          }
+          description
+            "Rule description";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container userGroupRules {
+      description
+        "User Group Rules container";
+      list userGroupRule {
+        key "userGroupName ruleName ruleType";
+        max-elements 50;
+        description
+          "User Group Rule list";
+        leaf userGroupName {
+          type leafref {
+            path "/aaa:aaa/aaa:userGroups/aaa:userGroup/aaa:userGroupName";
+          }
+          description
+            "User Group Name";
+        }
+        leaf ruleName {
+          type string {
+            length "1..15";
+          }
+          description
+            "Authorization rule name.";
+        }
+        leaf ruleType {
+          type netconfAuthorizationRuleType;
+          description
+            "Authorization rule type.";
+        }
+        leaf action {
+          type netconfAuthorizationAction;
+          mandatory true;
+          description
+            "Permit or deny action.";
+        }
+        leaf rpcOperName {
+          when "../ruleType='operationRule'";
+          type netconfOperationName;
+          mandatory true;
+          description
+            "Operation rule name.";
+        }
+        leaf dataNodePath {
+          when "../ruleType='datanodeRule'";
+          type string {
+            length "1..255";
+          }
+          mandatory true;
+          description
+            "Data node path.";
+        }
+        leaf read {
+          when "../ruleType='datanodeRule' and ../action='permit'";
+          type netconfAuthorizationAccess;
+          default "disable";
+          description
+            "Read access.";
+        }
+        leaf write {
+          when "../ruleType='datanodeRule' and ../action='permit'";
+          type netconfAuthorizationAccess;
+          default "disable";
+          description
+            "Write access.";
+        }
+        leaf execute {
+          when "../ruleType='datanodeRule' and ../action='permit'";
+          type netconfAuthorizationAccess;
+          default "disable";
+          description
+            "Execute access.";
+        }
+        leaf description {
+          type string {
+            length "1..63";
+          }
+          description
+            "Rule description";
+          ext:allowDelete "true";
+        }
+      }
+    }
+  }
+}

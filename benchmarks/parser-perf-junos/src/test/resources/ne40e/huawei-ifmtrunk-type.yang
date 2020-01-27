@@ -1,0 +1,432 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ifmtrunk-type {
+  belongs-to huawei-ifmtrunk {
+    prefix ifmtrunk;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "the ifmtrunk type submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  typedef ifmtrunkTrunkType {
+    type enumeration {
+      enum "EthTrunk" {
+        description
+          "Indicate that an Eth-Trunk link consists of only Ethernet links.";
+      }
+      enum "IPTrunk" {
+        description
+          "Indicate that an IP-Trunk link consists of only the Packet over SONET/SDH (POS) links.";
+      }
+    }
+    description
+      "Trunk Interface Type";
+  }
+  typedef ifmtrunkTrunkHashType {
+    type enumeration {
+      enum "IP" {
+        description
+          "Specify the IP-address-based per-destination load balancing mode. In this mode, data flows are differentiated based on IP addresses of packets to ensure that the packets of the same data flow are transmitted over the same member link.";
+      }
+      enum "MAC" {
+        description
+          "Specify the MAC-address-based per-destination load balancing mode. In this mode, data flows are differentiated based on MAC addresses of packets to ensure that the packets of the same data flow are transmitted over the same member link.";
+      }
+      enum "PacketAll" {
+        description
+          "Specifies the per-packet load balancing mode. In this mode, one packet (not a data flow)  is regarded as a unit, and packets are dispersed and transmitted  among different member links.";
+      }
+      enum "Enhanced" {
+        description
+          "Load balancing mode based on the enhanced profile.";
+      }
+      enum "Desip" {
+        description
+          "Load balancing based on the destination IP address. In this mode, the system obtains the specified three bits from each of the destination IP address and the TCP or UDP port number in outgoing packets to perform the Exclusive-OR calculation, and then selects the outbound interface from the Eth-Trunk table based on the calculation result.";
+      }
+      enum "Desmac" {
+        description
+          "Load balancing based on the destination MAC address. In this mode, the system obtains the specified three bits from each of the destination MAC address, VLAN ID, Ethernet type, and inbound interface information to perform the Exclusive-OR calculation, and then selects the outbound interface from the Eth-Trunk table based on the calculation result.";
+      }
+      enum "Sourceip" {
+        description
+          "Load balancing based on the source IP address. In this mode, the system obtains the specified three bits from each of the source IP address and the TCP or UDP port number in incoming packets to perform the Exclusive-OR calculation, and then selects the outbound interface from the Eth-Trunk table based on the calculation result.";
+      }
+      enum "Sourcemac" {
+        description
+          "Load balancing based on the source MAC address. In this mode, the system obtains the specified three bits from each of the source MAC address, VLAN ID, Ethernet type, and inbound interface information to perform the Exclusive-OR calculation, and then selects the outbound interface from the Eth-Trunk table based on the calculation result.";
+      }
+      enum "NoExistType" {
+        description
+          "Nonexistent hash type of trunk interfaces.";
+      }
+      enum "L4" {
+        description
+          "According to source/destination IP, source/destination port and protocol hash arithmetic";
+      }
+      enum "Resilient" {
+        description
+          "Load balancing mode based on the enhanced resilient profile.";
+      }
+      enum "Random" {
+        description
+          "Load balancing mode based on random selects the outbound interface from the Eth-Trunk";
+      }
+      enum "RoundRobin" {
+        description
+          "Load balancing mode based on round-robin selects the outbound interface from the Eth-Trunk";
+      }
+    }
+    description
+      "Trunk Hash Type";
+  }
+  typedef ifmTrunkArithHashType {
+    type enumeration {
+      enum "CRC32_1" {
+        description
+          "CRC32-1";
+      }
+      enum "CRC32_2" {
+        description
+          "CRC32-2";
+      }
+      enum "XOR_16BIT" {
+        description
+          "16bit XOR";
+      }
+      enum "XOR_8BIT" {
+        description
+          "8bit XOR";
+      }
+    }
+    description
+      "Trunk Arith Hash Type";
+  }
+  typedef ifmtrunkTrunkMode {
+    type enumeration {
+      enum "Manual" {
+        description
+          "Specify the manual load balancing mode. It is a basic link aggregation mode. In this mode, you must manually create a trunk interface, add interfaces to the trunk interface, and specify active member interfaces. LACP is not involved.";
+      }
+      enum "Dynamic" {
+        description
+          "Specify the dynamic LACP mode. In dynamic LACP mode,  if the Eth-Trunk interface has not be configured on the other end and the physical interfaces on two ends are both Up, dynamic LACP mode will set Eth-Trunk member interfaces to Indep, indicating the physical interfaces of the server and of the device are independent. This ensures that physical interfaces of the device can forward data to the server. ";
+      }
+      enum "Static" {
+        description
+          "Specify the static LACP mode. In this mode, you must manually add interfaces to the Eth-Trunk interface. Different from link aggregation in manual load balancing mode, active member interfaces are selected based on LACP packets.";
+      }
+      enum "Backup" {
+        description
+          "Specify the 1:1 active/standby load balancing mode. In this mode, an Eth-Trunk interface contains only two member interfaces (one active interface and one standby interface).";
+      }
+      enum "NoExistMode" {
+        description
+          "Nonexistent trunk working mode.";
+      }
+    }
+    description
+      "Trunk Work Mode";
+  }
+  typedef ifmtrunkMemberState {
+    type enumeration {
+      enum "Up" {
+        description
+          "The interface is in the Up state.";
+      }
+      enum "Down" {
+        description
+          "The interface is in the Down state.";
+      }
+    }
+    description
+      "Trunk Member State";
+  }
+  typedef ifmtrunkMemberSelectedState {
+    type enumeration {
+      enum "Selected" {
+        description
+          "The interface is in the Selected state.";
+      }
+      enum "UnSelected" {
+        description
+          "The interface is in the Unselected state.";
+      }
+      enum "Indep" {
+        description
+          "The interface is in the Independent state.";
+      }
+      enum "Force-Up" {
+        description
+          "The interface is in the Force-Up state.";
+      }
+    }
+    description
+      "Trunk Member Selected State";
+  }
+  typedef ifmcommIfPhyType {
+    type enumeration {
+      enum "Ethernet" {
+        description
+          "Ethernet:";
+      }
+      enum "fe" {
+        description
+          "fe:";
+      }
+      enum "GigabitEthernet" {
+        description
+          "GigabitEthernet:";
+      }
+      enum "reserve" {
+        description
+          "reserve:";
+      }
+      enum "Eth_trunk" {
+        description
+          "Eth-trunk:";
+      }
+      enum "Ip_trunk" {
+        description
+          "Ip-trunk:";
+      }
+      enum "Virtual_Ethernet" {
+        description
+          "Virtual-Ethernet:";
+      }
+      enum "RPR" {
+        description
+          "RPR:";
+      }
+      enum "Serial" {
+        description
+          "Serial:";
+      }
+      enum "Pos" {
+        description
+          "Pos:";
+      }
+      enum "Cpos" {
+        description
+          "Cpos:";
+      }
+      enum "ATM" {
+        description
+          "ATM:";
+      }
+      enum "Aux" {
+        description
+          "Aux:";
+      }
+      enum "GRE" {
+        description
+          "GRE:";
+      }
+      enum "Tunnel" {
+        description
+          "Tunnel:";
+      }
+      enum "Vlanif" {
+        description
+          "Vlanif:";
+      }
+      enum "subif" {
+        description
+          "subif:";
+      }
+      enum "inLoopback" {
+        description
+          "inLoopback:";
+      }
+      enum "Null" {
+        description
+          "Null:";
+      }
+      enum "Loopback" {
+        description
+          "Loopback:";
+      }
+    }
+    description
+      "Interface Physical Type";
+  }
+  typedef lacpRcvTmOutType {
+    type enumeration {
+      enum "Slow" {
+        description
+          "Indicate that the timeout period of Eth-Trunk interfaces in static LACP mode to receive packets is 90 seconds and the peer end sends an LACP packet every 30 seconds. In this mode, the device responds to the LACP packets from the peer slowly but consumes fewer system resources.";
+      }
+      enum "Fast" {
+        description
+          "Indicate that the timeout period of Eth-Trunk interfaces in static LACP mode to receive packets is 3 seconds and the peer end sends an LACP packet every 1 second. In this mode, the device can quickly respond to the LACP packets from the peer but consume more system resources. ";
+      }
+    }
+    description
+      "LACP Receive Timeout Type";
+  }
+  typedef lacpSelectStd {
+    type enumeration {
+      enum "Speed" {
+        description
+          "Indicate that the interface with a higher rate is selected as the active interface.";
+      }
+      enum "Prority" {
+        description
+          "Indicate that the interface with a higher priority is selected as the active interface.";
+      }
+    }
+    description
+      "LACP Select Standard";
+  }
+  typedef lacpPortType {
+    type enumeration {
+      enum "Null" {
+        description
+          "0M.";
+      }
+      enum "10M" {
+        description
+          "10M.";
+      }
+      enum "100M" {
+        description
+          "100M.";
+      }
+      enum "1GE" {
+        description
+          "1GE.";
+      }
+      enum "10GE" {
+        description
+          "10GE.";
+      }
+      enum "100GE" {
+        description
+          "100GE.";
+      }
+      enum "1TE" {
+        description
+          "1TE.";
+      }
+      enum "10TE" {
+        description
+          "10TE.";
+      }
+      enum "100TE" {
+        description
+          "100TE.";
+      }
+      enum "1000TE" {
+        description
+          "1000TE.";
+      }
+      enum "40GE" {
+        description
+          "40GE.";
+      }
+      enum "400GE" {
+        description
+          "400GE.";
+      }
+      enum "25GE" {
+        description
+          "25GE.";
+      }
+    }
+    description
+      "LACP Port Type";
+  }
+  typedef ifmtrunkMemberRole {
+    type enumeration {
+      enum "Slave" {
+        description
+          "Configure the slave interface in the Eth-Trunk interface working in 1:1 master/slave mode.";
+      }
+      enum "Master" {
+        description
+          "Configure the master interface in the Eth-Trunk interface working in 1:1 master/slave mode.";
+      }
+      enum "InvalidPort" {
+        description
+          "Invalid interface.";
+      }
+      enum "Member" {
+        description
+          "Trunk member interface.";
+      }
+    }
+    description
+      "Trunk Member Role";
+  }
+  typedef lacpPduResetType {
+    type enumeration {
+      enum "Null" {
+        description
+          "Null:";
+      }
+      enum "all" {
+        description
+          "all:";
+      }
+      enum "lacpdurcv" {
+        description
+          "lacpdurcv:";
+      }
+      enum "lacpdurcvill" {
+        description
+          "lacpdurcvill:";
+      }
+      enum "lacpdusend:" {
+        description
+          "lacpdusend::";
+      }
+      enum "markerpdurcv:" {
+        description
+          "markerpdurcv::";
+      }
+      enum "markerpdurcvill:" {
+        description
+          "markerpdurcvill::";
+      }
+      enum "markerrsppdusend:" {
+        description
+          "markerrsppdusend::";
+      }
+    }
+    description
+      "LACP PDU Reset Type";
+  }
+  typedef lacpSysMacSource {
+    type enumeration {
+      enum "Local" {
+        description
+          "The operate system ID is obtained from local configure.";
+      }
+      enum "Remote" {
+        description
+          "The operate system ID is obtained from remote device.";
+      }
+    }
+    description
+      "LACP SYS Mac Source";
+  }
+}

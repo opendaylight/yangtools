@@ -1,0 +1,1203 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-syslog {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-syslog";
+  prefix syslog;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-syslog-action;
+  include huawei-syslog-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "System log.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container syslog {
+    description
+      "System log.";
+    container syslogServers {
+      description
+        "List of syslog servers.";
+      list syslogServer {
+        key "ipType serverIp isDefaultVpn vrfName";
+        max-elements  "8";
+        description
+          "Log sever that receives logs.";
+        leaf ipType {
+          type imAddrFamilyType;
+          description
+            "Log server address type, IPv4 or IPv6.";
+          ext:allowDelete "false";
+        }
+        leaf serverIp {
+          type inet:ip-address-no-zone;
+          description
+            "Log server address, IPv4 or IPv6 type.";
+          ext:allowDelete "false";
+        }
+        leaf isDefaultVpn {
+          type boolean;
+          description
+            "Use the default VPN or not.";
+          ext:allowDelete "false";
+        }
+        leaf vrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          description
+            "VPN name on a log server.";
+        }
+        leaf level {
+          type imLogLevel;
+          default "debugging";
+          description
+            "Level of logs saved on a log server.";
+          ext:allowDelete "false";
+        }
+        leaf serverPort {
+          type uint32 {
+            range "1..65535";
+          }
+          default "514";
+          description
+            "Number of a port recving logs.";
+          ext:allowDelete "false";
+        }
+        leaf facility {
+          type imLogHostFacility;
+          default "local7";
+          description
+            "Log record tool.";
+          ext:allowDelete "false";
+        }
+        leaf chnlId {
+          type leafref {
+            path "/syslog/icChannels/icChannel/icChnlId";
+          }
+          default "2";
+          description
+            "Channel number.";
+          ext:allowDelete "false";
+        }
+        leaf chnlName {
+          type string {
+            length "1..30";
+          }
+          default "loghost";
+          config false;
+          description
+            "Channel name.";
+        }
+        leaf timestamp {
+          type imTimeStampFormat;
+          mandatory true;
+          description
+            "Log server timestamp.";
+          ext:allowDelete "false";
+        }
+        leaf transportMode {
+          type imTransportModeType;
+          mandatory true;
+          description
+            "Transport mode.";
+          ext:allowDelete "false";
+        }
+        leaf sslPolicyName {
+          when "not(../transportMode='udp')";
+          type string {
+            length "1..23";
+          }
+          description
+            "SSL policy name.";
+          ext:allowDelete "true";
+        }
+        leaf sourceIP {
+          when "not(../ipType!='ipv4')";
+          type inet:ip-address-no-zone;
+          description
+            "Syslog source IP address.";
+          ext:allowDelete "true";
+        }
+        leaf isBriefFmt {
+          type boolean;
+          default "false";
+          description
+            "Syslog Brief Format";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container syslogDNSs {
+      description
+        "List of domain syslog servers.";
+      list syslogDNS {
+        key "serverDomain isDefaultVpn vrfName";
+        max-elements  "8";
+        description
+          "Domain log sever that receives logs.";
+        leaf serverDomain {
+          type string {
+            length "1..255";
+          }
+          description
+            "Log server domian address.";
+          ext:allowDelete "false";
+        }
+        leaf isDefaultVpn {
+          type boolean;
+          description
+            "Use the default VPN or not.";
+          ext:allowDelete "false";
+        }
+        leaf vrfName {
+          type string {
+            length "1..31";
+          }
+          description
+            "VPN name on a log server.";
+        }
+        leaf level {
+          type imLogLevel;
+          default "debugging";
+          description
+            "Level of logs saved on a log server.";
+          ext:allowDelete "false";
+        }
+        leaf serverPort {
+          type uint32 {
+            range "1..65535";
+          }
+          default "514";
+          description
+            "Number of a port recving logs.";
+          ext:allowDelete "false";
+        }
+        leaf facility {
+          type imLogHostFacility;
+          default "local7";
+          description
+            "Log record tool.";
+          ext:allowDelete "false";
+        }
+        leaf chnlId {
+          type uint32 {
+            range "0..9";
+          }
+          default "2";
+          description
+            "Channel number.";
+          ext:allowDelete "false";
+        }
+        leaf chnlName {
+          type string {
+            length "1..30";
+          }
+          default "loghost";
+          config false;
+          description
+            "Channel name.";
+        }
+        leaf timestamp {
+          type imTimeStampFormat;
+          mandatory true;
+          description
+            "Log server timestamp.";
+          ext:allowDelete "false";
+        }
+        leaf transportMode {
+          type imTransportModeType;
+          mandatory true;
+          description
+            "Transport mode.";
+          ext:allowDelete "false";
+        }
+        leaf sslPolicyName {
+          when "not(../transportMode='udp')";
+          type string {
+            length "1..23";
+          }
+          description
+            "SSL policy name.";
+          ext:allowDelete "true";
+        }
+        leaf isBriefFmt {
+          type boolean;
+          default "false";
+          description
+            "Syslog Brief Format";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container globalParam {
+      description
+        "Global parameter.";
+      leaf icEnable {
+        type boolean;
+        description
+          "Whether the info-center function is enabled.";
+      }
+      leaf bufferSize {
+        type int32 {
+          range "0..102400";
+        }
+        default "512";
+        description
+          "Size of a log buffer.";
+      }
+      leaf suppressEnable {
+        type boolean;
+        description
+          "Whether a device is enabled to suppress duplicate statistics.";
+      }
+      leaf logTimeStamp {
+        type imTimeStamp;
+        default "DATE_SECOND";
+        description
+          "Timestamp format of log information. ";
+      }
+      leaf trapTimeStamp {
+        type imTimeStamp;
+        default "DATE_SECOND";
+        description
+          "Timestamp format of alarm information.";
+      }
+      leaf debugTimeStamp {
+        type imTimeStamp;
+        default "DATE_MILLISECOND";
+        description
+          "Timestamp type of debugging information.";
+      }
+      leaf ifName {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+        }
+        description
+          "Name of a log host interface sending logs.";
+        ext:allowDelete "true";
+      }
+      leaf icLogBuffEn {
+        type boolean;
+        description
+          "Whether a log buffer is enabled to output information.";
+      }
+      leaf icTrapBuffEn {
+        type boolean;
+        description
+          "Whether a trap buffer is enabled to output information.";
+      }
+      leaf trapBuffSize {
+        type int32 {
+          range "0..1024";
+        }
+        default "256";
+        description
+          "Size of a trap buffer.";
+      }
+      leaf packetPriority {
+        type int32 {
+          range "0..7";
+        }
+        default "0";
+        description
+          "Set the priority of the syslog packet.";
+      }
+      leaf syslogProxyEnable {
+        type boolean;
+        description
+          "Whether syslog proxy is enabled.";
+      }
+      leaf sourcePort {
+        type uint32 {
+          range "1025..65535";
+        }
+        default "38514";
+        description
+          "Port of the loghost.";
+        ext:allowDelete "true";
+      }
+      leaf icSyslogEnable {
+        type boolean;
+        description
+          "Whether syslog is enabled.";
+      }
+      leaf logNoTimeZone {
+        type boolean;
+        description
+          "Whether log Timestamp Without Timezone";
+      }
+      leaf trapNoTimeZone {
+        type boolean;
+        description
+          "Whether trap Timestamp Without Timezone";
+      }
+      leaf debugNoTimeZone {
+        type boolean;
+        description
+          "Whether debug Timestamp Without Timezone";
+      }
+    }
+    container icLogFileInfos {
+      description
+        "Log file info table.";
+      list icLogFileInfo {
+        key "logFileType";
+        max-elements  "4";
+        description
+          "Log file info.";
+        leaf logFileType {
+          type imLogType;
+          description
+            "Log file type.";
+          ext:allowDelete "false";
+        }
+        leaf maxFileNum {
+          type uint32 {
+            range "3..500";
+          }
+          description
+            "Maximum number of log files of the same type. The value range for log files is [3, 500], for security files is [1, 3], and for operation files is [1, 7].";
+          ext:allowDelete "false";
+        }
+        leaf maxFileSize {
+          type uint32 {
+            range "4..32";
+          }
+          description
+            "Maximum size (in MB) of a log file. The value range for log files is [4, 8, 16, 32], for security files is [1, 4], and for operation files is [1, 4].";
+          ext:allowDelete "false";
+        }
+      }
+    }
+    container icChannels {
+      description
+        "Channel list.";
+      list icChannel {
+        key "icChnlId";
+        max-elements  "10";
+        description
+          "Info-center channel.";
+        leaf icChnlId {
+          type uint32 {
+            range "0..9";
+          }
+          description
+            "Number for channel.";
+          ext:allowDelete "false";
+        }
+        leaf icChnlDefName {
+          type string {
+            length "1..30";
+          }
+          config false;
+          description
+            "Info-center channel default name.";
+        }
+        leaf icChnlCfgName {
+          type string {
+            length "1..30";
+          }
+          description
+            "Channel name.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container icDirChannels {
+      description
+        "List for mappings of output directions and channels of the information center.";
+      list icDirChannel {
+        key "icOutDirect";
+        max-elements  "7";
+        description
+          "Relation of direction and channel.";
+        leaf icOutDirect {
+          type string {
+            length "1..30";
+          }
+          description
+            "Direction of information output.";
+        }
+        leaf icDefChnlId {
+          type uint32 {
+            range "0..9";
+          }
+          default "0";
+          config false;
+          description
+            "Number of the default channel.";
+        }
+        leaf icCfgChnlId {
+          type leafref {
+            path "/syslog/icChannels/icChannel/icChnlId";
+          }
+          default "0";
+          description
+            "Number of a configured channel.";
+          ext:allowDelete "false";
+        }
+        leaf icCfgChnlName {
+          type string {
+            length "1..30";
+          }
+          config false;
+          description
+            "Name of a configured channel.";
+        }
+      }
+    }
+    container icSources {
+      description
+        "Rules in channel for outputting information.";
+      list icSource {
+        key "moduleName icChannelId";
+        description
+          "Rule in channel for outputting information.";
+        leaf moduleName {
+          type string {
+            length "1..31";
+          }
+          description
+            "Module name of the rule.";
+          ext:allowDelete "false";
+        }
+        leaf icChannelId {
+          type leafref {
+            path "/syslog/icChannels/icChannel/icChnlId";
+          }
+          description
+            "Number of a channel.";
+        }
+        leaf icChannelName {
+          type string {
+            length "1..30";
+          }
+          config false;
+          description
+            "Name of a channel.";
+        }
+        leaf logEnFlg {
+          type boolean;
+          description
+            "Whether a device is enabled to output logs.";
+        }
+        leaf logEnLevel {
+          type imLogLevel;
+          default "debugging";
+          description
+            "Log level permitted to output.";
+        }
+        leaf trapEnFlg {
+          type boolean;
+          description
+            "Whether a device is enabled to output alarms.";
+        }
+        leaf trapEnLevel {
+          type imLogLevel;
+          default "debugging";
+          description
+            "Trap level permitted to output.";
+        }
+        leaf dbgEnFlg {
+          type boolean;
+          description
+            "Whether a device is enabled to output debugging information.";
+        }
+        leaf dbgEnLevel {
+          type imLogLevel;
+          default "debugging";
+          description
+            "Debug level permitted to output.";
+        }
+      }
+    }
+    container icStatistics {
+      config false;
+      description
+        "Info-center statistics list.";
+      list icStatistic {
+        key "icModuleName";
+        config false;
+        description
+          "Info-center statistics item.";
+        leaf icModuleName {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Module name of the log.";
+        }
+        leaf icLogRecv {
+          type uint32;
+          config false;
+          description
+            "Number of received logs.";
+        }
+        leaf icLogDrop {
+          type uint32;
+          config false;
+          description
+            "Number of dropped logs.";
+        }
+        leaf icDiagRecv {
+          type uint32;
+          config false;
+          description
+            "Number of received diagnostic logs.";
+        }
+        leaf icDiagDrop {
+          type uint32;
+          config false;
+          description
+            "Number of dropped diagnostic logs.";
+        }
+        leaf icEventTrapRecv {
+          type uint32;
+          config false;
+          description
+            "Number of received event traps.";
+        }
+        leaf icEventTrapDrop {
+          type uint32;
+          config false;
+          description
+            "Number of dropped event traps.";
+        }
+        leaf icDebugRecv {
+          type uint32;
+          config false;
+          description
+            "Number of received debugging logs.";
+        }
+        leaf icDebugDrop {
+          type uint32;
+          config false;
+          description
+            "Number of dropped debugging logs.";
+        }
+      }
+    }
+    container icFilters {
+      description
+        "Info-center filter list.";
+      list icFilter {
+        key "icFeatureName icFilterLogName icFilterFlag";
+        max-elements  "65535";
+        description
+          "Filter item.";
+        leaf icFeatureName {
+          type leafref {
+            path "/syslog/idSwitchTbls/idSwitchTbl/icFeatureName";
+          }
+          description
+            "Feature name of the filtered log.";
+          ext:support-filter "true";
+        }
+        leaf icFilterLogName {
+          type leafref {
+            path "/syslog/idSwitchTbls/idSwitchTbl/icLogName";
+          }
+          description
+            "Name of the filtered log.";
+        }
+        leaf icFilterFlag {
+          type boolean;
+          description
+            "Whether logs are filtered.";
+        }
+      }
+    }
+    container idSwitchTbls {
+      description
+        "Log name information table.";
+      list idSwitchTbl {
+        key "icFeatureName icLogName";
+        max-elements  "65535";
+        description
+          "Log name information item.";
+        leaf icFeatureName {
+          type string {
+            length "1..31";
+          }
+          description
+            "Feature name of a log.";
+          ext:support-filter "true";
+        }
+        leaf icLogName {
+          type string {
+            length "1..63";
+          }
+          description
+            "Log name.";
+        }
+        leaf icLogLevel {
+          type imLogLevel;
+          default "debugging";
+          description
+            "Log level.";
+        }
+        leaf icSecurityFlag {
+          type boolean;
+          config false;
+          description
+            "Flag of security log.";
+        }
+        leaf icLogType {
+          type imInfoType;
+          config false;
+          description
+            "Log Type.";
+        }
+      }
+    }
+    container icInfoCenters {
+      config false;
+      description
+        "Display the buffer statistics table.";
+      list icInfoCenter {
+        key "icBufferName";
+        config false;
+        max-elements  "2";
+        description
+          "Display buffer statistics.";
+        leaf icBufferName {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Buffer name.";
+        }
+        leaf icEnableFlag {
+          type boolean;
+          config false;
+          description
+            "Buffer enable state.";
+        }
+        leaf icMaxBuffSize {
+          type uint32;
+          config false;
+          description
+            "Maximum buffer size.";
+        }
+        leaf icCurBuffSize {
+          type uint32;
+          config false;
+          description
+            "Configured buffer size.";
+        }
+        leaf icCuffentMsgs {
+          type uint32;
+          config false;
+          description
+            "Number of existing messages in the buffer.";
+        }
+        leaf icDroppedMsgs {
+          type uint32;
+          config false;
+          description
+            "Number of dropped messages in the buffer.";
+        }
+        leaf icOverWrtMsgs {
+          type uint32;
+          config false;
+          description
+            "Number of overwritten messages in the buffer.";
+        }
+        leaf icInfoChnlId {
+          type uint32 {
+            range "0..9";
+          }
+          default "0";
+          config false;
+          description
+            "ID of channel bind to the buffer.";
+        }
+        leaf icInfoChnlName {
+          type string {
+            length "1..30";
+          }
+          config false;
+          description
+            "Name of channel bind to the buffer.";
+        }
+      }
+    }
+    container moduleInfos {
+      config false;
+      description
+        "Module name information table.";
+      list moduleInfo {
+        key "moduleName";
+        config false;
+        description
+          "Module name information item.";
+        leaf moduleName {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Module name.";
+          ext:support-filter "true";
+        }
+      }
+    }
+    container icLogBuffers {
+      config false;
+      description
+        "Log buffer table. ";
+      list icLogBuffer {
+        key "sequence";
+        config false;
+        description
+          "Log buffer item. ";
+        leaf sequence {
+          type int32 {
+            range "1..102400";
+          }
+          config false;
+          description
+            "Sequence number of a queried log.";
+          ext:support-filter "true";
+        }
+        leaf starttime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Query start time. The valid value range is after 1970-01-01.";
+          ext:support-filter "true";
+        }
+        leaf endtime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Query end time. The valid value range is after 1970-01-01.";
+          ext:support-filter "true";
+        }
+        leaf levelEnum {
+          type imLogLevel;
+          default "debugging";
+          config false;
+          description
+            "Level of queried logs.";
+          ext:support-filter "true";
+        }
+        leaf logContent {
+          type string {
+            length "0..1200";
+          }
+          config false;
+          description
+            "Content of queried logs. ";
+        }
+      }
+    }
+    container icOperBuffers {
+      config false;
+      description
+        "Operation of log buffer table. ";
+      list icOperBuffer {
+        key "sequence";
+        config false;
+        description
+          "Operation of log buffer item. ";
+        leaf sequence {
+          type int32 {
+            range "1..102400";
+          }
+          config false;
+          description
+            "Sequence number of a queried log.";
+          ext:support-filter "true";
+        }
+        leaf starttime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Query start time. The valid value range is after 1970-01-01.";
+          ext:support-filter "true";
+        }
+        leaf endtime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Query end time. The valid value range is after 1970-01-01.";
+          ext:support-filter "true";
+        }
+        leaf levelEnum {
+          type imLogLevel;
+          default "debugging";
+          config false;
+          description
+            "Level of queried logs.";
+          ext:support-filter "true";
+        }
+        leaf logContent {
+          type string {
+            length "0..1200";
+          }
+          config false;
+          description
+            "Content of queried logs. ";
+        }
+      }
+    }
+    container icSecurityBuffers {
+      config false;
+      description
+        "Security of a log buffer table. ";
+      list icSecurityBuffer {
+        key "sequence";
+        config false;
+        description
+          "Security of a log buffer item. ";
+        leaf sequence {
+          type int32 {
+            range "1..102400";
+          }
+          config false;
+          description
+            "Sequence number of a queried log.";
+          ext:support-filter "true";
+        }
+        leaf starttime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Query start time. The valid value range is after 1970-01-01.";
+          ext:support-filter "true";
+        }
+        leaf endtime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Query end time. The valid value range is after 1970-01-01.";
+          ext:support-filter "true";
+        }
+        leaf levelEnum {
+          type imLogLevel;
+          default "debugging";
+          config false;
+          description
+            "Level of queried logs.";
+          ext:support-filter "true";
+        }
+        leaf logContent {
+          type string {
+            length "0..1200";
+          }
+          config false;
+          description
+            "Content of queried logs. ";
+        }
+      }
+    }
+    container icTrapBuffers {
+      config false;
+      description
+        "Trap buffer table. ";
+      list icTrapBuffer {
+        key "sequence";
+        config false;
+        description
+          "Trap buffer item.";
+        leaf sequence {
+          type int32 {
+            range "1..1024";
+          }
+          config false;
+          description
+            "Sequence number of a queried trap.";
+          ext:support-filter "true";
+        }
+        leaf trapContent {
+          type string {
+            length "0..1200";
+          }
+          config false;
+          description
+            "Content of query trap. ";
+        }
+      }
+    }
+    container icOperationLogs {
+      config false;
+      description
+        "Operation log table.";
+      list icOperationLog {
+        key "sequence";
+        config false;
+        description
+          "Operation log.";
+        leaf sequence {
+          type uint32 {
+            range "1..4294967295";
+          }
+          config false;
+          description
+            "Operation log sequence number.";
+          ext:support-filter "false";
+        }
+        leaf starttime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Query start time. The valid value range is after 1970-01-01.";
+          ext:support-filter "true";
+        }
+        leaf endtime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Query end time. The valid value range is after 1970-01-01.";
+          ext:support-filter "true";
+        }
+        leaf operSequence {
+          type uint32 {
+            range "1..4294967295";
+          }
+          default "1";
+          config false;
+          description
+            "Operation sequence.";
+        }
+        leaf recordTime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Operation log record time.";
+        }
+        leaf user {
+          type string {
+            length "0..255";
+          }
+          config false;
+          description
+            "Operation log user name.";
+        }
+        leaf operType {
+          type string {
+            length "0..63";
+          }
+          config false;
+          description
+            "Operation type.";
+        }
+        leaf operObj {
+          type string {
+            length "0..1024";
+          }
+          config false;
+          description
+            "Operation object.";
+        }
+        leaf result {
+          type imOperResult;
+          config false;
+          description
+            "Operation log operation result.";
+        }
+        leaf terminalType {
+          type imTerminalType;
+          config false;
+          description
+            "Access terminal type.";
+        }
+        leaf ipAddress {
+          type string {
+            length "0..46";
+          }
+          config false;
+          description
+            "Access IP address.";
+        }
+      }
+    }
+    container icSecurityLogs {
+      config false;
+      description
+        "Security log table.";
+      list icSecurityLog {
+        key "sequence";
+        config false;
+        description
+          "Security log.";
+        leaf sequence {
+          type uint32 {
+            range "1..4294967295";
+          }
+          config false;
+          description
+            "Security log sequence number.";
+          ext:support-filter "false";
+        }
+        leaf starttime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Query start time. The valid value range is after 1970-01-01.";
+          ext:support-filter "true";
+        }
+        leaf endtime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Query end time. The valid value range is after 1970-01-01.";
+          ext:support-filter "true";
+        }
+        leaf recordTime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Security log record time.";
+        }
+        leaf user {
+          type string {
+            length "0..255";
+          }
+          config false;
+          description
+            "Security log user name.";
+        }
+        leaf event {
+          type string {
+            length "0..63";
+          }
+          config false;
+          description
+            "Security log event name.";
+        }
+        leaf resource {
+          type string {
+            length "0..1024";
+          }
+          config false;
+          description
+            "Security log resource name.";
+        }
+        leaf result {
+          type imOperResult;
+          config false;
+          description
+            "Security log operation result.";
+        }
+        leaf ipAddress {
+          type string {
+            length "0..46";
+          }
+          config false;
+          description
+            "IP address.";
+        }
+      }
+    }
+    container hosts {
+      config false;
+      description
+        "Alarm settings of an NMS host.";
+      list host {
+        key "targetHostName";
+        config false;
+        description
+          "Configuration of an NMS host.";
+        leaf targetHostName {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Name of an NMS host.";
+        }
+        leaf evtReportType {
+          type reportChannelType;
+          default "ITUT";
+          config false;
+          description
+            "Type of send event.";
+        }
+      }
+    }
+    container syslogGneIds {
+      description
+        "Syslog GNE ID table.";
+      list syslogGneId {
+        key "gneId";
+        max-elements  "10";
+        description
+          "Syslog GNE.";
+        leaf gneId {
+          type string {
+            length "3..9";
+          }
+          description
+            "Gateway network element (GNE) ID Using format A-B.The value range for A is [1,254],for B is [1,49135].";
+          ext:allowDelete "false";
+        }
+        leaf level {
+          type imLogLevel;
+          default "debugging";
+          description
+            "Log level.";
+          ext:allowDelete "false";
+        }
+        leaf syslogSecurityEnable {
+          type boolean;
+          must "not(../syslogOperationEnable='false' and ../syslogEventEnable='false') or (../syslogOperationEnable='false' and ../syslogEventEnable='false' and ../syslogSecurityEnable='true')";
+          default "true";
+          description
+            "Whether a device is enabled to report security logs.";
+          ext:allowDelete "false";
+        }
+        leaf syslogOperationEnable {
+          type boolean;
+          must "not(../syslogSecurityEnable='false' and ../syslogEventEnable='false') or (../syslogSecurityEnable='false' and ../syslogEventEnable='false' and ../syslogOperationEnable='true')";
+          default "true";
+          description
+            "Whether a device is enabled to report operation logs.";
+          ext:allowDelete "false";
+        }
+        leaf syslogEventEnable {
+          type boolean;
+          must "not(../syslogSecurityEnable='false' and ../syslogOperationEnable='false') or (../syslogSecurityEnable='false' and ../syslogOperationEnable='false' and ../syslogEventEnable='true')";
+          default "false";
+          description
+            "Whether a device is enabled to report event logs.";
+          ext:allowDelete "false";
+        }
+      }
+    }
+  }
+}

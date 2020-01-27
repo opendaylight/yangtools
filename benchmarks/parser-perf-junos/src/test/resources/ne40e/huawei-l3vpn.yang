@@ -1,0 +1,50 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-l3vpn {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-l3vpn";
+  prefix l3vpn;
+  include huawei-l3vpn-action;
+  include huawei-l3vpn-l3vpncomm;
+  include huawei-l3vpn-qos-action;
+  include huawei-l3vpn-type;
+  include huawei-l3vpn-l3vpncomm-type;
+  include huawei-l3vpn-mpls;
+  include huawei-l3vpn-tnl;
+  include huawei-l3vpn-staticfrr;
+  include huawei-l3vpn-netslice;
+  include huawei-l3vpn-qos;
+  include huawei-l3vpn-mpls-type;
+  include huawei-l3vpn-qos-type;
+  include huawei-l3vpn-tnl-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Layer 3 Virtual Private Network (L3VPN). An L3VPN is a virtual private network set up over public networks by Internet Service Providers (ISPs) and Network Service Providers (NSPs).";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container l3vpn {
+    description
+      "Layer 3 Virtual Private Network (L3VPN). An L3VPN is a virtual private network set up over public networks by Internet Service Providers (ISPs) and Network Service Providers (NSPs).";
+    container l3vpncomm {
+      description
+        "Universal L3VPN configurations that contain the basic L3VPN configurations and the query information.";
+      uses l3vpn:l3vpn_l3vpncomm_l3vpncomm_type;
+    }
+  }
+}

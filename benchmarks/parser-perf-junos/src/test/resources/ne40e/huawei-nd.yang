@@ -1,0 +1,868 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-nd {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-nd";
+  prefix nd;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-nd-action;
+  include huawei-nd-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "ND management.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container nd {
+    description
+      "ND management.";
+    container ndDetectFlag {
+      description
+        "ND detect flag.";
+      leaf preDetectFlag {
+        type ndFlag;
+        default "false";
+        description
+          "To determine whether to enable pre-detection.";
+        ext:allowDelete "true";
+      }
+      leaf autoDetectFlag {
+        type ndFlag;
+        default "true";
+        description
+          "To enable the automatic detection of ND entries.";
+        ext:allowDelete "true";
+      }
+      leaf sysHopLimit {
+        type uint8 {
+          range "1..255";
+        }
+        default "64";
+        description
+          "IPv6 packet hoplimit.";
+      }
+      leaf rsaCalcRateLimit {
+        type uint64 {
+          range "0..100";
+        }
+        default "0";
+        description
+          "Rate limit for RSA option calculation.0 means disabling the function of rsa calculation limit.";
+        ext:allowDelete "true";
+      }
+      leaf sysStaleTime {
+        type uint32 {
+          range "60..172800";
+        }
+        units second;
+        default "1200";
+        description
+          "Aging time of the global stale state.";
+      }
+    }
+    container ndIfTables {
+      description
+        "List of ND management.";
+      list ndIfTable {
+        key "ifName";
+        description
+          "ND interface configurations.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          must "/ifm:ifm/ifm:interfaces/ifm:interface[ifm:ifName=/nd/ndIfTables/ndIfTable/ifName]/ifm:ipv6Config/ifm:enableFlag!='false'";
+          description
+            "ND interface.";
+        }
+        leaf hopLimit {
+          type uint8 {
+            range "0..255";
+          }
+          default "64";
+          description
+            "The default value that should be placed in the Hop Count field of the IP header for outgoing IP packets.";
+          ext:allowDelete "true";
+        }
+        leaf maFlag {
+          type ndFlag;
+          default "false";
+          description
+            "Flag of obtaining the routable address through state-based automatic configuration.";
+        }
+        leaf oFlag {
+          type ndFlag;
+          default "false";
+          description
+            "To set state-based automatic configuration.";
+        }
+        leaf staleTime {
+          type uint32 {
+            range "60..172800";
+          }
+          units second;
+          description
+            "Aging time of the stale state.";
+          ext:allowDelete "true";
+        }
+        leaf raHaltFlag {
+          type ndFlag;
+          default "true";
+          description
+            "To suppress the advertisement of RA packets.";
+        }
+        leaf raLifeTime {
+          type uint32 {
+            range "0..9000";
+          }
+          units second;
+          description
+            "TTL of RA packets.If the value is 0, it implies that this node is not a router.And the value from 1 to 3 is invalid.";
+          ext:allowDelete "true";
+        }
+        leaf maxInterval {
+          type uint32 {
+            range "4..1800";
+          }
+          units second;
+          default "600";
+          description
+            "Maximum interval.";
+        }
+        leaf minInterval {
+          type uint32 {
+            range "3..1350";
+          }
+          units second;
+          description
+            "Minimum interval.";
+          ext:allowDelete "true";
+        }
+        container ipv6NdPrefixs {
+          description
+            "List of prefix views.";
+          list ipv6NdPrefix {
+            key "addrPrefix";
+            description
+              "Prefix view.";
+            leaf addrPrefix {
+              type inet:ipv6-address-no-zone;
+              description
+                "IPv6 address of the prefix.";
+            }
+            leaf addrPrefixLen {
+              type int32 {
+                range "0..128";
+              }
+              mandatory true;
+              description
+                "Length of the prefix address.";
+            }
+            leaf preferLifetime {
+              type uint32 {
+                range "0..4294967295";
+              }
+              units second;
+              mandatory true;
+              description
+                "Preferred life time.";
+            }
+            leaf validLifetime {
+              type uint32 {
+                range "0..4294967295";
+              }
+              units second;
+              mandatory true;
+              description
+                "Valid life time.";
+            }
+            leaf autoFlag {
+              type aFlag;
+              default "on";
+              description
+                "To set the autonomous address-configuration flag.";
+            }
+            leaf onLinkFlag {
+              type oFlag;
+              default "on";
+              description
+                "To set the on-link flag.";
+            }
+          }
+        }
+        leaf retransTimer {
+          type uint32 {
+            range "1000..4294967295";
+          }
+          units millisecond;
+          default "1000";
+          description
+            "To set the retransmission timer of a router.";
+          ext:allowDelete "true";
+        }
+        leaf nudReachTime {
+          type uint32 {
+            range "1..3600000";
+          }
+          units millisecond;
+          default "1200000";
+          description
+            "To set the reachable time of a neighbor.";
+          ext:allowDelete "true";
+        }
+        leaf attemptsValue {
+          type uint32 {
+            range "0..600";
+          }
+          default "1";
+          description
+            "To set the number of sent NS messages during DAD.";
+        }
+        leaf nsMcastFlag {
+          type ndFlag;
+          default "false";
+          description
+            "Flag of Enabling multicast.";
+        }
+        leaf strictFlag {
+          type boolean;
+          default "false";
+          description
+            "Strict security mode.";
+        }
+        leaf tsFuzzFactor {
+          type uint16 {
+            range "0..1000";
+          }
+          units second;
+          default "1";
+          description
+            "Fuzz factor for timestamp option.";
+        }
+        leaf tsClockDrift {
+          type uint8 {
+            range "0..100";
+          }
+          default "1";
+          description
+            "Drift for timestamp option.";
+        }
+        leaf tsDelta {
+          type uint16 {
+            range "0..1000";
+          }
+          units second;
+          default "300";
+          description
+            "Delta for timestamp option.";
+        }
+        leaf rsaMinKeyLen {
+          type uint16 {
+            range "384..2048";
+          }
+          units bit;
+          default "512";
+          description
+            "The minimum length of acceptable RSA key pair.";
+        }
+        leaf rsaMaxKeyLen {
+          type uint16 {
+            range "384..2048";
+          }
+          units bit;
+          default "2048";
+          description
+            "The maximum length of acceptable RSA key pair.";
+        }
+        leaf raPreference {
+          type ndRoutePreference;
+          default "MEDIUM";
+          description
+            "RA router preference.";
+        }
+        leaf maxDynNBNum {
+          type uint64 {
+            range "0..16384";
+          }
+          default "0";
+          description
+            "The maximum of limitation of dynamic neighbor.";
+        }
+        leaf raPrefixFlag {
+          type ndFlag;
+          default "true";
+          description
+            "Flag of RA packet carry prefix information.";
+        }
+        leaf raMtuFlag {
+          type ndFlag;
+          default "true";
+          description
+            "Flag of RA Packet Carry MTU Option.";
+        }
+      }
+    }
+    container ndSENDCfgNcfs {
+      config false;
+      description
+        "List of SEND.";
+      list ndSENDCfgNcf {
+        key "ifName";
+        config false;
+        description
+          "Query SEND configuration.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          config false;
+          description
+            "ND interface.";
+        }
+        leaf strictFlag {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Strict security mode.";
+        }
+        leaf rsaMinKeyLen {
+          type uint16 {
+            range "384..2048";
+          }
+          config false;
+          description
+            "The minimum length of acceptable RSA key pair.";
+        }
+        leaf rsaMaxKeyLen {
+          type uint16 {
+            range "384..2048";
+          }
+          config false;
+          description
+            "The maximum length of acceptable RSA key pair.";
+        }
+        leaf tsFuzzFactor {
+          type uint16 {
+            range "0..1000";
+          }
+          config false;
+          description
+            "Fuzz factor for timestamp option.";
+        }
+        leaf tsClockDrift {
+          type uint8 {
+            range "0..100";
+          }
+          config false;
+          description
+            "Drift for timestamp option.";
+        }
+        leaf tsDelta {
+          type uint16 {
+            range "0..1000";
+          }
+          config false;
+          description
+            "Delta for timestamp option.";
+        }
+        container cgaRsaAndModifierInfo {
+          config false;
+          description
+            "RSA and Modifier.";
+          leaf rsaKeyPair {
+            type string {
+              length "1..35";
+            }
+            config false;
+            description
+              "Label of RSA key pair.";
+          }
+          leaf secLevel {
+            type uint64 {
+              range "0..1";
+            }
+            config false;
+            description
+              "Security level.";
+          }
+          leaf modifier {
+            type inet:ipv6-address-no-zone;
+            config false;
+            description
+              "Modifier value.";
+          }
+        }
+        container cgaAddrInfos {
+          config false;
+          description
+            "List of CGA information.";
+          list cgaAddrInfo {
+            key "cgaPrefix";
+            config false;
+            description
+              "CGA information.";
+            leaf cgaPrefix {
+              type inet:ipv6-address-no-zone;
+              config false;
+              description
+                "CGA prefix.";
+            }
+            leaf cgaPrefixLen {
+              type pub-type:ipv6PrefixLength {
+                range "0..128";
+              }
+              config false;
+              description
+                "CGA prefix length.";
+            }
+            leaf isLinkLocal {
+              type boolean;
+              config false;
+              description
+                "Link local address.";
+            }
+            leaf collisionCount {
+              type uint64;
+              config false;
+              description
+                "Collision count.";
+            }
+          }
+        }
+      }
+    }
+    container StaticNbs {
+      description
+        "List of static neighbor entry configurations.";
+      list StaticNb {
+        key "ifName ipv6Addr";
+        description
+          "To configure static neighbor entry.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Interface of a neighbor entry.";
+        }
+        leaf ipv6Addr {
+          type inet:ipv6-address-no-zone;
+          description
+            "IPv6 address of a neighbor entry.";
+        }
+        leaf macAddr {
+          type pub-type:macAddress {
+            length "1..255";
+          }
+          mandatory true;
+          description
+            "MAC address.";
+        }
+        leaf intfType {
+          type ndIntfType;
+          must "not(../intfType='COMMON' or ../intfType='DOT1Q' or ../intfType='QINQ' or ../intfType='VLANIF' or not(../intfType))";
+          description
+            "Interface type of one neighbor entry.";
+          ext:allowDelete "true";
+        }
+        leaf vlanID {
+          when "not(../intfType='COMMON' or ../intfType='DOT1Q' or ../intfType='QINQ')";
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "VlanID of one neighbor entry.";
+          ext:allowDelete "true";
+        }
+        leaf portIfName {
+          when "not(../intfType='COMMON' or ../intfType='DOT1Q' or ../intfType='QINQ')";
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "On the condition of Vlanif, the port interface of a neighbor entry.";
+          ext:allowDelete "true";
+        }
+        leaf pevid {
+          when "not(../intfType='COMMON' or ../intfType='VLANIF')";
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "Outer VLAN tag. If this parameter is not set, the value of the VLAN ID is considered to be 0. It this parameter is set, it indicates that the ND entry is in the associated VLAN.";
+          ext:allowDelete "true";
+        }
+        leaf cevid {
+          when "not(../intfType='COMMON' or ../intfType='DOT1Q' or ../intfType='VLANIF')";
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "Inner VLAN tag. If this parameter is not set, the value of the VLAN ID is considered to be 0. If this parameter is set, it indicates that the ND entry is in the associated VLAN.";
+          ext:allowDelete "true";
+        }
+        leaf vniId {
+          type uint32;
+          description
+            "VNI ID.";
+          ext:allowDelete "true";
+        }
+        leaf addrType {
+          type ndAddrTypeE;
+          description
+            "Address type.";
+          ext:allowDelete "true";
+        }
+        leaf source {
+          type inet:ipv4-address-no-zone;
+          description
+            "Source IPv4 address.";
+          ext:allowDelete "true";
+        }
+        leaf destination {
+          type inet:ipv4-address-no-zone;
+          description
+            "Destination IPv4 address.";
+          ext:allowDelete "true";
+        }
+        leaf sourceIpv6 {
+          type inet:ipv6-address-no-zone;
+          description
+            "Source IPv6 address.";
+          ext:allowDelete "true";
+        }
+        leaf destinationIpv6 {
+          type inet:ipv6-address-no-zone;
+          description
+            "Destination IPv6 address.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container Ipv6Neighbors {
+      config false;
+      description
+        "List of information about neighbor entry query.";
+      list Ipv6Neighbor {
+        key "ifName ipv6Addr";
+        config false;
+        description
+          "To query neighbor entries which can be static, or dynamic.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          config false;
+          description
+            "Interface of a neighbor entry.";
+          ext:support-filter "true";
+        }
+        leaf ipv6Addr {
+          type inet:ipv6-address-no-zone;
+          config false;
+          description
+            "IPv6 address of a neighbor entry.";
+        }
+        leaf macAddr {
+          type pub-type:macAddress {
+            length "1..255";
+          }
+          config false;
+          mandatory true;
+          description
+            "MAC address.";
+        }
+        leaf vpnname {
+          type string {
+            length "0..48";
+          }
+          config false;
+          description
+            "VPN name.";
+        }
+        leaf vlanID {
+          type uint32 {
+            range "1..4094";
+          }
+          config false;
+          description
+            "VLAN ID.";
+        }
+        leaf state {
+          type ndNgbState;
+          config false;
+          description
+            "Status of a neighbor entry.";
+        }
+        leaf staticFlag {
+          type ndFlag;
+          config false;
+          description
+            "Type of a neighbor entry. The available options are static and dynamic.";
+        }
+        leaf age {
+          type uint32 {
+            range "1..4294967293";
+          }
+          config false;
+          description
+            "Time when a neighbor entry is established.";
+        }
+        leaf isRouter {
+          type ndFlag;
+          config false;
+          description
+            "Is a Router.";
+        }
+        leaf cevid {
+          type uint32 {
+            range "1..4094";
+          }
+          config false;
+          description
+            "Inner VLAN tag. If this parameter is not set, the value of the VLAN ID is considered to be 0. If this parameter is set, it indicates that the ND entry is in the associated VLAN.";
+        }
+        leaf strictFlag {
+          type boolean;
+          config false;
+          description
+            "Strict security mode.";
+        }
+        leaf nickname {
+          type uint32;
+          config false;
+          description
+            "Nickname";
+        }
+        leaf bdId {
+          type uint32 {
+            range "1..16777215";
+          }
+          config false;
+          description
+            "Bridge-domain ID.";
+        }
+        leaf vni {
+          type uint32 {
+            range "1..16777215";
+          }
+          config false;
+          description
+            "Vxlan VNI.";
+        }
+        leaf sourceAddr {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "Tunnel  SourceIPAddr.";
+        }
+        leaf peerAddr {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "Tunnel  PeerIPAddr.";
+        }
+      }
+    }
+    container sendNonces {
+      config false;
+      description
+        "List of SEND nonce information.";
+      list sendNonce {
+        key "ifName";
+        config false;
+        description
+          "SEND nonce information.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          config false;
+          description
+            "Interface name.";
+        }
+        leaf peerAddress {
+          type inet:ipv6-address-no-zone;
+          config false;
+          description
+            "Peer address.";
+        }
+        leaf nonce {
+          type string {
+            length "0..64";
+          }
+          config false;
+          description
+            "Nonce.";
+        }
+      }
+    }
+    container sendTimestampStats {
+      config false;
+      description
+        "List of SEND timestamp information.";
+      list sendTimestampStat {
+        key "ifName";
+        config false;
+        description
+          "SEND timestamp information.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          config false;
+          description
+            "Interface name.";
+        }
+        leaf peerAddress {
+          type inet:ipv6-address-no-zone;
+          config false;
+          description
+            "Peer address.";
+        }
+        leaf rdLast {
+          type string {
+            length "0..24";
+          }
+          config false;
+          description
+            "The receive time of the last received and accepted SEND message.";
+        }
+        leaf tsLast {
+          type string {
+            length "0..24";
+          }
+          config false;
+          description
+            "The time stamp in the last received and accepted SEND message.";
+        }
+      }
+    }
+    container sendPktStats {
+      config false;
+      description
+        "List of SEND packet statistics information.";
+      list sendPktStat {
+        key "ifName";
+        config false;
+        description
+          "SEND packet statistics information.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          config false;
+          description
+            "Interface name.";
+          ext:support-filter "true";
+        }
+        leaf type {
+          type ndPacketStatType;
+          config false;
+          description
+            "Packet type.";
+        }
+        leaf nsStat {
+          type uint64;
+          config false;
+          description
+            "NS packet statistics.";
+        }
+        leaf naStat {
+          type uint64;
+          config false;
+          description
+            "NA packet statistics.";
+        }
+        leaf rsStat {
+          type uint64;
+          config false;
+          description
+            "RS packet statistics.";
+        }
+        leaf raStat {
+          type uint64;
+          config false;
+          description
+            "RA packet statistics.";
+        }
+        leaf redirectStat {
+          type uint64;
+          config false;
+          description
+            "Redirect packet statistics.";
+        }
+      }
+    }
+    container ndIfRouteInfos {
+      description
+        "List of RA route information option.";
+      list ndIfRouteInfo {
+        key "ifName prefix prefixlength";
+        description
+          "To configure RA route information option.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "The interface of a RA route information.";
+        }
+        leaf prefix {
+          type inet:ipv6-address-no-zone;
+          description
+            "The ipv6 prefix of RA route information.";
+        }
+        leaf prefixlength {
+          type uint8 {
+            range "0..128";
+          }
+          description
+            "The prefix length of RA route information.";
+        }
+        leaf lifeTime {
+          type uint64 {
+            range "0..4294967295";
+          }
+          units second;
+          mandatory true;
+          description
+            "The lifetime of RA route information(s).";
+        }
+        leaf preference {
+          type ndRoutePreference;
+          default "MEDIUM";
+          description
+            "The preference of RA route information.";
+        }
+      }
+    }
+  }
+}

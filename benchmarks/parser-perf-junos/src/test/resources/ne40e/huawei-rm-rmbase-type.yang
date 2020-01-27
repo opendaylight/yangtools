@@ -1,0 +1,363 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-rm-rmbase-type {
+  belongs-to huawei-rm {
+    prefix rm;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "route type.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef rmbaseRouteFlag {
+    type enumeration {
+      enum "D" {
+        description
+          "D:";
+      }
+      enum "RD" {
+        description
+          "RD:";
+      }
+      enum "R" {
+        description
+          "R:";
+      }
+      enum "T" {
+        description
+          "T:";
+      }
+      enum "DT" {
+        description
+          "DT:";
+      }
+      enum "RDT" {
+        description
+          "RDT:";
+      }
+      enum "RT" {
+        description
+          "RT:";
+      }
+      enum "DB" {
+        description
+          "DB:";
+      }
+      enum "RDB" {
+        description
+          "RDB:";
+      }
+      enum "RB" {
+        description
+          "RB:";
+      }
+      enum "TB" {
+        description
+          "TB:";
+      }
+      enum "DTB" {
+        description
+          "DTB:";
+      }
+      enum "RDTB" {
+        description
+          "RDTB:";
+      }
+      enum "RTB" {
+        description
+          "RTB:";
+      }
+      enum "B" {
+        description
+          "B:";
+      }
+    }
+    description
+      "route flag";
+  }
+  typedef rmbaseRouteState {
+    type enumeration {
+      enum "Active_Adv" {
+        description
+          "Active Adv:";
+      }
+      enum "Active_NoAdv" {
+        description
+          "Active NoAdv:";
+      }
+      enum "Inactive_Adv" {
+        description
+          "Inactive Adv:";
+      }
+      enum "Active_Adv_Relied" {
+        description
+          "Active Adv Relied:";
+      }
+      enum "Invalid_Adv" {
+        description
+          "Invalid Adv:";
+      }
+      enum "Active_NoAdv_Relied" {
+        description
+          "Active NoAdv Relied:";
+      }
+      enum "Invalid_NoAdv" {
+        description
+          "Invalid NoAdv:";
+      }
+      enum "Inactive_NoAdv" {
+        description
+          "Inactive NoAdv:";
+      }
+      enum "Inactive_Adv_Relied" {
+        description
+          "Inactive Adv Relied:";
+      }
+      enum "Inactive_NoAdv_Relied" {
+        description
+          "Inactive NoAdv Relied:";
+      }
+    }
+    description
+      "route state";
+  }
+  typedef rmbaseRoutePriority {
+    type enumeration {
+      enum "critical" {
+        description
+          "critical:";
+      }
+      enum "high" {
+        description
+          "high:";
+      }
+      enum "medium" {
+        description
+          "medium:";
+      }
+      enum "low" {
+        description
+          "low:";
+      }
+    }
+    description
+      "route priority";
+  }
+  typedef rmbaseStatisticType {
+    type enumeration {
+      enum "DIRECT" {
+        description
+          "DIRECT:";
+      }
+      enum "STATIC" {
+        description
+          "STATIC:";
+      }
+      enum "RIP" {
+        description
+          "RIP:";
+      }
+      enum "RIPng" {
+        description
+          "RIPng:";
+      }
+      enum "OSPF" {
+        description
+          "OSPF:";
+      }
+      enum "OSPFv3" {
+        description
+          "OSPFv3:";
+      }
+      enum "IS_IS" {
+        description
+          "IS-IS:";
+      }
+      enum "BGP" {
+        description
+          "BGP:";
+      }
+      enum "Total" {
+        description
+          "Total:";
+      }
+      enum "UNR" {
+        description
+          "UNR:";
+      }
+      enum "OPR" {
+        description
+          "OPR:";
+      }
+    }
+    description
+      "route staticType";
+  }
+  typedef rmbaseStatisticType2 {
+    type enumeration {
+      enum "STATIC" {
+        description
+          "STATIC:";
+      }
+    }
+    description
+      "route staticType_ext";
+  }
+  typedef rmbaseStateType {
+    type enumeration {
+      enum "total" {
+        description
+          "total:";
+      }
+      enum "active" {
+        description
+          "active:";
+      }
+      enum "inactive" {
+        description
+          "inactive:";
+      }
+    }
+    description
+      "route state type";
+  }
+  typedef rmbaseRmTableId {
+    type enumeration {
+      enum "base" {
+        description
+          "base:";
+      }
+      enum "localmt" {
+        description
+          "localmt:";
+      }
+      enum "igpext" {
+        description
+          "igpext:";
+      }
+      enum "mbgp" {
+        description
+          "mbgp:";
+      }
+      enum "msr" {
+        description
+          "msr:";
+      }
+    }
+    description
+      "route tableId";
+  }
+  typedef commodelProtocolType {
+    type enumeration {
+      enum "INIT" {
+        description
+          "INIT:";
+      }
+      enum "Direct" {
+        description
+          "Direct:";
+      }
+      enum "OSPF" {
+        description
+          "OSPF:";
+      }
+      enum "ISIS" {
+        description
+          "ISIS:";
+      }
+      enum "Static" {
+        description
+          "Static:";
+      }
+      enum "RIP" {
+        description
+          "RIP:";
+      }
+      enum "BGP" {
+        description
+          "BGP:";
+      }
+      enum "OSPFV3" {
+        description
+          "OSPFV3:";
+      }
+      enum "RIPNG" {
+        description
+          "RIPNG:";
+      }
+      enum "Total" {
+        description
+          "Total:";
+      }
+      enum "NetStream" {
+        description
+          "NetStream:";
+      }
+      enum "UNR" {
+        description
+          "UNR:";
+      }
+      enum "OPR" {
+        description
+          "OPR:";
+      }
+    }
+    description
+      "route protocolType";
+  }
+  typedef commodelProtocolType2 {
+    type enumeration {
+      enum "Static" {
+        description
+          "Static:";
+      }
+    }
+    description
+      "route protocolType_ext";
+  }
+  typedef commodelAfType {
+    type enumeration {
+      enum "ipv4unicast" {
+        description
+          "ipv4unicast:";
+      }
+      enum "ipv6unicast" {
+        description
+          "ipv6unicast:";
+      }
+    }
+    description
+      "address family";
+  }
+  typedef frrType {
+    type enumeration {
+      enum "Primary" {
+        description
+          "Primary:";
+      }
+      enum "Backup" {
+        description
+          "Backup:";
+      }
+    }
+    description
+      "frr Type";
+  }
+}

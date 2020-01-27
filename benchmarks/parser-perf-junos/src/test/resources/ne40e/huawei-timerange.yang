@@ -1,0 +1,139 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-timerange {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-timerange";
+  prefix timerange;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-timerange-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Specify a time range. It includes periodic time ranges within one week and absolute time ranges. These time ranges determine application validity.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container timerange {
+    description
+      "Specify a time range. It includes periodic time ranges within one week and absolute time ranges. These time ranges determine application validity.";
+    container timeRangeInstances {
+      description
+        "A list of time ranges.";
+      list timeRangeInstance {
+        key "timeRangeName";
+        max-elements  "256";
+        description
+          "A time range instance.";
+        leaf timeRangeName {
+          type string {
+            length "1..32";
+            pattern '([a-zA-Z]([^\s]*))';
+          }
+          description
+            "Specify the name of a time range. It is a character string with a maximum of 32 characters. It must begin with a letter from a to z (or A to Z). To avoid ambiguity, do not use the name 'all'.";
+        }
+        leaf activeStatus {
+          type pub-type:rowStatus;
+          config false;
+          description
+            "Identify whether the time range is valid.";
+        }
+        container absoluteRanges {
+          description
+            "A set of all absolute time ranges.";
+          list absoluteRange {
+            key "startTime endTime";
+            max-elements  "12";
+            description
+              "Specify the period of time starting from yyyy-mm-dd and ending at yyyy-mm-dd, which is not cyclic and has no cycle.";
+            leaf startTime {
+              type yang:date-and-time;
+              description
+                "Specify the start time and date. The date ranges from 2000 to 2037.";
+            }
+            leaf endTime {
+              type yang:date-and-time;
+              description
+                "Specify the end time and date. The date ranges from 2000 to 2037.";
+            }
+          }
+        }
+        container periodRanges {
+          description
+            "A set of all periodic time ranges.";
+          list periodRange {
+            key "dayOfWeek startTime endTime";
+            max-elements  "32";
+            description
+              "Specify the period of time taken by a cycle, which is cyclic.";
+            leaf dayOfWeek {
+              type pub-type:bits8;
+              description
+                "Specify the day on which a configured time range is valid.";
+              ext:masklen 7;
+                ext:bit "Sun" {
+                  position 0;
+                }
+                ext:bit "Mon" {
+                  position 1;
+                }
+                ext:bit "Tue" {
+                  position 2;
+                }
+                ext:bit "Wed" {
+                  position 3;
+                }
+                ext:bit "Tur" {
+                  position 4;
+                }
+                ext:bit "Fri" {
+                  position 5;
+                }
+                ext:bit "Sat" {
+                  position 6;
+                }
+            }
+            leaf startTime {
+              type pub-type:time_hhmm {
+                length "5";
+                pattern '(([0-1][0-9])|(2[0-3])):[0-5][0-9]';
+              }
+              description
+                "Specify the start time of a time range. The format is hh:mm, for example, 01:05.";
+            }
+            leaf endTime {
+              type pub-type:time_hhmm {
+                length "5";
+                pattern '(([0-1][0-9])|(2[0-3])):[0-5][0-9]';
+              }
+              description
+                "Specify the end time of a time range. The format is hh:mm, for example, 01:05.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

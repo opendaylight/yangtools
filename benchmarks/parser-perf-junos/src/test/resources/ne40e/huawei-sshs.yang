@@ -1,0 +1,1062 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-sshs {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-sshs";
+  prefix sshs;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-sshs-action;
+  include huawei-sshs-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "SSH Server";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference      "Huawei private.";
+  }
+  container sshs {
+    description
+      "SSH Server";
+    container sshServer {
+      description
+        "Server configuration statistics.";
+      leaf portNumber {
+        type int32 {
+          range "22..65535";
+        }
+        default "22";
+        description
+          "User can change the number of the port monitored by the SSH server. Default port number is 22.";
+        ext:allowDelete "true";
+      }
+      leaf sshacl4Name {
+        when "not(../sshacl4Num)";
+        type string {
+          length "1..64";
+        }
+        description
+          "Server ACL name for IPV4 connections";
+        ext:allowDelete "true";
+      }
+      leaf sshacl4Num {
+        when "not(../sshacl4Name)";
+        type uint32 {
+          range "2000..3999";
+        }
+        description
+          "Server ACL number for IPV4 connections";
+        ext:allowDelete "true";
+      }
+      leaf sshacl6Name {
+        type string {
+          length "1..64";
+        }
+        description
+          "Server ACL name for IPV6 connections";
+        ext:allowDelete "true";
+      }
+      leaf sshacl6Num {
+        type uint32 {
+          range "2000..3999";
+        }
+        description
+          "Server ACL number for IPV6 connections";
+        ext:allowDelete "true";
+      }
+      leaf authenticationTimeout {
+        type int32 {
+          range "1..120";
+        }
+        default "60";
+        description
+          "User can set the authentication timeout period of the SSH. By default, SSH authentication timeout interval is 60 seconds.";
+        ext:allowDelete "true";
+      }
+      leaf rekeyInterval {
+        type int32 {
+          range "0..24";
+        }
+        default "0";
+        description
+          "User can set the interval for updating the key pair of the SSH server. By default, the interval for updating the key pair of the SSH server is 0 that indicates no updating.";
+        ext:allowDelete "true";
+      }
+      leaf sshVersion {
+        type sshsSshVersion;
+        config false;
+        description
+          "Indicates the SSH protocol version that the server supports. A version 1.99 can supports both protocol version 2.0 & protocol version 1.x, if the compatability is enabled.";
+      }
+      leaf keepAliveEnable {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "SSH server supports keep alive functionality & will respond to client keep alive packets.";
+        ext:allowDelete "true";
+      }
+      leaf compatibleSsh1x {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "User can enable the earlier version-compatible function on the SSH server. By default, compatibility is enabled.";
+        ext:allowDelete "true";
+      }
+      leaf stelnetEnable {
+        type sshsSshBool;
+        description
+          "User can enable the STelnet service on the SSH server. By default, the STelnet service is disabled on the SSH server.";
+        ext:allowDelete "true";
+      }
+      leaf sftpEnable {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "User can enable the SFTP service on the SSH server. By default, the SFTP service is disabled on the SSH server.";
+        ext:allowDelete "true";
+      }
+      leaf sftpMaxUser {
+        type int32 {
+          range "0..15";
+        }
+        default "5";
+        description
+          "User can configure maximum number of clients can be connected to server at any point of time for SFTP service.";
+        ext:allowDelete "true";
+      }
+      leaf sftpTimeoutMin {
+        type uint16 {
+          range "0..35791";
+        }
+        default "10";
+        description
+          "SFTP idle timeout in minutes";
+        ext:allowDelete "true";
+      }
+      leaf sftpTimeoutSec {
+        type uint8 {
+          range "0..59";
+        }
+        default "0";
+        description
+          "SFTP idle timeout in seconds";
+        ext:allowDelete "true";
+      }
+      leaf snetconfEnable {
+        type sshsSshBool;
+        description
+          "User can enable the SNetConf service on the SSH server. By default, the SNetConf service is disabled on the SSH server.";
+        ext:allowDelete "true";
+      }
+      leaf sshAuthDefPass {
+        type sshsSshBool;
+        description
+          "User can enable default authentication type as password on the SSH server. By default, it is disabled.";
+        ext:allowDelete "true";
+      }
+      leaf authRetries {
+        type uint8 {
+          range "1..5";
+        }
+        default "3";
+        description
+          "User can set authentication retry times. By default retry times is 3";
+        ext:allowDelete "true";
+      }
+      leaf sftpOnlineUser {
+        type int32 {
+          range "0..15";
+        }
+        config false;
+        description
+          "The current number of active sftp sessions.";
+      }
+      leaf snetconfPortEnable {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "User can enable the SNetConf port 830 on the SSH server. By default, the SNetConf port 830 is disabled on the SSH server.";
+        ext:allowDelete "true";
+      }
+      leaf srcInterfName {
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+        }
+        description
+          "Specify the source interface name.";
+        ext:allowDelete "true";
+      }
+      leaf scpEnable {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "User can enable the SCP service on the SSH server. By default, the SCP service is disabled on the SSH server.";
+        ext:allowDelete "true";
+      }
+      leaf scpMaxsession {
+        type int32 {
+          range "0..5";
+        }
+        default "2";
+        description
+          "User can configure maximum number of clients can be connected to server at any point of time for SCP service.";
+        ext:allowDelete "true";
+      }
+      leaf rsaHostKey {
+        type string {
+          length "1..35";
+        }
+        description
+          "User can assign the rsa host key for rsa connection.";
+        ext:allowDelete "true";
+      }
+      leaf rsaServerKey {
+        type string {
+          length "1..35";
+        }
+        config false;
+        description
+          "User can assign the rsa server key for rsa connection.";
+      }
+      leaf dsaHostKey {
+        type string {
+          length "1..35";
+        }
+        description
+          "User can assign the dsa host key for dsa connection.";
+        ext:allowDelete "true";
+      }
+      leaf eccHostKey {
+        type string {
+          length "1..35";
+        }
+        description
+          "User can assign the ecc host key for ecc connection.";
+        ext:allowDelete "true";
+      }
+      leaf ipBlockEnable {
+        type boolean;
+        default "true";
+        description
+          "SSH IP Block";
+        ext:allowDelete "true";
+      }
+      leaf sshAuthorDef {
+        type DEFAUTHOR;
+        description
+          "SSH Authorization";
+        ext:allowDelete "true";
+      }
+      leaf srcIpv6VpnId {
+        type uint32;
+        default "0";
+        config false;
+        description
+          "SSH Ipv6 Server source VpnId ";
+      }
+      leaf srcIpv6Addr {
+        type inet:ipv6-address-no-zone;
+        description
+          "SSH Ipv6 Server source IpAddress ";
+        ext:allowDelete "true";
+      }
+      leaf srcIpv6VpnName {
+        type string;
+        description
+          "SSH ipv6 server source VpnName";
+        ext:allowDelete "true";
+      }
+    }
+    container loginFailAlarm {
+      description
+        "Alarm when manager login failed frequently.";
+      leaf upperLimit {
+        type uint32 {
+          range "0..100";
+        }
+        default "30";
+        description
+          "Login Alarm report times, default is 30 times.  ";
+        ext:allowDelete "true";
+      }
+      leaf lowerLimit {
+        type uint32 {
+          range "0..45";
+        }
+        must "(../upperLimit and ../lowerLimit<=../upperLimit) or not(../upperLimit or not(../upperLimit))";
+        default "20";
+        description
+          "Login Alarm resume times, default is 20 times.";
+        ext:allowDelete "true";
+      }
+      leaf period {
+        type uint32 {
+          range "1..120";
+        }
+        must "not(not(../upperLimit))";
+        default "5";
+        description
+          "Login Alarm period, default is 5 minutes.";
+        ext:allowDelete "true";
+      }
+    }
+    container sshSessionStatuss {
+      config false;
+      description
+        "Session statistic list.";
+      list sshSessionStatus {
+        key "SshSessNum";
+        config false;
+        description
+          "Session statistic.";
+        leaf serviceIndex {
+          type string {
+            length "0..12";
+          }
+          config false;
+          description
+            "The connection index of the session belonging to particular service type.";
+        }
+        leaf SshSessNum {
+          type int32;
+          config false;
+          description
+            "Unique identification number for the session.";
+        }
+        leaf sshVersion {
+          type string {
+            length "0..8";
+          }
+          config false;
+          description
+            "The current SSH protocol version of the session. ";
+        }
+        leaf connState {
+          type sshsSshsConnState;
+          config false;
+          description
+            "The state of the current connection.";
+        }
+        leaf userName {
+          type string {
+            length "0..253";
+          }
+          config false;
+          description
+            "Name of the user for the current session.";
+        }
+        leaf ctosCipher {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "The encryption algorithm name used for transmission from client to server.";
+        }
+        leaf stocCipher {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "The encryption algorithm name used for transmission from server to client.";
+        }
+        leaf ctosCompress {
+          type string {
+            length "0..10";
+          }
+          config false;
+          description
+            "The compression algorithm name used for transmission from client to server.";
+        }
+        leaf stocCompress {
+          type string {
+            length "0..10";
+          }
+          config false;
+          description
+            "The compression algorithm name used for transmission from server to client.";
+        }
+        leaf ctosHMAC {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "The Mac algorithm name chosen for the current client to server transmission for integrity.";
+        }
+        leaf stocHMAC {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "The Mac algorithm name chosen for the current server to client transmission for integrity.";
+        }
+        leaf keyExchange {
+          type string {
+            length "0..64";
+          }
+          config false;
+          description
+            "The key negotiation algorithm chosen for the current session.";
+        }
+        leaf serviceType {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "The current session service type.";
+        }
+        leaf sessionRetry {
+          type int32;
+          config false;
+          description
+            "The number of times the user have retired authenticating to the server before successful connection for the current session.";
+        }
+        leaf sessionAuthType {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "The authentication type used for the current session.";
+        }
+        leaf connectionPort {
+          type int32 {
+            range "22..65535";
+          }
+          config false;
+          description
+            "Port used for the current session.";
+        }
+        leaf sessionKeyType {
+          type sshsPubKeyType;
+          config false;
+          description
+            "Public key type used for current session";
+        }
+      }
+    }
+    container sshUserCfgs {
+      description
+        "SSH User Configuration list.";
+      list sshUserCfg {
+        key "userName";
+        description
+          "SSH User Configuration.";
+        leaf userName {
+          type string {
+            length "1..253";
+          }
+          description
+            "User name is a string of characters without a blank space.";
+        }
+        leaf authType {
+          type SSHSUSERAUTH;
+          description
+            "Authentication Type { password | rsa | password-rsa | dsa | password-dsa | ecc | password-ecc | all }";
+          ext:allowDelete "true";
+        }
+        leaf sftpDir {
+          type string {
+            length "1..255";
+          }
+          description
+            "The total length of absolute path is 128, the length of single directory is 128.";
+          ext:allowDelete "true";
+        }
+        leaf keyName {
+          type string {
+            length "1..30";
+          }
+          description
+            "User public key name is a configured public key name of the client. It is a string of 1 to 30 characters.";
+          ext:allowDelete "true";
+        }
+        leaf sshServiceType {
+          type sshsSshsSrvcType;
+          description
+            "SSH service types supported";
+          ext:allowDelete "true";
+        }
+        leaf pubKeyType {
+          when "not(not(../keyName))";
+          type sshsPubKeyType;
+          description
+            "SSH user public key type";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container sshNcaVtyCfg {
+      description
+        "SSH NCA Configuration list.";
+      leaf timeoutMin {
+        type uint16 {
+          range "0..35791";
+        }
+        default "10";
+        description
+          "The timeout period for a terminal user in minutes.";
+        ext:allowDelete "true";
+      }
+      leaf timeoutSec {
+        type uint8 {
+          range "0..59";
+        }
+        default "0";
+        description
+          "The timeout period for a terminal user in seconds";
+        ext:allowDelete "true";
+      }
+      leaf maxSessions {
+        type int32 {
+          range "0..15";
+        }
+        default "5";
+        description
+          "User can configure maximum number of clients can be connected to server at any point of time for Netconf service.";
+        ext:allowDelete "true";
+      }
+    }
+    container sshSCipherAlg {
+      description
+        "Encryption algorithms supported for SSHS.";
+      leaf descbc {
+        type boolean;
+        default "false";
+        description
+          "DES CBC encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf des3cbc {
+        type boolean;
+        default "true";
+        description
+          "3DES CBC encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes128cbc {
+        type boolean;
+        default "true";
+        description
+          "AES128 CBC encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes192cbc {
+        type boolean;
+        default "true";
+        description
+          "AES192 CBC encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes256cbc {
+        type boolean;
+        default "true";
+        description
+          "AES256 CBC encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes128ctr {
+        type boolean;
+        default "true";
+        description
+          "AES128 CTR encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes192ctr {
+        type boolean;
+        default "true";
+        description
+          "AES192 CTR encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes256ctr {
+        type boolean;
+        default "true";
+        description
+          "AES256 CTR encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf arcfour128 {
+        type boolean;
+        default "true";
+        description
+          "ARCFOUR128 encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf arcfour256 {
+        type boolean;
+        default "true";
+        description
+          "ARCFOUR256 encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf blowfishcbc {
+        type boolean;
+        default "true";
+        description
+          "BLOWFISH CBC encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes128gcm {
+        type boolean;
+        default "true";
+        description
+          "AES128 GCM encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes256gcm {
+        type boolean;
+        default "true";
+        description
+          "AES256 GCM encryption algorithm.";
+        ext:allowDelete "true";
+      }
+    }
+    container sshSHMacAlg {
+      description
+        "HMAC algorithms supported for SSHS.";
+      leaf md5 {
+        type boolean;
+        default "true";
+        description
+          "MD5 Hmac Algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf md596 {
+        type boolean;
+        default "true";
+        description
+          "MD5_96 Hmac Algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf sha1 {
+        type boolean;
+        default "true";
+        description
+          "SHA1 Hmac Algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf sha196 {
+        type boolean;
+        default "true";
+        description
+          "SHA1_96 Hmac Algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf sha2256 {
+        type boolean;
+        default "true";
+        description
+          "SHA2_256 Hmac Algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf sha225696 {
+        type boolean;
+        default "true";
+        description
+          "SHA2_256_96 Hmac Algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf sha2512 {
+        type boolean;
+        default "true";
+        description
+          "SHA2_512 Hmac Algorithm.";
+        ext:allowDelete "true";
+      }
+    }
+    container sshsLocalKeys {
+      description
+        "Configure RSA server key";
+      container sshsLocalKey {
+        description
+          "Configure RSA server key";
+        leaf keySize {
+          type uint32 {
+            range "512..2048";
+          }
+          description
+            "key size";
+        }
+        leaf hostKeyName {
+          type string {
+            length "0..264";
+          }
+          config false;
+          description
+            "Hostkey name";
+        }
+        leaf hostKeyCode {
+          type string {
+            length "0..4096";
+          }
+          config false;
+          description
+            "Hostkey code";
+        }
+        leaf hostKeySSH1 {
+          type string {
+            length "0..1281";
+          }
+          config false;
+          description
+            "Hostkey code in SSH1 format";
+        }
+        leaf hostKeyPEM {
+          type string {
+            length "0..1281";
+          }
+          config false;
+          description
+            "Hostkey code in PEM format";
+        }
+        leaf hostKeyOpenSSH {
+          type string {
+            length "0..1281";
+          }
+          config false;
+          description
+            "Hostkey code in OpenSSH format";
+        }
+        leaf serverKeyName {
+          type string {
+            length "0..264";
+          }
+          config false;
+          description
+            "Server key name";
+        }
+        leaf serverKeyCode {
+          type string {
+            length "0..1024";
+          }
+          config false;
+          description
+            "Server key code";
+        }
+      }
+    }
+    container sshIPBlockStatss {
+      config false;
+      description
+        "SSH IP Block Statistics";
+      list sshIPBlockStats {
+        key "blockIpAddr vpnInstance";
+        config false;
+        description
+          "SSH IP Block Statistics";
+        leaf blockIpAddr {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "IP Address";
+        }
+        leaf vpnInstance {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "VPN Name";
+        }
+        leaf unBlockInterval {
+          type uint32 {
+            range "0..300";
+          }
+          config false;
+          description
+            "UnBlock Interval(Seconds)";
+        }
+      }
+    }
+    container sshIPBlockAllStatss {
+      config false;
+      description
+        "SSH IP Block All Statistics";
+      list sshIPBlockAllStats {
+        key "blockIpAddr vpnInstance";
+        config false;
+        description
+          "SSH IP Block All Statistics";
+        leaf blockIpAddr {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "IP Address";
+        }
+        leaf vpnInstance {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "VPN Name";
+        }
+        leaf state {
+          type sshIPBlockStateType;
+          config false;
+          description
+            "IP Current State";
+        }
+        leaf authFailCount {
+          type uint32 {
+            range "0..6";
+          }
+          config false;
+          description
+            "Authentication fialed Count";
+        }
+      }
+    }
+    container callHomes {
+      description
+        "Call home configurations";
+      list callHome {
+        key "callHomeName";
+        description
+          "Call home";
+        leaf callHomeName {
+          type string {
+            length "1..19";
+          }
+          description
+            "Call home name";
+        }
+        container sshEndpoints {
+          description
+            "End point configurations";
+          list sshEndpoint {
+            key "endpointName";
+            description
+              "End point";
+            leaf endpointName {
+              type string {
+                length "1..19";
+              }
+              description
+                "End point name ";
+            }
+            leaf address {
+              type inet:ip-address-no-zone;
+              description
+                "Peer IP address";
+              ext:allowDelete "true";
+            }
+            leaf port {
+              when "../address";
+              type uint16 {
+                range "1..65535";
+              }
+              description
+                "Peer port";
+              ext:allowDelete "true";
+            }
+          }
+        }
+        container reconnectStrategy {
+          description
+            "Reconnect strategy";
+          leaf reconnectInterval {
+            type uint16 {
+              range "5..300";
+            }
+            default "5";
+            description
+              "Reconnect interval";
+            ext:allowDelete "true";
+          }
+        }
+      }
+    }
+    container sshsKexAlg {
+      description
+        "Key Exchange Algorithm";
+      leaf dhGroup14Sha1 {
+        type boolean;
+        default "true";
+        description
+          "Diffie-hellman-group14-sha1 algorithm";
+        ext:allowDelete "true";
+      }
+      leaf dhGroup1Sha1 {
+        type boolean;
+        default "true";
+        description
+          "Diffie-hellman-group1-sha1 algorithm";
+        ext:allowDelete "true";
+      }
+      leaf ecdhSha2Nistp521 {
+        type boolean;
+        default "true";
+        description
+          "Ecdh-sha2-nistp521 algorithm";
+        ext:allowDelete "true";
+      }
+      leaf ecdhSha2Nistp384 {
+        type boolean;
+        default "true";
+        description
+          "Ecdh-sha2-nistp384 algorithm";
+        ext:allowDelete "true";
+      }
+      leaf ecdhSha2Nistp256 {
+        type boolean;
+        default "true";
+        description
+          "Ecdh-sha2-nistp256 algorithm";
+        ext:allowDelete "true";
+      }
+      leaf dhGroupExchangeSha256 {
+        type boolean;
+        default "true";
+        description
+          "Diffie-hellman-group-exchange-sha256 algorithm";
+        ext:allowDelete "true";
+      }
+      leaf dhGroupExchangeSha1 {
+        type boolean;
+        default "true";
+        description
+          "Diffie-hellman-group-exchange-sha1 algorithm";
+        ext:allowDelete "true";
+      }
+      leaf sm2Kep {
+        type boolean;
+        default "true";
+        description
+          "Sm2kep-sha2-nistp256 algorithm";
+        ext:allowDelete "true";
+      }
+    }
+    container sshKeyboard {
+      description
+        "Keyborad support";
+      leaf keyBdIntSup {
+        type KeyBoardFlag;
+        description
+          "Flag of keyborad support";
+        ext:allowDelete "true";
+      }
+    }
+    container sshServerPort {
+      description
+        "Port";
+      leaf ipv4PortNumber {
+        type int32 {
+          range "22..65535";
+        }
+        default "22";
+        description
+          "User can change the number of the port monitored by the IPv4 SSH server. Default port number is 22.";
+        ext:allowDelete "true";
+      }
+      leaf ipv6PortNumber {
+        type int32 {
+          range "22..65535";
+        }
+        default "22";
+        description
+          "User can change the number of the port monitored by the SSH IPv6 server. Default port number is 22.";
+        ext:allowDelete "true";
+      }
+    }
+    container sshServerEnable {
+      description
+        "SSH server enable";
+      leaf stelIpv4Enable {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "User can enable the stelnet IPv4 server. By default, the stelnet IPv4 server is disabled.";
+        ext:allowDelete "true";
+      }
+      leaf stelIpv6Enable {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "User can enable the stelnet IPv6 server. By default, the stelnet IPv6 server is disabled.";
+        ext:allowDelete "true";
+      }
+      leaf sftpIpv4Enable {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "User can enable the sftp IPv4 server. By default, the sftp IPv4 server is disabled.";
+        ext:allowDelete "true";
+      }
+      leaf sftpIpv6Enable {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "User can enable the sftp Ipv6 server. By default, the sftp Ipv6 server is disabled.";
+        ext:allowDelete "true";
+      }
+      leaf scpIpv4Enable {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "User can enable the scp IPv4 server. By default, the scp IPv4 server is disabled.";
+        ext:allowDelete "true";
+      }
+      leaf scpIpv6Enable {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "User can enable the scp IPv6 server. By default, the scp IPv6 server is disabled.";
+        ext:allowDelete "true";
+      }
+      leaf sncaIpv4Enable {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "User can enable the snetconf IPv4 server. By default, the snetconf IPv4 server is disabled.";
+        ext:allowDelete "true";
+      }
+      leaf sncaIpv6Enable {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "User can enable the snetconf Ipv6 server. By default, the snetconf Ipv6 server is disabled.";
+        ext:allowDelete "true";
+      }
+      leaf nca830V4Enable {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "User can enable the snetconf IPv4 server of port 830. By default, the snetconf IPv4 server of port 830 is disabled.";
+        ext:allowDelete "true";
+      }
+      leaf nca830V6Enable {
+        type sshsSshBool;
+        default "Disable";
+        description
+          "User can enable the snetconf Ipv6 server of port 830. By default, the snetconf Ipv6 server of port 830 is disabled.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+}

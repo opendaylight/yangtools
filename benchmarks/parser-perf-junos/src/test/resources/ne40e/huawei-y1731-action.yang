@@ -1,0 +1,641 @@
+submodule huawei-y1731-action {
+  belongs-to huawei-y1731 {
+    prefix y1731;
+  }
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-y1731-type;
+  include huawei-y1731-dtools-action;
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "y1731_action";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference "Huawei private.";
+  }
+
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference "Huawei private.";
+  }
+
+  rpc resetStats {
+    description
+      "Reset the statistic result.";
+    input {
+      leaf testId {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Configure the ID of a test instance.";
+      }
+      leaf statisticType {
+        type measurementType;
+        description
+          "Configure the statistic type.";
+      }
+    }
+  }
+  rpc oneWayDM {
+    description
+      "Configure an on-demand one-way delay measurement send instance.";
+    input {
+      leaf testId {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Configure the ID of a test instance.";
+      }
+      leaf interval {
+        type onDemondInterval1;
+        default "interval1000ms";
+        description
+          "Configure the interval of one-way delay measurement send.";
+      }
+      leaf count {
+        type uint32 {
+          range "1..60";
+        }
+        default "5";
+        description
+          "Configure the count of one-way delay measurement send.";
+      }
+    }
+  }
+  rpc twoWayDM {
+    description
+      "Configure an on-demand two-way delay measurement send instance.";
+    input {
+      leaf testId {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Configure the ID of a test instance.";
+      }
+      leaf interval {
+        type onDemondInterval1;
+        default "interval1000ms";
+        description
+          "Configure the interval of two-way delay measurement send.";
+      }
+      leaf count {
+        type uint32 {
+          range "1..60";
+        }
+        default "5";
+        description
+          "Configure the count of two-way delay measurement send.";
+      }
+    }
+  }
+  rpc createTwoWayDM {
+    description
+      "Configure an on-demand two-way delay measurement send instance.";
+    input {
+      leaf testName {
+        type string {
+          length "1..31";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Specify the name of a test case. ";
+      }
+      leaf mdName {
+        type string {
+          length "1..43";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance domain (MD).";
+      }
+      leaf maName {
+        type string {
+          length "1..43";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance association (MA).";
+      }
+      leaf mepId {
+        type uint16 {
+          range "1..8191";
+        }
+        mandatory true;
+        description
+          "Configure a MEP ID.";
+      }
+      leaf rmepId {
+        type uint16 {
+          range "1..8191";
+        }
+        description
+          "Specify the ID of an RMEP.";
+        ext:allowDelete "true";
+      }
+      leaf rmepMAC {
+        type pub-type:macAddress;
+        description
+          "Specify the MAC address of an RMEP.";
+        ext:allowDelete "true";
+      }
+      leaf timeout {
+        type uint32 {
+          range "10..100";
+        }
+        default "10";
+        description
+          "Specify the time of two-way delay, the value is expressed in seconds.";
+        ext:allowDelete "true";
+      }
+      leaf pktSize {
+        type uint16 {
+          range "64..1518";
+        }
+        default "64";
+        description
+          "Specify the number of bytes of the sent test packets. ";
+        ext:allowDelete "true";
+      }
+      leaf priority {
+        type uint8 {
+          range "0..7";
+        }
+        default "7";
+        description
+          "Specify the priority of packets.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc stopTwoWayDM {
+    description
+      "Stop on-demand two-way delay measurement send.";
+    input {
+      leaf testName {
+        type string {
+          length "1..31";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Specify the name of a test case. ";
+      }
+    }
+  }
+  rpc deleteTwoWayDM {
+    description
+      "Delete on-demand two-way delay measurement send result.";
+    input {
+      leaf testName {
+        type string {
+          length "1..31";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Specify the name of a test case. ";
+      }
+    }
+  }
+  rpc singleLM {
+    description
+      "Configure an on-demand single-ended loss measurement send instance.";
+    input {
+      leaf testId {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Configure the ID of a test instance.";
+      }
+      leaf interval {
+        type onDemondInterval1;
+        default "interval1000ms";
+        description
+          "Configure the interval of single-ended loss measurement send.";
+      }
+      leaf count {
+        type uint32 {
+          range "1..60";
+        }
+        default "5";
+        description
+          "Configure the count of single-ended loss measurement send.";
+      }
+    }
+  }
+  rpc startTestSend {
+    description
+      "Configure sending TEST packets.";
+    input {
+      leaf mdName {
+        type string {
+          length "1..43";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance domain (MD).";
+      }
+      leaf maName {
+        type string {
+          length "1..43";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance association (MA).";
+      }
+      leaf mepId {
+        type uint16 {
+          range "1..8191";
+        }
+        mandatory true;
+        description
+          "Configure a MEP ID.";
+      }
+      leaf rmepId {
+        type uint16 {
+          range "1..8191";
+        }
+        description
+          "Configure an RMEP ID.";
+        ext:allowDelete "true";
+      }
+      leaf rmepMAC {
+        type pub-type:macAddress;
+        description
+          "Configure the MAC of an RMEP, format: H-H-H.";
+        ext:allowDelete "true";
+      }
+      leaf mode {
+        type tstMode;
+        mandatory true;
+        description
+          "Configure the mode of sending packets.";
+      }
+      leaf rateValue {
+        type uint32 {
+          range "1..4294967295";
+        }
+        mandatory true;
+        description
+          "Configure the rate value of sending packets, the value is expressed in Kbps.";
+      }
+      leaf priority {
+        type uint8 {
+          range "0..7";
+        }
+        default "7";
+        description
+          "Configure the priority of packets.";
+        ext:allowDelete "true";
+      }
+      leaf pattern {
+        type tstPattern;
+        default "zero-no-crc";
+        description
+          "Configure the pattern type. The default value is zero-no-crc.";
+        ext:allowDelete "true";
+      }
+      leaf packetSize {
+        type uint16 {
+          range "64..1518";
+        }
+        default "64";
+        description
+          "Configure the number of Bytes of the sent test packets.";
+        ext:allowDelete "true";
+      }
+      leaf outOfService {
+        type boolean;
+        default "false";
+        description
+          "Configure the out of service.";
+        ext:allowDelete "true";
+      }
+      leaf lckLevel {
+        type uint8 {
+          range "0..7";
+        }
+        description
+          "Configure the value of LCK message level.";
+        ext:allowDelete "true";
+      }
+      leaf timeout {
+        type uint16 {
+          range "1..1800";
+        }
+        default "300";
+        description
+          "Configures the Value of time out, the value is expressed in seconds. The default value is 300.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc stopTestSend {
+    description
+      "Stop sending TEST packets.";
+    input {
+      leaf mdName {
+        type string {
+          length "1..43";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance domain (MD).";
+      }
+      leaf maName {
+        type string {
+          length "1..43";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance association (MA).";
+      }
+      leaf mepId {
+        type uint16 {
+          range "1..8191";
+        }
+        mandatory true;
+        description
+          "Configure a MEP ID.";
+      }
+    }
+  }
+  rpc startTestRecv {
+    description
+      "Configure receiving TEST packets.";
+    input {
+      leaf mdName {
+        type string {
+          length "1..43";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance domain (MD).";
+      }
+      leaf maName {
+        type string {
+          length "1..43";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance association (MA).";
+      }
+      leaf mepId {
+        type uint16 {
+          range "1..8191";
+        }
+        mandatory true;
+        description
+          "Configure a MEP ID.";
+      }
+    }
+  }
+  rpc stopTestRecv {
+    description
+      "Stop receiving TEST packets.";
+    input {
+      leaf mdName {
+        type string {
+          length "1..43";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance domain (MD).";
+      }
+      leaf maName {
+        type string {
+          length "1..43";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance association (MA).";
+      }
+      leaf mepId {
+        type uint16 {
+          range "1..8191";
+        }
+        mandatory true;
+        description
+          "Configure a MEP ID.";
+      }
+    }
+  }
+  rpc createSingleLM {
+    description
+      "Configure an on-demand single-ended loss measurement send instance.";
+    input {
+      leaf testName {
+        type string {
+          length "1..31";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Specify the name of a test case. ";
+      }
+      leaf mdName {
+        type string {
+          length "1..43";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance domain (MD).";
+      }
+      leaf maName {
+        type string {
+          length "1..43";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance association (MA).";
+      }
+      leaf mepId {
+        type uint16 {
+          range "1..8191";
+        }
+        mandatory true;
+        description
+          "Configure a MEP ID.";
+      }
+      leaf rmepId {
+        type uint16 {
+          range "1..8191";
+        }
+        description
+          "Specify the ID of an RMEP.";
+        ext:allowDelete "true";
+      }
+      leaf rmepMAC {
+        type pub-type:macAddress;
+        description
+          "Specify the MAC address of an RMEP.";
+        ext:allowDelete "true";
+      }
+      leaf timeout {
+        type uint32 {
+          range "1..180";
+        }
+        default "10";
+        description
+          "Specify the time of single-ended loss, the value is expressed in seconds.";
+        ext:allowDelete "true";
+      }
+      leaf priority {
+        type uint8 {
+          range "0..7";
+        }
+        default "7";
+        description
+          "Specify the priority of packets.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc stopSingleLM {
+    description
+      "Stop on-demand single-ended loss measurement send.";
+    input {
+      leaf testName {
+        type string {
+          length "1..31";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Specify the name of a test case. ";
+      }
+    }
+  }
+  rpc deleteSingleLM {
+    description
+      "Delete on-demand single-ended loss measurement send Result.";
+    input {
+      leaf testName {
+        type string {
+          length "1..31";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Specify the name of a test case. ";
+      }
+    }
+  }
+  rpc deleteTestResult {
+    description
+      "Delete TEST results.";
+    input {
+      leaf mdName {
+        type string {
+          length "1..43";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance domain (MD).";
+      }
+      leaf maName {
+        type string {
+          length "1..43";
+          pattern '[^\?]*';
+        }
+        mandatory true;
+        description
+          "Configure the name of a maintenance association (MA).";
+      }
+      leaf mepId {
+        type uint16 {
+          range "1..8191";
+        }
+        mandatory true;
+        description
+          "Configure a MEP ID.";
+      }
+      leaf direction {
+        type tstDirection;
+        mandatory true;
+        description
+          "Location of test measurement.";
+      }
+    }
+  }
+  rpc syntheticLM {
+    description
+      "Configure frame loss measurement of single-ended synthetic.";
+    input {
+      leaf testId {
+        type uint32 {
+          range "1..4294967295";
+        }
+        mandatory true;
+        description
+          "Configure test ID of single-ended synthetic frame loss measurement.";
+      }
+      leaf interval {
+        type interval100and1000;
+        mandatory true;
+        description
+          "Configure interval of single-ended synthetic frame loss measurement.";
+      }
+      leaf sendCount {
+        type uint16 {
+          range "1..1000";
+        }
+        default "10";
+        description
+          "Configure send count of single-ended synthetic frame loss measurement.";
+        ext:allowDelete "true";
+      }
+      leaf timeOut {
+        type uint8 {
+          range "1..10";
+        }
+        default "5";
+        description
+          "Congifure time-out value of single-ended synthetic frame loss measurement.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+  rpc resetAllStats {
+    description
+      "Reset All Statistic Result";
+    input {
+      leaf statisticType {
+        type measurementType;
+        description
+          "Configure the statistic type.";
+      }
+    }
+  }
+}

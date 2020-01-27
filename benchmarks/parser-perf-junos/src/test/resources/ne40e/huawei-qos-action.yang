@@ -1,0 +1,395 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-qos-action {
+  belongs-to huawei-qos {
+    prefix qos;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  include huawei-qos-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "QoS_action submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc qosResetIfCar {
+    description
+      "To clear interface CAR(Committed Access Rate) statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Name of an interface.";
+      }
+      leaf direction {
+        type qosDirectionType;
+        description
+          "Direction. The available options are inbound and outbound.";
+      }
+    }
+  }
+  rpc qosResetPolicyApply {
+    description
+      "To clear traffic policy statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Name of an interface.";
+      }
+      leaf direction {
+        type qosDirectionType;
+        description
+          "Direction. The available options are inbound and outbound.";
+      }
+      leaf groupId {
+        type uint32;
+        description
+          "Group ID.";
+      }
+    }
+  }
+  rpc qosResetIfQppb {
+    description
+      "Reset QPPB statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+      leaf direction {
+        type qosIfQppbMode;
+        description
+          "Direction.";
+      }
+    }
+  }
+  rpc qosResetPortQueue {
+    description
+      "To clear interface flow queue statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Name of an interface.";
+      }
+      leaf serviceClass {
+        type qosServiceClass;
+        description
+          "CoS.";
+      }
+      leaf isonboard {
+        type IsOnboard;
+        description
+          "isonboard.";
+      }
+    }
+  }
+  rpc qosResetLsPortQueue {
+    description
+      "To clear interface flow queue statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Name of an interface.";
+      }
+      leaf serviceClass {
+        type qosServiceClass;
+        description
+          "CoS.";
+      }
+    }
+  }
+  rpc qosResetProfile {
+    description
+      "To clear interface user queue statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Name of an interface.";
+      }
+      leaf serviceClass {
+        type qosServiceClass;
+        description
+          "CoS.";
+      }
+    }
+  }
+  rpc qosResetBdPolicyApply {
+    description
+      "To clear traffic policy statistics.";
+    input {
+      leaf bdName {
+        type uint32 {
+          range "1..16777215";
+        }
+        description
+          "Name of an bd interface.";
+      }
+      leaf bddirection {
+        type qosDirectionType;
+        description
+          "Direction. The available options are inbound and outbound.";
+      }
+    }
+  }
+  rpc qosResetIfSQ {
+    description
+      "To clear interface SQ statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Name of an interface.";
+      }
+      leaf direction {
+        type qosDirectionType;
+        description
+          "Direction. The available options are inbound and outbound.";
+      }
+    }
+  }
+  rpc qosResetIfGQ {
+    description
+      "To clear interface SQ statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Name of an interface.";
+      }
+      leaf direction {
+        type qosDirectionType;
+        description
+          "Direction. The available options are inbound and outbound.";
+      }
+      leaf appPeVlan {
+        type uint32 {
+          range "0..4094";
+        }
+        description
+          "Pe vlan.";
+      }
+      leaf appCeVlan {
+        type uint32 {
+          range "0..4094";
+        }
+        description
+          "Ce vlan.";
+      }
+    }
+  }
+  rpc qosResetVniGQ {
+    description
+      "To clear interface SQ statistics.";
+    input {
+      leaf vniID {
+        type uint32 {
+          range "1..16777215";
+        }
+        description
+          "ID of an vni.";
+      }
+      leaf direction {
+        type qosDirectionType;
+        description
+          "Direction. The available options are inbound and outbound.";
+      }
+    }
+  }
+  rpc qosResetHardPipe {
+    description
+      "To clear interface HardPipe statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Name of an interface.";
+      }
+    }
+  }
+  rpc qosResetSlotPortQueue {
+    description
+      "To clear port queue statistics.";
+    input {
+      leaf slotid {
+        type string {
+          length "0..32";
+        }
+        description
+          "Slot ID.";
+      }
+      leaf serviceClass {
+        type qosServiceClass;
+        description
+          "CoS.";
+      }
+    }
+  }
+  rpc qosResetSlotVOQSt {
+    description
+      "To clear port queue statistics.";
+    input {
+      leaf slotid {
+        type string {
+          length "0..32";
+        }
+        description
+          "Slot ID.";
+      }
+      leaf desSlotID {
+        type string {
+          length "1..31";
+        }
+        description
+          "Destination Slot ID.";
+      }
+      leaf voqFlag {
+        type qosVoqFlagType;
+        description
+          "flag.";
+      }
+    }
+  }
+  rpc qosResetATMPvcQueue {
+    description
+      "To clear atm pvc queue statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Name of an interface.";
+      }
+      leaf vpi {
+        type uint32 {
+          range "0..4095";
+        }
+        description
+          "PVC VPI.";
+      }
+      leaf vci {
+        type uint32 {
+          range "0..65535";
+        }
+        description
+          "PVC VCI.";
+      }
+      leaf serviceClass {
+        type qosServiceClass;
+        description
+          "CoS.";
+      }
+    }
+  }
+  rpc qosResetGlobalPolicy {
+    description
+      "Clear Global ACL Statistics.";
+    input {
+      leaf direction {
+        type qosDirectionType;
+        description
+          "Direction. ";
+      }
+    }
+  }
+  rpc qosResetBdVxlanPolicyApply {
+    description
+      "To clear traffic policy statistics.";
+    input {
+      leaf bdName {
+        type uint32 {
+          range "1..16777215";
+        }
+        description
+          "Name of an bd interface.";
+      }
+      leaf bddirection {
+        type qosDirectionType;
+        description
+          "Direction. The available options are inbound and outbound.";
+      }
+    }
+  }
+  rpc qosResetVpnVxlanPolicyApply {
+    description
+      "To clear traffic policy statistics.";
+    input {
+      leaf vpnName {
+        type pub-type:vrfName;
+        description
+          "Name of an vpn interface.";
+      }
+      leaf vpndirection {
+        type qosDirectionType;
+        description
+          "Direction. The available options are inbound and outbound.";
+      }
+    }
+  }
+  rpc qosResetProUSt {
+    description
+      "qosResetIfCar";
+    input {
+      leaf userID {
+        type uint32 {
+          range "0..4294967294";
+        }
+        description
+          "userID";
+      }
+      leaf direction {
+        type qosDirectionType;
+        description
+          "direction";
+      }
+    }
+  }
+  rpc qosResetSubPortQSt {
+    description
+      "To clear sub interface queue statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+    }
+  }
+  rpc qosResetIFGQSt {
+    description
+      "To clear sub interface queue statistics.";
+    input {
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Interface name.";
+      }
+      leaf direction {
+        type qosDirectionType;
+        description
+          "Interface direction.";
+      }
+    }
+  }
+}

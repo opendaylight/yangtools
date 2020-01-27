@@ -1,0 +1,333 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-system {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-system";
+  prefix system;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-system-action;
+  include huawei-system-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "System.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container system {
+    description
+      "System.";
+    container systemInfo {
+      description
+        "System information.";
+      leaf sysName {
+        type string {
+          length "1..246";
+        }
+        default "HUAWEI";
+        description
+          "System name.";
+      }
+      leaf characterSet {
+        type characterSet;
+        default "UTF-8";
+        description
+          "System Character Set.";
+      }
+      leaf sysContact {
+        type string {
+          length "1..255";
+        }
+        default "R&D Beijing, Huawei Technologies co.,Ltd.";
+        description
+          "System contact information.";
+      }
+      leaf sysLocation {
+        type string {
+          length "1..255";
+        }
+        default "Beijing China";
+        description
+          "System location information.";
+      }
+      leaf sysDesc {
+        type string {
+          length "0..255";
+        }
+        config false;
+        description
+          "Textual description of an entity.";
+      }
+      leaf sysObjectId {
+        type string {
+          length "0..255";
+        }
+        config false;
+        description
+          "Entity OID. ";
+      }
+      leaf sysGmtTime {
+        type uint32;
+        config false;
+        description
+          "Current system time in UTC seconds.";
+      }
+      leaf sysUpTime {
+        type pub-type:timeTick;
+        config false;
+        description
+          "Time elapses since the system is running.";
+      }
+      leaf sysService {
+        type pub-type:bits8;
+        config false;
+        description
+          "Integer value which indicates the set of services that this entity offers.";
+        ext:masklen 7;
+          ext:bit "Physical Layer" {
+            position 0;
+          }
+          ext:bit "Data Link Layer" {
+            position 1;
+          }
+          ext:bit "Network Layer" {
+            position 2;
+          }
+          ext:bit "Transport Layer" {
+            position 3;
+          }
+          ext:bit "Session Layer" {
+            position 4;
+          }
+          ext:bit "Presentation Layer" {
+            position 5;
+          }
+          ext:bit "Application Layer" {
+            position 6;
+          }
+      }
+      leaf platformName {
+        type string {
+          length "0..255";
+        }
+        config false;
+        description
+          "Name of a platform. For example, Huawei Versatile Routing Platform.";
+      }
+      leaf platformVer {
+        type string {
+          length "0..255";
+        }
+        config false;
+        description
+          "Version of a platform. For example, VRP (R) Software, Version 8.10.";
+      }
+      leaf productName {
+        type string {
+          length "0..255";
+        }
+        config false;
+        description
+          "Name of a product. For example, Quidway NetEngine 5000E.";
+      }
+      leaf productVer {
+        type string {
+          length "0..255";
+        }
+        config false;
+        description
+          "Product version. The version format is VxxRxxCxxSPxxx, for example, V800R002C01SPC001.";
+      }
+      leaf patchVer {
+        type string {
+          length "0..255";
+        }
+        config false;
+        description
+          "Latest patch version. The version format is CPxxx/HPxxx, for example, CP001.";
+      }
+      leaf esn {
+        type string {
+          length "0..511";
+        }
+        config false;
+        description
+          "Product ESN number.";
+      }
+      leaf mac {
+        type string {
+          length "0..50";
+        }
+        config false;
+        description
+          "System MAC address.";
+      }
+      leaf lsRole {
+        type systemLsRoleType;
+        config false;
+        description
+          "Logical system (LS) role.";
+      }
+      leaf authenFlag {
+        type boolean;
+        default "false";
+        config false;
+        description
+          "Authentication flag, indicating whether authentication is enabled when LS0 is switched to an existing LS.";
+      }
+    }
+    container fileCollectTaskInfos {
+      config false;
+      description
+        "Information on file collect tasks.";
+      list fileCollectTaskInfo {
+        key "taskName";
+        config false;
+        description
+          "Information on a file collect task.";
+        leaf taskName {
+          type string {
+            length "0..32";
+          }
+          config false;
+          description
+            "Task name.";
+        }
+        leaf taskType {
+          type systemFileCollectTaskType;
+          config false;
+          description
+            "Task type.";
+        }
+        leaf fileName {
+          type string {
+            length "5..64";
+          }
+          config false;
+          description
+            "File name.";
+        }
+        leaf fileCompressType {
+          type systemFileCompressType;
+          config false;
+          description
+            "File compression type.";
+        }
+        leaf paraContent {
+          type string {
+            length "0..2048";
+          }
+          config false;
+          description
+            "Content of parameters.";
+        }
+        leaf taskAgingTime {
+          type uint32 {
+            range "1..60";
+          }
+          default "5";
+          config false;
+          description
+            "Aging time (in minutes) of task. The default value is 5 minutes.";
+        }
+        leaf startAgingTime {
+          type yang:date-and-time;
+          config false;
+          description
+            "Start aging time.";
+        }
+        leaf destFileName {
+          type string {
+            length "5..64";
+          }
+          config false;
+          description
+            "Destination file name.";
+        }
+        leaf taskOperateState {
+          type systemFileCollectTaskOperateState;
+          config false;
+          description
+            "Task operating status.";
+        }
+        leaf errorInfo {
+          type string {
+            length "0..255";
+          }
+          config false;
+          description
+            "Error information.";
+        }
+        leaf serviceType {
+          type uint32;
+          config false;
+          description
+            "Service type of HFTP.";
+        }
+      }
+    }
+    container securityRiskInfos {
+      config false;
+      description
+        "Information on security risk.";
+      list securityRiskInfo {
+        key "level featureName";
+        config false;
+        description
+          "Information on security risk.";
+        leaf level {
+          type riskLevelType;
+          config false;
+          description
+            "Security risk Level.";
+        }
+        leaf featureName {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Feature name.";
+        }
+        leaf riskInfo {
+          type string {
+            length "1..511";
+          }
+          config false;
+          description
+            "Risk information.";
+        }
+        leaf repairAction {
+          type string {
+            length "1..511";
+          }
+          config false;
+          description
+            "Repair action.";
+        }
+      }
+    }
+  }
+}

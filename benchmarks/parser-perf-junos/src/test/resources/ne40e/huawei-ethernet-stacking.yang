@@ -1,0 +1,41 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-ethernet-stacking {
+  belongs-to huawei-ethernet {
+    prefix ethernet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Ethernet stacking Interface.";
+  revision 2017-03-23 {
+	description
+	"Functions supported by the schema are added to the YANG file.";
+	reference
+	"Huawei private.";
+	}
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference      "Huawei private.";
+  }
+  grouping l2vpn_stacking_single_type {
+    description
+      "Description FOR submodule";
+    leaf singleModeEn {
+      type boolean;
+      default "false";
+      description
+        "Enable single-mode configuration.";
+      ext:allowDelete "true";
+    }
+  }
+}

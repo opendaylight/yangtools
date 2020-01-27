@@ -1,0 +1,645 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-vlan {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-vlan";
+  prefix vlan;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-vlan-action;
+  include huawei-vlan-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "VLAN management.";
+  revision 2017-03-23 {
+	description
+	"Functions supported by the schema are added to the YANG file.";
+	reference
+	"Huawei private.";
+	}
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference      "Huawei private.";
+  }
+  container vlan {
+    description
+      "VLAN management.";
+    container vlans {
+      description
+        "VLAN list.";
+      list vlan {
+        key "vlanId";
+        max-elements 4094;
+        description
+          "VLAN information.";
+        leaf vlanId {
+          type vlanId {
+            range "1..4094";
+          }
+          description
+            "VLAN ID.";
+        }
+        leaf vlanName {
+          type string {
+            length "1..31";
+          }
+          must "not(../vlanType='carrier' or ../vlanType='fcoe')";
+          description
+            "VLAN name.";
+          ext:allowDelete "true";
+        }
+        leaf vlanDesc {
+          type string {
+            length "1..80";
+          }
+          must "not(../vlanType='carrier' or ../vlanType='fcoe')";
+          description
+            "VLAN description.";
+          ext:allowDelete "true";
+        }
+        leaf vlanType {
+          type vlanType;
+          must "((../vlanType='common' or ../vlanType='super' or ../vlanType='principal') ) or (../vlanType='common' and (../vlanType='common' or ../vlanType='super' or ../vlanType='principal') ) or (../vlanType='group' and (../vlanType='common' or ../vlanType='group') ) or (../vlanType='principal' and (../vlanType='common' or ../vlanType='principal') ) or (../vlanType='seperate' and (../vlanType='common' or ../vlanType='seperate') ) or (../vlanType='sub' and (../vlanType='common' or ../vlanType='sub') ) or (../vlanType='super' and (../vlanType='common' or ../vlanType='super') ) or not(../vlanType!='common' and ../vlanType!='super' and ../vlanType!='sub' and ../vlanType!='principal' and ../vlanType!='group' and ../vlanType!='seperate' or ../vlanType='common' or ../vlanType='group' or ../vlanType='principal' or ../vlanType='seperate' or ../vlanType='sub' or ../vlanType='super')";
+          default "common";
+          description
+            "VLAN type, such as common VLANs, super VLANs, and sub-VLANs. ";
+        }
+        leaf adminStatus {
+          type vlanAdmin;
+          must "not(../vlanType='carrier' or ../vlanType='fcoe')";
+          default "up";
+          description
+            "Administrative status of a VLAN.";
+          ext:allowDelete "true";
+        }
+        leaf broadcastEnable {
+          type vlanEnableStatus;
+          default "enable";
+          description
+            "Whether broadcast is enabled in a VLAN. ";
+          ext:allowDelete "true";
+        }
+        leaf unknownmulticast {
+          type vlanEnableStatus;
+          default "disable";
+          description
+            "Drop VLAN unknown multicast.";
+          ext:allowDelete "true";
+        }
+        leaf macLearn {
+          type vlanEnableStatus;
+          default "enable";
+          description
+            "Whether MAC address leaning is enabled in a VLAN.";
+          ext:allowDelete "true";
+        }
+        leaf statisEnable {
+          type vlanEnableStatus;
+          default "disable";
+          description
+            "Whether VLAN statistics collection is enabled.";
+          ext:allowDelete "true";
+        }
+        leaf statisticDiscard {
+          type vlanEnableStatus;
+          must "not(../statisEnable='disable') or (../statisEnable='disable' and ../statisticDiscard='disable')";
+          default "disable";
+          description
+            "Whether BUM discard statistics collection is enabled.";
+          ext:allowDelete "true";
+        }
+        leaf macAgingTime {
+          when "not(../vlanType='super')";
+          type uint32 {
+            range "0..1000000";
+          }
+          description
+            "MAC address aging time. Value [0, 60-1000000]. 0 indicates that MAC addresses do not age.";
+          ext:allowDelete "true";
+        }
+        container setisoportlists {
+          description
+            "Set Isolate Port Lists.";
+          list setisoportlist {
+            key "ifName";
+            description
+              "Isolate Port.";
+            leaf ifName {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+              }
+              description
+                "Name of a port.";
+              ext:support-filter "true";
+            }
+          }
+        }
+        leaf subVlans {
+          when "../vlanType='super'";
+          type pub-type:VLAN_RANGE {
+            length "0..4094";
+          }
+          description
+            "List of sub-VLANs.";
+          ext:allowDelete "true";
+        }
+        leaf superVlan {
+          type vlanId {
+            range "1..4094";
+          }
+          config false;
+          description
+            "The Corresponding Super-VLAN ID When the VLAN is a Sub-VLAN.";
+        }
+        container memberPorts {
+          description
+            "List of ports in a VLAN.";
+          list memberPort {
+            when "not(../../vlanType='super')";
+            key "ifName";
+            description
+              "Port in a VLAN.";
+            leaf ifName {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+              }
+              description
+                "Names of ports in a VLAN.";
+            }
+            leaf accessType {
+              type vlanAccessType;
+              must "((../accessType='access' or ../accessType='hybrid' or ../accessType='dot1qtunnel') )";
+              default "hybrid";
+              description
+                "Port link type.";
+            }
+          }
+        }
+        container vlanif {
+          when "not(../vlanType!='common' and ../vlanType!='super' and ../vlanType!='principal')";
+          description
+            "VLANIF interface.";
+          leaf ifName {
+            type pub-type:ifName;
+            config false;
+            description
+              "VLANIF interface name.";
+          }
+          leaf cfgBand {
+            type uint32 {
+              range "1..1000000";
+            }
+            description
+              "VLANIF interface bandwidth, in Mbit/s.";
+            ext:allowDelete "true";
+          }
+          leaf dampTime {
+            type uint16 {
+              range "0..20";
+            }
+            description
+              "Delay time after which a VLANIF interface goes Down, in seconds.";
+            ext:allowDelete "true";
+          }
+        }
+        container muxVlan {
+          when "../vlanType='principal'";
+          description
+            "Subordinate VLAN List";
+          leaf separateVlan {
+            type vlanId {
+              range "1..4094";
+            }
+            description
+              "Separate VLAN";
+            ext:allowDelete "true";
+          }
+          leaf groupVlans {
+            type pub-type:VLAN_RANGE {
+              length "0..4094";
+            }
+            description
+              "Group VLAN";
+            ext:allowDelete "true";
+          }
+        }
+        container unkownUnicastDrop {
+          description
+            "Drop unknown unicast.";
+          leaf macLearnEnable {
+            type vlanEnableStatus;
+            must "(../isDrop='disable' and ../macLearnEnable='enable') or ((not(../isDrop='disable') and (../macLearnEnable='enable' or ../macLearnEnable='disable') ))";
+            default "enable";
+            description
+              "Enable unknown unicast MAC address learning.";
+            ext:allowDelete "true";
+          }
+          leaf isDrop {
+            type vlanEnableStatus;
+            default "disable";
+            description
+              "Whether to drop unknown unicast MAC addresses.";
+            ext:allowDelete "true";
+          }
+        }
+        container suppression {
+          description
+            "Traffic suppression.";
+          leaf inboundSupp {
+            type vlanEnableStatus;
+            default "disable";
+            description
+              "Inbound suppression.";
+            ext:allowDelete "true";
+          }
+          leaf outboundSupp {
+            type vlanEnableStatus;
+            default "disable";
+            description
+              "Outbound suppression.";
+            ext:allowDelete "true";
+          }
+        }
+        container protocolVlans {
+          description
+            "protocol VLAN List.";
+          list protocolVlan {
+            when "not(../../vlanType='carrier' or ../../vlanType='fcoe')";
+            key "protocolIndex protocolType";
+            description
+              "protocol VLAN.";
+            leaf protocolIndex {
+              type int16 {
+                range "0..15";
+              }
+              description
+                "protocol ifindex.";
+            }
+            leaf protocolType {
+              type protocolVlanType;
+              description
+                "protocol Def.";
+            }
+            leaf encapType {
+              when "not(../protocolType='at' or ../protocolType='ipv4' or ../protocolType='ipv6' or ../protocolType='ipx_ethernetii' or ../protocolType='ipx_llc' or ../protocolType='ipx_raw' or ../protocolType='ipx_snap' or not(../protocolType)) or ../protocolType='mode'";
+              type encapType;
+              mandatory true;
+              description
+                "protocol Encap Type.";
+            }
+            leaf snapProtocolValue {
+              when "not(../encapType='llc' and ../protocolType='mode' or ../protocolType='at' or ../protocolType='ipv4' or ../protocolType='ipv6' or ../protocolType='ipx_ethernetii' or ../protocolType='ipx_llc' or ../protocolType='ipx_raw' or ../protocolType='ipx_snap' or ../protocolType='mode' and ../encapType='ethernetii' or ../protocolType='mode' or not(../protocolType)) or ../encapType='snap' and ../protocolType='mode'";
+              type pub-type:hexBinary;
+              mandatory true;
+              description
+                "snap Protocol Value.";
+            }
+            leaf ethiiProtocolValue {
+              when "not(../encapType='llc' and ../protocolType='mode' or ../encapType='snap' and ../protocolType='mode' or ../protocolType='at' or ../protocolType='ipv4' or ../protocolType='ipv6' or ../protocolType='ipx_ethernetii' or ../protocolType='ipx_llc' or ../protocolType='ipx_raw' or ../protocolType='ipx_snap' or ../protocolType='mode' or not(../protocolType)) or ../protocolType='mode' and ../encapType='ethernetii'";
+              type pub-type:hexBinary;
+              mandatory true;
+              description
+                "ethii Protocol Value.";
+            }
+            leaf dsap {
+              when "not(../encapType='snap' and ../protocolType='mode' or ../protocolType='at' or ../protocolType='ipv4' or ../protocolType='ipv6' or ../protocolType='ipx_ethernetii' or ../protocolType='ipx_llc' or ../protocolType='ipx_raw' or ../protocolType='ipx_snap' or ../protocolType='mode' and ../encapType='ethernetii' or ../protocolType='mode' or not(../protocolType)) or ../encapType='llc' and ../protocolType='mode'";
+              type pub-type:hexBinary;
+              mandatory true;
+              description
+                "dsap Value.";
+            }
+            leaf ssap {
+              when "not(../encapType='snap' and ../protocolType='mode' or ../protocolType='at' or ../protocolType='ipv4' or ../protocolType='ipv6' or ../protocolType='ipx_ethernetii' or ../protocolType='ipx_llc' or ../protocolType='ipx_raw' or ../protocolType='ipx_snap' or ../protocolType='mode' and ../encapType='ethernetii' or ../protocolType='mode' or not(../protocolType)) or ../encapType='llc' and ../protocolType='mode'";
+              type pub-type:hexBinary;
+              mandatory true;
+              description
+                "ssap Value.";
+            }
+          }
+        }
+        container portInfos {
+          config false;
+          description
+            "List of ports in a VLAN.";
+          list portInfo {
+            key "ifName";
+            config false;
+            description
+              "Port in a VLAN.";
+            leaf ifName {
+              type pub-type:ifName;
+              config false;
+              description
+                "Names of ports in a VLAN.";
+            }
+            leaf accessType {
+              type vlanAccessType;
+              config false;
+              description
+                "Port link type.";
+            }
+            leaf tagMode {
+              type tagMode;
+              config false;
+              description
+                "Port tag Mode.";
+            }
+          }
+        }
+        container vlanStatistics {
+          config false;
+          description
+            "VLAN statistics.";
+          leaf inboundPackets {
+            type uint64;
+            config false;
+            description
+              "Number of inbound packets.";
+          }
+          leaf inboundBytes {
+            type uint64;
+            config false;
+            description
+              "Number of inbound bytes.";
+          }
+          leaf outboundPackets {
+            type uint64;
+            config false;
+            description
+              "Number of outbound packets.";
+          }
+          leaf outboundBytes {
+            type uint64;
+            config false;
+            description
+              "Number of outbound bytes.";
+          }
+          leaf inboundUnicasts {
+            type uint64;
+            config false;
+            description
+              "Number of inbound unicasts.";
+          }
+          leaf inboundMulticasts {
+            type uint64;
+            config false;
+            description
+              "Number of inbound multicasts.";
+          }
+          leaf inboundBroadcasts {
+            type uint64;
+            config false;
+            description
+              "Number of inbound broadcasts.";
+          }
+          leaf inboundUnkUnicastDrops {
+            type uint64;
+            config false;
+            description
+              "Number of unknown unicast drops.";
+          }
+          leaf inboundUnkMulticastDrops {
+            type uint64;
+            config false;
+            description
+              "Number of unknown multicast drops.";
+          }
+          leaf inbounBrdCastDrops {
+            type uint64;
+            config false;
+            description
+              "Number of broadcast drops.";
+          }
+          leaf outboundUnicasts {
+            type uint64;
+            config false;
+            description
+              "Number of outbound unicasts.";
+          }
+          leaf outboundMulticasts {
+            type uint64;
+            config false;
+            description
+              "Number of outbound multicasts.";
+          }
+          leaf outboundBroadcasts {
+            type uint64;
+            config false;
+            description
+              "Number of outbound broadcasts.";
+          }
+        }
+      }
+    }
+    container dynamicVlans {
+      config false;
+      description
+        "Dynamic VLAN List.";
+      list dynamicVlan {
+        key "vlanId";
+        config false;
+        max-elements 4094;
+        description
+          "Dynamic VLAN.";
+        leaf vlanId {
+          type vlanId {
+            range "1..4094";
+          }
+          config false;
+          description
+            "VLAN ID.";
+        }
+        leaf vlanName {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "VLAN name.";
+        }
+        leaf vlanDesc {
+          type string {
+            length "1..80";
+          }
+          config false;
+          description
+            "VLAN description.";
+        }
+        leaf adminStatus {
+          type vlanAdmin;
+          default "up";
+          config false;
+          description
+            "Administrative status of a VLAN.";
+        }
+        container activePortInfos {
+          config false;
+          description
+            "List of active ports in a dynamic VLAN.";
+          list activePortInfo {
+            key "ifName";
+            config false;
+            description
+              "Active port in a dynamic VLAN.";
+            leaf ifName {
+              type pub-type:ifName;
+              config false;
+              description
+                "Names of ports in a VLAN.";
+            }
+            leaf accessType {
+              type vlanAccessType;
+              config false;
+              description
+                "Port link type.";
+            }
+            leaf tagMode {
+              type tagMode;
+              config false;
+              description
+                "Port tag Mode.";
+            }
+          }
+        }
+      }
+    }
+    container vlanAssigns {
+      description
+        "VLAN Resource Assign.";
+      list vlanAssign {
+        key "type";
+        description
+          "VLAN Resource Assign.";
+        leaf type {
+          type vlanAssignType;
+          description
+            "The Type of VLAN Resource Assign.";
+        }
+        leaf vlanLists {
+          type pub-type:VLAN_RANGE {
+            length "0..4094";
+          }
+          mandatory true;
+          description
+            "VLAN List of VLAN Resource Assign.";
+        }
+      }
+    }
+    container instances {
+      config false;
+      description
+        "Instances.";
+      list instance {
+        key "instanceId";
+        config false;
+        description
+          "Instances.";
+        leaf instanceId {
+          type uint16 {
+            range "0..4094";
+          }
+          config false;
+          description
+            "Instance ID.";
+        }
+        leaf instanceType {
+          type instanceType;
+          config false;
+          mandatory true;
+          description
+            "instance type.";
+        }
+        leaf vlans {
+          type pub-type:VLAN_RANGE {
+            length "0..4094";
+          }
+          config false;
+          mandatory true;
+          description
+            "VLAN list.";
+        }
+      }
+    }
+    container feimainifresrvvlans {
+      description
+        "Reserved VLAN for Main-interface.";
+      list feimainifresrvvlan {
+        key "startVlanId endVlanId";
+        description
+          "Reserved VLAN Region for Main-interface.";
+        leaf startVlanId {
+          type vlanId {
+            range "1..4094";
+          }
+          description
+            "Start VLAN ID.";
+        }
+        leaf endVlanId {
+          type vlanId {
+            range "1..4094";
+          }
+          description
+            "End VLAN ID.";
+        }
+      }
+    }
+    container isoportlists {
+      config false;
+      description
+        "Isolate Port Lists.";
+      list isoportlist {
+        key "ifName vlanId slotId";
+        config false;
+        description
+          "Isolate Port.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          config false;
+          description
+            "Name of a port.";
+          ext:support-filter "true";
+        }
+        leaf vlanId {
+          type vlanId {
+            range "1..4094";
+          }
+          config false;
+          description
+            "Identifier of a VLAN.";
+        }
+        leaf ceVlanId {
+          type vlanId {
+            range "1..4094";
+          }
+          config false;
+          description
+            "VLAN over Customer network";
+        }
+        leaf slotId {
+          type string {
+            length "1..24";
+          }
+          config false;
+          description
+            "Slot ID.";
+        }
+      }
+    }
+  }
+}

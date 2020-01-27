@@ -1,0 +1,47 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-bgp {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-bgp";
+  prefix bgp;
+  include huawei-bgp-action;
+  include huawei-bgp-type;
+  include huawei-bgp-bgpcomm-action;
+  include huawei-bgp-bgpcomm;
+  include huawei-bgp-bgpmultiinstcomm;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Inter-AS routing protocol that exchanges Network Layer Reachability Information (NLRI) with other BGP systems.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container bgp {
+    description
+      "Inter-AS routing protocol that exchanges Network Layer Reachability Information (NLRI) with other BGP systems.";
+    container bgpcomm {
+      description
+        "Universal BGP configurations that contain the basic BGP configurations and the query information.";
+      uses bgp:bgp_bgpcomm_bgpcomm_type;
+    }
+    container bgpmultiinstcomm {
+      description
+        "Universal BGP multi-instance configurations that contain the basic BGP configurations and the query information.";
+      uses bgp:bgp_bgpmultiinstcomm_bgpmultiinstcomm_type;
+    }
+  }
+}

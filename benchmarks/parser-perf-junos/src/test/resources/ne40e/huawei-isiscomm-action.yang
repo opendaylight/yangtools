@@ -1,0 +1,95 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-isiscomm-action {
+  belongs-to huawei-isiscomm {
+    prefix isiscomm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-isiscomm-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "isis action defined file.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc resetIsis {
+    description
+      "Reset IS-IS.";
+    input {
+      leaf instanceId {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "ID of an IS-IS process.";
+      }
+    }
+  }
+  rpc resetIsisPeer {
+    description
+      "Reset an IS-IS neighbor.";
+    input {
+      leaf instanceId {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "ID of an IS-IS process.";
+      }
+      leaf systemId {
+        type string {
+          length "0..256";
+        }
+        description
+          "System ID of a neighbor.";
+      }
+    }
+  }
+  rpc resetSuppressPeer {
+    description
+      "Reset neighbor flapping suppression.";
+    input {
+      leaf instanceId {
+        type uint32 {
+          range "1..4294967295";
+        }
+        description
+          "Set the process ID.";
+      }
+      leaf ifName {
+        type pub-type:ifName;
+        description
+          "Set the interface name.";
+        ext:allowDelete "true";
+      }
+      leaf notifyPeer {
+        type boolean;
+        default "false";
+        description
+          "Set whether the neighbor is notified.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+}

@@ -1,0 +1,715 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-staticrt-staticrtbase {
+  belongs-to huawei-staticrt {
+    prefix staticrt;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-staticrt-staticmrt-type;
+  include huawei-staticrt-staticrtbase-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Basic service package for static routes.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping staticrt_staticrtbase_type {
+    description
+      "Basic service package for static routes.";
+    container srStaticSite {
+      config false;
+      description
+        "Global parameters for static routes.";
+      leaf maxRouteNum {
+        type uint32 {
+          range "0..500000";
+        }
+        default "100000";
+        config false;
+        description
+          "Maximum number of IPv4 and IPv6 static routes that can be configured. For details, see other nodes.";
+      }
+    }
+    container srIPv4StaticSite {
+      description
+        "Parameters for IPv4 static routes.";
+      leaf relayswitch {
+        type boolean;
+        default "false";
+        description
+          "Select static routes based on the iteration depth.";
+      }
+      leaf preference {
+        type uint32 {
+          range "1..255";
+        }
+        default "60";
+        description
+          "Specify the default priority for IPv4 static routes.";
+      }
+      leaf minTxInterval {
+        type uint32 {
+          range "3..1000";
+        }
+        units millisecond;
+        default "50";
+        description
+          "Minimum interval at which IPv4 BFD packets are sent to the peer end.";
+      }
+      leaf minRxInterval {
+        type uint32 {
+          range "3..1000";
+        }
+        units millisecond;
+        default "50";
+        description
+          "Minimum interval at which IPv4 BFD packets are received from the peer end.";
+      }
+      leaf multiplier {
+        type uint32 {
+          range "3..50";
+        }
+        default "3";
+        description
+          "IPv4 Local detection multiplier.";
+      }
+      leaf relayRemote {
+        type boolean;
+        default "true";
+        description
+          "Iterate IPv4 unicast routes to remote VPN routes.";
+      }
+      leaf maxIpv4RtNum {
+        type uint32 {
+          range "0..100000";
+        }
+        default "100000";
+        config false;
+        description
+          "Maximum number of IPv4 static routes that can be configured.";
+      }
+      leaf curIpv4RtNum {
+        type uint32 {
+          range "0..100000";
+        }
+        default "0";
+        config false;
+        description
+          "Number of IPv4 static routes that have been configured.";
+      }
+      leaf relayArpVlink {
+        type boolean;
+        default "false";
+        description
+          "Iterate IPv4 unicast routes to ARP Vlink routes.";
+      }
+      leaf inheritCostswitch {
+        type boolean;
+        default "false";
+        description
+          "Select static routes comparing inherit cost.";
+      }
+    }
+    container srIPv6StaticSite {
+      description
+        "Parameters for IPv6 static routes.";
+      leaf ipv6Preference {
+        type uint32 {
+          range "1..255";
+        }
+        default "60";
+        description
+          "Specify a default priority for IPv6 static routes.";
+      }
+      leaf minTxInterval6 {
+        type uint32 {
+          range "3..1000";
+        }
+        units millisecond;
+        default "50";
+        description
+          "Minimum interval at which IPv6 BFD packets are sent to the peer end.";
+      }
+      leaf minRxInterval6 {
+        type uint32 {
+          range "3..1000";
+        }
+        units millisecond;
+        default "50";
+        description
+          "Minimum interval at which IPv6 BFD packets are received from the peer end.";
+      }
+      leaf multiplier6 {
+        type uint32 {
+          range "3..50";
+        }
+        default "3";
+        description
+          "IPv6 Local detection multiplier.";
+      }
+      leaf maxIpv6RtNum {
+        type uint32 {
+          range "0..100000";
+        }
+        default "100000";
+        config false;
+        description
+          "Maximum number of IPv6 static routes that can be configured.";
+      }
+      leaf curIpv6RtNum {
+        type uint32 {
+          range "0..100000";
+        }
+        default "0";
+        config false;
+        description
+          "Number of IPv6 static routes that have been configured.";
+      }
+    }
+    container srRoutes {
+      description
+        "Static route list.";
+      list srRoute {
+        key "vrfName afType topologyName prefix maskLength ifName destVrfName nexthop";
+        description
+          "Configure static routes. Static routes can be configured on a network with a simple topology to ensure normal running of the network, and can be configured when a router cannot run dynamic routing protocols or cannot generate routes to destination networks. Reasonable configuration of static routes can improve network performance and ensure bandwidths for important services.";
+        leaf vrfName {
+          type pub-type:vrfName;
+          description
+            "Name of the VPN to which a prefix belongs.";
+        }
+        leaf afType {
+          type rmbaseAfType;
+          description
+            "Address family type.";
+        }
+        leaf topologyName {
+          type string {
+            length "1..31";
+          }
+          description
+            "Name of the specified topology.";
+        }
+        leaf prefix {
+          type inet:ip-address-no-zone;
+          description
+            "Destination IP address.";
+        }
+        leaf maskLength {
+          type uint32 {
+            range "0..128";
+          }
+          description
+            "Mask length of an IP address.";
+        }
+        leaf ifName {
+          type pub-type:ifName;
+          description
+            "Transmission interface of a route.";
+        }
+        leaf destVrfName {
+          type pub-type:vrfName;
+          description
+            "Name of the destination VPN instance.";
+        }
+        leaf nexthop {
+          type inet:ip-address-no-zone;
+          description
+            "Next hop IP address of a route.";
+        }
+        leaf description {
+          type string {
+            length "0..35";
+          }
+          description
+            "Description of a static route.";
+        }
+        leaf preference {
+          type uint32 {
+            range "1..255";
+          }
+          description
+            "Set a priority for the static routing protocol. If no priority is specified, the global default priority is used.";
+          ext:allowDelete "true";
+        }
+        leaf tag {
+          type uint32 {
+            range "1..4294967295";
+          }
+          description
+            "Tag of a static route.";
+          ext:allowDelete "true";
+        }
+        leaf bfdEnable {
+          type boolean;
+          default "false";
+          description
+            "Bind a dynamic BFD session to a static route. The dynamic BFD session can detect the link status of the static route and quickly detect link changes, which improves network reliability. When configuring BFD for a single static route, check whether corresponding BFD parameters are set for the route.";
+        }
+        leaf sessionName {
+          type string {
+            length "1..15";
+          }
+          description
+            "Bind a static BFD session to a static route. The static BFD session can detect the session link status and quickly detect link status changes, which improves network reliability.";
+          ext:allowDelete "true";
+        }
+        leaf isInheritCost {
+          type boolean;
+          default "false";
+          description
+            "Make static route can inherit the cost value of the iterator route's.";
+        }
+        leaf isPermanent {
+          type boolean;
+          default "false";
+          description
+            "enables the static route active 
+permanently";
+        }
+        leaf isNoAdvertise {
+          type boolean;
+          default "false";
+          description
+            "No advertise the static route";
+        }
+        leaf isNoInstall {
+          type boolean;
+          default "false";
+          description
+            "No install the static route";
+        }
+        leaf trackEfmIfName {
+          type pub-type:ifName;
+          default "Invalid0";
+          description
+            "Track EFM Interface Name";
+          ext:allowDelete "true";
+        }
+        leaf isRelayHostRoute {
+          type boolean;
+          default "false";
+          description
+            "Enable the iteration of static routes to host routes.";
+        }
+      }
+    }
+    container srRouteInfoTables {
+      config false;
+      description
+        "Static routing Table.";
+      list srRouteInfoTable {
+        key "vrfName afType topologyName prefix maskLength ifName destVrfName nexthop RelayNextHop RelayInterface TunnelID";
+        config false;
+        description
+          "Static routing Table.";
+        leaf vrfName {
+          type pub-type:vrfName;
+          config false;
+          description
+            "Name of the VPN to which the prefix belongs.";
+        }
+        leaf afType {
+          type rmbaseAfType;
+          config false;
+          description
+            "Address family type.";
+        }
+        leaf topologyName {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Name of the specified topology.";
+        }
+        leaf prefix {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "Destination IP address.";
+        }
+        leaf maskLength {
+          type uint32 {
+            range "0..128";
+          }
+          config false;
+          description
+            "Mask length of an IP address.";
+        }
+        leaf ifName {
+          type pub-type:ifName;
+          config false;
+          description
+            "Transmission interface of a route.";
+        }
+        leaf destVrfName {
+          type pub-type:vrfName;
+          config false;
+          description
+            "Name of the destination VPN instance.";
+        }
+        leaf nexthop {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "Next-hop IP address of a route.";
+        }
+        leaf preference {
+          type uint32 {
+            range "1..255";
+          }
+          config false;
+          description
+            "Priority of a static routing protocol. If no priority is specified for the protocol, the global default priority is used.";
+        }
+        leaf cost {
+          type uint32 {
+            range "1..4294967295";
+          }
+          config false;
+          description
+            "Cost of static route.";
+        }
+        leaf tag {
+          type uint32 {
+            range "1..4294967295";
+          }
+          config false;
+          description
+            "Tag of a static route.";
+        }
+        leaf BfdType {
+          type string {
+            length "0..15";
+          }
+          config false;
+          description
+            "Type of BFD enabled for the static route.";
+        }
+        leaf sessionName {
+          type string {
+            length "1..15";
+          }
+          config false;
+          description
+            "Binds a static BFD session to a static route. The static BFD session can detect the session link status and quickly detect link status changes, which improves network reliability.";
+        }
+        leaf InterfaceState {
+          type string {
+            length "1..8";
+          }
+          config false;
+          description
+            "Interface status. ";
+        }
+        leaf BfdDetect {
+          type string {
+            length "1..36";
+          }
+          config false;
+          description
+            "Establishment status of a BFD session:
+Disable: indicates that the BFD session is not enabled.
+Up: indicates that the BFD session is established successfully.
+Down: indicates that the BFD session fails to be established.";
+        }
+        leaf State {
+          type string {
+            length "1..25";
+          }
+          config false;
+          description
+            "Route selection result:
+Active Primary: indicates an active primary route.
+Active Backup: indicates an active backup route.
+Inactive Valid: indicates a route that takes part in the route selection but is not preferred.
+Inactive Invalid: indicates a route that cannot take part in the route selection.
+";
+        }
+        leaf IndirectID {
+          type pub-type:hexBinary;
+          config false;
+          description
+            "Keyword of indirect next hop.";
+        }
+        leaf LocalAddress {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "IP address of the local interface. If no IP address is configured for the local interface, this item is displayed as 0.0.0.0. ";
+        }
+        leaf RemoteIp {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "IP address of the remote P2P interface. If no IP address is configured for the remote P2P interface, this item is displayed as 0.0.0.0. ";
+        }
+        leaf RelayNextHop {
+          type inet:ip-address-no-zone;
+          config false;
+          description
+            "Next hop address to which a static route is iterated. If the static route is iterated to a tunnel, this item is displayed as 0.0.0.0. ";
+        }
+        leaf RelayInterface {
+          type pub-type:ifName;
+          config false;
+          description
+            "Name of an iteration outbound interface. If the static route is iterated to a tunnel, this item is displayed as a tunnel name. ";
+        }
+        leaf TunnelID {
+          type string {
+            length "1..21";
+          }
+          config false;
+          description
+            "ID of a tunnel.";
+        }
+        leaf isInheritCost {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Enable static routes to inherit the cost of the route to which it is iterated.";
+        }
+        leaf label {
+          type uint32;
+          config false;
+          description
+            "Label.";
+        }
+        leaf isPermanent {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "Enable permanent static route advertisement.";
+        }
+        leaf isNoAdvertise {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "No advertise the static route";
+        }
+        leaf isNoInstall {
+          type boolean;
+          default "false";
+          config false;
+          description
+            "No install the static route";
+        }
+        leaf trackEfmIfName {
+          type pub-type:ifName;
+          config false;
+          description
+            "EFM interface name";
+        }
+        leaf efmDetect {
+          type string {
+            length "1..8";
+          }
+          config false;
+          description
+            "Detection status of EFM:
+Disable: indicates that the EFM detection is not enabled.
+Up: indicates the EFM detection succeeds.
+Down: indicates the EFM detection fails.
+UNKNOWN: indicates the detection status of the EFM test instance is no result.";
+        }
+      }
+    }
+    container srUniAfs {
+      description
+        "FRR list.";
+      list srUniAf {
+        key "vrfName afType";
+        description
+          "Configure FRR. This function is configured to protect static routes when an active/standby link switchover is performed. ";
+        leaf vrfName {
+          type pub-type:vrfName;
+          description
+            "Name of a VPN instance.";
+        }
+        leaf afType {
+          type rmbaseAfType;
+          description
+            "Address family.";
+        }
+        leaf frrEnable {
+          type boolean;
+          default "false";
+          description
+            "Enable FRR. A VPN instance needs to be configured before the FRR function is configured for static routes of a private network.";
+        }
+        leaf rpfRouteFrrEnable {
+          type boolean;
+          default "false";
+          description
+            "Flag of enable rpf route frr.";
+        }
+      }
+    }
+    container srQppbSwitchs {
+      description
+        "Configure a QoS route-policy list.";
+      list srQppbSwitch {
+        key "vrfName afType";
+        description
+          "Configure a QoS route-policy. QoS information in the route-policy can be added to the routes that match the route-policy.";
+        leaf vrfName {
+          type pub-type:vrfName;
+          description
+            "Set the name of a VPN instance.";
+        }
+        leaf afType {
+          type rmbaseAfType;
+          description
+            "Configure the address family. The value must be IPv4 unicast address family.";
+        }
+        leaf routePolicyName {
+          type string {
+            length "1..200";
+          }
+          mandatory true;
+          description
+            "Set the name of a QoS route-policy.";
+        }
+      }
+    }
+    container srBfdParas {
+      description
+        "BFD template list.";
+      list srBfdPara {
+        key "afType ifName destVrfName nexthop";
+        description
+          "BFD template. When you enable dynamic BFD detection for a static route, the system checks whether a BFD template is configured for the static route based on the outbound interface, next hop, and VPN to which the next hop belongs. If no such a template is available, dynamic BFD detection does not take effect on the static route.";
+        leaf afType {
+          type rmbaseAfType;
+          description
+            "Address family type.";
+        }
+        leaf ifName {
+          type pub-type:ifName;
+          description
+            "Transmission interface of a route.";
+        }
+        leaf destVrfName {
+          type pub-type:vrfName;
+          description
+            "Name of the destination VPN instance.";
+        }
+        leaf nexthop {
+          type inet:ip-address-no-zone;
+          description
+            "Next hop address.";
+        }
+        leaf localAddress {
+          type inet:ip-address-no-zone;
+          default "0.0.0.0";
+          description
+            "Local address.";
+        }
+        leaf minTxInterval {
+          type uint32 {
+            range "3..1000";
+          }
+          units millisecond;
+          description
+            "Minimum interval at which BFD packets are sent to the peer end. If no minimum interval is specified, the global default minimum value is used.";
+          ext:allowDelete "true";
+        }
+        leaf minRxInterval {
+          type uint32 {
+            range "3..1000";
+          }
+          units millisecond;
+          description
+            "Minimum interval at which BFD packets are received from the peer end. If no minimum interval is specified, the global default value is used.";
+          ext:allowDelete "true";
+        }
+        leaf multiplier {
+          type uint32 {
+            range "3..50";
+          }
+          description
+            "Local detection multiplier. If no detection multiplier is specified locally, the global default value is used.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container srBfdAdmDwnCfgs {
+      description
+        "bfd admindown invliad configurations list.";
+      list srBfdAdmDwnCfg {
+        key "afType sessionName";
+        description
+          "Static routes bound to the BFD session will be set invlaid when the BFD session is in admindown state.";
+        leaf afType {
+          type rmbaseAfType;
+          description
+            "Configure the address family. ";
+        }
+        leaf sessionName {
+          type string {
+            length "1..15";
+          }
+          description
+            "Set the name of a BFD session.";
+          ext:allowDelete "false";
+        }
+      }
+    }
+    container relayTunnel {
+      description
+        "Iteration Tunnel.";
+      leaf relayEnable {
+        type boolean;
+        default "false";
+        description
+          "Enable iterated tunnel. This function is valid for all routes by default. If an IP prefix list is configured, this function is valid for only the routes that match the IP prefix list; if a tunnel policy is configured, routes are iterated based on the tunnel policy.";
+        ext:allowDelete "true";
+      }
+      leaf prefixName {
+        type string {
+          length "1..169";
+        }
+        description
+          "Name of an IPv4 prefix list. The name is a character string, spaces not supported.";
+        ext:allowDelete "true";
+      }
+      leaf tnlPolicyName {
+        type string {
+          length "1..39";
+        }
+        description
+          "Name of a tunnel policy. The value is a string of 1 to 19 case-sensitive characters, spaces not supported.";
+        ext:allowDelete "true";
+      }
+    }
+  }
+}

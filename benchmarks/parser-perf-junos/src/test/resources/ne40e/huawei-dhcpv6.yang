@@ -1,0 +1,142 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-dhcpv6 {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-dhcpv6";
+  prefix dhcpv6;
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-ipsec {
+    prefix ipsec;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-dhcpv6-action;
+  include huawei-dhcpv6-type;
+  include huawei-dhcpv6-relay;
+  include huawei-dhcpv6-relay-action;
+  include huawei-dhcpv6-relay-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Dynamic Host Configuration Protocol for IPv6.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container dhcpv6 {
+    description
+      "dhcpv6";
+    container common {
+      description
+        "Global configuration.";
+      container dhcpv6CommonCfg {
+        description
+          "DHCPv6 global configuration.";
+        leaf dhcpv6Enable {
+          type boolean;
+          default "false";
+          description
+            "Enable Dynamic Host Configuration Protocol for IPv6.";
+        }
+        leaf duidFormat {
+          type dhcpv6Duid;
+          description
+            "DHCP unique identifier format.";
+        }
+        leaf duidString {
+          when "../duidFormat='user-defined'";
+          type string {
+            length "0..28";
+            pattern '([^\t]{0,})';
+          }
+          description
+            "DUID string, in hexadecimal notation.";
+          ext:allowDelete "true";
+        }
+        leaf dhcpv6IpsecSa {
+          type string {
+            length "0..15";
+            pattern '([^\t]{0,})';
+          }
+          description
+            "Security association name.";
+          ext:allowDelete "true";
+        }
+        leaf rateLimitEnable {
+          type boolean;
+          default "false";
+          description
+            "DHCPv6 Packets Rate Limit Enable.";
+        }
+        leaf rateLimit {
+          type uint32 {
+            range "1..1000";
+          }
+          default "512";
+          description
+            "DHCPv6 Packets Rate Limit Value(Default value is 512,unit:pps).";
+          ext:allowDelete "true";
+        }
+        leaf sourceIpAdaptive {
+          type boolean;
+          default "false";
+          description
+            "DHCPv6 source-ip-address format adaptive enable.";
+        }
+      }
+      container dhcpv6IpsecPeers {
+        description
+          "DHCPv6 IPsec configuration.";
+        list dhcpv6IpsecPeer {
+          key "peerAddr vrfName";
+          description
+            "DHCPv6 IPsec configuration.";
+          leaf peerAddr {
+            type inet:ipv6-address-no-zone;
+            description
+              "Peer address.";
+          }
+          leaf vrfName {
+            type leafref {
+              path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+            }
+            description
+              "VPN instance name.";
+          }
+          leaf saName {
+            type leafref {
+              path "/ipsec:ipsec/ipsec:ipsecSAs/ipsec:ipsecSA/ipsec:saName";
+            }
+            mandatory true;
+            description
+              "SA Name.";
+          }
+        }
+      }
+    }
+    container relay {
+      description
+        "Relay.";
+      uses dhcpv6:dhcpv6Relay_type;
+    }
+  }
+}

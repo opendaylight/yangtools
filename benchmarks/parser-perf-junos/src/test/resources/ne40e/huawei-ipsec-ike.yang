@@ -1,0 +1,3351 @@
+submodule huawei-ipsec-ike {
+  belongs-to huawei-ipsec {
+    prefix ipsec;
+  }
+
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ipsec-ike-type;
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "submodule ipsec-ike";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference "Huawei private.";
+  }
+
+  grouping ikeipsec_ikeipsec_type {
+    description
+      "";
+    container ikeGlobalConfiguration {
+      description
+        "IKE Global Congfiguration";
+      leaf dfBitClear {
+        type boolean;
+        description
+          "Clear Fragmentation Flag";
+      }
+      leaf fragBeforeEncr {
+        type boolean;
+        description
+          "Fragment Before Encryption";
+      }
+      leaf preCheck {
+        type boolean;
+        description
+          "Pre-Check Function enable";
+      }
+      leaf succeedCheck {
+        type boolean;
+        description
+          "Succeed-Check Function Enable";
+      }
+      leaf traffSaDisFlg {
+        type boolean;
+        default "false";
+        description
+          "Disable SA Duration by Traffic ";
+      }
+      leaf trafficSaDurtn {
+        when "not(../traffSaDisFlg='true')";
+        type uint32 {
+          range "8000..200000000";
+        }
+        default "1843200";
+        description
+          "SA Duration by Traffic (in KB), default value is 1843200";
+        ext:allowDelete "true";
+      }
+      leaf timeSaDurtn {
+        type uint32 {
+          range "480..604800";
+        }
+        default "3600";
+        description
+          "SA Duration by Time (in seconds), default value is 3600";
+        ext:allowDelete "true";
+      }
+      leaf antiReplFlg {
+        type boolean;
+        description
+          "Anti-replay";
+      }
+      leaf windowSize {
+        when "not(../antiReplFlg='false')";
+        type ikeipsecWindowSizeType;
+        must "(../antiReplFlg='false' and (../windowSize='None') ) or ((not(../antiReplFlg='false') and (../windowSize='32' or ../windowSize='64' or ../windowSize='128' or ../windowSize='256' or ../windowSize='512' or ../windowSize='1024') ))";
+        default "1024";
+        description
+          "Value of anti-replay window size [32,64,128,256,512,1024], default value is 1024";
+        ext:allowDelete "true";
+      }
+      leaf seqBackupNum {
+        type uint32 {
+          range "1000..200000000";
+        }
+        default "5000";
+        description
+          "Specify number of packets to process before backup sequence number, default value is 5000";
+        ext:allowDelete "true";
+      }
+      leaf localName {
+        type string {
+          length "1..255";
+        }
+        description
+          "Local Name";
+        ext:allowDelete "true";
+      }
+      leaf natKpAlvIntrvl {
+        type uint16 {
+          range "5..300";
+        }
+        default "20";
+        description
+          "NAT keepalive interval (in seconds), default value is 20";
+        ext:allowDelete "true";
+      }
+      leaf dpdType {
+        type ikeipsecDpdType;
+        default "none";
+        description
+          "DPD Type";
+        ext:allowDelete "true";
+      }
+      leaf dpdInterval {
+        when "not(../dpdType='none')";
+        type uint16 {
+          range "10..3600";
+        }
+        default "10";
+        description
+          "DPD check interval (in seconds)";
+        ext:allowDelete "false";
+      }
+      leaf dpdRetryIntrvl {
+        when "not(../dpdType='none')";
+        type uint8 {
+          range "2..60";
+        }
+        default "5";
+        description
+          "DPD message retry interval(IKE only) (in seconds), default value is 5";
+        ext:allowDelete "true";
+      }
+      leaf dosLogEnable {
+        type boolean;
+        default "false";
+        description
+          "DOS attack";
+      }
+      leaf dosThreshold {
+        when "../dosLogEnable='true'";
+        type uint16 {
+          range "1..200";
+        }
+        default "120";
+        description
+          "Log threshold value, default is 120";
+        ext:allowDelete "true";
+      }
+      leaf sm4version {
+        type ikeipsecGlobalSM4VersionType;
+        description
+          "SM4 Version.";
+        ext:allowDelete "true";
+      }
+      leaf dpdImdly {
+        when "not(../dpdType!='ondemand')";
+        type boolean;
+        default "false";
+        description
+          "DPD Effective Immediately";
+      }
+    }
+    container ikePeers {
+      description
+        "IKE Peers";
+      list ikePeer {
+        key "peerName";
+        description
+          "IKE Peer";
+        leaf peerName {
+          type string {
+            length "1..15";
+          }
+          description
+            "Peer Name";
+        }
+        leaf presharedKey {
+          type pub-type:passwordIke {
+            length "1..127";
+          }
+          description
+            "Preshared Key";
+          ext:allowDelete "true";
+        }
+        leaf exchangeMode {
+          type ikeipsecExchangeModeType;
+          default "main";
+          description
+            "Exchange Mode";
+        }
+        leaf natTraversal {
+          type boolean;
+          description
+            "NAT Traversal";
+        }
+        leaf proposal {
+          type leafref {
+            path "/ipsec/ike/ikeProposals/ikeProposal/proposalNumber";
+          }
+          description
+            "Proposal";
+          ext:allowDelete "true";
+        }
+        leaf localIdType {
+          type ikeipsecLocalIdType;
+          default "ip";
+          description
+            "Local ID Type";
+        }
+        leaf remoteId {
+          type string {
+            length "1..255";
+          }
+          description
+            "Remote ID";
+          ext:allowDelete "true";
+        }
+        leaf version1 {
+          type boolean;
+          default "true";
+          description
+            "IKE version 1";
+        }
+        leaf version2 {
+          type boolean;
+          default "true";
+          description
+            "IKE version 2";
+        }
+        leaf lowRemoteAddr {
+          type inet:ipv4-address-no-zone;
+          description
+            "LowRemoteAddr";
+        }
+        leaf highRemoteAddr {
+          type inet:ipv4-address-no-zone;
+          description
+            "HighRemoteAddr";
+        }
+        leaf inVrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          description
+            "InVrfName";
+          ext:allowDelete "true";
+        }
+        leaf outVrfName {
+          type leafref {
+            path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+          }
+          description
+            "OutVrfName";
+          ext:allowDelete "true";
+        }
+        leaf certLocalFile {
+          type string {
+            length "1..127";
+          }
+          description
+            "CertLocalFile";
+          ext:allowDelete "true";
+        }
+        leaf certRemoteFile {
+          type string {
+            length "1..127";
+          }
+          description
+            "Remote Cert File";
+          ext:allowDelete "true";
+        }
+        leaf authAddress {
+          type inet:ipv4-address-no-zone;
+          description
+            "Ike Remote Authentication Address";
+        }
+        leaf authEndAddress {
+          type inet:ipv4-address-no-zone;
+          description
+            "Ike Remote Authentication End Address";
+        }
+        leaf peersm4version {
+          type ikeipsecSM4VersionType;
+          description
+            "SM4 Version.";
+          ext:allowDelete "true";
+        }
+        leaf pkiWhiteListEnable {
+          type ikePeerWhiteListEnType;
+          description
+            "PKI WhiteList enable.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container ikeProposals {
+      description
+        "IKE Proposals";
+      list ikeProposal {
+        key "proposalNumber";
+        description
+          "IKE Proposal";
+        leaf proposalNumber {
+          type uint32 {
+            range "1..100";
+          }
+          description
+            "Proposal Number";
+        }
+        leaf authMethod {
+          type ikeipsecAuthMethodType;
+          must "not(../proposalNumber=101 or ../proposalNumber=102 or ../proposalNumber=103)";
+          default "pre-share";
+          description
+            "Authentication Method";
+          ext:allowDelete "true";
+        }
+        leaf authAlgorithm {
+          type ikeipsecAuthAlgoType;
+          must "not(../proposalNumber=101 or ../proposalNumber=102 or ../proposalNumber=103)";
+          default "sha2-256";
+          description
+            "Authentication Algorithm";
+          ext:allowDelete "true";
+        }
+        leaf encrAlgorithm {
+          type ikeipsecEncrAlgoType;
+          must "not(../proposalNumber=101 or ../proposalNumber=102 or ../proposalNumber=103)";
+          default "aes-cbc-256";
+          description
+            "Encryption Algorithm";
+          ext:allowDelete "true";
+        }
+        leaf integAlgorithm {
+          type ikeipsecIntegAlgoType;
+          must "not(../proposalNumber=101 or ../proposalNumber=102 or ../proposalNumber=103)";
+          default "hmac-sha2-256";
+          description
+            "Integrity Algorithm";
+          ext:allowDelete "true";
+        }
+        leaf dhGroup {
+          type ikeipsecDhModeType;
+          must "not(../proposalNumber=101 or ../proposalNumber=102 or ../proposalNumber=103)";
+          default "None";
+          description
+            "DH Group";
+          ext:allowDelete "true";
+        }
+        leaf reauthInterval {
+          type uint32 {
+            range "60..604800";
+          }
+          must "not(../proposalNumber=101 or ../proposalNumber=102 or ../proposalNumber=103)";
+          description
+            "Re-Authentication Interval";
+          ext:allowDelete "true";
+        }
+        leaf saDuration {
+          type uint32 {
+            range "60..604800";
+          }
+          must "not(../proposalNumber=101 or ../proposalNumber=102 or ../proposalNumber=103)";
+          default "86400";
+          description
+            "SA Duration";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container ipsecPolicys {
+      description
+        "Configure IPSec Policy";
+      list ipsecPolicy {
+        key "policyName sequenceNumber policyMode templateMode";
+        description
+          "Configure IPSec Policy";
+        leaf policyName {
+          type string {
+            length "1..15";
+          }
+          description
+            "Name of IPsec policy";
+        }
+        leaf sequenceNumber {
+          type uint32 {
+            range "1..10000";
+          }
+          description
+            "The sequence number of IPsec policy";
+        }
+        leaf policyMode {
+          type ikeipsecPolicyModeType;
+          description
+            "Policy Mode: 
+             ISAKMP: Indicates use of IKE to establish the IPsec SA.
+            ";
+        }
+        leaf templateMode {
+          type ikeipsecDynaTempMode;
+          description
+            "Template Mode: Bind a policy-template to ISAKMP(Use IPsec policy template to establish the IPsec SA).";
+        }
+        leaf templateName {
+          when "../policyMode='isakmp' and ../templateMode='dynaTemplate'";
+          type leafref {
+            path "/ipsec/ike/ipsecPolicyTemps/ipsecPolicyTemp/policyName";
+          }
+          description
+            "Name of IPsec policy template";
+          ext:allowDelete "true";
+        }
+        leaf localAddress {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type inet:ipv4-address-no-zone;
+          description
+            "IPsec policy local address";
+        }
+        leaf bindingInterfaceName {
+          type pub-type:ifName;
+          config false;
+          description
+            "Binding the enter interface of IPsec message";
+        }
+        leaf aclNumber {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type uint32 {
+            range "3000..3999";
+          }
+          description
+            "Specify the packets to protect by this policy, specify the acl number";
+          ext:allowDelete "true";
+        }
+        leaf aclName {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type string {
+            length "1..64";
+          }
+          description
+            "Specify the packets to protect by this policy, specify the ACL name (the name is a string of 1 to 64 characters, which begins with a-z or A-Z)";
+          ext:allowDelete "true";
+        }
+        leaf traffSaDisFlg {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type boolean;
+          description
+            "Disable SA duration traffic-based function";
+        }
+        leaf saLifeTimeKB {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate' or ../policyMode='isakmp' and ../templateMode='none' and ../traffSaDisFlg='true') or ../policyMode='isakmp' and ../templateMode='none' and ../traffSaDisFlg='false'";
+          type uint32 {
+            range "8000..200000000";
+          }
+          description
+            "Volume of traffic(in KB) a SA will live before expiring.";
+          ext:allowDelete "true";
+        }
+        leaf saLifeTimeSec {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type uint32 {
+            range "480..604800";
+          }
+          description
+            "Value of time(in seconds) a SA will live.";
+          ext:allowDelete "true";
+        }
+        leaf pfs {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type ikeipsecDhModeType;
+          description
+            "Use perfect forward secrecy(PFS) in IKE phase 2 negotiation";
+          ext:allowDelete "true";
+        }
+        leaf peerName {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type leafref {
+            path "/ipsec/ike/ikePeers/ikePeer/peerName";
+          }
+          description
+            "Specify the IKE peer of IPsec policy";
+          ext:allowDelete "true";
+        }
+        leaf dscpInboundSelect {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type ikeipsecDscpValueType;
+          description
+            "Remark DSCP value";
+          ext:allowDelete "true";
+        }
+        leaf dscpInboundValue {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate') or ../dscpInboundSelect='EnterDSCPCode'";
+          type uint8 {
+            range "0..63";
+          }
+          description
+            "Remark DSCP value";
+          ext:allowDelete "true";
+        }
+        leaf dscpOutboundSelect {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type ikeipsecDscpValueType;
+          description
+            "Remark DSCP value";
+          ext:allowDelete "true";
+        }
+        leaf dscpOutboundValue {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate') or ../dscpOutboundSelect='EnterDSCPCode'";
+          type uint8 {
+            range "0..63";
+          }
+          description
+            "Remark DSCP value";
+          ext:allowDelete "true";
+        }
+        leaf antiReplayEnum {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type ikeipsecAntiReplay;
+          default "NotConfigured";
+          description
+            "Anti-replay";
+          ext:allowDelete "true";
+        }
+        leaf windowSize {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate') or ../antiReplayEnum='Enable'";
+          type ikeipsecWindowSizeType;
+          default "1024";
+          description
+            "Configure IPsec anti-replay window size, default value is 1024\n";
+          ext:allowDelete "true";
+        }
+        leaf dfBitClear {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type boolean;
+          description
+            "Clear Fragmentation flag of encrypted packets";
+          ext:allowDelete "true";
+        }
+        leaf fragBeforeEncr {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type boolean;
+          description
+            "Fragment packets before encryption";
+          ext:allowDelete "true";
+        }
+        leaf inSpeedLimit {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type uint32 {
+            range "8..4194303";
+          }
+          description
+            "The speed limit inbound direction.The unit is kbytes/s.";
+          ext:allowDelete "true";
+        }
+        leaf inSpdPayloadFlag {
+          when "not(not(../inSpeedLimit))";
+          type ikeEnableType;
+          description
+            "Inbound Speed Limit IP Payload Flag.";
+          ext:allowDelete "true";
+        }
+        leaf outSpeedLimit {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type uint32 {
+            range "8..4194303";
+          }
+          description
+            "The speed limit outbound direction.The unit is kbytes/s.";
+          ext:allowDelete "true";
+        }
+        leaf outSpdPayloadFlag {
+          when "not(not(../outSpeedLimit))";
+          type ikeEnableType;
+          description
+            "Outbound Speed Limit IP Payload Flag.";
+          ext:allowDelete "true";
+        }
+        leaf inServiceClass {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type ikeipsecExpValueType;
+          default "none";
+          description
+            "Remark inbound service class";
+          ext:allowDelete "true";
+        }
+        leaf outServiceClass {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type ikeipsecExpValueType;
+          default "none";
+          description
+            "Remark outbound service class";
+          ext:allowDelete "true";
+        }
+        leaf loadbalanceHashArithmetic {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type hashArithmeticType;
+          description
+            "IPSec Load Balance Arithmetic";
+          ext:allowDelete "true";
+        }
+        leaf logEnable {
+          when "not(../policyMode='isakmp' and ../templateMode='dynaTemplate')";
+          type boolean;
+          default "false";
+          description
+            "Log enable function of Ipec tunnel establishment and removal";
+        }
+        container attachIPSecProposals {
+          description
+            "Specify the proposals of IPsec policy";
+          list attachIPSecProposal {
+            when "not(../../policyMode='isakmp' and ../../templateMode='dynaTemplate')";
+            key "ipsecProposalName";
+            description
+              "Specify the proposals of IPsec policy";
+            leaf ipsecProposalName {
+              type leafref {
+                path "/ipsec/ipsecProposals/ipsecProposal/proposalName";
+              }
+              description
+                "Name of IPsec proposal";
+              ext:allowDelete "true";
+            }
+          }
+        }
+      }
+    }
+    container ipsecPolicyTemps {
+      description
+        "Configure IPSec Policy-Template";
+      list ipsecPolicyTemp {
+        key "policyName sequenceNumber policyMode";
+        description
+          "Configure IPSec Policy-Template";
+        leaf policyName {
+          type string {
+            length "1..15";
+          }
+          description
+            "Name of IPsec policy";
+        }
+        leaf sequenceNumber {
+          type uint32 {
+            range "1..10000";
+          }
+          description
+            "The sequence number of IPsec policy";
+        }
+        leaf policyMode {
+          type ikeipsecPolicyTempModeType;
+          description
+            "Policy Mode: 
+             ISAKMP: Indicates use of IKE to establish the IPsec SA;
+             Template : Use IPsec policy template to establish the IPsec SA;
+             Policy-template : Configure IPsec policy template.
+            ";
+        }
+        leaf localAddress {
+          type inet:ipv4-address-no-zone;
+          description
+            "IPsec policy local address";
+        }
+        leaf bindingInterfaceName {
+          when "not(not(../localAddress)) or ../policyMode='dynamic'";
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Binding the enter interface of IPsec message";
+          ext:allowDelete "true";
+        }
+        leaf startVlanId1 {
+          when "not(not(../localAddress)) or ../bindingInterfaceName or ../policyMode='dynamic'";
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            " The start value of VLAN ID 1 ( only can input 3 parts vlan)";
+          ext:allowDelete "true";
+        }
+        leaf endVlanId1 {
+          when "not(not(../localAddress)) or ../bindingInterfaceName or ../policyMode='dynamic'";
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "The end value of VLAN ID 1 ( only can input 3 parts vlan)";
+          ext:allowDelete "true";
+        }
+        leaf startVlanId2 {
+          when "not(not(../localAddress)) or ../bindingInterfaceName or ../policyMode='dynamic'";
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            " The start value of VLAN ID 2 ( only can input 3 parts vlan)";
+          ext:allowDelete "true";
+        }
+        leaf endVlanId2 {
+          when "not(not(../localAddress)) or ../bindingInterfaceName or ../policyMode='dynamic'";
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "The end value of VLAN ID 2 ( only can input 3 parts vlan)";
+          ext:allowDelete "true";
+        }
+        leaf startVlanId3 {
+          when "not(not(../localAddress)) or ../bindingInterfaceName or ../policyMode='dynamic'";
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            " The start value of VLAN ID 3 ( only can input 3 parts vlan)";
+          ext:allowDelete "true";
+        }
+        leaf endVlanId3 {
+          when "not(not(../localAddress)) or ../bindingInterfaceName or ../policyMode='dynamic'";
+          type uint16 {
+            range "1..4094";
+          }
+          description
+            "The end value of VLAN ID 3 ( only can input 3 parts vlan)";
+          ext:allowDelete "true";
+        }
+        leaf aclNumber {
+          type uint32 {
+            range "3000..3999";
+          }
+          description
+            "Specify the packets to protect by this policy, specify the acl number";
+          ext:allowDelete "true";
+        }
+        leaf aclName {
+          type string {
+            length "1..64";
+          }
+          description
+            "Specify the packets to protect by this policy, specify the ACL name (the name is a string of 1 to 64 characters, which begins with a-z or A-Z)";
+          ext:allowDelete "true";
+        }
+        leaf traffSaDisFlg {
+          type boolean;
+          description
+            "Disable SA duration traffic-based function";
+        }
+        leaf saLifeTimeKB {
+          when "../traffSaDisFlg!='true'";
+          type uint32 {
+            range "8000..200000000";
+          }
+          description
+            "Volume of traffic(in KB) a SA will live before expiring.";
+          ext:allowDelete "true";
+        }
+        leaf saLifeTimeSec {
+          type uint32 {
+            range "480..604800";
+          }
+          description
+            "Value of time(in seconds) a SA will live.";
+          ext:allowDelete "true";
+        }
+        leaf pfs {
+          type ikeipsecDhModeType;
+          description
+            "Use perfect forward secrecy(PFS) in IKE phase 2 negotiation";
+          ext:allowDelete "true";
+        }
+        leaf peerName {
+          type leafref {
+            path "/ipsec/ike/ikePeers/ikePeer/peerName";
+          }
+          description
+            "Specify the IKE peer of IPsec policy";
+          ext:allowDelete "true";
+        }
+        leaf dscpInboundSelect {
+          type ikeipsecDscpValueType;
+          description
+            "Remark DSCP value";
+          ext:allowDelete "true";
+        }
+        leaf dscpInboundValue {
+          when "../dscpInboundSelect='EnterDSCPCode'";
+          type uint8 {
+            range "0..63";
+          }
+          description
+            "Remark DSCP value";
+          ext:allowDelete "true";
+        }
+        leaf dscpOutboundSelect {
+          type ikeipsecDscpValueType;
+          description
+            "Remark DSCP value";
+          ext:allowDelete "true";
+        }
+        leaf dscpOutboundValue {
+          when "../dscpOutboundSelect='EnterDSCPCode'";
+          type uint8 {
+            range "0..63";
+          }
+          description
+            "Remark DSCP value";
+          ext:allowDelete "true";
+        }
+        leaf antiReplayEnum {
+          type ikeipsecAntiReplay;
+          default "NotConfigured";
+          description
+            "Anti-replay";
+          ext:allowDelete "true";
+        }
+        leaf windowSize {
+          when "../antiReplayEnum='Enable'";
+          type ikeipsecWindowSizeType;
+          default "1024";
+          description
+            "Configure IPsec anti-replay window size, default value is 1024\n";
+          ext:allowDelete "true";
+        }
+        leaf dfBitClear {
+          type boolean;
+          description
+            "Clear Fragmentation flag of encrypted packets";
+          ext:allowDelete "true";
+        }
+        leaf fragBeforeEncr {
+          type boolean;
+          description
+            "Fragment packets before encryption";
+          ext:allowDelete "true";
+        }
+        leaf inSpeedLimit {
+          type uint32 {
+            range "8..4194303";
+          }
+          description
+            "The speed limit inbound direction.The unit is kbytes/s.";
+          ext:allowDelete "true";
+        }
+        leaf inSpdPayloadFlag {
+          when "not(not(../inSpeedLimit))";
+          type ikeEnableType;
+          description
+            "Inbound Speed Limit IP Payload Flag.";
+          ext:allowDelete "true";
+        }
+        leaf outSpeedLimit {
+          type uint32 {
+            range "8..4194303";
+          }
+          description
+            "The speed limit outbound direction.The unit is kbytes/s.";
+          ext:allowDelete "true";
+        }
+        leaf outSpdPayloadFlag {
+          when "not(not(../outSpeedLimit))";
+          type ikeEnableType;
+          description
+            "Outbound Speed Limit IP Payload Flag.";
+          ext:allowDelete "true";
+        }
+        leaf inServiceClass {
+          type ikeipsecExpValueType;
+          default "none";
+          description
+            "Remark inbound service class";
+          ext:allowDelete "true";
+        }
+        leaf outServiceClass {
+          type ikeipsecExpValueType;
+          default "none";
+          description
+            "Remark outbound service class";
+          ext:allowDelete "true";
+        }
+        leaf loadbalanceHashArithmetic {
+          type hashArithmeticType;
+          description
+            "IPSec Load Balance Arithmetic";
+          ext:allowDelete "true";
+        }
+        leaf logEnable {
+          type boolean;
+          default "false";
+          description
+            "Log enable function of Ipec tunnel establishment and removal";
+        }
+        container attachIPSecProposals {
+          description
+            "Specify the proposals of IPsec policy";
+          list attachIPSecProposal {
+            key "ipsecProposalName";
+            description
+              "Specify the proposals of IPsec policy";
+            leaf ipsecProposalName {
+              type leafref {
+                path "/ipsec/ipsecProposals/ipsecProposal/proposalName";
+              }
+              description
+                "Name of IPsec proposal";
+              ext:allowDelete "true";
+            }
+          }
+        }
+      }
+    }
+    container ipsecInterfaceCfgs {
+      description
+        "Configure IPSec Interface";
+      list ipsecInterfaceCfg {
+        key "interfaceName";
+        description
+          "Configure IPSec Interface";
+        leaf interfaceName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Configure Interface Name";
+        }
+        leaf policyName {
+          type string {
+            length "1..15";
+          }
+          description
+            "Configure Policy Name";
+          ext:allowDelete "true";
+        }
+        leaf serviceInstanceGroupName {
+          type string {
+            length "1..31";
+          }
+          description
+            "Configure Service Instance Group Name";
+          ext:allowDelete "true";
+        }
+        leaf generateRoute {
+          type boolean;
+          default "true";
+          description
+            "Configure Generate Route";
+          ext:allowDelete "true";
+        }
+        leaf instanceId {
+          type leafref {
+            path "/ipsec/ike/ipsecInstances/ipsecInstance/instanceId";
+          }
+          description
+            "Configure IPSecinstance id";
+          ext:allowDelete "true";
+        }
+        leaf slaveDown {
+          when "not(not(../instanceId))";
+          type boolean;
+          default "false";
+          description
+            "Configure SlaveDown mode";
+          ext:allowDelete "true";
+        }
+        container portMirror {
+          description
+            "Port mirroring.";
+          leaf observIndexInbound {
+            when "not(not(../../policyName))";
+            type uint8 {
+              range "1..255";
+            }
+            description
+              "Port mirroring inbound observer index.";
+            ext:allowDelete "true";
+          }
+          leaf portMirrAclInbound {
+            when "not(not(../observIndexInbound))";
+            type uint16 {
+              range "3000..3999";
+            }
+            description
+              "Port mirroring inbound ACL number.";
+            ext:allowDelete "true";
+          }
+          leaf observIndexOutbound {
+            when "not(not(../../policyName))";
+            type uint8 {
+              range "1..255";
+            }
+            description
+              "Port mirroring outbound observer index.";
+            ext:allowDelete "true";
+          }
+          leaf portMirrAclOutbound {
+            when "not(not(../observIndexOutbound))";
+            type uint16 {
+              range "3000..3999";
+            }
+            description
+              "Port mirroring outbound ACL number.";
+            ext:allowDelete "true";
+          }
+        }
+        container trafficPolicy {
+          when "not(not(../policyName))";
+          description
+            "Traffic policy.";
+          leaf trafficPlcyAclInbound {
+            type int16 {
+              range "3000..3999";
+            }
+            description
+              "Traffic Policy inbound ACL number.";
+            ext:allowDelete "true";
+          }
+          leaf trafficPlcyAclOutbound {
+            type uint16 {
+              range "3000..3999";
+            }
+            description
+              "Traffic Policy outbound ACL number.";
+            ext:allowDelete "true";
+          }
+        }
+      }
+    }
+    container ipsecInstances {
+      description
+        "IPSec instances";
+      list ipsecInstance {
+        key "instanceId";
+        description
+          "IPSec instance";
+        leaf instanceId {
+          type uint16 {
+            range "1..128";
+          }
+          description
+            "IPSec instance id";
+        }
+        leaf rbpName {
+          type string;
+          description
+            "Remote backup profile name";
+          ext:allowDelete "true";
+        }
+        leaf srcIfName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Source interface name of backup";
+          ext:allowDelete "true";
+        }
+        leaf startPort {
+          type uint16 {
+            range "1025..65280";
+          }
+          description
+            "Start port of backup";
+          ext:allowDelete "true";
+        }
+        leaf endPort {
+          type uint16 {
+            range "1280..65535";
+          }
+          description
+            "End port of backup";
+          ext:allowDelete "true";
+        }
+        leaf rbsName {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Remote backup service name";
+        }
+        leaf rbsSrcAddress {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Remote backup service source address";
+        }
+        leaf rbsDstAddress {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Remote backup service destination address";
+        }
+        leaf rbsPort {
+          type uint16 {
+            range "1024..65535";
+          }
+          config false;
+          description
+            "Remote backup service port";
+        }
+        leaf vrrpId {
+          type uint16 {
+            range "1..255";
+          }
+          config false;
+          description
+            "Virtual router redundancy protocol id";
+        }
+        leaf vrrpState {
+          type ikeVrrpStateType;
+          config false;
+          description
+            "Virtual router redundancy protocol state";
+        }
+        leaf haChannelState {
+          type ikeHAChannelStateType;
+          config false;
+          description
+            "Hot backup channel state";
+        }
+        leaf haFsmState {
+          type ikeHAFsmStateType;
+          config false;
+          description
+            "Hot backup state";
+        }
+        container usedIpsecPolicys {
+          config false;
+          description
+            "Used ipsec policys";
+          list usedIpsecPolicy {
+            key "policyName";
+            config false;
+            description
+              "Used ipsec policys";
+            leaf policyName {
+              type string {
+                length "1..32";
+              }
+              config false;
+              description
+                "IPSec policy name";
+            }
+          }
+        }
+      }
+    }
+    container ikeVrrpTrkInsts {
+      description
+        "VRRP Track IPSec Instance.";
+      list ikeVrrpTrkInst {
+        key "vrrpIfName vrrpId ipsecInstId";
+        description
+          "VRRP Track IPSec Instance.";
+        leaf vrrpIfName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "VRRP Interface name.";
+        }
+        leaf vrrpId {
+          type uint8 {
+            range "1..255";
+          }
+          description
+            "VRRP ID.";
+        }
+        leaf ipsecInstId {
+          type leafref {
+            path "/ipsec/ike/ipsecInstances/ipsecInstance/instanceId";
+          }
+          description
+            "IPSec Instance ID.";
+        }
+        leaf reducedPri {
+          type uint8 {
+            range "1..255";
+          }
+          description
+            "Reduced priority.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container ikeDispPros {
+      config false;
+      description
+        "Display IKE Proposals";
+      list ikeDispPro {
+        key "proposalNumber";
+        config false;
+        description
+          "Display IKE Proposal";
+        leaf proposalNumber {
+          type uint32 {
+            range "1..103";
+          }
+          config false;
+          description
+            "Proposal Number";
+        }
+        leaf authMethod {
+          type ikeipsecAuthMethodType;
+          config false;
+          description
+            "Authentication Method";
+        }
+        leaf authAlgorithm {
+          type ikeipsecAuthAlgoType;
+          config false;
+          description
+            "Authentication Algorithm";
+        }
+        leaf encrAlgorithm {
+          type ikeipsecEncrAlgoType;
+          config false;
+          description
+            "Encryption Algorithm";
+        }
+        leaf integAlgorithm {
+          type ikeipsecIntegAlgoType;
+          config false;
+          description
+            "Integrity Algorithm";
+        }
+        leaf dhGroup {
+          type ikeipsecDhModeType;
+          config false;
+          description
+            "DH Group";
+        }
+        leaf saDuration {
+          type uint32 {
+            range "60..604800";
+          }
+          config false;
+          description
+            "SA Duration";
+        }
+      }
+    }
+    container ikeSaHaStats {
+      config false;
+      description
+        "SA ha Statistics";
+      list ikeSaHaStat {
+        config false;
+        description
+          "SA ha Statistics";
+        leaf currentSaNum {
+          type uint32;
+          config false;
+          description
+            "Total number of SA";
+        }
+        leaf singleHmngSa {
+          type uint32;
+          config false;
+          description
+            "Number of Single Homing SA";
+        }
+        leaf multiHmngMasterSa {
+          type uint32;
+          config false;
+          description
+            "Number of Multi Homing SA in Master state";
+        }
+        leaf multiHmngSlaveSa {
+          type uint32;
+          config false;
+          description
+            "Number of Multi Homing SA in Slave state";
+        }
+        leaf noBkupSa {
+          type uint32;
+          config false;
+          description
+            "Number of SA not backedup";
+        }
+        leaf bkupSa {
+          type uint32;
+          config false;
+          description
+            "Number of SA backedup";
+        }
+      }
+    }
+    container ikeSas {
+      config false;
+      description
+        "IKE Security Association's";
+      list ikeSa {
+        key "connectionId";
+        config false;
+        description
+          "IKE Security Association";
+        leaf connectionId {
+          type uint32 {
+            range "1..65535";
+          }
+          config false;
+          description
+            "Connection ID of IKE SA";
+        }
+        leaf remoteAddress {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "IPsec policy remote address";
+          ext:support-filter "true";
+        }
+        leaf remotePort {
+          type uint16 {
+            range "0..65535";
+          }
+          config false;
+          description
+            "IPsec policy remote port((Nat Traversal))";
+        }
+        leaf slotId {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Slot number";
+          ext:support-filter "true";
+        }
+        leaf subSlotType {
+          type ikeSubSlotType;
+          config false;
+          description
+            "Security unit type";
+          ext:support-filter "true";
+        }
+        leaf subSlotId {
+          type uint16 {
+            range "0..1";
+          }
+          config false;
+          description
+            "Security unit ID";
+          ext:support-filter "true";
+        }
+        leaf haFlag {
+          type ikeSaHaType;
+          config false;
+          description
+            "Ha flag";
+          ext:support-filter "true";
+        }
+        leaf saFlag {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "SA flag string";
+        }
+        leaf vpn {
+          type pub-type:vrfName {
+            length "1..31";
+          }
+          default "_public_";
+          config false;
+          description
+            "VPN Flag";
+        }
+        leaf instanceId {
+          type uint32;
+          config false;
+          description
+            "Instance ID";
+        }
+        leaf phase {
+          type uint8 {
+            range "1..2";
+          }
+          config false;
+          description
+            "phase";
+        }
+        leaf localAddress {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "IPsec policy local address";
+        }
+        leaf initiatorCookie {
+          type string {
+            length "1..16";
+          }
+          config false;
+          description
+            "Initiator cookie";
+        }
+        leaf responderCookie {
+          type string {
+            length "1..16";
+          }
+          config false;
+          description
+            "Responder cookie";
+        }
+        leaf interfaceName {
+          type pub-type:ifName;
+          config false;
+          description
+            "Interface name";
+        }
+        leaf authMethod {
+          type ikeipsecAuthMethodType;
+          config false;
+          description
+            "Authentication method";
+        }
+        leaf authAlgorithm {
+          type ikeipsecAuthAlgoType;
+          config false;
+          description
+            "Authentication algorithm";
+        }
+        leaf encrAlgorithm {
+          type ikeipsecEncrAlgoType;
+          config false;
+          description
+            "Encryption algorithm";
+        }
+        leaf integAlgorithm {
+          type ikeipsecIntegAlgoType;
+          config false;
+          description
+            "Integrity algorithm";
+        }
+        leaf dhGroup {
+          type ikeipsecDhModeDispType;
+          config false;
+          description
+            "Diffie-Hellman Group";
+        }
+        leaf remainingTime {
+          type uint32;
+          config false;
+          description
+            "Remaining SA duration";
+        }
+        leaf referenceCount {
+          type uint32;
+          config false;
+          description
+            "Reference count ";
+        }
+        leaf isBackedUp {
+          type boolean;
+          config false;
+          description
+            "Is backed up flag";
+        }
+        leaf saEstablishedTime {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "SA established time";
+        }
+        leaf ikePeerName {
+          type string {
+            length "1..15";
+          }
+          config false;
+          description
+            "IKE peer name";
+        }
+        leaf ikeVersion {
+          type ikeipsecIkeVersionType;
+          config false;
+          description
+            "IKE version";
+        }
+        leaf flowVpn {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Flow VPN";
+        }
+        leaf peerVpn {
+          type string {
+            length "1..32";
+          }
+          config false;
+          description
+            "Peer VPN";
+        }
+        leaf ext {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Ext";
+        }
+        leaf sendMsgCount {
+          type uint32;
+          config false;
+          description
+            "Send message count";
+        }
+        leaf recvMsgCount {
+          type uint32;
+          config false;
+          description
+            "Receive message count";
+        }
+      }
+    }
+    container ikeIpsecSas {
+      config false;
+      description
+        "IKE IPSec SA";
+      list ikeIpsecSa {
+        key "connectionId";
+        config false;
+        description
+          "IKE IPSec SA";
+        leaf connectionId {
+          type uint32;
+          config false;
+          description
+            "Connection Id";
+        }
+        leaf interfaceName {
+          type pub-type:ifName;
+          config false;
+          description
+            "Interface Name";
+        }
+        leaf policyName {
+          type string {
+            length "1..15";
+          }
+          config false;
+          description
+            "Policy Name";
+          ext:support-filter "true";
+        }
+        leaf vpn {
+          type pub-type:vrfName {
+            length "1..31";
+          }
+          default "_public_";
+          config false;
+          description
+            "Vpn";
+        }
+        leaf sequenceNumber {
+          type uint16 {
+            range "1..10000";
+          }
+          config false;
+          description
+            "Sequence Number";
+          ext:support-filter "true";
+        }
+        leaf instanceId {
+          type string {
+            length "1..15";
+          }
+          config false;
+          description
+            "Instance Id";
+        }
+        leaf slotId {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Slot ID";
+          ext:support-filter "true";
+        }
+        leaf subSlotType {
+          type ikeSubSlotType;
+          config false;
+          description
+            "Security unit type";
+          ext:support-filter "true";
+        }
+        leaf subSlotId {
+          type uint16 {
+            range "0..1";
+          }
+          config false;
+          description
+            "Security unit ID";
+          ext:support-filter "true";
+        }
+        leaf policyMode {
+          type ikeipsecPolicyModeDispType;
+          config false;
+          description
+            "Policy Mode";
+        }
+        leaf inboundVPN {
+          type pub-type:vrfName {
+            length "1..31";
+          }
+          default "_public_";
+          config false;
+          description
+            "Inbound VPN";
+        }
+        leaf outboundVPN {
+          type pub-type:vrfName {
+            length "1..31";
+          }
+          default "_public_";
+          config false;
+          description
+            "Outbound VPN";
+        }
+        leaf aclRuleNum {
+          type uint32;
+          config false;
+          description
+            "ACL Rule Number";
+        }
+        leaf encapMode {
+          type ikeipsecEncapsulationModeType;
+          config false;
+          description
+            "Encapsulation Mode ";
+        }
+        leaf tunnelLocalAddress {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Tunnel Local Address";
+        }
+        leaf tunnelRemoteAddress {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Tunnel Remote Address";
+          ext:support-filter "true";
+        }
+        leaf srcFlowStartAddr {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Source Flow Start Address";
+        }
+        leaf maskSrc {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Source Mask";
+        }
+        leaf srcFlowPid {
+          type uint32;
+          config false;
+          description
+            "Source Flow Pid";
+        }
+        leaf srcFlowSP {
+          type uint32;
+          config false;
+          description
+            "Source Flow SP";
+        }
+        leaf destFlowStartAddr {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Destination Flow Start Address";
+        }
+        leaf maskDest {
+          type inet:ipv4-address-no-zone;
+          config false;
+          description
+            "Destination Mask";
+        }
+        leaf destFlowPid {
+          type uint32;
+          config false;
+          description
+            "Destination Flow Pid";
+        }
+        leaf destFlowDP {
+          type uint32;
+          config false;
+          description
+            "Destination Flow DP";
+        }
+        leaf dscp {
+          type uint8 {
+            range "0..63";
+          }
+          config false;
+          description
+            "DSCP Value";
+        }
+        leaf inAhSAId {
+          type uint32;
+          config false;
+          description
+            "Inbound AH SA Id";
+        }
+        leaf inESPSaId {
+          type uint32;
+          config false;
+          description
+            "Inbound ESP SA Id";
+        }
+        leaf outAhSAId {
+          type uint32;
+          config false;
+          description
+            "Outbound AH SA Id";
+        }
+        leaf outESPSaId {
+          type uint32;
+          config false;
+          description
+            "Outbound ESP SA Id";
+        }
+        leaf inAhSaEstablishTime {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Inboud AH Established Time";
+        }
+        leaf inAhSpi {
+          type uint64;
+          config false;
+          description
+            "Inbound AH SPI";
+        }
+        leaf inAhHexSpi {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Hexadecimal Inbound SPI";
+        }
+        leaf inAhProposal {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Inbound AH Proposal";
+        }
+        leaf inAhMaxSeqNum {
+          type uint32;
+          config false;
+          description
+            "Inbound AH Max Sequence Number";
+        }
+        leaf inAhUdpEncap {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Inbound AH Udp Encapsulation(Used for NAT traversal)";
+        }
+        leaf inAhDisSARemDur {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Inbound AH  SA Remain Key Duration in(kilobytes/sec)";
+        }
+        leaf outAhSaEstablishTime {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Outbound AH SA Established Time";
+        }
+        leaf outAhSpi {
+          type uint64;
+          config false;
+          description
+            "Outbound AH SPI";
+        }
+        leaf outAhProposal {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Outbound AH Proposal";
+        }
+        leaf outAhMaxSeqNum {
+          type uint32;
+          config false;
+          description
+            "Outbound AH Max Sequence Num";
+        }
+        leaf outAhUdpEncap {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Outbound AH Udp Encapsulation(Used for NAT traversal)";
+        }
+        leaf outAhHexSpi {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Outbound AH Hexadecimal SPI";
+        }
+        leaf outAhDisSARemDur {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Outbound AH SA Remain Key Duration in(kilobytes/sec)";
+        }
+        leaf outEspSaEstablishTime {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Outbound ESP SA Established Time";
+        }
+        leaf outboundEspSpi {
+          type uint64;
+          config false;
+          description
+            "Outbound ESP SPI";
+        }
+        leaf outEspProposal {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Outbound ESP Proposal";
+        }
+        leaf outEspMaxSeqNum {
+          type uint32;
+          config false;
+          description
+            "Outbound ESP Max Sequence Num";
+        }
+        leaf outEspUdpEncap {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Outbound ESP Udp Encapsulation(Used for NAT traversal)";
+        }
+        leaf outHexEspSpi {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Outbound Hexadecimal ESP SPI";
+        }
+        leaf outEspDisSARemDur {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Outbound ESP SA Remain Key Duration in(kilobytes/sec)";
+        }
+        leaf inEspSaEstablishTime {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Inbound ESP SA Established Time";
+        }
+        leaf inEspSpi {
+          type uint64;
+          config false;
+          description
+            "Inbound ESP SPI";
+        }
+        leaf inEspProposal {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Inbound ESP Proposal";
+        }
+        leaf inEspMaxSeqNum {
+          type uint32;
+          config false;
+          description
+            "Inbound ESP Max Sequence Num";
+        }
+        leaf inEspUdpEncap {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Inbound ESP Udp Encapsulation(Used for NAT traversal)";
+        }
+        leaf inHexEspSpi {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Inbound Hexdecimal ESP SPI";
+        }
+        leaf inEspDisSARemDur {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Inbound ESP SA Remain Key Duration in(kilobytes/sec)";
+        }
+        leaf ext {
+          type string {
+            length "1..50";
+          }
+          config false;
+          description
+            "Ext";
+        }
+      }
+    }
+    container activeIpsecSlots {
+      description
+        "Active Ipsec Slot List";
+      list activeIpsecSlot {
+        key "slotId";
+        description
+          "Active Ipsec Slot ";
+        leaf slotId {
+          type string {
+            length "1..31";
+          }
+          description
+            "Slot";
+          ext:allowDelete "false";
+        }
+      }
+    }
+    container ikeMsgStatistics {
+      config false;
+      description
+        "Msg Statistics";
+      list ikeMsgStatistic {
+        key "slotId subSlotType subSlotId";
+        config false;
+        description
+          "Msg Statistics";
+        leaf slotId {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Slot Number";
+        }
+        leaf subSlotType {
+          type ikeSubSlotType;
+          config false;
+          description
+            "Security unit type";
+        }
+        leaf subSlotId {
+          type uint16 {
+            range "0..1";
+          }
+          config false;
+          description
+            "Security unit ID";
+        }
+        leaf msgRecv {
+          type uint32;
+          config false;
+          description
+            "IKE message received";
+        }
+        leaf msgSent {
+          type uint32;
+          config false;
+          description
+            "IKE message sent";
+        }
+        leaf ikev1P1RekeySuccess {
+          type uint32;
+          config false;
+          description
+            "IKEv1 phase1 rekey success";
+        }
+        leaf ikev1P2RekeySuccess {
+          type uint32;
+          config false;
+          description
+            "IKEv1 phase2 rekey success";
+        }
+        leaf ikev1P1ExchTimeout {
+          type uint32;
+          config false;
+          description
+            "IKEv1 phase1 exchange timeout";
+        }
+        leaf ikev1P2ExchTimeout {
+          type uint32;
+          config false;
+          description
+            "IKEv1 phase2 exchange timeout";
+        }
+        leaf ikev2P1RekeySuccess {
+          type uint32;
+          config false;
+          description
+            "IKEv2 IKE SA rekey success";
+        }
+        leaf ikev2P2RekeySuccess {
+          type uint32;
+          config false;
+          description
+            "IKEv2 child SA rekey success";
+        }
+        leaf ikev2P1ExchTimeout {
+          type uint32;
+          config false;
+          description
+            "IKEv2 IKE SA rekey timeout";
+        }
+        leaf ikev2P2ExchTimeout {
+          type uint32;
+          config false;
+          description
+            "IKEv2 child SA rekey timeout";
+        }
+        leaf ikev2AuthExchTimeout {
+          type uint32;
+          config false;
+          description
+            "IKEv2 authenticate exchange timeout";
+        }
+        leaf ikev2ReAuthInit {
+          type uint32;
+          config false;
+          description
+            "IKEv2 re-authenticate initiate";
+        }
+        leaf ikev2ReAuthSuccess {
+          type uint32;
+          config false;
+          description
+            "IKEv2 re-authenticate success";
+        }
+        leaf ikev2DrpReAuthInvalidState {
+          type uint32;
+          config false;
+          description
+            "IKEv2 drop re-authenticate invalid SA";
+        }
+        leaf ikev2DrpReAuthNoChild {
+          type uint32;
+          config false;
+          description
+            "IKEv2 drop re-authenticate no child";
+        }
+        leaf ikev2HardReAuth {
+          type uint32;
+          config false;
+          description
+            "IKEv2 hard re-authenticate";
+        }
+        leaf rmtAuthMthdMis {
+          type uint32;
+          config false;
+          description
+            "Remote auth method mismatch";
+        }
+        leaf ikeExpRecv {
+          type uint32;
+          config false;
+          description
+            "IKE expire received";
+        }
+        leaf ikeAcqRecv {
+          type uint32;
+          config false;
+          description
+            "IKE acquire received";
+        }
+        leaf ikeExpDrp {
+          type uint32;
+          config false;
+          description
+            "IKE acquire dropped";
+        }
+        leaf ikeAcqDrp {
+          type uint32;
+          config false;
+          description
+            "IKE expire dropped";
+        }
+        leaf ikeReplacRecv {
+          type uint32;
+          config false;
+          description
+            "IKE replace received";
+        }
+      }
+    }
+    container ikeV1Statistics {
+      config false;
+      description
+        "V1 Statistics";
+      list ikeV1Statistic {
+        key "slotId subSlotType subSlotId";
+        config false;
+        description
+          "V1 Statistics";
+        leaf slotId {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "slot Number";
+        }
+        leaf subSlotType {
+          type ikeSubSlotType;
+          config false;
+          description
+            "Security unit type";
+        }
+        leaf subSlotId {
+          type uint16 {
+            range "0..1";
+          }
+          config false;
+          description
+            "Security unit ID";
+        }
+        leaf totalv1Peer {
+          type uint32;
+          config false;
+          description
+            "Number of total peers                        ";
+        }
+        leaf totalv1CfgPeer {
+          type uint32;
+          config false;
+          description
+            "Number of policy peers                       ";
+        }
+        leaf totalv1PrfPeer {
+          type uint32;
+          config false;
+          description
+            "Number of profile peers                      ";
+        }
+        leaf proposalV1 {
+          type uint32;
+          config false;
+          description
+            "Number of proposals                          ";
+        }
+        leaf estv1p1SA {
+          type uint32;
+          config false;
+          description
+            "Number of established V1 phase 1 SAs         ";
+        }
+        leaf estv1p2SA {
+          type uint32;
+          config false;
+          description
+            "Number of established V1 phase 2 SAs         ";
+        }
+        leaf totalv1p1SA {
+          type uint32;
+          config false;
+          description
+            "Number of total V1 phase 1 SAs               ";
+        }
+        leaf totalv1p2SA {
+          type uint32;
+          config false;
+          description
+            "Number of total V1 phase 2 SAs               ";
+        }
+        leaf totalv1SA {
+          type uint32;
+          config false;
+          description
+            "Number of total SAs                          ";
+        }
+        leaf dropRespExc {
+          type uint32;
+          config false;
+          description
+            "Number of Response exchange Drop             ";
+        }
+      }
+    }
+    container ikeV2Statistics {
+      config false;
+      description
+        "V2 Statistics";
+      list ikeV2Statistic {
+        key "slotId subSlotType subSlotId";
+        config false;
+        description
+          "V2 Statistics";
+        leaf slotId {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Slot Number";
+        }
+        leaf subSlotType {
+          type ikeSubSlotType;
+          config false;
+          description
+            "Security unit type";
+        }
+        leaf subSlotId {
+          type uint16 {
+            range "0..1";
+          }
+          config false;
+          description
+            "Security unit ID";
+        }
+        leaf totalv2Peer {
+          type uint32;
+          config false;
+          description
+            "Number of total peers                        ";
+        }
+        leaf totalv2CfgPeer {
+          type uint32;
+          config false;
+          description
+            "Number of policy peers                       ";
+        }
+        leaf totalv2PrfPeer {
+          type uint32;
+          config false;
+          description
+            "Number of profile peers                      ";
+        }
+        leaf proposalV2 {
+          type uint32;
+          config false;
+          description
+            "Number of proposals                          ";
+        }
+        leaf estv2p1SA {
+          type uint32;
+          config false;
+          description
+            "Number of established V2 phase 1 SAs         ";
+        }
+        leaf estv2p2SA {
+          type uint32;
+          config false;
+          description
+            "Number of established V2 phase 2 SAs         ";
+        }
+        leaf totalv2p1SA {
+          type uint32;
+          config false;
+          description
+            "Number of total V2 phase 1 SAs               ";
+        }
+        leaf totalv2p2SA {
+          type uint32;
+          config false;
+          description
+            "Number of total V2 phase 2 SAs               ";
+        }
+        leaf totalv2SA {
+          type uint32;
+          config false;
+          description
+            "Number of total SAs                          ";
+        }
+      }
+    }
+    container ikeAllStatistics {
+      config false;
+      description
+        "All Statistics";
+      list ikeAllStatistic {
+        key "slotId subSlotType subSlotId";
+        config false;
+        description
+          "All Statistics";
+        leaf slotId {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Slot Number";
+        }
+        leaf subSlotType {
+          type ikeSubSlotType;
+          config false;
+          description
+            "Security unit type";
+        }
+        leaf subSlotId {
+          type uint16 {
+            range "0..1";
+          }
+          config false;
+          description
+            "Security unit ID";
+        }
+        leaf totalPeer {
+          type uint32;
+          config false;
+          description
+            "Total number of peers (IKEv1 & IKEv2) ";
+        }
+        leaf configPeer {
+          type uint32;
+          config false;
+          description
+            "Number of policy peers (IKEv1 & IKEv2) ";
+        }
+        leaf profilePeer {
+          type uint32;
+          config false;
+          description
+            "Number of profile peers (IKEv1 & IKEv2)";
+        }
+        leaf transportCount {
+          type uint32;
+          config false;
+          description
+            "Number of transports (IKEv1 & IKEv2)  ";
+        }
+        leaf proposalCount {
+          type uint32;
+          config false;
+          description
+            "Number of IKE proposals   ";
+        }
+        leaf exchangeCount {
+          type uint32;
+          config false;
+          description
+            "Number of exchanges   ";
+        }
+        leaf invalidPayloadSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid payload type sent";
+        }
+        leaf doiNotSupportedS {
+          type uint32;
+          config false;
+          description
+            "Number of DOI not supported sent ";
+        }
+        leaf situationNotSupportedS {
+          type uint32;
+          config false;
+          description
+            "Number of situation not supported sent ";
+        }
+        leaf invalidCookieSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid cookie sent ";
+        }
+        leaf invalidMajorVersionSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid major version sent   ";
+        }
+        leaf invalidMinorVersionSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid minor version sent ";
+        }
+        leaf invalidExchangeTypeSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid exchange type sent ";
+        }
+        leaf invalidFlagsSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid flags sent ";
+        }
+        leaf invalidMessageIdSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid message ID sent  ";
+        }
+        leaf invalidProtocolIdSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid protocol ID sent  ";
+        }
+        leaf invalidSpiSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid SPI sent  ";
+        }
+        leaf invalidTransformIdSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid transform ID sent ";
+        }
+        leaf attributesNotSupportedSent {
+          type uint32;
+          config false;
+          description
+            "Number of attribute not supported sent  ";
+        }
+        leaf noProposalChosenSent {
+          type uint32;
+          config false;
+          description
+            "Number of no proposal chosen sent";
+        }
+        leaf badProposalSyntaxSent {
+          type uint32;
+          config false;
+          description
+            "Number of bad proposal syntx sent";
+        }
+        leaf notifyPayloadMalformedSent {
+          type uint32;
+          config false;
+          description
+            "Number of notify payload malformed sent";
+        }
+        leaf invalidKeyInfoSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid key information sent";
+        }
+        leaf invalidIdInfoSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid ID sent ";
+        }
+        leaf invalidCertEncodingSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid certification encoding sent      ";
+        }
+        leaf invalidCertificateSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid certification sent               ";
+        }
+        leaf certificateTypeNotSupportedSent {
+          type uint32;
+          config false;
+          description
+            "Number of certification type not supported sent    ";
+        }
+        leaf invalidCertificateAuthoritySent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid certification authority sent     ";
+        }
+        leaf invalidHashInfoSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid hash information sent            ";
+        }
+        leaf authenticationFailedSent {
+          type uint32;
+          config false;
+          description
+            "Number of authorization failed sent                ";
+        }
+        leaf invalidSignatureSent {
+          type uint32;
+          config false;
+          description
+            "Number of invalid signature sent                   ";
+        }
+        leaf numAddressSent {
+          type uint32;
+          config false;
+          description
+            "Number of address sent                             ";
+        }
+        leaf numSaLifeTimeSent {
+          type uint32;
+          config false;
+          description
+            "Number of SA lifetime sent                         ";
+        }
+        leaf certificateUnavailableSent {
+          type uint32;
+          config false;
+          description
+            "Number of certification unavailable sent           ";
+        }
+        leaf exchTypeNotSupportedSent {
+          type uint32;
+          config false;
+          description
+            "Number of exchange type not supported sent         ";
+        }
+        leaf unequalPayloadLengthsSent {
+          type uint32;
+          config false;
+          description
+            "Number of unqualified payload Length sent          ";
+        }
+        leaf invalidPayloadTypeRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid payload type received            ";
+        }
+        leaf doiNotSuppRecv {
+          type uint32;
+          config false;
+          description
+            "Number of DOI not supported received               ";
+        }
+        leaf situationNotSupRecv {
+          type uint32;
+          config false;
+          description
+            "Number of situation not supported received         ";
+        }
+        leaf invalidCookieRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid cookie received                  ";
+        }
+        leaf invalidMajorVersionRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid major version received           ";
+        }
+        leaf invalidMinorVersionRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid minor version received           ";
+        }
+        leaf invalidExchTypeRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid exchange type received           ";
+        }
+        leaf invalidFlagsRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid flags received                   ";
+        }
+        leaf invalidMessageIdRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid message ID received              ";
+        }
+        leaf invalidProtocoldRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid protocol ID received             ";
+        }
+        leaf invalidSpiRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid SPI received                     ";
+        }
+        leaf invalidTransformIdRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid transform ID received            ";
+        }
+        leaf attributeNotSuppRecv {
+          type uint32;
+          config false;
+          description
+            "Number of attribute not supported received         ";
+        }
+        leaf noProposalChosenRecv {
+          type uint32;
+          config false;
+          description
+            "Number of no proposal chosen received              ";
+        }
+        leaf badProposalSyntaxRecv {
+          type uint32;
+          config false;
+          description
+            "Number of bad proposal syntax received             ";
+        }
+        leaf notifyPayloadMalformedRecv {
+          type uint32;
+          config false;
+          description
+            "Number of notify payload malformed received        ";
+        }
+        leaf invalidKeyInfoRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid key information received         ";
+        }
+        leaf invalidIdInfoRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid ID received                      ";
+        }
+        leaf invalidCertEncodingRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid certification encoding received  ";
+        }
+        leaf invalidCertificateRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid certification received           ";
+        }
+        leaf certificateTypeNotSupportedRecv {
+          type uint32;
+          config false;
+          description
+            "Number of certification type not supported received";
+        }
+        leaf invalidCertAuthorityRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid certification authority received ";
+        }
+        leaf invalidHashInfoRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid hash information received        ";
+        }
+        leaf authFailRecv {
+          type uint32;
+          config false;
+          description
+            "Number of authorization failed received            ";
+        }
+        leaf invalidSignatureRecv {
+          type uint32;
+          config false;
+          description
+            "Number of invalid signature received               ";
+        }
+        leaf numAddressRecv {
+          type uint32;
+          config false;
+          description
+            "Number of address received                         ";
+        }
+        leaf numSaLifetimeRecv {
+          type uint32;
+          config false;
+          description
+            "Number of SA lifetime received                     ";
+        }
+        leaf certUnavailableRecv {
+          type uint32;
+          config false;
+          description
+            "Number of certification unavailable received       ";
+        }
+        leaf exchangeTypeNotSuppRecv {
+          type uint32;
+          config false;
+          description
+            "Number of exchange type not supported received     ";
+        }
+        leaf unequalPayloadLengthsRecv {
+          type uint32;
+          config false;
+          description
+            "Number of unqualified payload length received      ";
+        }
+        leaf respLifeTimeSent {
+          type uint32;
+          config false;
+          description
+            "Number of responder lifetime sent                  ";
+        }
+        leaf replayStatusSent {
+          type uint32;
+          config false;
+          description
+            "Number of replay status sent                       ";
+        }
+        leaf initContactSent {
+          type uint32;
+          config false;
+          description
+            "Number of initial contact sent                     ";
+        }
+        leaf stillConnectSent {
+          type uint32;
+          config false;
+          description
+            "Number of still connected sent                     ";
+        }
+        leaf respLifeTimRecv {
+          type uint32;
+          config false;
+          description
+            "Number of responder lifetime received              ";
+        }
+        leaf replayStatusRecv {
+          type uint32;
+          config false;
+          description
+            "Number of replay status received                   ";
+        }
+        leaf initContactRecv {
+          type uint32;
+          config false;
+          description
+            "Number of initial contact received                 ";
+        }
+        leaf stillConnectRecv {
+          type uint32;
+          config false;
+          description
+            "Number of still connected received                 ";
+        }
+        leaf dpdReqSent {
+          type uint32;
+          config false;
+          description
+            "Number of DPD request sent                         ";
+        }
+        leaf dpdAckRecv {
+          type uint32;
+          config false;
+          description
+            "Number of DPD ack received                         ";
+        }
+        leaf dpdReqRecv {
+          type uint32;
+          config false;
+          description
+            "Number of DPD request received                     ";
+        }
+        leaf dpdAckSent {
+          type uint32;
+          config false;
+          description
+            "Number of DPD ack sent                             ";
+        }
+        leaf delSaSent {
+          type uint32;
+          config false;
+          description
+            "Number of delete SA sent                           ";
+        }
+        leaf delSaRecv {
+          type uint32;
+          config false;
+          description
+            "Number of delete SA received                       ";
+        }
+      }
+    }
+    container ikeGlobalStatistic {
+      config false;
+      description
+        "IKE  global statistics";
+      leaf ikeSaNegotiFailCount {
+        type uint32;
+        config false;
+        description
+          "IKE SA negotiation failing count";
+      }
+    }
+    container ikeExpireStatistics {
+      config false;
+      description
+        "IKE IPSec Expire Statistics";
+      list ikeExpireStatistic {
+        key "slotId subSlotType subSlotId";
+        config false;
+        description
+          "IKE IPSec Expire Statistics";
+        leaf slotId {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Slot Number";
+        }
+        leaf subSlotType {
+          type ikeSubSlotType;
+          config false;
+          description
+            "Security unit type";
+        }
+        leaf subSlotId {
+          type uint16 {
+            range "0..1";
+          }
+          config false;
+          description
+            "Security unit ID";
+        }
+        leaf softExp1 {
+          type uint32;
+          config false;
+          description
+            "70 percent soft expire sent";
+        }
+        leaf softExp2 {
+          type uint32;
+          config false;
+          description
+            "80 percent soft expire sent";
+        }
+        leaf softExp3 {
+          type uint32;
+          config false;
+          description
+            "90 percent soft expire sent";
+        }
+        leaf hardExp {
+          type uint32;
+          config false;
+          description
+            "Hard expire sent";
+        }
+        leaf saAcquireSent {
+          type uint32;
+          config false;
+          description
+            "Acquire SA sent";
+        }
+        leaf saEntryFillRecv {
+          type uint32;
+          config false;
+          description
+            "SA fill entry receive";
+        }
+        leaf saAddRecv {
+          type uint32;
+          config false;
+          description
+            "SA Add Receive";
+        }
+        leaf saDelRecv {
+          type uint32;
+          config false;
+          description
+            "SA Delete Receive";
+        }
+        leaf cryptoFail {
+          type uint32;
+          config false;
+          description
+            "Get crypto fail";
+        }
+      }
+    }
+    container ikeIpsecStatistics {
+      config false;
+      description
+        "IKE IPSec Statistics";
+      list ikeIpsecStatistic {
+        key "slotId subSlotType subSlotId";
+        config false;
+        description
+          "IKE IPSec Statistics";
+        leaf slotId {
+          type string {
+            length "1..31";
+          }
+          config false;
+          description
+            "Slot Number";
+        }
+        leaf subSlotType {
+          type ikeSubSlotType;
+          config false;
+          description
+            "Security unit type";
+        }
+        leaf subSlotId {
+          type uint16 {
+            range "0..1";
+          }
+          config false;
+          description
+            "Security unit ID";
+        }
+        leaf ikePktInbondOk {
+          type uint32;
+          config false;
+          description
+            "IKE packet inbound OK";
+        }
+        leaf ikePktInbondErr {
+          type uint32;
+          config false;
+          description
+            "IKE packet inbound error";
+        }
+        leaf ikePktOutbondOk {
+          type uint32;
+          config false;
+          description
+            "IKE packet outbound OK";
+        }
+        leaf ikePktOutbondEr {
+          type uint32;
+          config false;
+          description
+            "IKE packet outbound error";
+        }
+        leaf ikeNatKlPktRecd {
+          type uint32;
+          config false;
+          description
+            "IKE nat keepalive packet received";
+        }
+        leaf softExpr {
+          type uint32;
+          config false;
+          description
+            "Soft expire";
+        }
+        leaf hardExpr {
+          type uint32;
+          config false;
+          description
+            "Hard expire";
+        }
+        leaf dpdRcv {
+          type uint32;
+          config false;
+          description
+            "DPD recive";
+        }
+        leaf dpdSend {
+          type uint32;
+          config false;
+          description
+            "DPD send";
+        }
+        leaf swapSa {
+          type uint32;
+          config false;
+          description
+            "Swap SA";
+        }
+        leaf modpCnt {
+          type uint32;
+          config false;
+          description
+            "MODP count";
+        }
+        leaf saeSucc {
+          type uint32;
+          config false;
+          description
+            "SAE success";
+        }
+        leaf softwareSucc {
+          type uint32;
+          config false;
+          description
+            "Software success";
+        }
+        leaf rsa2SaeCnt {
+          type uint32;
+          config false;
+          description
+            "RSA to SAE count";
+        }
+        leaf rsa2SaesuccCnt {
+          type uint32;
+          config false;
+          description
+            "RSA to SAE success count";
+        }
+        leaf rsa2SaeErrCnt {
+          type uint32;
+          config false;
+          description
+            "RSA to SAE error count";
+        }
+        leaf mpu1stPktRecv {
+          type uint32;
+          config false;
+          description
+            "Mpu first packets receive";
+        }
+        leaf mpu1stPktSend {
+          type uint32;
+          config false;
+          description
+            "Mpu first packets send";
+        }
+        leaf ipPktOk {
+          type uint64;
+          config false;
+          description
+            "IP packet OK";
+        }
+        leaf ipPktErr {
+          type uint64;
+          config false;
+          description
+            "IP packet error";
+        }
+        leaf ipPktDrop {
+          type uint64;
+          config false;
+          description
+            "IP packet drop";
+        }
+        leaf inSecPkts {
+          type uint64;
+          config false;
+          description
+            "Input security packets";
+        }
+        leaf outSecPkts {
+          type uint64;
+          config false;
+          description
+            "output security packets";
+        }
+        leaf inSecBytes {
+          type uint64;
+          config false;
+          description
+            "Input security bytes";
+        }
+        leaf outSecBytes {
+          type uint64;
+          config false;
+          description
+            "Output security bytes";
+        }
+        leaf inDropSecPkts {
+          type uint64;
+          config false;
+          description
+            "Input dropped security packets";
+        }
+        leaf outDropSecPkts {
+          type uint64;
+          config false;
+          description
+            "Output dropped security packets";
+        }
+        leaf encSendSae {
+          type uint64;
+          config false;
+          description
+            "Send SAE packets";
+        }
+        leaf encRecvSae {
+          type uint64;
+          config false;
+          description
+            "Receive SAE packets";
+        }
+        leaf encSendErr {
+          type uint64;
+          config false;
+          description
+            "Send SAE packets error";
+        }
+        leaf encIntaPkts {
+          type uint64;
+          config false;
+          description
+            "Intact packet";
+        }
+        leaf encFisrtSlice {
+          type uint64;
+          config false;
+          description
+            "First slice";
+        }
+        leaf encAfterSlice {
+          type uint64;
+          config false;
+          description
+            "After slice";
+        }
+        leaf decSendSae {
+          type uint64;
+          config false;
+          description
+            "Send SAE";
+        }
+        leaf decRecvSae {
+          type uint64;
+          config false;
+          description
+            "Receive SAE";
+        }
+        leaf decSendErr {
+          type uint64;
+          config false;
+          description
+            "Send SAE packets error";
+        }
+        leaf decFristSlice {
+          type uint64;
+          config false;
+          description
+            "REASS first slice";
+        }
+        leaf decAfterSlice {
+          type uint64;
+          config false;
+          description
+            "REASS after slice";
+        }
+        leaf decAfterLenErr {
+          type uint64;
+          config false;
+          description
+            "REASS len error";
+        }
+        leaf dropHeadErr {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for packet header wrong";
+        }
+        leaf dropMemApFail {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for memory apply fail";
+        }
+        leaf dropNoSa {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for can't find SA";
+        }
+        leaf dropWrongSa {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for wrong SA";
+        }
+        leaf dropAuth {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for authentication";
+        }
+        leaf dropReplay {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for replay";
+        }
+        leaf dropPreChck {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for pre-check";
+        }
+        leaf dropSuccChck {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for succeed-check";
+        }
+        leaf dropExLimit {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for exceed packet limit";
+        }
+        leaf dropChangeEnc {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for change cpu enc";
+        }
+        leaf dropChangeDec {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for dec change cpu";
+        }
+        leaf dropProcIpv4 {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for process IPv4";
+        }
+        leaf dropFibSearch {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for FIB search";
+        }
+        leaf dropRcvEncErSae {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for rcv enc form sae said error";
+        }
+        leaf dropRcvDecErSae {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for rcv dec form sae said error";
+        }
+        leaf dropSendPort {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for send port error";
+        }
+        leaf dropSendOutput {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for output error";
+        }
+        leaf dropIfAclReChIn {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for interface ACL recheck inbound drop";
+        }
+        leaf dropIfAclRechOut {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for interface ACL recheck outbound drop";
+        }
+        leaf dropTcamNoMatch {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for ACL TCAM found not match";
+        }
+        leaf dropBackupSa {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for backup SA drop";
+        }
+        leaf dropSaeQue {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for sae shared queue message number";
+        }
+        leaf dropSaeQueErr {
+          type uint64;
+          config false;
+          description
+            "Dropped security packet for sae shared queue drop";
+        }
+      }
+    }
+  }
+}

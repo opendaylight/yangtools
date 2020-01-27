@@ -1,0 +1,147 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-wdm-type {
+  belongs-to huawei-wdm {
+    prefix wdm;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "wdm_type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef wdmOtnFecModeType {
+    type enumeration {
+      enum "standard" {
+        description
+          "FEC(G.709).";
+      }
+      enum "none" {
+        description
+          "FEC Disable.";
+      }
+      enum "enhanced" {
+        description
+          "HGFEC(Enhanced).";
+      }
+      enum "enhanced-i-4" {
+        description
+          "AFEC-3(G.975.1 I.4).";
+      }
+      enum "enhanced-i-7" {
+        description
+          "AFEC(G.975.1 I.7).";
+      }
+    }
+    description
+      "wdmOtnFecModeType";
+  }
+  typedef wdmTransAlarmType {
+    type enumeration {
+      enum "ODU_AIS" {
+        description
+          "ODU_AIS.";
+      }
+      enum "ODU_LCK" {
+        description
+          "ODU_LCK.";
+      }
+      enum "ODU_OCI" {
+        description
+          "ODU_OCI.";
+      }
+      enum "OTU_AIS" {
+        description
+          "OTU_AIS.";
+      }
+      enum "OTU_LOM" {
+        description
+          "OTU_LOM.";
+      }
+      enum "OTU_SD_BER" {
+        description
+          "OTU_SD_BER.";
+      }
+      enum "OTU_SF_BER" {
+        description
+          "OTU_SF_BER.";
+      }
+      enum "PM_BDI" {
+        description
+          "PM_BDI.";
+      }
+      enum "PM_TIM" {
+        description
+          "PM_TIM.";
+      }
+      enum "R_LOF" {
+        description
+          "R_LOF.";
+      }
+      enum "R_LOS" {
+        description
+          "R_LOS.";
+      }
+      enum "R_OOF" {
+        description
+          "R_OOF.";
+      }
+      enum "SM_BDI" {
+        description
+          "SM_BDI.";
+      }
+      enum "SM_IAE" {
+        description
+          "SM_IAE.";
+      }
+      enum "SM_TIM" {
+        description
+          "SM_TIM.";
+      }
+      enum "PREFEC_TCA" {
+        description
+          "PREFEC_TCA.";
+      }
+    }
+    description
+      "wdmTransAlarmType";
+  }
+  typedef wdmMapPathType {
+    type enumeration {
+      enum "No-configurable" {
+        description
+          "Unsupported.";
+      }
+      enum "opu2-standard" {
+        description
+          "GSup43 7.3 mapping path.";
+      }
+      enum "opu2-non-standard" {
+        description
+          "GSup43 6.2 mapping path.";
+      }
+      enum "opu2e" {
+        description
+          "GSup43 7.1 mapping path.";
+      }
+    }
+    description
+      "wdmMapPathType";
+  }
+}

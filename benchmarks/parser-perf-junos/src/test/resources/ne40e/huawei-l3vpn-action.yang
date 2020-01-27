@@ -1,0 +1,116 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-l3vpn-action {
+  belongs-to huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  include huawei-l3vpn-l3vpncomm;
+  include huawei-l3vpn-qos-action;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "The submodule of l3vpn:l3vpn_action";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc forceSwitchFrr {
+    description
+      "ForceSwitch State";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "VPN Instance Name";
+      }
+      leaf ifNameMaster {
+        type pub-type:ifName;
+        description
+          "Master Outbound Interface Name";
+      }
+      leaf ifNameSlave {
+        type pub-type:ifName;
+        description
+          "Slave Outbound Interface Name";
+      }
+      leaf nextHopMaster {
+        type inet:ipv4-address-no-zone;
+        description
+          "Master Next Hop Address";
+      }
+      leaf nextHopSlave {
+        type inet:ipv4-address-no-zone;
+        description
+          "Slave Next Hop Address";
+      }
+    }
+  }
+  rpc clearForceSwitchFrr {
+    description
+      "clear ForceSwitch State";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "VPN Instance Name";
+      }
+      leaf ifNameMaster {
+        type pub-type:ifName;
+        description
+          "Master Outbound Interface Name";
+      }
+      leaf ifNameSlave {
+        type pub-type:ifName;
+        description
+          "Slave Outbound Interface Name";
+      }
+      leaf nextHopMaster {
+        type inet:ipv4-address-no-zone;
+        description
+          "Master Next Hop Address";
+      }
+      leaf nextHopSlave {
+        type inet:ipv4-address-no-zone;
+        description
+          "Slave Next Hop Address";
+      }
+    }
+  }
+  rpc resetTraffic {
+    description
+      "Reset traffic statistics ";
+    input {
+      leaf vrfName {
+        type string {
+          length "1..31";
+        }
+        description
+          "VPN Instance Name";
+      }
+    }
+  }
+}

@@ -1,0 +1,63 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-snmp-action {
+  belongs-to huawei-snmp {
+    prefix snmp;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-snmp-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description of snmp action submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc snmpaActivateUsers {
+    description
+      "Activate the users blocked by authentication failure.";
+    input {
+      list snmpaActivateUser {
+        description
+          "Activate the user blocked by authentication failure.";
+        leaf userName {
+          type string {
+            length "0..32";
+          }
+          description
+            "Unique name to identify the USM user";
+        }
+        leaf engineId {
+          type string {
+            length "10..64";
+            pattern '(([0-9a-fA-F])*)';
+          }
+          description
+            "Remote Engine ID";
+          ext:allowDelete "true";
+        }
+      }
+    }
+  }
+  rpc sendNmsPingTraps {
+    description
+      "Send test trap";
+  }
+}

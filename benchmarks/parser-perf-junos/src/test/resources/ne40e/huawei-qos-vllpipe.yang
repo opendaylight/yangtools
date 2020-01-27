@@ -1,0 +1,100 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-qos-vllpipe {
+  belongs-to huawei-qos {
+    prefix qos;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-qos-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "QoS_vllpipe submodule";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping qos_vllpipe_type {
+    description
+      "";
+    leaf splitMode {
+      type boolean;
+      default "false";
+      description
+        "Specify the splitMode.";
+    }
+    leaf pipeMode {
+      type l2vpnPipeMode;
+      must "(../splitMode='false' and (../pipeMode='pipe' or ../pipeMode='shortPipe' or ../pipeMode='uniform') ) or ((not(../splitMode='false') and ../pipeMode='uniform'))";
+      default "uniform";
+      description
+        "Specify the pipe mode.";
+      ext:allowDelete "true";
+    }
+    leaf ingPipeMode {
+      type l2vpnPipeMode;
+      must "not(../splitMode='false') or (../splitMode='false' and ../ingPipeMode='uniform')";
+      default "uniform";
+      description
+        "Specify the ingPipe mode.";
+      ext:allowDelete "true";
+    }
+    leaf egPipeMode {
+      type l2vpnPipeMode;
+      must "not(../splitMode='false') or (../splitMode='false' and ../egPipeMode='uniform')";
+      default "uniform";
+      description
+        "Specify the egPipe mode.";
+      ext:allowDelete "true";
+    }
+    leaf serviceClass {
+      type l2vpnServiceClass;
+      must "not(../splitMode='false' and ../pipeMode='uniform' or ../splitMode='true' and ../ingPipeMode='uniform')";
+      default "be";
+      description
+        "Specify the CoS.";
+      ext:allowDelete "true";
+    }
+    leaf color {
+      type l2vpnColor;
+      must "not(../splitMode='false' and ../pipeMode='uniform' or ../splitMode='true' and ../ingPipeMode='uniform')";
+      default "green";
+      description
+        "Specify the color of packets.";
+      ext:allowDelete "true";
+    }
+    leaf dsName {
+      type string {
+        length "1..31";
+      }
+      must "not(../splitMode='false' and ../pipeMode='pipe' or ../splitMode='false' and ../pipeMode='uniform' or ../splitMode='true' and ../egPipeMode='pipe' or ../splitMode='true' and ../egPipeMode='uniform')";
+      description
+        "DS domain name.";
+      ext:allowDelete "true";
+    }
+    leaf trustType {
+      type l2vpnTrustType;
+      must "not(../splitMode='false' and ../pipeMode='pipe' or ../splitMode='false' and ../pipeMode='shortPipe' or ../splitMode='false' and ../pipeMode='uniform' or ../splitMode='true' and ../egPipeMode='pipe' or ../splitMode='true' and ../egPipeMode='uniform')";
+      default "outpri";
+      description
+        "Specify the TrustType.";
+      ext:allowDelete "true";
+    }
+  }
+}

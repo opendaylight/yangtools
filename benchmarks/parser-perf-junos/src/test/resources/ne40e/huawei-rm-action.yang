@@ -1,0 +1,83 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-rm-action {
+  belongs-to huawei-rm {
+    prefix rm;
+  }
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  include huawei-rm-rmbase-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Clear statistics in the routing table.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc resetRmStatistics {
+    description
+      "Clear statistics in the routing table. The cleared statistics in the routing table cannot be restored. Therefore, exercise caution when clearing statistics in the routing table.";
+    input {
+      leaf vrfName {
+        type pub-type:vrfName;
+        description
+          "VPN instance name.";
+      }
+      leaf afType {
+        type commodelAfType;
+        description
+          "Type of an address family.";
+      }
+      leaf topologyName {
+        type string {
+          length "1..31";
+        }
+        description
+          "Topology name.";
+      }
+      leaf protocolId {
+        type rmbaseStatisticType;
+        description
+          "Clear statistics about routes of the specified protocol, which can be direct, BGP, IS-IS, OSPF, RIP, static, OSPFv3, and RIPng.";
+      }
+    }
+  }
+  rpc resetVpnv4statistics {
+    description
+      "Clear statistics in the routing table. The cleared statistics in the routing table cannot be restored. Therefore, exercise caution when clearing statistics in the routing table.";
+    input {
+      leaf protocolId {
+        type rmbaseStatisticType;
+        description
+          "Clear statistics about routes of the specified protocol, which can be direct, BGP, IS-IS, OSPF, RIP, static, OSPFv3, and RIPng.";
+      }
+    }
+  }
+  rpc resetVpnv6statistics {
+    description
+      "Clear statistics in the routing table. The cleared statistics in the routing table cannot be restored. Therefore, exercise caution when clearing statistics in the routing table.";
+    input {
+      leaf protocolId {
+        type rmbaseStatisticType;
+        description
+          "Clear statistics about routes of the specified protocol, which can be direct, BGP, IS-IS, OSPF, RIP, static, OSPFv3, and RIPng.";
+      }
+    }
+  }
+}

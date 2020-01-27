@@ -1,0 +1,42 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-pim {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-pim";
+  prefix pim;
+  include huawei-pim-type;
+  include huawei-pim-pimafspro;
+  include huawei-pim-pimafspro-type;
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Protocol Independent Multicast.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container pim {
+    description
+      "Protocol Independent Multicast.";
+    container pimafspro {
+      description
+        "Protocol Independent Multicast.";
+      uses pim:pimafspro_pimafspro_type;
+    }
+  }
+}
+
+

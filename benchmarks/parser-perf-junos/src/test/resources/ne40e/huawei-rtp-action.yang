@@ -1,0 +1,79 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-rtp-action {
+  belongs-to huawei-rtp {
+    prefix rtp;
+  }
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Delete statistics about route policy.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc resetPrefixCnt {
+    description
+      "Delete statistics about the specified IPv4 prefix list.";
+    input {
+      leaf prefixName {
+                type string {
+          length "1..169";
+        }
+                description
+          "Name of an IPv4 prefix. ";
+      }
+    }
+  }
+  rpc resetPrefix6Cnt {
+    description
+      "Delete statistics about the specified IPv6 prefix list.";
+    input {
+      leaf prefix6Name {
+                type string {
+          length "1..169";
+        }
+                description
+          "Name of an IPv6 prefix.";
+      }
+    }
+  }
+  rpc resetRPMatchCnt {
+    description
+      "Delete statistics about the specified route policy list.";
+    input {
+      leaf policyName {
+                type string {
+          length "1..200";
+        }
+                description
+          "Route policy name.";
+      }
+    }
+  }
+  rpc resetPrefixCntAll {
+    description
+      "Delete statistics about all IPv4 prefix lists.";
+  }
+  rpc resetPrefix6CntAll {
+    description
+      "Delete statistics about all IPv6 prefix list.";
+  }
+  rpc resetRPMatchCntAll {
+    description
+      "Delete statistics about all route policies.";
+  }
+}

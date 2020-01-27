@@ -1,0 +1,471 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-acl-type {
+  belongs-to huawei-acl {
+    prefix acl;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "ACL type.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef aclMatchOrder {
+    type enumeration {
+      enum "Config" {
+        description
+          "Rules in a rule group are matched in the order they are configured.";
+      }
+      enum "Auto" {
+        description
+          "Rules in a rule group are automatically matched based on the depth-first principle.";
+      }
+    }
+    description
+      "Matching Order.";
+  }
+  typedef aclRuleAction {
+    type enumeration {
+      enum "permit" {
+        description
+          "Permit packets.";
+      }
+      enum "deny" {
+        description
+          "Deny packets.";
+      }
+    }
+    description
+      "Matching mode of basic ACL rules. The available options are Permit and Deny.";
+  }
+  typedef aclFragmentType {
+    type enumeration {
+      enum "fragment_subseq" {
+        description
+          "Non-first fragment in fragmentation.
+Flag of checking the non-first fragment in fragmentation.";
+      }
+      enum "fragment" {
+        description
+          "Non-first fragmented packet.
+Flag of checking the non-first fragmented packets.";
+      }
+      enum "non_fragment" {
+        description
+          "Non-fragmented packet.
+Flag of checking the non-fragment packets.";
+      }
+      enum "non_subseq" {
+        description
+          "First fragment or non-fragment packets.
+Flag of checking the first fragment or non-fragment packets.";
+      }
+      enum "fragment_spe_first" {
+        description
+          "First fragment of a packet.
+Flag of checking the first fragment of the fragmented packets.";
+      }
+      enum "clear_fragment" {
+        description
+          "Clear fragment configuration.";
+      }
+    }
+    description
+      "Type of packet fragmentation.";
+  }
+  typedef aclFragmentIPv6Type {
+    type enumeration {
+      enum "fragment" {
+        description
+          "IPv6 non-first fragmented packet.
+Flag of checking the non-first fragmented packets.";
+      }
+      enum "clear_fragment" {
+        description
+          "IPv6 clear fragment configuration.";
+      }
+    }
+    description
+      "Type of packet fragmentation.";
+  }
+  typedef aclRangeType {
+    type enumeration {
+      enum "lt" {
+        description
+          "Less than the given port number.";
+      }
+      enum "eq" {
+        description
+          "Equal to the given port number.";
+      }
+      enum "gt" {
+        description
+          "Greater than the given port number.";
+      }
+      enum "neq" {
+        description
+          "Not equal to the given port number.";
+      }
+      enum "range" {
+        description
+          "Between two port numbers.";
+      }
+    }
+    description
+      "Range type.";
+  }
+  typedef ICMPNAME {
+    type enumeration {
+      enum "unconfigured" {
+        description
+          "This attribute is not configured.";
+      }
+      enum "echo" {
+        description
+          "echo (Type=8,code=0).";
+      }
+      enum "echo-reply" {
+        description
+          "echo-reply (Type=0,code=0).";
+      }
+      enum "fragmentneed-DFset" {
+        description
+          "fragmentneed-DFset (Type=3,code=4).";
+      }
+      enum "host-redirect" {
+        description
+          "host-redirect (Type=5,code=1).";
+      }
+      enum "host-tos-redirect" {
+        description
+          "host-tos-redirect (Type=5,code=3).";
+      }
+      enum "host-unreachable" {
+        description
+          "host-unreachable (Type=3,code=1).";
+      }
+      enum "information-reply" {
+        description
+          "information-reply (Type=16,code=0).";
+      }
+      enum "information-request" {
+        description
+          "information-request (Type=15,code=0).";
+      }
+      enum "net-redirect" {
+        description
+          "net-redirect (Type=5,code=0).";
+      }
+      enum "net-tos-redirect" {
+        description
+          "net-tos-redirect (Type=5,code=2).";
+      }
+      enum "net-unreachable" {
+        description
+          "net-unreachable (Type=3,code=0).";
+      }
+      enum "parameter-problem" {
+        description
+          "parameter-problem (Type=12,code=0).";
+      }
+      enum "port-unreachable" {
+        description
+          "port-unreachable (Type=3,code=3).";
+      }
+      enum "protocol-unreachable" {
+        description
+          "protocol-unreachable (Type=3,code=2).";
+      }
+      enum "reassembly-timeout" {
+        description
+          "reassembly-timeout (Type=11,code=1).";
+      }
+      enum "source-quench" {
+        description
+          "source-quench (Type=4,code=0).";
+      }
+      enum "source-route-failed" {
+        description
+          "source-route-failed (Type=3,code=5).";
+      }
+      enum "timestamp-reply" {
+        description
+          "timestamp-reply (Type=14,code=0).";
+      }
+      enum "timestamp-request" {
+        description
+          "timestamp-request (Type=13,code=0).";
+      }
+      enum "ttl-exceeded" {
+        description
+          "ttl-exceeded (Type=11,code=0).";
+      }
+      enum "address-mask-reply" {
+        description
+          "address-mask-reply (Type=18,code=0).";
+      }
+      enum "address-mask-request" {
+        description
+          "address-mask-request (Type=17,code=0).";
+      }
+      enum "custom" {
+        description
+          "User-defined ICMP type and code.";
+      }
+    }
+    description
+      "ICMP name.";
+  }
+  typedef ICMP6NAME {
+    type enumeration {
+      enum "unconfigured" {
+        description
+          "This attribute is not configured by users.";
+      }
+      enum "Redirect" {
+        description
+          "Redirect (Type=137,code=0).";
+      }
+      enum "echo" {
+        description
+          "echo (Type=128,code=0).";
+      }
+      enum "echo-reply" {
+        description
+          "echo-reply (Type=129,code=0).";
+      }
+      enum "err-Header-field" {
+        description
+          "err-Header-field (Type=4,code=0).";
+      }
+      enum "frag-time-exceeded" {
+        description
+          "frag-time-exceeded (Type=3,code=1).";
+      }
+      enum "hop-limit-exceeded" {
+        description
+          "hop-limit-exceeded (Type=3,code=0).";
+      }
+      enum "host-admin-prohib" {
+        description
+          "host-admin-prohib (Type=1,code=1).";
+      }
+      enum "host-unreachable" {
+        description
+          "host-unreachable (Type=1,code=3).";
+      }
+      enum "neighbor-advertisement" {
+        description
+          "neighbor-advertisement (Type=136,code=0).";
+      }
+      enum "neighbor-solicitation" {
+        description
+          "neighbor-solicitation (Type=135,code=0).";
+      }
+      enum "network-unreachable" {
+        description
+          "network-unreachable (Type=1,code=0).";
+      }
+      enum "packet-too-big" {
+        description
+          "packet-too-big (Type=2,code=0).";
+      }
+      enum "port-unreachable" {
+        description
+          "port-unreachable (Type=1,code=4).";
+      }
+      enum "router-advertisement" {
+        description
+          "router-advertisement (Type=134,code=0).";
+      }
+      enum "router-solicitation" {
+        description
+          "router-solicitation (Type=133,code=0).";
+      }
+      enum "unknown-ipv6-opt" {
+        description
+          "unknown-ipv6-opt (Type=4,code=2).";
+      }
+      enum "unknown-next-hdr" {
+        description
+          "unknown-next-hdr (Type=4,code=1).";
+      }
+      enum "custom" {
+        description
+          "User-defined ICMP type and code.";
+      }
+    }
+    description
+      "ICMP name.";
+  }
+  typedef timeName {
+    type string {
+      length "1..32";
+      pattern '([a-zA-Z]([^\s]*))';
+    }
+    description
+      "timeName is begin with a-z or A-Z";
+  }
+  typedef acl6NumOrName {
+    type string {
+      length "1..32";
+      pattern '([1-3]\d{3})|([a-zA-Z]([^\s]*))';
+    }
+    description
+      "acl6NumOrName is begin with a-z or A-Z or 0-9";
+  }
+  typedef aclOffsetBegin {
+    type enumeration {
+      enum "l2-head" {
+        description
+          "Layer 2 header.";
+      }
+      enum "ipv4-head" {
+        description
+          "IPv4 header.";
+      }
+      enum "l4-head" {
+        description
+          "Layer 4 header.";
+      }
+    }
+    description
+      "Position of the start offset.";
+  }
+  typedef aclEncapType {
+    type enumeration {
+      enum "ether-ii" {
+        description
+          "Ethernet-II encapsulation.";
+      }
+      enum "802.3" {
+        description
+          "802.3 encapsulation.";
+      }
+      enum "snap" {
+        description
+          "SNAP encapsulation.";
+      }
+    }
+    description
+      "Encapsulation type.";
+  }
+  typedef acl4GroupType {
+    type enumeration {
+      enum "Interface" {
+        description
+          "Interface ACL.";
+      }
+      enum "Link" {
+        description
+          "Link ACL.";
+      }
+      enum "Basic" {
+        description
+          "Basic ACL.";
+      }
+      enum "Advance" {
+        description
+          "Advanced ACL.";
+      }
+      enum "Mpls" {
+        description
+          "MPLS ACL.";
+      }
+      enum "User" {
+        description
+          "User ACL.";
+      }
+      enum "ARP" {
+        description
+          "Arp acl.";
+      }
+    }
+    description
+      "Type of a rule group.";
+  }
+  typedef acl6GroupType {
+    type enumeration {
+      enum "Basic" {
+        description
+          "Basic ACL.";
+      }
+      enum "Advance" {
+        description
+          "Advanced ACL.";
+      }
+      enum "Interface" {
+        description
+          "Interface ACL.";
+      }
+    }
+    description
+      "Type of a rule group.";
+  }
+  typedef aclMaskMode {
+    type enumeration {
+      enum "PositiveLength" {
+        description
+          "Positive mask.";
+      }
+      enum "Negative" {
+        description
+          "Wildcard mask.";
+      }
+    }
+    description
+      "Mask Mode.";
+  }
+  typedef aclTtlRangeType {
+    type enumeration {
+      enum "lt" {
+        description
+          "Less than the given number.";
+      }
+      enum "eq" {
+        description
+          "Equal to the given number.";
+      }
+      enum "gt" {
+        description
+          "Greater than the given number.";
+      }
+      enum "range" {
+        description
+          "Between two numbers.";
+      }
+    }
+    description
+      "TTL Range Type.";
+  }
+  typedef aclPacketMode {
+    type enumeration {
+      enum "request" {
+        description
+          "Specify ARP request packet.";
+      }
+      enum "reply" {
+        description
+          "Specify ARP reply packet.";
+      }
+    }
+    description
+      "Packet type of ARP packet, request or reply.";
+  }
+}

@@ -1,0 +1,2380 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-acl {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-acl";
+  prefix acl;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-timerange {
+    prefix timerange;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-acl-action;
+  include huawei-acl-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Access Control List (ACL). An ACL is used to identify and select data packets through packet attributes. For example, applying an ACL in the firewall can either permit or discard data packets. Applying an ACL in IPsec can encrypt data packets that match ACL rules and forward those that do not match any ACL rule.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container acl {
+    description
+      "Access Control List (ACL). An ACL is used to identify and select data packets through packet attributes. For example, applying an ACL in the firewall can either permit or discard data packets. Applying an ACL in IPsec can encrypt data packets that match ACL rules and forward those that do not match any ACL rule.";
+    container aclGroups {
+      description
+        "List of all ACL rule groups.";
+      list aclGroup {
+        key "aclNumOrName";
+        description
+          "ACL rule group, which is a collection of rules. Other features can use the ACL control by referring to the ACL rule group name.";
+        leaf aclNumOrName {
+          type pub-type:aclNumOrName {
+            length "1..32";
+            pattern '([1-5]\d{3})|(10[0-9]{3})|(23[0-9]{3})|(99999)|([a-zA-Z]([^\s]*))';
+          }
+          description
+            "ACL number or name. An ACL number ranges from 1000 to 5999 or 10000 to 10999 or 23000 to 23999. An ACL name must start with a letter, spaces not supported. The number of an interface-based ACL ranges from 1000 to 1999. The number of a basic ACL ranges from 2000 to 2999. The number of an advanced ACL ranges from 3000 to 3999, and an advanced ACL can start with a letter. The number of an Ethernet frame header-based ACL ranges from 4000 to 4999. The number of a user-defined ACL ranges from 5000 to 5999. The number of an MPLS-based ACL ranges from 10000 to 10999.The number of an ARP-based ACL ranges from 23000 to 23999.
+ ";
+          ext:support-filter "true";
+        }
+        leaf aclType {
+          type acl4GroupType;
+          description
+            "Type.";
+          ext:support-filter "true";
+          ext:allowDelete "true";
+        }
+        leaf aclNumber {
+          type uint32 {
+            range "1000..23999";
+          }
+          must "(../aclType='ARP' and ../aclNumber>=23000) and ((../aclType='ARP' and ../aclNumber<=23999)) or (../aclType='Advance' and ../aclNumber>=3000) and ((../aclType='Advance' and ../aclNumber<=3999)) or (../aclType='Basic' and ../aclNumber>=2000) and ((../aclType='Basic' and ../aclNumber<=2999)) or (../aclType='Interface' and ../aclNumber>=1000) and ((../aclType='Interface' and ../aclNumber<=1999)) or (../aclType='Link' and ../aclNumber>=4000) and ((../aclType='Link' and ../aclNumber<=4999)) or (../aclType='Mpls' and ../aclNumber>=10000) and ((../aclType='Mpls' and ../aclNumber<=10999)) or (../aclType='User' and ../aclNumber>=5000) and ((../aclType='User' and ../aclNumber<=5999)) or not(../aclType='ARP' or ../aclType='Advance' or ../aclType='Basic' or ../aclType='Interface' or ../aclType='Link' or ../aclType='Mpls' or ../aclType='User')";
+          description
+            "ACL number.";
+          ext:support-filter "true";
+          ext:allowDelete "true";
+        }
+        leaf aclMatchOrder {
+          type aclMatchOrder;
+          default "Config";
+          description
+            "Matching order of ACL rules. ACL rules can be matched in depth first or configuration order.";
+          ext:support-filter "true";
+        }
+        leaf aclStep {
+          type uint32 {
+            range "1..20";
+          }
+          default "5";
+          description
+            "ACL step.";
+          ext:support-filter "true";
+          ext:allowDelete "true";
+        }
+        leaf aclDescription {
+          type string {
+            length "1..127";
+            pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+          }
+          description
+            "ACL description. The value cannot begin or end with a space.";
+          ext:support-filter "true";
+          ext:allowDelete "true";
+        }
+        container aclRuleBas4s {
+          description
+            "List of basic ACL rules. The basic ACL rule group where these rules reside is of the numeric type or name type. For the basic ACL rule group of the numeric type, the value ranges from 2000 to 2999.";
+          list aclRuleBas4 {
+            key "aclRuleName";
+            description
+              "Basic ACL rule, used to permit or deny packets. Other features can use these rules through a rule group to match source IP addresses.";
+            leaf aclRuleName {
+              type string {
+                length "1..32";
+                pattern '[^\s\?]*';
+              }
+              must "../../../aclType = 'Basic'";
+              description
+                "Name of a basic ACL rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf aclRuleID {
+              type uint32 {
+                range "0..4294967294";
+              }
+              description
+                "ID of a basic ACL rule in configuration mode.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclAction {
+              type aclRuleAction;
+              mandatory true;
+              description
+                "Matching mode of basic ACL rules. The available options are Permit and Deny.";
+              ext:support-filter "true";
+            }
+            leaf aclActiveStatus {
+              type pub-type:rowStatus;
+              default "active";
+              config false;
+              description
+                "Whether a rule is valid at the current time. ";
+            }
+            leaf aclSourceIp {
+              type inet:ipv4-address-no-zone;
+              default "0.0.0.0";
+              description
+                "Source IP address.";
+              ext:support-filter "true";
+            }
+            leaf aclSrcWild {
+              type inet:ipv4-address-no-zone;
+              default "255.255.255.255";
+              description
+                "Wildcard mask of a source IP address. ";
+              ext:support-filter "true";
+            }
+            leaf aclFragType {
+              type aclFragmentType;
+              description
+                "Type of packet fragmentation.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf vrfName {
+              when "not(../vrfAny='true')";
+              type leafref {
+                path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+              }
+              default "_public_";
+              description
+                "VPN instance name. Data packets can be filtered based on VPN instance names.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf vrfAny {
+              type boolean;
+              default "false";
+              description
+                "Any VPN Instance.";
+              ext:support-filter "true";
+            }
+            leaf aclTimeName {
+              type leafref {
+                path "/timerange:timerange/timerange:timeRangeInstances/timerange:timeRangeInstance/timerange:timeRangeName";
+              }
+              description
+                "Name of a time range in which an ACL rule takes effect. The value is a string of 1 to 32 characters and must start with an uppercase or lowercase letter.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclRuleDescription {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            container aclRuleCnts {
+              config false;
+              description
+                "Number of times basic ACL rules are matched.";
+              list aclRuleCnt {
+                config false;
+                description
+                  "Information about the rule matched count.";
+                leaf matchCount {
+                  type uint64;
+                  config false;
+                  description
+                    "Number of times when an user ACL rule is matched.";
+                }
+              }
+            }
+            leaf aclLogFlag {
+              type boolean;
+              default "false";
+              description
+                "Flag of logging matched data packets.";
+              ext:support-filter "true";
+            }
+          }
+        }
+        container aclRuleAdv4s {
+          description
+            "List of advanced ACL rules. The advanced ACL rule group where these rules reside is of the numeric type or name type. For the advanced ACL rule group of the numeric type, the value ranges from 3000 to 3999.";
+          list aclRuleAdv4 {
+            key "aclRuleName";
+            description
+              "Advanced ACL rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group.";
+            leaf aclRuleName {
+              type string {
+                length "1..32";
+                pattern '[^\s\?]*';
+              }
+              must "../../../aclType = 'Advance'";
+              description
+                "Name of an advanced ACL rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf aclRuleID {
+              type uint32 {
+                range "0..4294967294";
+              }
+              description
+                "ID of an advanced ACL rule in configuration mode.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclAction {
+              type aclRuleAction;
+              mandatory true;
+              description
+                "Matching mode of advanced ACL rules. The available options are Permit and Deny.";
+              ext:support-filter "true";
+            }
+            leaf aclActiveStatus {
+              type pub-type:rowStatus;
+              default "active";
+              config false;
+              description
+                "Whether a rule is valid at the current time.";
+            }
+            leaf aclProtocol {
+              type uint8;
+              mandatory true;
+              description
+                "Protocol type value ((0: any ipv4 protocol; 1: icmp; 2: igmp; 4: ipinip; 6: tcp; 17: udp; 47: gre; 89: ospf). ";
+              ext:support-filter "true";
+              ext:value-replace {
+                ext:item  "0" {
+                  ext:meaning "IP";
+                }
+                ext:item  "1" {
+                  ext:meaning "ICMP";
+                }
+                ext:item  "2" {
+                  ext:meaning "IGMP";
+                }
+                ext:item  "4" {
+                  ext:meaning "IPINIP";
+                }
+                ext:item  "6" {
+                  ext:meaning "TCP";
+                }
+                ext:item  "17" {
+                  ext:meaning "UDP";
+                }
+                ext:item  "47" {
+                  ext:meaning "GRE";
+                }
+                ext:item  "89" {
+                  ext:meaning "OSPF";
+                }
+              }
+            }
+            leaf aclVni {
+              when "not(../aclProtocol!=17)";
+              type uint32 {
+                range "1..16777215";
+              }
+              description
+                "VXLAN ID.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclSourceIp {
+              when "not(../aclSPoolName)";
+              type inet:ipv4-address-no-zone;
+              default "0.0.0.0";
+              description
+                "Source IP address.";
+              ext:support-filter "true";
+            }
+            leaf aclSrcWild {
+              when "not(../aclSPoolName)";
+              type inet:ipv4-address-no-zone;
+              default "255.255.255.255";
+              description
+                "Wildcard mask of the source IP address. ";
+              ext:support-filter "true";
+            }
+            leaf aclSPoolName {
+              type leafref {
+                path "/acl/aclPools/aclPool/aclPoolName";
+              }
+              description
+                "Name of a source pool.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclDestIp {
+              when "not(../aclDPoolName)";
+              type inet:ipv4-address-no-zone;
+              default "0.0.0.0";
+              description
+                "Destination IP address.";
+              ext:support-filter "true";
+            }
+            leaf aclDestWild {
+              when "not(../aclDPoolName)";
+              type inet:ipv4-address-no-zone;
+              default "255.255.255.255";
+              description
+                "Wildcard mask of a destination IP address.";
+              ext:support-filter "true";
+            }
+            leaf aclDPoolName {
+              type leafref {
+                path "/acl/aclPools/aclPool/aclPoolName";
+              }
+              description
+                "Name of a destination pool.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclSrcPortOp {
+              when "not(../aclProtocol!=6 and ../aclProtocol!=17 or ../aclSPortPoolName) or ../aclProtocol=17 and not(../aclSPortPoolName) or ../aclProtocol=6 and not(../aclSPortPoolName)";
+              type aclRangeType;
+              description
+                "Range type of the source port.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclSrcPortBegin {
+              when "not(../aclProtocol!=6 and ../aclProtocol!=17 or ../aclSPortPoolName) or ../aclProtocol=17 and not(../aclSPortPoolName) or ../aclProtocol=6 and not(../aclSPortPoolName)";
+              type uint16 {
+                range "0..65535";
+              }
+              must "not(../aclSrcPortOp='lt' or not(../aclSrcPortOp))";
+              description
+                "Start port number of the source port.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclSrcPortEnd {
+              when "not(../aclProtocol!=6 and ../aclProtocol!=17 or ../aclSPortPoolName) or ../aclProtocol=17 and not(../aclSPortPoolName) or ../aclProtocol=6 and not(../aclSPortPoolName)";
+              type uint16 {
+                range "0..65535";
+              }
+              must "not(../aclSrcPortOp='eq' or ../aclSrcPortOp='gt' or ../aclSrcPortOp='neq' or not(../aclSrcPortOp))";
+              description
+                "End port number of the source port.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclSPortPoolName {
+              when "not(../aclProtocol!=6 and ../aclProtocol!=17) or ../aclProtocol=17 or ../aclProtocol=6";
+              type leafref {
+                path "/acl/aclPortPools/aclPortPool/aclPortPoolName";
+              }
+              description
+                "Name of a source port pool.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclDestPortOp {
+              when "not(../aclDPortPoolName or ../aclProtocol!=6 and ../aclProtocol!=17 or ../aclProtocol=17 and ../aclVni) or ../aclProtocol=17 and not(../aclDPortPoolName) or ../aclProtocol=6 and not(../aclDPortPoolName)";
+              type aclRangeType;
+              description
+                "Range type of the destination port.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclDestPortB {
+              when "not(../aclDPortPoolName or ../aclProtocol!=6 and ../aclProtocol!=17 or ../aclProtocol=17 and ../aclVni) or ../aclProtocol=17 and not(../aclDPortPoolName) or ../aclProtocol=6 and not(../aclDPortPoolName)";
+              type uint16 {
+                range "0..65535";
+              }
+              must "not(../aclDestPortOp='lt' or not(../aclDestPortOp))";
+              description
+                "Start port number of the destination port.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclDestPortE {
+              when "not(../aclDPortPoolName or ../aclProtocol!=6 and ../aclProtocol!=17 or ../aclProtocol=17 and ../aclVni) or ../aclProtocol=17 and not(../aclDPortPoolName) or ../aclProtocol=6 and not(../aclDPortPoolName)";
+              type uint16 {
+                range "0..65535";
+              }
+              must "not(../aclDestPortOp='eq' or ../aclDestPortOp='gt' or ../aclDestPortOp='neq' or not(../aclDestPortOp))";
+              description
+                "End port of the destination port.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclDPortPoolName {
+              when "not(../aclProtocol!=6 and ../aclProtocol!=17 or ../aclProtocol=17 and ../aclVni) or ../aclProtocol=17 and not(../aclVni) or ../aclProtocol=6";
+              type leafref {
+                path "/acl/aclPortPools/aclPortPool/aclPortPoolName";
+              }
+              description
+                "Name of a destination port pool.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclFragType {
+              type aclFragmentType;
+              description
+                "Type of packet fragmentation.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclPrecedence {
+              when "not(../aclDscp)";
+              type uint8 {
+                range "0..7";
+              }
+              description
+                "Data packets can be filtered based on the priority field.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTos {
+              when "not(../aclDscp)";
+              type uint8 {
+                range "0..15";
+              }
+              description
+                "ToS value on which data packet filtering is based.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclDscp {
+              when "not(../aclPrecedence) and not(../aclTos or ../aclPrecedence or ../aclTos)";
+              type uint8 {
+                range "0..63";
+              }
+              description
+                "Differentiated Services Code Point.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclIcmpName {
+              when "../aclProtocol=1";
+              type ICMPNAME;
+              default "unconfigured";
+              description
+                "ICMP name.";
+              ext:support-filter "true";
+            }
+            leaf aclIcmpType {
+              when "../aclProtocol=1";
+              type uint16 {
+                range "0..255";
+              }
+              must "(../aclIcmpName='address-mask-reply' and ../aclIcmpType=18) or (../aclIcmpName='address-mask-request' and ../aclIcmpType=17) or (../aclIcmpName='echo' and ../aclIcmpType=8) or (../aclIcmpName='echo-reply' and ../aclIcmpType=0) or (../aclIcmpName='fragmentneed-DFset' and ../aclIcmpType=3) or (../aclIcmpName='host-redirect' and ../aclIcmpType=5) or (../aclIcmpName='host-tos-redirect' and ../aclIcmpType=5) or (../aclIcmpName='host-unreachable' and ../aclIcmpType=3) or (../aclIcmpName='information-reply' and ../aclIcmpType=16) or (../aclIcmpName='information-request' and ../aclIcmpType=15) or (../aclIcmpName='net-redirect' and ../aclIcmpType=5) or (../aclIcmpName='net-tos-redirect' and ../aclIcmpType=5) or (../aclIcmpName='net-unreachable' and ../aclIcmpType=3) or (../aclIcmpName='parameter-problem' and ../aclIcmpType=12) or (../aclIcmpName='port-unreachable' and ../aclIcmpType=3) or (../aclIcmpName='protocol-unreachable' and ../aclIcmpType=3) or (../aclIcmpName='reassembly-timeout' and ../aclIcmpType=11) or (../aclIcmpName='source-quench' and ../aclIcmpType=4) or (../aclIcmpName='source-route-failed' and ../aclIcmpType=3) or (../aclIcmpName='timestamp-reply' and ../aclIcmpType=14) or (../aclIcmpName='timestamp-request' and ../aclIcmpType=13) or (../aclIcmpName='ttl-exceeded' and ../aclIcmpType=11) or not(../aclIcmpName='address-mask-reply' or ../aclIcmpName='address-mask-request' or ../aclIcmpName='echo' or ../aclIcmpName='echo-reply' or ../aclIcmpName='fragmentneed-DFset' or ../aclIcmpName='host-redirect' or ../aclIcmpName='host-tos-redirect' or ../aclIcmpName='host-unreachable' or ../aclIcmpName='information-reply' or ../aclIcmpName='information-request' or ../aclIcmpName='net-redirect' or ../aclIcmpName='net-tos-redirect' or ../aclIcmpName='net-unreachable' or ../aclIcmpName='parameter-problem' or ../aclIcmpName='port-unreachable' or ../aclIcmpName='protocol-unreachable' or ../aclIcmpName='reassembly-timeout' or ../aclIcmpName='source-quench' or ../aclIcmpName='source-route-failed' or ../aclIcmpName='timestamp-reply' or ../aclIcmpName='timestamp-request' or ../aclIcmpName='ttl-exceeded' or ../aclIcmpName='unconfigured')";
+              description
+                "ICMP type. This parameter is available only when the packet protocol is ICMP. If this parameter is not set, packets of all ICMP types are matched.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclIcmpTypeEnd {
+              when "../aclProtocol=1";
+              type uint16 {
+                range "0..255";
+              }
+              must "not(../aclIcmpName='address-mask-reply' or ../aclIcmpName='address-mask-request' or ../aclIcmpName='echo' or ../aclIcmpName='echo-reply' or ../aclIcmpName='fragmentneed-DFset' or ../aclIcmpName='host-redirect' or ../aclIcmpName='host-tos-redirect' or ../aclIcmpName='host-unreachable' or ../aclIcmpName='information-reply' or ../aclIcmpName='information-request' or ../aclIcmpName='net-redirect' or ../aclIcmpName='net-tos-redirect' or ../aclIcmpName='net-unreachable' or ../aclIcmpName='parameter-problem' or ../aclIcmpName='port-unreachable' or ../aclIcmpName='protocol-unreachable' or ../aclIcmpName='reassembly-timeout' or ../aclIcmpName='source-quench' or ../aclIcmpName='source-route-failed' or ../aclIcmpName='timestamp-reply' or ../aclIcmpName='timestamp-request' or ../aclIcmpName='ttl-exceeded' or ../aclIcmpName='unconfigured')";
+              description
+                "ICMP type end. This parameter is available only when the packet protocol is ICMP. If this parameter is not set, it indicates that the packets of all ICMP types can match.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclIcmpCode {
+              when "../aclProtocol=1";
+              type uint16 {
+                range "0..255";
+              }
+              must "(../aclIcmpName='address-mask-reply' and ../aclIcmpCode=0) or (../aclIcmpName='address-mask-request' and ../aclIcmpCode=0) or (../aclIcmpName='echo' and ../aclIcmpCode=0) or (../aclIcmpName='echo-reply' and ../aclIcmpCode=0) or (../aclIcmpName='fragmentneed-DFset' and ../aclIcmpCode=4) or (../aclIcmpName='host-redirect' and ../aclIcmpCode=1) or (../aclIcmpName='host-tos-redirect' and ../aclIcmpCode=3) or (../aclIcmpName='host-unreachable' and ../aclIcmpCode=1) or (../aclIcmpName='information-reply' and ../aclIcmpCode=0) or (../aclIcmpName='information-request' and ../aclIcmpCode=0) or (../aclIcmpName='net-redirect' and ../aclIcmpCode=0) or (../aclIcmpName='net-tos-redirect' and ../aclIcmpCode=2) or (../aclIcmpName='net-unreachable' and ../aclIcmpCode=0) or (../aclIcmpName='parameter-problem' and ../aclIcmpCode=0) or (../aclIcmpName='port-unreachable' and ../aclIcmpCode=3) or (../aclIcmpName='protocol-unreachable' and ../aclIcmpCode=2) or (../aclIcmpName='reassembly-timeout' and ../aclIcmpCode=1) or (../aclIcmpName='source-quench' and ../aclIcmpCode=0) or (../aclIcmpName='source-route-failed' and ../aclIcmpCode=5) or (../aclIcmpName='timestamp-reply' and ../aclIcmpCode=0) or (../aclIcmpName='timestamp-request' and ../aclIcmpCode=0) or (../aclIcmpName='ttl-exceeded' and ../aclIcmpCode=0) or not(../aclIcmpName='address-mask-reply' or ../aclIcmpName='address-mask-request' or ../aclIcmpName='echo' or ../aclIcmpName='echo-reply' or ../aclIcmpName='fragmentneed-DFset' or ../aclIcmpName='host-redirect' or ../aclIcmpName='host-tos-redirect' or ../aclIcmpName='host-unreachable' or ../aclIcmpName='information-reply' or ../aclIcmpName='information-request' or ../aclIcmpName='net-redirect' or ../aclIcmpName='net-tos-redirect' or ../aclIcmpName='net-unreachable' or ../aclIcmpName='parameter-problem' or ../aclIcmpName='port-unreachable' or ../aclIcmpName='protocol-unreachable' or ../aclIcmpName='reassembly-timeout' or ../aclIcmpName='source-quench' or ../aclIcmpName='source-route-failed' or ../aclIcmpName='timestamp-reply' or ../aclIcmpName='timestamp-request' or ../aclIcmpName='ttl-exceeded' or ../aclIcmpName='unconfigured')";
+              description
+                "ICMP message code. Data packets can be filtered based on the ICMP message code.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTtlExpired {
+              type boolean;
+              description
+                "Whether TTL Expired is matched, with the TTL value of 1.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf vrfName {
+              when "not(../vrfAny='true')";
+              type leafref {
+                path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+              }
+              default "_public_";
+              description
+                "VPN instance name. Data packets can be filtered based on VPN instance names.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf vrfAny {
+              type boolean;
+              default "false";
+              description
+                "Any VPN Instance.";
+              ext:support-filter "true";
+            }
+            leaf aclSynFlag {
+              when "../aclEstablished='false' and ../aclProtocol=6 or ../aclProtocol=6";
+              type uint8 {
+                range "0..63";
+              }
+              description
+                "TCP header flag.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTcpFlagMask {
+              when "not(not(../aclSynFlag)) or ../aclProtocol=6";
+              type uint16 {
+                range "0..63";
+              }
+              description
+                "Mask of TCP header flag.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclEstablished {
+              when "../aclProtocol=6 and not(../aclSynFlag) or ../aclProtocol=6";
+              type boolean;
+              default "false";
+              description
+                "Match established connections.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTimeName {
+              type leafref {
+                path "/timerange:timerange/timerange:timeRangeInstances/timerange:timeRangeInstance/timerange:timeRangeName";
+              }
+              description
+                "Name of a time range in which an ACL rule takes effect. The value is a string of 1 to 32 characters and must start with an uppercase or lowercase letter.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ttlOp {
+              type aclRangeType;
+              description
+                "Range Type of TTL(gt,lt,eq,neq,range).";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ttl {
+              type uint8 {
+                range "1..255";
+              }
+              must "not(../ttlOp='lt' or not(../ttlOp))";
+              description
+                "Start TTL value.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ttlEnd {
+              type uint8 {
+                range "1..255";
+              }
+              must "not(../ttlOp='eq' or ../ttlOp='gt' or ../ttlOp='neq' or not(../ttlOp))";
+              description
+                "End TTL value.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclRuleDescription {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclIgmpType {
+              when "../aclProtocol=2";
+              type uint16 {
+                range "0..255";
+              }
+              description
+                "Internet Group Management Protocol.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+              ext:value-replace {
+                ext:item  "17" {
+                  ext:meaning "host-query";
+                }
+                ext:item  "18" {
+                  ext:meaning "v1host-report";
+                }
+                ext:item  "22" {
+                  ext:meaning "v2host-report";
+                }
+                ext:item  "23" {
+                  ext:meaning "v2leave-group";
+                }
+                ext:item  "30" {
+                  ext:meaning "mtrace-resp";
+                }
+                ext:item  "31" {
+                  ext:meaning "mtrace-route";
+                }
+                ext:item  "34" {
+                  ext:meaning "v3host-report";
+                }
+                ext:item  "48" {
+                  ext:meaning "mrouter-adver";
+                }
+                ext:item  "49" {
+                  ext:meaning "mrouter-solic";
+                }
+                ext:item  "50" {
+                  ext:meaning "mrouter-termi";
+                }
+              }
+            }
+            leaf aclPktLenOp {
+              type aclRangeType;
+              description
+                "Range Type of  packet length(gt,lt,eq,neq,range).";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclPktLenBegin {
+              type uint16 {
+                range "0..65535";
+              }
+              must "not(../aclPktLenOp='lt' or not(../aclPktLenOp))";
+              description
+                "Start  packet length value.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclPktLenEnd {
+              type uint16 {
+                range "0..65535";
+              }
+              must "not(../aclPktLenOp='eq' or ../aclPktLenOp='gt' or ../aclPktLenOp='neq' or not(../aclPktLenOp))";
+              description
+                "End  packet length value.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            container aclRuleCnts {
+              config false;
+              description
+                "Number of times advanced ACL rules are matched.";
+              list aclRuleCnt {
+                config false;
+                description
+                  "Information about the rule matched count.";
+                leaf matchCount {
+                  type uint64;
+                  config false;
+                  description
+                    "Number of times when an user ACL rule is matched.";
+                }
+              }
+            }
+            leaf aclLogFlag {
+              type boolean;
+              default "false";
+              description
+                "Flag of logging matched data packets.";
+              ext:support-filter "true";
+            }
+          }
+        }
+        container aclRuleEths {
+          description
+            "List of Ethernet frame header-based ACL rules. The ACL rule group where these rules reside is of the numeric type or name type. For the Ethernet frame header-based ACL rule group of the numeric type, the value ranges from 4000 to 4999.";
+          list aclRuleEth {
+            key "aclRuleName";
+            description
+              "Ethernet frame header-based ACL rule, used to permit or deny packets. Other features can use these rules through a rule group to match source IP addresses.";
+            leaf aclRuleName {
+              type string {
+                length "1..32";
+                pattern '[^\s\?]*';
+              }
+              must "../../../aclType = 'Link'";
+              description
+                "Name of an Ethernet frame header-based ACL rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf aclRuleID {
+              type uint32 {
+                range "0..4294967294";
+              }
+              description
+                "ID of an Ethernet frame header-based ACL rule in configuration mode.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclAction {
+              type aclRuleAction;
+              mandatory true;
+              description
+                "Matching mode of Ethernet frame header-based ACL rules. The available options are Permit and Deny.";
+              ext:support-filter "true";
+            }
+            leaf aclActiveStatus {
+              type pub-type:rowStatus;
+              default "active";
+              config false;
+              description
+                "Whether a rule is valid at the current time.";
+            }
+            leaf aclFramType {
+              type string {
+                length "3..6";
+                pattern '0[xX][a-fA-F0-9]{1,4}';
+              }
+              default "0x0";
+              description
+                "Type of Layer 2 Ethernet frame header protocols. Value range: [0x0, 0xffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclFramMask {
+              type string {
+                length "3..6";
+                pattern '0[xX][a-fA-F0-9]{1,4}';
+              }
+              default "0x0";
+              description
+                "Mask of the Layer 2 Ethernet frame header protocols. Value range: [0x0, 0xffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclSrcMac {
+              type pub-type:macAddress {
+                length "0..255";
+              }
+              default "0000-0000-0000";
+              description
+                "Source MAC address of an Ethernet frame. Example:: 1-1-1, 0001-0001-0001.";
+              ext:support-filter "true";
+            }
+            leaf aclSrcMacMask {
+              type pub-type:macAddress {
+                length "0..255";
+              }
+              default "0000-0000-0000";
+              description
+                "Source MAC address of an Ethernet frame. Example: 1-1-1, 0001-0001-0001.";
+              ext:support-filter "true";
+            }
+            leaf aclDestMac {
+              type pub-type:macAddress {
+                length "0..255";
+              }
+              default "0000-0000-0000";
+              description
+                "Destination MAC address of an Ethernet frame. Example: 1-1-1, 0001-0001-0001.";
+              ext:support-filter "true";
+            }
+            leaf aclDestMacMask {
+              type pub-type:macAddress {
+                length "0..255";
+              }
+              default "0000-0000-0000";
+              description
+                "Destination MAC address mask of an Ethernet frame. Example: 1-1-1, 0001-0001-0001.";
+              ext:support-filter "true";
+            }
+            leaf aclVlanId {
+              type uint16 {
+                range "1..4094";
+              }
+              description
+                "VLAN ID.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclVlanIdMask {
+              type string {
+                length "3..5";
+                pattern '0[xX][a-fA-F0-9]{1,3}';
+              }
+              default "0xfff";
+              description
+                "VLAN ID mask. Value range: [0x0, 0xfff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf acl8021p {
+              type uint8 {
+                range "0..7";
+              }
+              description
+                "802.1p priority.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclCVlanId {
+              type uint16 {
+                range "1..4094";
+              }
+              description
+                "CE-VLAN ID.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclCVlanIdMask {
+              type string {
+                length "3..5";
+                pattern '0[xX][a-fA-F0-9]{1,3}';
+              }
+              default "0xfff";
+              description
+                "CE-VLAN ID mask. Value range: [0x0, 0xfff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclCVlan8021p {
+              type uint8 {
+                range "0..7";
+              }
+              description
+                "802.1p priority in the CE-VLAN tag.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclDoubleTag {
+              type boolean;
+              description
+                "Whether double tags are matched.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclEncapType {
+              type aclEncapType;
+              description
+                "Encapsulation type.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTimeName {
+              type leafref {
+                path "/timerange:timerange/timerange:timeRangeInstances/timerange:timeRangeInstance/timerange:timeRangeName";
+              }
+              description
+                "Name of a time range in which an ACL rule takes effect. The value is a string of 1 to 32 characters and must start with an uppercase or lowercase letter.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclRuleDescription {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            container aclRuleCnts {
+              config false;
+              description
+                "Number of times Ethernet frame header-based ACL rules are matched.";
+              list aclRuleCnt {
+                config false;
+                description
+                  "Information about the rule matched count.";
+                leaf matchCount {
+                  type uint64;
+                  config false;
+                  description
+                    "Number of times when an user ACL rule is matched.";
+                }
+              }
+            }
+          }
+        }
+        container aclRuleIfs {
+          description
+            "List of interface-based ACL rules. The ACL rule group where these rules reside is of the numeric type or name type. For the interface-based ACL rule group of the numeric type, the value ranges from 1000 to 1999.";
+          list aclRuleIf {
+            key "aclRuleName";
+            description
+              "Interface-based ACL rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group.";
+            leaf aclRuleName {
+              type string {
+                length "1..32";
+                pattern '[^\s\?]*';
+              }
+              must "../../../aclType = 'Interface'";
+              description
+                "Name of an interface-based ACL rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf aclRuleID {
+              type uint32 {
+                range "0..4294967294";
+              }
+              description
+                "ID of an interface-based ACL rule in configuration mode.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclAction {
+              type aclRuleAction;
+              mandatory true;
+              description
+                "Matching mode of interface-based ACL rules. The available options are Permit and Deny.";
+              ext:support-filter "true";
+            }
+            leaf aclIfAny {
+              type boolean;
+              default "false";
+              description
+                "Any interface.";
+              ext:support-filter "true";
+            }
+            leaf ifName {
+              when "not(../aclIfAny='true')";
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+              }
+              description
+                "Name of the interface into which the data packets come.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTimeName {
+              type leafref {
+                path "/timerange:timerange/timerange:timeRangeInstances/timerange:timeRangeInstance/timerange:timeRangeName";
+              }
+              description
+                "Name of a time range in which an ACL rule takes effect. The value is a string of 1 to 32 characters and must start with an uppercase or lowercase letter.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclActiveStatus {
+              type pub-type:rowStatus;
+              default "active";
+              config false;
+              description
+                "Whether a rule is valid at the current time.";
+            }
+            leaf aclRuleDescription {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            container aclRuleCnts {
+              config false;
+              description
+                "Number of times interface-based ACL rules are matched.";
+              list aclRuleCnt {
+                config false;
+                description
+                  "Information about the rule matched count.";
+                leaf matchCount {
+                  type uint64;
+                  config false;
+                  description
+                    "Number of times when an user ACL rule is matched.";
+                }
+              }
+            }
+          }
+        }
+        container aclRuleMplss {
+          description
+            "List of MPLS ACL rules. The mpls ACL rule group where these rules reside is of the numeric type, with the value ranging from 10000 to 10999.";
+          list aclRuleMpls {
+            key "aclRuleName";
+            description
+              "MPLS ACL rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group.";
+            leaf aclRuleName {
+              type string {
+                length "1..32";
+                pattern '[^\s\?]*';
+              }
+              must "../../../aclType = 'Mpls'";
+              description
+                "Name of a MPLS ACL rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf aclRuleID {
+              type uint32 {
+                range "0..4294967294";
+              }
+              description
+                "ID of an advanced ACL rule in configuration mode.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclAction {
+              type aclRuleAction;
+              mandatory true;
+              description
+                "Matching mode of advanced ACL rules. The available options are Permit and Deny.";
+              ext:support-filter "true";
+            }
+            leaf aclExp1 {
+              type uint8 {
+                range "0..7";
+              }
+              description
+                "EXP value in the first MPLS label.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclExp2 {
+              type uint8 {
+                range "0..7";
+              }
+              description
+                "EXP value in the second MPLS label.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclExp3 {
+              type uint8 {
+                range "0..7";
+              }
+              description
+                "EXP value in the third MPLS label.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclExp4 {
+              type uint8 {
+                range "0..7";
+              }
+              description
+                "EXP value in the fourth MPLS label.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclLabel1 {
+              type uint32 {
+                range "0..1048575";
+              }
+              description
+                "Label value in the first MPLS label.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclLabel2 {
+              type uint32 {
+                range "0..1048575";
+              }
+              description
+                "Label value in the second MPLS label.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclLabel3 {
+              type uint32 {
+                range "0..1048575";
+              }
+              description
+                "Label value in the third MPLS label.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclLabel4 {
+              type uint32 {
+                range "0..1048575";
+              }
+              description
+                "Label value in the fourth MPLS label.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTtlOp1 {
+              type aclTtlRangeType;
+              description
+                "TTL range of the first MPLS label.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTtlBegin1 {
+              type uint16 {
+                range "0..255";
+              }
+              must "not(../aclTtlOp1='lt' or not(../aclTtlOp1))";
+              description
+                "Start value of a TTL range.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTtlEnd1 {
+              type uint16 {
+                range "0..255";
+              }
+              must "not(../aclTtlOp1='eq' or ../aclTtlOp1='gt' or not(../aclTtlOp1))";
+              description
+                "End value of a TTL range.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTtlOp2 {
+              type aclTtlRangeType;
+              description
+                "TTL range of the second MPLS label.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTtlBegin2 {
+              type uint16 {
+                range "0..255";
+              }
+              must "not(../aclTtlOp2='lt' or not(../aclTtlOp2))";
+              description
+                "Start value of a TTL range.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTtlEnd2 {
+              type uint16 {
+                range "0..255";
+              }
+              must "not(../aclTtlOp2='eq' or ../aclTtlOp2='gt' or not(../aclTtlOp2))";
+              description
+                "End value of a TTL range.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTtlOp3 {
+              type aclTtlRangeType;
+              description
+                "TTL range of the third MPLS label.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTtlBegin3 {
+              type uint16 {
+                range "0..255";
+              }
+              must "not(../aclTtlOp3='lt' or not(../aclTtlOp3))";
+              description
+                "Start value of a TTL range.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTtlEnd3 {
+              type uint16 {
+                range "0..255";
+              }
+              must "not(../aclTtlOp3='eq' or ../aclTtlOp3='gt' or not(../aclTtlOp3))";
+              description
+                "End value of a TTL range.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclRuleDescription {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            container aclRuleCnts {
+              config false;
+              description
+                "Number of times MPLS ACL rules are matched.";
+              list aclRuleCnt {
+                config false;
+                description
+                  "Information about the rule matched count.";
+                leaf matchCount {
+                  type uint64;
+                  config false;
+                  description
+                    "Number of times when an user ACL rule is matched.";
+                }
+              }
+            }
+          }
+        }
+        container aclRuleUsers {
+          description
+            "List of user ACL rules. The USER ACL rule group where these rules reside is of the numeric type, with the value ranging from 5000 to 5999.";
+          list aclRuleUser {
+            key "aclRuleName";
+            description
+              "User ACL rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group.";
+            leaf aclRuleName {
+              type string {
+                length "1..32";
+                pattern '[^\s\?]*';
+              }
+              must "../../../aclType = 'User'";
+              description
+                "Name of a user ACL rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf aclRuleID {
+              type uint32 {
+                range "0..4294967294";
+              }
+              description
+                "Rule ID.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclAction {
+              type aclRuleAction;
+              mandatory true;
+              description
+                "Matching mode of interface-based ACL6 rules. The available options are Permit and Deny.";
+              ext:support-filter "true";
+            }
+            leaf aclTimeName {
+              type leafref {
+                path "/timerange:timerange/timerange:timeRangeInstances/timerange:timeRangeInstance/timerange:timeRangeName";
+              }
+              description
+                "Name of a time range in which an ACL rule takes effect. The value is a string of 1 to 32 characters and must start with an uppercase or lowercase letter.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclOffsetBegin {
+              type aclOffsetBegin;
+              description
+                "Position of the start offset. The offset can start from the Layer 2 header, IPv4 header, or Layer 4 header.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString1 {
+              type pub-type:hexBinary;
+              description
+                "First match field value. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString1Mask {
+              type pub-type:hexBinary;
+              description
+                "First match field mask. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf offset1 {
+              type uint8;
+              description
+                "First match field offset. When the offset starts from a Layer 2 header, the value ranges from 2 to 114, in the format of 4n+2. When the offset starts from an IPv4 header, the value ranges from 0 to 96, in the format of 4n. When the offset starts from a Layer 4 header, the value ranges from 0 to 60, in the format of 4n. (n=0, 1, 2...)";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString2 {
+              type pub-type:hexBinary;
+              description
+                "Second match field value. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString2Mask {
+              type pub-type:hexBinary;
+              description
+                "Second match field mask. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf offset2 {
+              type uint8;
+              description
+                "Second match field offset. When the offset starts from a Layer 2 header, the value ranges from 2 to 114, in the format of 4n+2. When the offset starts from an IPv4 header, the value ranges from 0 to 96, in the format of 4n. When the offset starts from a Layer 4 header, the value ranges from 0 to 60, in the format of 4n. (n=0, 1, 2...)";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString3 {
+              type pub-type:hexBinary;
+              description
+                "Third match field value. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString3Mask {
+              type pub-type:hexBinary;
+              description
+                "Third match field mask. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf offset3 {
+              type uint8;
+              description
+                "Third match field offset. When the offset starts from a Layer 2 header, the value ranges from 2 to 114, in the format of 4n+2. When the offset starts from an IPv4 header, the value ranges from 0 to 96, in the format of 4n. When the offset starts from a Layer 4 header, the value ranges from 0 to 60, in the format of 4n. (n=0, 1, 2...)";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString4 {
+              type pub-type:hexBinary;
+              description
+                "Fourth match field value. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString4Mask {
+              type pub-type:hexBinary;
+              description
+                "Fourth match field mask. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf offset4 {
+              type uint8;
+              description
+                "Fourth match field offset. When the offset starts from a Layer 2 header, the value ranges from 2 to 114, in the format of 4n+2. When the offset starts from an IPv4 header, the value ranges from 0 to 96, in the format of 4n. When the offset starts from a Layer 4 header, the value ranges from 0 to 60, in the format of 4n. (n=0, 1, 2...)";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString5 {
+              type pub-type:hexBinary;
+              description
+                "Fifth match field value. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString5Mask {
+              type pub-type:hexBinary;
+              description
+                "Fifth match field mask. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf offset5 {
+              type uint8;
+              description
+                "Fifth match field offset. When the offset starts from a Layer 2 header, the value ranges from 2 to 114, in the format of 4n+2. When the offset starts from an IPv4 header, the value ranges from 0 to 96, in the format of 4n. When the offset starts from a Layer 4 header, the value ranges from 0 to 60, in the format of 4n. (n=0, 1, 2...)";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString6 {
+              type pub-type:hexBinary;
+              description
+                "Sixth match field value. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString6Mask {
+              type pub-type:hexBinary;
+              description
+                "Sixth match field mask. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf offset6 {
+              type uint8;
+              description
+                "Sixth match field offset. When the offset starts from a Layer 2 header, the value ranges from 2 to 114, in the format of 4n+2. When the offset starts from an IPv4 header, the value ranges from 0 to 96, in the format of 4n. When the offset starts from a Layer 4 header, the value ranges from 0 to 60, in the format of 4n. (n=0, 1, 2...)";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString7 {
+              type pub-type:hexBinary;
+              description
+                "Seventh match field value. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString7Mask {
+              type pub-type:hexBinary;
+              description
+                "Seventh match field mask. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf offset7 {
+              type uint8;
+              description
+                "Seventh match field offset. When the offset starts from a Layer 2 header, the value ranges from 2 to 114, in the format of 4n+2. When the offset starts from an IPv4 header, the value ranges from 0 to 96, in the format of 4n. When the offset starts from a Layer 4 header, the value ranges from 0 to 60, in the format of 4n. (n=0, 1, 2...)";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString8 {
+              type pub-type:hexBinary;
+              description
+                "Eighth match field value. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf ruleString8Mask {
+              type pub-type:hexBinary;
+              description
+                "Eighth match field mask. Value range: [0x0, 0xffffffff].";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf offset8 {
+              type uint8;
+              description
+                "Eighth match field offset. When the offset starts from a Layer 2 header, the value ranges from 2 to 114, in the format of 4n+2. When the offset starts from an IPv4 header, the value ranges from 0 to 96, in the format of 4n. When the offset starts from a Layer 4 header, the value ranges from 0 to 60, in the format of 4n. (n=0, 1, 2...)";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclActiveStatus {
+              type pub-type:rowStatus;
+              default "active";
+              config false;
+              description
+                "Whether a rule is valid at the current time.";
+            }
+            leaf aclRuleDescription {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            container aclRuleCnts {
+              config false;
+              description
+                "List of the matching count of all user ACL rules.";
+              list aclRuleCnt {
+                config false;
+                description
+                  "Information about the rule matched count.";
+                leaf matchCount {
+                  type uint64;
+                  config false;
+                  description
+                    "Number of times when an user ACL rule is matched.";
+                }
+              }
+            }
+          }
+        }
+        container aclRuleArps {
+          description
+            "List of ARP ACL rules. The ARP ACL rule group where these rules reside is of the numeric type, with the value ranging from 23000 to 23999.";
+          list aclRuleArp {
+            key "aclRuleName";
+            description
+              "ARP ACL rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group.";
+            leaf aclRuleName {
+              type string {
+                length "1..32";
+                pattern '[^\s\?]*';
+              }
+              must "../../../aclType = 'ARP'";
+              description
+                "Name of a ARP ACL rule.User can specify number or string without spaces,But start with _is not permitted.";
+            }
+            leaf aclRuleID {
+              type uint32 {
+                range "0..4294967294";
+              }
+              description
+                "Rule ID.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclAction {
+              type aclRuleAction;
+              mandatory true;
+              description
+                "Matching mode of interface-based ACL rules. The available options are Permit and Deny.";
+              ext:support-filter "true";
+            }
+            leaf aclTimeName {
+              type leafref {
+                path "/timerange:timerange/timerange:timeRangeInstances/timerange:timeRangeInstance/timerange:timeRangeName";
+              }
+              description
+                "Name of a period of time after which an ACL rule expires. The value is a string of 1 to 32 characters, starting with a lower- or upper-case English letter.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclPacketMode {
+              type aclPacketMode;
+              mandatory true;
+              description
+                "Packet type of ARP packet, request or reply.";
+              ext:support-filter "true";
+            }
+            leaf aclSourceIp {
+              type inet:ipv4-address-no-zone;
+              default "0.0.0.0";
+              description
+                "Source IP address.";
+              ext:support-filter "true";
+            }
+            leaf aclSrcWild {
+              type inet:ipv4-address-no-zone;
+              default "255.255.255.255";
+              description
+                "Wildcard mask of the source IP address. ";
+              ext:support-filter "true";
+            }
+            leaf aclDestIp {
+              when "not(../aclPacketMode='request')";
+              type inet:ipv4-address-no-zone;
+              default "0.0.0.0";
+              description
+                "Destination IP address.";
+              ext:support-filter "true";
+            }
+            leaf aclDestWild {
+              when "not(../aclPacketMode='request')";
+              type inet:ipv4-address-no-zone;
+              default "255.255.255.255";
+              description
+                "Wildcard mask of the destination IP address.";
+              ext:support-filter "true";
+            }
+            leaf aclSrcMac {
+              type pub-type:macAddress {
+                length "0..255";
+              }
+              default "0000-0000-0000";
+              description
+                "Source MAC address of the ARP packet.Input foramt sample: 1-1-1, 0001-0001-0001.";
+              ext:support-filter "true";
+            }
+            leaf aclSrcMacMask {
+              type pub-type:macAddress {
+                length "0..255";
+              }
+              default "0000-0000-0000";
+              description
+                "Mask of the source MAC address.Input foramt sample: 1-1-1, 0001-0001-0001.";
+              ext:support-filter "true";
+            }
+            leaf aclDestMac {
+              when "not(../aclPacketMode='request')";
+              type pub-type:macAddress {
+                length "0..255";
+              }
+              default "0000-0000-0000";
+              description
+                "Destination MAC address of the ARP packet.Input foramt sample: 1-1-1, 0001-0001-0001.";
+              ext:support-filter "true";
+            }
+            leaf aclDestMacMask {
+              when "not(../aclPacketMode='request')";
+              type pub-type:macAddress {
+                length "0..255";
+              }
+              default "0000-0000-0000";
+              description
+                "Mask of the destination MAC address.Input foramt sample: 1-1-1, 0001-0001-0001.";
+              ext:support-filter "true";
+            }
+            leaf aclActiveStatus {
+              type pub-type:rowStatus;
+              default "active";
+              config false;
+              description
+                "Indicates whether a rule is valid at the current time. ";
+            }
+            leaf aclRuleDescription {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            container aclRuleCnts {
+              config false;
+              description
+                "List of the matching count of all user ACL rules.";
+              list aclRuleCnt {
+                config false;
+                description
+                  "Information about the rule matched count.";
+                leaf matchCount {
+                  type uint64;
+                  config false;
+                  description
+                    "Number of times when an user ACL rule is matched.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    container aclGroup6s {
+      description
+        "List of ACL6 rule groups.";
+      list aclGroup6 {
+        key "aclNumOrName";
+        description
+          "ACL6 rule group, which is a collection of multiple ACL6 rules. Other features can use the ACL6 control by referring to the ACL6 rule group name.";
+        leaf aclNumOrName {
+          type acl6NumOrName {
+            length "1..32";
+            pattern '([1-3]\d{3})|([a-zA-Z]([^\s]*))';
+          }
+          description
+            "ACL6 number or name. An ACL6 number ranges from 1000 to 3999. An ACL name must start with a letter, spaces not supported. The number of an interface-based ACL6 ranges from 1000 to 1999. The number of a basic ACL6 ranges from 2000 to 2999. The number of an advanced ACL6 ranges from 3000 to 3999, and an advanced ACL can start with a letter.
+";
+          ext:support-filter "true";
+        }
+        leaf aclType {
+          type acl6GroupType;
+          description
+            "Type.";
+          ext:support-filter "true";
+          ext:allowDelete "true";
+        }
+        leaf aclMatchOrder {
+          type aclMatchOrder;
+          default "Config";
+          description
+            "Matching order of an ACL6 rule. ACL rules can be matched in the order of depth or configuration.";
+          ext:support-filter "true";
+        }
+        leaf aclDescription {
+          type string {
+            length "1..127";
+            pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+          }
+          description
+            "Description about an ACL6 rule group. The value cannot begin or end with a space.";
+          ext:support-filter "true";
+          ext:allowDelete "true";
+        }
+        container aclRuleBas6s {
+          description
+            "List of basic ACL6 rules. The ACL6 rule group where these rules reside is of the numeric type or name type. For the basic ACL6 rule group of the numeric type, the value ranges from 2000 to 2999.";
+          list aclRuleBas6 {
+            key "aclRuleName";
+            description
+              "Basic ACL6 rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group.";
+            leaf aclRuleName {
+              type string {
+                length "1..32";
+                pattern '[^\s\?]*';
+              }
+              must "../../../aclType = 'Basic'";
+              description
+                "Name of an ACL6 rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf aclRuleID {
+              type uint32 {
+                range "0..4294967294";
+              }
+              description
+                "ID of an ACL6 rule in configuration mode.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclAction {
+              type aclRuleAction;
+              mandatory true;
+              description
+                "Matching mode of ACL6 rules. The available options are Permit and Deny.";
+              ext:support-filter "true";
+            }
+            leaf aclActiveStatus {
+              type pub-type:rowStatus;
+              default "active";
+              config false;
+              description
+                "Whether a rule is valid at the current time.";
+            }
+            leaf aclSourceIp {
+              type inet:ipv6-address-no-zone;
+              description
+                "Source IPv6 address.";
+              ext:support-filter "true";
+            }
+            leaf aclSrcMaskMode {
+              type aclMaskMode;
+              default "PositiveLength";
+              description
+                "Mask mode of an IPv6 address.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclSrcWild {
+              when "not(not(../aclSrcMaskMode)) or ../aclSrcMaskMode='PositiveLength'";
+              type uint32 {
+                range "1..128";
+              }
+              description
+                "Source IPv6 address mask. ";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclSourceIpMask {
+              when "not(../aclSrcMaskMode='PositiveLength' or not(../aclSrcMaskMode))";
+              type inet:ipv6-address-no-zone;
+              default "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff";
+              description
+                "Wildcard mask of a source IPv6 address.";
+              ext:support-filter "true";
+            }
+            leaf aclFragType {
+              type aclFragmentIPv6Type;
+              must "((../aclFragType='fragment' or ../aclFragType='clear_fragment') )";
+              description
+                "Type of packet fragmentation.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf vrfName {
+              when "not(../vrfAny='true')";
+              type leafref {
+                path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+              }
+              default "_public_";
+              description
+                "VPN instance name. Data packets can be filtered based on VPN instance names.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf vrfAny {
+              type boolean;
+              default "false";
+              description
+                "Any VPN Instance.";
+              ext:support-filter "true";
+            }
+            leaf aclTimeName {
+              type leafref {
+                path "/timerange:timerange/timerange:timeRangeInstances/timerange:timeRangeInstance/timerange:timeRangeName";
+              }
+              description
+                "Name of a time range in which an ACL rule takes effect. The value is a string of 1 to 32 characters and must start with an uppercase or lowercase letter.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclRuleDescription {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            container acl6RuleCnts {
+              config false;
+              description
+                "Number of times ACL6 rules are matched.";
+              list acl6RuleCnt {
+                config false;
+                description
+                  "Number of times interface-based ACL6 rules are matched.";
+                leaf matchCount {
+                  type uint64;
+                  config false;
+                  description
+                    "Information about the rule matched count.";
+                }
+              }
+            }
+          }
+        }
+        container aclRuleAdv6s {
+          description
+            "List of advanced ACL6 rules. The ACL6 rule group where these rules reside is of the numeric type or name type. For the ACL6 rule group of the numeric type, the value ranges from 3000 to 3999.";
+          list aclRuleAdv6 {
+            key "aclRuleName";
+            description
+              "Advanced ACL6 rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group.";
+            leaf aclRuleName {
+              type string {
+                length "1..32";
+                pattern '[^\s\?]*';
+              }
+              must "../../../aclType = 'Advance'";
+              description
+                "Name of an advanced ACL6 rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf aclRuleID {
+              type uint32 {
+                range "0..4294967294";
+              }
+              description
+                "ID of an advanced ACL6 rule in configuration mode.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclAction {
+              type aclRuleAction;
+              mandatory true;
+              description
+                "Matching mode of advanced ACL6 rules. The available options are Permit and Deny.";
+              ext:support-filter "true";
+            }
+            leaf aclActiveStatus {
+              type pub-type:rowStatus;
+              default "active";
+              config false;
+              description
+                "Whether a rule is valid at the current time.";
+            }
+            leaf aclProtocol {
+              type uint8;
+              mandatory true;
+              description
+                "Protocol type value (0: any ipv6 protocol; 6: tcp; 17: udp; 47: gre; 50: ipv6-esp; 51: ipv6-ah; 58: icmpv6; 89: ospf). ";
+              ext:support-filter "true";
+              ext:value-replace {
+                ext:item  "0" {
+                  ext:meaning "IPV6";
+                }
+                ext:item  "6" {
+                  ext:meaning "TCP";
+                }
+                ext:item  "17" {
+                  ext:meaning "UDP";
+                }
+                ext:item  "47" {
+                  ext:meaning "GRE";
+                }
+                ext:item  "50" {
+                  ext:meaning "IPV6-ESP";
+                }
+                ext:item  "51" {
+                  ext:meaning "IPV6-AH";
+                }
+                ext:item  "58" {
+                  ext:meaning "ICMPV6";
+                }
+                ext:item  "89" {
+                  ext:meaning "OSPF";
+                }
+              }
+            }
+            leaf aclSourceIp {
+              type inet:ipv6-address-no-zone;
+              description
+                "Source IPv6 address.";
+              ext:support-filter "true";
+            }
+            leaf aclSrcMaskMode {
+              type aclMaskMode;
+              default "PositiveLength";
+              description
+                "Mask mode of a source IPv6 address.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclSrcWild {
+              when "not(not(../aclSrcMaskMode)) or ../aclSrcMaskMode='PositiveLength'";
+              type uint32 {
+                range "1..128";
+              }
+              description
+                "Mask of the source IP address. ";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclSourceIpMask {
+              when "not(../aclSrcMaskMode='PositiveLength' or not(../aclSrcMaskMode))";
+              type inet:ipv6-address-no-zone;
+              default "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff";
+              description
+                "Wildcard mask of a source IPv6 address.";
+              ext:support-filter "true";
+            }
+            leaf aclDestIp {
+              type inet:ipv6-address-no-zone;
+              description
+                "Destination IPv6 address.";
+              ext:support-filter "true";
+            }
+            leaf aclDestMaskMode {
+              type aclMaskMode;
+              default "PositiveLength";
+              description
+                "Mask mode of a destination IPv6 address.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclDestWild {
+              when "not(not(../aclDestMaskMode)) or ../aclDestMaskMode='PositiveLength'";
+              type uint32 {
+                range "1..128";
+              }
+              description
+                "Mask of the destination IP address.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclDestIpMask {
+              when "not(../aclDestMaskMode='PositiveLength' or not(../aclDestMaskMode))";
+              type inet:ipv6-address-no-zone;
+              default "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff";
+              description
+                "Wildcard mask of a destination IPv6 address.";
+              ext:support-filter "true";
+            }
+            leaf aclSrcPool6Name {
+              type leafref {
+                path "/acl/aclPool6s/aclPool6/aclPool6Name";
+              }
+              description
+                "Name of a source IPv6 pool.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclSrcPortOp {
+              when "not(../aclProtocol!=6 and ../aclProtocol!=17) or ../aclProtocol=17 or ../aclProtocol=6";
+              type aclRangeType;
+              description
+                "Range type of the source port.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclSrcPortBegin {
+              when "not(../aclProtocol!=6 and ../aclProtocol!=17) or ../aclProtocol=17 or ../aclProtocol=6";
+              type uint16 {
+                range "0..65535";
+              }
+              must "not(../aclSrcPortOp='lt' or not(../aclSrcPortOp))";
+              description
+                "Start port number of the source port.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclSrcPortEnd {
+              when "not(../aclProtocol!=6 and ../aclProtocol!=17) or ../aclProtocol=17 or ../aclProtocol=6";
+              type uint16 {
+                range "0..65535";
+              }
+              must "not(../aclSrcPortOp='eq' or ../aclSrcPortOp='gt' or ../aclSrcPortOp='neq' or not(../aclSrcPortOp))";
+              description
+                "End port number of the source port.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclDestPortOp {
+              when "not(../aclProtocol!=6 and ../aclProtocol!=17) or ../aclProtocol=17 or ../aclProtocol=6";
+              type aclRangeType;
+              description
+                "Range type of the destination port.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclDestPortB {
+              when "not(../aclProtocol!=6 and ../aclProtocol!=17) or ../aclProtocol=17 or ../aclProtocol=6";
+              type uint16 {
+                range "0..65535";
+              }
+              must "not(../aclDestPortOp='lt' or not(../aclDestPortOp))";
+              description
+                "Start port number of the destination port.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclDestPortE {
+              when "not(../aclProtocol!=6 and ../aclProtocol!=17) or ../aclProtocol=17 or ../aclProtocol=6";
+              type uint16 {
+                range "0..65535";
+              }
+              must "not(../aclDestPortOp='eq' or ../aclDestPortOp='gt' or ../aclDestPortOp='neq' or not(../aclDestPortOp))";
+              description
+                "End port number of the destination port.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclFragType {
+              type aclFragmentIPv6Type;
+              must "((../aclFragType='fragment' or ../aclFragType='clear_fragment') )";
+              description
+                "Type of packet fragmentation.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclPrecedence {
+              when "not(../aclDscp)";
+              type uint8 {
+                range "0..7";
+              }
+              description
+                "Data packets can be filtered according to the priority field.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTos {
+              when "not(../aclDscp)";
+              type uint8 {
+                range "0..15";
+              }
+              description
+                "ToS value on which data packet filtering is based.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclDscp {
+              when "not(../aclPrecedence) and not(../aclTos or ../aclPrecedence or ../aclTos)";
+              type uint8 {
+                range "0..63";
+              }
+              description
+                "Value of the Differentiated Services Code Point (DSCP).";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclIcmpName {
+              when "../aclProtocol=58";
+              type ICMP6NAME;
+              default "unconfigured";
+              description
+                "ICMP Name.";
+              ext:support-filter "true";
+            }
+            leaf aclIcmpType {
+              when "../aclProtocol=58";
+              type uint16 {
+                range "0..255";
+              }
+              must "(../aclIcmpName='Redirect' and ../aclIcmpType=137) or (../aclIcmpName='echo' and ../aclIcmpType=128) or (../aclIcmpName='echo-reply' and ../aclIcmpType=129) or (../aclIcmpName='err-Header-field' and ../aclIcmpType=4) or (../aclIcmpName='frag-time-exceeded' and ../aclIcmpType=3) or (../aclIcmpName='hop-limit-exceeded' and ../aclIcmpType=3) or (../aclIcmpName='host-admin-prohib' and ../aclIcmpType=1) or (../aclIcmpName='host-unreachable' and ../aclIcmpType=1) or (../aclIcmpName='neighbor-advertisement' and ../aclIcmpType=136) or (../aclIcmpName='neighbor-solicitation' and ../aclIcmpType=135) or (../aclIcmpName='network-unreachable' and ../aclIcmpType=1) or (../aclIcmpName='packet-too-big' and ../aclIcmpType=2) or (../aclIcmpName='port-unreachable' and ../aclIcmpType=1) or (../aclIcmpName='router-advertisement' and ../aclIcmpType=134) or (../aclIcmpName='router-solicitation' and ../aclIcmpType=133) or (../aclIcmpName='unknown-ipv6-opt' and ../aclIcmpType=4) or (../aclIcmpName='unknown-next-hdr' and ../aclIcmpType=4) or not(../aclIcmpName='Redirect' or ../aclIcmpName='echo' or ../aclIcmpName='echo-reply' or ../aclIcmpName='err-Header-field' or ../aclIcmpName='frag-time-exceeded' or ../aclIcmpName='hop-limit-exceeded' or ../aclIcmpName='host-admin-prohib' or ../aclIcmpName='host-unreachable' or ../aclIcmpName='neighbor-advertisement' or ../aclIcmpName='neighbor-solicitation' or ../aclIcmpName='network-unreachable' or ../aclIcmpName='packet-too-big' or ../aclIcmpName='port-unreachable' or ../aclIcmpName='router-advertisement' or ../aclIcmpName='router-solicitation' or ../aclIcmpName='unconfigured' or ../aclIcmpName='unknown-ipv6-opt' or ../aclIcmpName='unknown-next-hdr')";
+              description
+                "ICMP type. This parameter is available only when the packet protocol is ICMP. If this parameter is not set, it indicates that the packets of all ICMP types can match.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclIcmpTypeEnd {
+              when "../aclProtocol=58";
+              type uint16 {
+                range "0..255";
+              }
+              must "not(../aclIcmpName='Redirect' or ../aclIcmpName='echo' or ../aclIcmpName='echo-reply' or ../aclIcmpName='err-Header-field' or ../aclIcmpName='frag-time-exceeded' or ../aclIcmpName='hop-limit-exceeded' or ../aclIcmpName='host-admin-prohib' or ../aclIcmpName='host-unreachable' or ../aclIcmpName='neighbor-advertisement' or ../aclIcmpName='neighbor-solicitation' or ../aclIcmpName='network-unreachable' or ../aclIcmpName='packet-too-big' or ../aclIcmpName='port-unreachable' or ../aclIcmpName='router-advertisement' or ../aclIcmpName='router-solicitation' or ../aclIcmpName='unconfigured' or ../aclIcmpName='unknown-ipv6-opt' or ../aclIcmpName='unknown-next-hdr')";
+              description
+                "ICMP type end. This parameter is available only when the packet protocol is ICMP. If this parameter is not set, it indicates that the packets of all ICMP types can match.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclIcmpCode {
+              when "../aclProtocol=58";
+              type uint16 {
+                range "0..255";
+              }
+              must "(../aclIcmpName='Redirect' and ../aclIcmpCode=0) or (../aclIcmpName='echo' and ../aclIcmpCode=0) or (../aclIcmpName='echo-reply' and ../aclIcmpCode=0) or (../aclIcmpName='err-Header-field' and ../aclIcmpCode=0) or (../aclIcmpName='frag-time-exceeded' and ../aclIcmpCode=1) or (../aclIcmpName='hop-limit-exceeded' and ../aclIcmpCode=0) or (../aclIcmpName='host-admin-prohib' and ../aclIcmpCode=1) or (../aclIcmpName='host-unreachable' and ../aclIcmpCode=3) or (../aclIcmpName='neighbor-advertisement' and ../aclIcmpCode=0) or (../aclIcmpName='neighbor-solicitation' and ../aclIcmpCode=0) or (../aclIcmpName='network-unreachable' and ../aclIcmpCode=0) or (../aclIcmpName='packet-too-big' and ../aclIcmpCode=0) or (../aclIcmpName='port-unreachable' and ../aclIcmpCode=4) or (../aclIcmpName='router-advertisement' and ../aclIcmpCode=0) or (../aclIcmpName='router-solicitation' and ../aclIcmpCode=0) or (../aclIcmpName='unknown-ipv6-opt' and ../aclIcmpCode=2) or (../aclIcmpName='unknown-next-hdr' and ../aclIcmpCode=1) or not(../aclIcmpName='Redirect' or ../aclIcmpName='echo' or ../aclIcmpName='echo-reply' or ../aclIcmpName='err-Header-field' or ../aclIcmpName='frag-time-exceeded' or ../aclIcmpName='hop-limit-exceeded' or ../aclIcmpName='host-admin-prohib' or ../aclIcmpName='host-unreachable' or ../aclIcmpName='neighbor-advertisement' or ../aclIcmpName='neighbor-solicitation' or ../aclIcmpName='network-unreachable' or ../aclIcmpName='packet-too-big' or ../aclIcmpName='port-unreachable' or ../aclIcmpName='router-advertisement' or ../aclIcmpName='router-solicitation' or ../aclIcmpName='unconfigured' or ../aclIcmpName='unknown-ipv6-opt' or ../aclIcmpName='unknown-next-hdr')";
+              description
+                "ICMP message code. The data packets can be filtered on the basis of the ICMP message code.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf vrfName {
+              when "not(../vrfAny='true')";
+              type leafref {
+                path "/l3vpn:l3vpn/l3vpn:l3vpncomm/l3vpn:l3vpnInstances/l3vpn:l3vpnInstance/l3vpn:vrfName";
+              }
+              default "_public_";
+              description
+                "VPN instance name. Data packets can be filtered based on VPN instance names.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf vrfAny {
+              type boolean;
+              default "false";
+              description
+                "Any VPN Instance.";
+              ext:support-filter "true";
+            }
+            leaf aclSynFlag {
+              type uint8 {
+                range "0..63";
+              }
+              description
+                "TCP flag value.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclTimeName {
+              type leafref {
+                path "/timerange:timerange/timerange:timeRangeInstances/timerange:timeRangeInstance/timerange:timeRangeName";
+              }
+              description
+                "Name of a time range in which an ACL rule takes effect. The value is a string of 1 to 32 characters and must start with an uppercase or lowercase letter.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclRuleDescription {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            container acl6RuleCnts {
+              config false;
+              description
+                "Number of times rules are matched.";
+              list acl6RuleCnt {
+                config false;
+                description
+                  "Number of times interface-based ACL6 rules are matched.";
+                leaf matchCount {
+                  type uint64;
+                  config false;
+                  description
+                    "Information about the rule matched count.";
+                }
+              }
+            }
+          }
+        }
+        container aclRuleIf6s {
+          description
+            "List of interface-based ACL6 rules. The ACL6 rule group where these rules reside is of the numeric type, ranging from 1000 to 1999.";
+          list aclRuleIf6 {
+            key "aclRuleName";
+            description
+              "Interface-based ACL6 rule, used to permit or deny packets. Other features can use the ACL control by referring to the rule group.";
+            leaf aclRuleName {
+              type string {
+                length "1..32";
+                pattern '[^\s\?]*';
+              }
+              must "../../../aclType = 'Interface'";
+              description
+                "Name of an interface-based ACL6 rule. The rule name can be a number or character string without spaces, but cannot start with an underscore (_).";
+            }
+            leaf aclRuleID {
+              type uint32 {
+                range "0..4294967294";
+              }
+              description
+                "ID of an interface-based ACL6 rule in configuration mode.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclAction {
+              type aclRuleAction;
+              mandatory true;
+              description
+                "Matching mode of interface-based ACL6 rules. The available options are Permit and Deny.";
+              ext:support-filter "true";
+            }
+            leaf aclIfAny {
+              type boolean;
+              default "false";
+              description
+                "Any interface.";
+              ext:support-filter "true";
+            }
+            leaf ifName {
+              when "not(../aclIfAny='true')";
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+              }
+              description
+                "Name of the interface into which the data packets come.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclActiveStatus {
+              type pub-type:rowStatus;
+              default "active";
+              config false;
+              description
+                "Whether a rule is valid at the current time.";
+            }
+            leaf aclTimeName {
+              type leafref {
+                path "/timerange:timerange/timerange:timeRangeInstances/timerange:timeRangeInstance/timerange:timeRangeName";
+              }
+              description
+                "Name of a time range in which an ACL rule takes effect. The value is a string of 1 to 32 characters and must start with an uppercase or lowercase letter.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            leaf aclRuleDescription {
+              type string {
+                length "1..127";
+                pattern '[^\?\s](([^\?\s]*)|[^\t\?]*[^\?\s])';
+              }
+              description
+                "Description about an ACL rule. The value cannot begin or end with a space.";
+              ext:support-filter "true";
+              ext:allowDelete "true";
+            }
+            container acl6RuleCnts {
+              config false;
+              description
+                "Number of times interface-based ACL6 rules are matched.";
+              list acl6RuleCnt {
+                config false;
+                description
+                  "Number of times interface-based ACL6 rules are matched.";
+                leaf matchCount {
+                  type uint64;
+                  config false;
+                  description
+                    "Information about the rule matched count.";
+                }
+              }
+            }
+          }
+        }
+        leaf aclStep {
+          type uint32 {
+            range "1..20";
+          }
+          default "5";
+          description
+            "Step of an ACL6 rule.";
+          ext:support-filter "true";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container aclPools {
+      description
+        "List of all ACL pools.";
+      list aclPool {
+        key "aclPoolName";
+        max-elements  "256";
+        description
+          "ACL pool, which is a collection of IP addresses.";
+        leaf aclPoolName {
+          type string {
+            length "1..32";
+          }
+          description
+            "Name of an ACL pool.";
+          ext:support-filter "true";
+        }
+        leaf applyBgpIPv4Peer {
+          type boolean;
+          default "false";
+          description
+            "Apply all BGP IPv4 peers.";
+          ext:support-filter "true";
+        }
+        container aclPoolIps {
+          description
+            "List of all IP addresses for ACL pools.";
+          list aclPoolIp {
+            key "aclPoolIpAdd aclPoolIpMask";
+            max-elements  "256";
+            description
+              "IP addresses in a pool.";
+            leaf aclPoolIpAdd {
+              type inet:ipv4-address-no-zone;
+              description
+                "IP address.";
+            }
+            leaf aclPoolIpMask {
+              type inet:ipv4-address-no-zone;
+              description
+                "IP address wildcard mask.";
+            }
+          }
+        }
+      }
+    }
+    container aclPool6s {
+      description
+        "List of all ACL IPv6 pools.";
+      list aclPool6 {
+        key "aclPool6Name";
+        max-elements  "1";
+        description
+          "ACL IPv6 pool, which is a collection of IPv6 addresses.";
+        leaf aclPool6Name {
+          type string {
+            length "1..32";
+          }
+          description
+            "Name of an ACL IPv6 pool.";
+          ext:support-filter "true";
+        }
+        leaf applyBgpIPv6Peer {
+          type boolean;
+          default "false";
+          description
+            "Apply all BGP IPv6 peers.";
+          ext:support-filter "true";
+        }
+      }
+    }
+    container aclPortPools {
+      description
+        "List of all ACL port pools.";
+      list aclPortPool {
+        key "aclPortPoolName";
+        max-elements  "256";
+        description
+          "ACL port pool, which is a collection of port number range.";
+        leaf aclPortPoolName {
+          type string {
+            length "1..32";
+          }
+          description
+            "Name of an ACL port pool.";
+          ext:support-filter "true";
+        }
+        container aclPorts {
+          description
+            "List of all port number range for ACL port pools.";
+          list aclPort {
+            key "aclPortOp aclPortBegin aclPortEnd";
+            max-elements  "256";
+            description
+              "Port number range in a pool.";
+            leaf aclPortOp {
+              type aclRangeType;
+              description
+                "Range type of the port.";
+            }
+            leaf aclPortBegin {
+              type uint16 {
+                range "0..65535";
+              }
+              description
+                "Start port number of the port.";
+            }
+            leaf aclPortEnd {
+              type uint16 {
+                range "0..65535";
+              }
+              description
+                "End port number of the port.";
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,146 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifmcpostrunk {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-ifmcpostrunk";
+  prefix ifmcpostrunk;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ifmcpostrunk-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Defines the Cpos-Trunk bundling technology, which bundles multiple physical interfaces into a logical interface.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+  container ifmcpostrunk {
+    description
+      "Defines the Cpos-Trunk bundling technology, which bundles multiple physical interfaces into a logical interface.";
+    container cposTrunkIfs {
+      description
+        "Specifies the list of Cpos-Trunk interfaces.";
+      list cposTrunkIf {
+        key "ifName";
+        description
+          "Defines the Cpos-Trunk interface, which is a logical interface with multiple physical interfaces being bundled.";
+        leaf ifName {
+          type pub-type:ifName;
+          description
+            "Specifies the name of a Cpos-Trunk interface. For example, Cpos-Trunk0.";
+        }
+        leaf upMemberIfNum {
+          type uint32;
+          config false;
+          description
+            "Specifies the number of member interfaces in the Up state.";
+        }
+        leaf channelMode {
+          type ifmcpostrunkchannelMode;
+          description
+            "Channel Mode";
+          ext:allowDelete "true";
+        }
+        container trunkMembers {
+          description
+            "Configures a list of cpos-trunk member interfaces.";
+          list trunkMember {
+            key "memberIfName";
+            max-elements 2;
+            description
+              "Configures cpos-trunk member interfaces.";
+            leaf memberIfName {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+              }
+              description
+                "Configures a name for a cpos-trunk member interface.";
+            }
+            leaf portStatus {
+              type ifmcpostrunkAbstractState;
+              config false;
+              description
+                "Displays the status of a cpos-trunk member interface.";
+            }
+            leaf portActiveStatus {
+              type ifmcpostrunkMemActiveState;
+              config false;
+              description
+                "Displays the active status of a cpos-trunk member interface.";
+            }
+          }
+        }
+        container e1t1Infos {
+          description
+            "E1T1 port attributes.";
+          list e1t1Info {
+            key "e1t1Number";
+            max-elements 63;
+            description
+              "E1T1 port attribute.";
+            leaf e1t1Number {
+              type uint32 {
+                range "1..63";
+              }
+              description
+                "E1T1 number.";
+            }
+            leaf workMode {
+              type ifmcpostrunkE1T1InfoWorkModeType;
+              description
+                "Work mode.";
+              ext:allowDelete "true";
+            }
+            container channelSets {
+              description
+                "Channel-sets.";
+              list channelSet {
+                when "not(../../workMode='unframed')";
+                key "setNumber timeSlot";
+                max-elements 30;
+                description
+                  "Channel-sets.";
+                leaf setNumber {
+                  type uint32 {
+                    range "0..30";
+                  }
+                  description
+                    "Set number.";
+                }
+                leaf timeSlot {
+                  type pub-type:devmTimeslotListType {
+                    length "1..61";
+                  }
+                  description
+                    "Integer<1-31> Timeslots in range, seperated by ',' or '-'.";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

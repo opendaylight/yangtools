@@ -1,0 +1,86 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-netconf {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-netconf";
+  prefix netconf;
+  include huawei-netconf-type;
+  include huawei-netconf-authorization;
+  include huawei-netconf-notification;
+  include huawei-netconf-authorization-type;
+  include huawei-netconf-notification-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "The NETCONF protocol defines a simple mechanism through which a network device can be managed, configuration data information can be retrieved, and new configuration data can be uploaded and manipulated.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  container netconf {
+    description
+      "The NETCONF protocol defines a simple mechanism through which a network device can be managed, configuration data information can be retrieved, and new configuration data can be uploaded and manipulated.";
+    container netconfCapabilitys {
+      config false;
+      description
+        "NETCONF capability list.";
+      list netconfCapability {
+        key "capabilityName version";
+        config false;
+        description
+          "NETCONF capability.";
+        leaf capabilityName {
+          type netconfNcaCapability;
+          config false;
+          description
+            "Name of the NETCONF capability.";
+        }
+        leaf version {
+          type netconfCapabilityVersion;
+          config false;
+          description
+            "Capability version number.";
+        }
+        leaf scope {
+          type netconfCapabilityScope;
+          config false;
+          description
+            "Scope of the capability.";
+        }
+      }
+    }
+    container authorization {
+      description
+        "NETCONF authorization.";
+      uses netconf:netconf_authorization_type;
+    }
+    container notification {
+      config false;
+      description
+        "notification";
+      uses netconf:netconf_notification_type;
+    }
+    container operationLogSwitch {
+      description
+        "Switch for RPC oper log.";
+      leaf get {
+        type boolean;
+        description
+          "Get oper type.";
+      }
+    }
+  }
+}

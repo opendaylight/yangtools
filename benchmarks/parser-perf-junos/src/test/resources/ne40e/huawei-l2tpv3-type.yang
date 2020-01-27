@@ -1,0 +1,124 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-l2tpv3-type {
+  belongs-to huawei-l2tpv3 {
+    prefix l2tpv3;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Description FOR submodule";
+  revision 2017-03-23 {
+	description
+	"Functions supported by the schema are added to the YANG file.";
+	reference
+	"Huawei private.";
+	}
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference    "Huawei private.";
+  }
+  typedef cookieAuthMode {
+    type enumeration {
+      enum "authNone" {
+        description
+          "Current auth mode is none";
+      }
+      enum "authPlain" {
+        description
+          "Current auth mode is plain";
+      }
+      enum "authCipher" {
+        description
+          "Current auth mode is cipher";
+      }
+    }
+    description
+      "Cookie Auth Mode";
+  }
+  typedef l2tpv3PwRoleType {
+    type enumeration {
+      enum "primary" {
+        description
+          "Primary Tunnel";
+      }
+      enum "injected" {
+        description
+          "Injected Tunnel";
+      }
+    }
+    description
+      "PW Role Type";
+  }
+  typedef l2tpv3InstanceType {
+    type enumeration {
+      enum "normal" {
+        description
+          "Normal Mode";
+      }
+      enum "localConnect" {
+        description
+          "Local Connect mode";
+      }
+    }
+    description
+      "Instance Type";
+  }
+  typedef l2tpv3DiffservMode {
+    type enumeration {
+      enum "pipe" {
+        description
+          "";
+      }
+      enum "uniform" {
+        description
+          "";
+      }
+    }
+    description
+      "Diff Service Mode";
+  }
+  typedef l2tpv3State {
+    type enumeration {
+      enum "down" {
+        description
+          "down";
+      }
+      enum "up" {
+        description
+          "up";
+      }
+    }
+    description
+      "L2TPv3 State";
+  }
+  typedef cookieLength {
+    type enumeration {
+      enum "4" {
+        description
+          "4 Bytes";
+      }
+      enum "8" {
+        description
+          "8 Bytes";
+      }
+    }
+    description
+      "Cookie Length";
+  }
+  typedef L2tpv3ipv6Address {
+    type string {
+      length "0..255";
+      pattern '\s*((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}(:|((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})|(:[0-9A-Fa-f]{1,4})))|(([0-9A-Fa-f]{1,4}:){5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){4}(:[0-9A-Fa-f]{1,4}){0,1}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){3}(:[0-9A-Fa-f]{1,4}){0,2}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){2}(:[0-9A-Fa-f]{1,4}){0,3}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:)(:[0-9A-Fa-f]{1,4}){0,4}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(:(:[0-9A-Fa-f]{1,4}){0,5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})))(%.+)?\s*';
+    }
+    description
+      "An IPV6 address in standard notation";
+  }
+}

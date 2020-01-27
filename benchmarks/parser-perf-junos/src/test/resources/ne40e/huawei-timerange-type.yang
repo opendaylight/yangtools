@@ -1,0 +1,93 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-timerange-type {
+  belongs-to huawei-timerange {
+    prefix timerange;
+  }
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "The type definition of time range";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  typedef timeRangeActiveStatus {
+    type enumeration {
+      enum "NoRefer" {
+        description
+          "NoRefer:";
+      }
+      enum "Active" {
+        description
+          "Active:";
+      }
+      enum "Inactive" {
+        description
+          "Inactive:";
+      }
+    }
+    description
+      "Active status";
+  }
+  typedef timeRangeDayOfWeek {
+    type enumeration {
+      enum "Sun" {
+        description
+          "Sun:";
+      }
+      enum "Mon" {
+        description
+          "Mon:";
+      }
+      enum "Tue" {
+        description
+          "Tue:";
+      }
+      enum "Wed" {
+        description
+          "Wed:";
+      }
+      enum "Thu" {
+        description
+          "Thu:";
+      }
+      enum "Fri" {
+        description
+          "Fri:";
+      }
+      enum "Sat" {
+        description
+          "Sat:";
+      }
+      enum "working-day" {
+        description
+          "Specify working days in the periodic time range.";
+      }
+      enum "off-day" {
+        description
+          "Specify off days in the periodic time range.";
+      }
+      enum "daily" {
+        description
+          "Specify Monday to Sunday in the periodic time range.";
+      }
+    }
+    description
+      "The day of a week";
+  }
+}

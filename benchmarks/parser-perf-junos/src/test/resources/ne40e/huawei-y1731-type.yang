@@ -1,0 +1,880 @@
+submodule huawei-y1731-type {
+  belongs-to huawei-y1731 {
+    prefix y1731;
+  }
+
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "y1731_type";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference "Huawei private.";
+  }
+
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference "Huawei private.";
+  }
+
+  typedef cfmVersion {
+    type enumeration {
+      enum "draft7" {
+        description
+          "IEEE 802.1ag Draft 7.";
+      }
+      enum "standard" {
+        description
+          "IEEE Std 802.1ag-2007.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef mpAddressModel {
+    type enumeration {
+      enum "bridge" {
+        description
+          "Bridge MAC model of an 802.1ag protocol.";
+      }
+      enum "individual" {
+        description
+          "Individual MAC model of an 802.1ag protocol.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef mapType {
+    type enumeration {
+      enum "no-bind" {
+        description
+          "The maintenance association is bound to no service.";
+      }
+      enum "bind-vlan" {
+        description
+          "The maintenance association is bound to a VLAN.";
+      }
+      enum "bind-l2vc" {
+        description
+          "The maintenance association is bound to an L2VC.";
+      }
+      enum "bind-vsi" {
+        description
+          "The maintenance association is bound to a VSI.";
+      }
+      enum "bind-ccc" {
+        description
+          "The maintenance association is bound to a CCC.";
+      }
+      enum "bind-l2tpv3-pw" {
+        description
+          "The maintenance association binds a L2TPV3 Tunnel.";
+      }
+      enum "bind-l2tpv3-ccc" {
+        description
+          "The maintenance association binds a L2TPV3 Local Connection.";
+      }
+      enum "bind-bgp-pw" {
+        description
+          "The maintenance association is bound to a BGP PW";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef ccmInterval {
+    type enumeration {
+      enum "interval3.3ms" {
+        description
+          "CCM interval of 3.3 ms.";
+      }
+      enum "interval10ms" {
+        description
+          "CCM interval of 10 ms.";
+      }
+      enum "interval100ms" {
+        description
+          "CCM interval of 100 ms.";
+      }
+      enum "interval1s" {
+        description
+          "CCM interval of 1s.";
+      }
+      enum "interval10s" {
+        description
+          "CCM interval of 10s.";
+      }
+      enum "interval1min" {
+        description
+          "CCM interval of 1 min.";
+      }
+      enum "interval10min" {
+        description
+          "CCM interval of 10 min.";
+      }
+      enum "interval20ms" {
+        description
+          "CCM interval of 20 ms.";
+      }
+      enum "interval30ms" {
+        description
+          "CCM interval of 30 ms.";
+      }
+      enum "interval50ms" {
+        description
+          "CCM interval of 50 ms.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef l2vcType {
+    type enumeration {
+      enum "vlan" {
+        description
+          "Configure the L2VPN encapsulation type as VLAN.";
+      }
+      enum "ethernet" {
+        description
+          "Configure the L2VPN encapsulation type as Ethernet.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef maFormat {
+    type enumeration {
+      enum "string" {
+        description
+          "The maintenance association's name is in string format.";
+      }
+      enum "icc-based" {
+        description
+          "The maintenance association's name is in ICC-based format.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef mdFormat {
+    type enumeration {
+      enum "none" {
+        description
+          "CCM packets have no maintenance domain name.";
+      }
+      enum "dnsLinkName" {
+        description
+          "The maintenance domain name is CCM packets DNS name.";
+      }
+      enum "macAddressAndUint" {
+        description
+          "The maintenance domain name is MAC and 2-octet integer (H-H-H:U<0-65535>, example: 0001-0001-0001:1).";
+      }
+      enum "charString" {
+        description
+          "The maintenance domain name is string format.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef measurementType {
+    type enumeration {
+      enum "singleloss" {
+        description
+          "Type of single-ended loss measure.";
+      }
+      enum "dualloss" {
+        description
+          "Type of dual-ended loss measure.";
+      }
+      enum "onewaydelay" {
+        description
+          "Type of one-way delay measure.";
+      }
+      enum "twowaydelay" {
+        description
+          "Type of two-way delay measure.";
+      }
+      enum "syntheticloss" {
+        description
+          "The type of synthetic loss measure.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef mepDirection {
+    type enumeration {
+      enum "inward" {
+        description
+          "Type of a MEP, which sends packets to the device's relay.";
+      }
+      enum "outward" {
+        description
+          "Type of a MEP, which sends packets out of device.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef measurePoint {
+    type enumeration {
+      enum "pw" {
+        description
+          "Measure the flow through the PW interface.
+           
+           .";
+      }
+      enum "ac" {
+        description
+          "Measure the flow through the AC interface.
+           
+           .";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef mepType {
+    type enumeration {
+      enum "interface" {
+        description
+          "Interface type of a MEP.";
+      }
+      enum "vlan" {
+        description
+          "VLAN type of a MEP.";
+      }
+      enum "pw" {
+        description
+          "PW type of a MEP.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef continueInterval1 {
+    type enumeration {
+      enum "interval30000ms" {
+        description
+          "";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef continueInterval2 {
+    type enumeration {
+      enum "interval1000ms" {
+        description
+          "";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef onDemondInterval1 {
+    type enumeration {
+      enum "interval1000ms" {
+        description
+          "Interval of 1000 ms.";
+      }
+      enum "interval10000ms" {
+        description
+          "Interval of 10000 ms.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef interval100and1000 {
+    type enumeration {
+      enum "interval100ms" {
+        description
+          "interval of 100ms.";
+      }
+      enum "interval1000ms" {
+        description
+          "interval of 1000ms.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef mipCreateType {
+    type enumeration {
+      enum "default" {
+        description
+          "The rule of default: MIPs can be created on the port of the MD only when the port does not have the MEP of a higher MD-level or the MIP of a lower MD-level.";
+      }
+      enum "explicit" {
+        description
+          "The rule of explicit: MIPs can be created on the port of the MD only when the port meets the following conditions: the port does not have the MEP of a higher MD-level or the MIP of a lower MD-level; the port has the MEP of a lower MD-level.";
+      }
+      enum "none" {
+        description
+          "The rule of none: no MIPs can be created on the port of the maintenance domain.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef senderTLVType {
+    type enumeration {
+      enum "none" {
+        description
+          "The sender ID TLV is not to be sent.";
+      }
+      enum "chassis" {
+        description
+          "Information about the chassis ID is to be sent.";
+      }
+      enum "manage" {
+        description
+          "Information about the management address is to be sent.";
+      }
+      enum "chassis-manage" {
+        description
+          "Information about the chassis ID and management address is to be sent.";
+      }
+      enum "defer" {
+        description
+          "The contents are determined by the maintenance domain managed object.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef aisInterval {
+    type enumeration {
+      enum "interval1s" {
+        description
+          "AIS interval of 1s.";
+      }
+      enum "interval60s" {
+        description
+          "AIS interval of 60s.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef ethCsfInterval {
+    type enumeration {
+      enum "interval1s" {
+        description
+          "ETH-CSF interval of 1s.";
+      }
+      enum "interval60s" {
+        description
+          "ETH-CSF interval of 60s.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef alarmType {
+    type enumeration {
+      enum "unexpectedMEGLevel" {
+        description
+          "The MEG level of CCM packets is unexpected which the MEP received.";
+      }
+      enum "unexpectedMEP" {
+        description
+          "The MEP ID of CCM packets is unexpected which the MEP received.";
+      }
+      enum "mismerge" {
+        description
+          "The MEG ID of CCM packets is unexpected which the MEP received.";
+      }
+      enum "unexpectedPeriod" {
+        description
+          "The interval of CCM packets is unexpected which the MEP received.";
+      }
+      enum "unexpectedMAC" {
+        description
+          "The resource MAC of CCM packets is unexpected which the MEP received.";
+      }
+      enum "LOC" {
+        description
+          "Fault of lost connection.";
+      }
+      enum "exceptionalMACstatus" {
+        description
+          "The value of interface status TLV is not up.";
+      }
+      enum "RDI" {
+        description
+          "Fault of remote defect indication.";
+      }
+      enum "none" {
+        description
+          "There is no fault.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef measureGran {
+    type enumeration {
+      enum "port-vlan" {
+        description
+          "Measure the flow through the specified VLAN in the interface.
+           
+          ";
+      }
+      enum "port" {
+        description
+          "Measure the flow through the interface.
+           
+          ";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef configType {
+    type enumeration {
+      enum "Auto" {
+        description
+          "The MIP is automatically created.";
+      }
+      enum "Manual" {
+        description
+          "The MIP is manually created.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef portIdTlvType {
+    type enumeration {
+      enum "interface-name" {
+        description
+          "Interface name Type of port ID TLV.";
+      }
+      enum "local" {
+        description
+          "Private type of port ID TLV.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef measureMode {
+    type enumeration {
+      enum "on-demand" {
+        description
+          "Measure mode of on-demand.";
+      }
+      enum "proactive" {
+        description
+          "Measure mode of proactive.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef status {
+    type enumeration {
+      enum "working" {
+        description
+          "The measurement is in process.";
+      }
+      enum "finished" {
+        description
+          "The measurement is finished.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef errorInfo {
+    type enumeration {
+      enum "valid" {
+        description
+          "Data is valid.";
+      }
+      enum "invalid-loss" {
+        description
+          "The packet loss is invalid.";
+      }
+      enum "invalid-delay" {
+        description
+          "The delay is invalid.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef cfmStatus {
+    type enumeration {
+      enum "up" {
+        description
+          "Status of Up.";
+      }
+      enum "down" {
+        description
+          "Status of Down.";
+      }
+      enum "disable" {
+        description
+          "Status of disable.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef interfaceTLVType {
+    type enumeration {
+      enum "none" {
+        description
+          "Interface status TLV is not received.";
+      }
+      enum "up" {
+        description
+          "The value of interface status TLV is Up.";
+      }
+      enum "down" {
+        description
+          "The value of interface status TLV is Down.";
+      }
+      enum "testing" {
+        description
+          "The value of interface status TLV is Testing.";
+      }
+      enum "unknown" {
+        description
+          "The value of interface status TLV is Unknown.";
+      }
+      enum "dormant" {
+        description
+          "The value of interface status TLV is Dormant.";
+      }
+      enum "notPresent" {
+        description
+          "The value of interface status TLV is NotPresent.";
+      }
+      enum "lowerLayerDown" {
+        description
+          "The value of interface status TLV is LowerLayerDown.";
+      }
+      enum "undefined" {
+        description
+          "The value of interface status TLV is not defined in protocol.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef portStatusTLVType {
+    type enumeration {
+      enum "none" {
+        description
+          "Port status TLV is not received.";
+      }
+      enum "blocked" {
+        description
+          "The value of port status TLV is Blocked.";
+      }
+      enum "up" {
+        description
+          "The value of port status TLV is Up.";
+      }
+      enum "undefined" {
+        description
+          "The value of port status TLV is not defined in protocol.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef priority {
+    type enumeration {
+      enum "0" {
+        description
+          "The priority is 0.";
+      }
+      enum "1" {
+        description
+          "The priority is 1.";
+      }
+      enum "2" {
+        description
+          "The priority is 2.";
+      }
+      enum "3" {
+        description
+          "The priority is 3.";
+      }
+      enum "4" {
+        description
+          "The priority is 4.";
+      }
+      enum "5" {
+        description
+          "The priority is 5.";
+      }
+      enum "6" {
+        description
+          "The priority is 6.";
+      }
+      enum "7" {
+        description
+          "The priority is 7.";
+      }
+      enum "none" {
+        description
+          "There is no priority.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef delayType {
+    type enumeration {
+      enum "one-way-delay" {
+        description
+          "Threshold of one-way delay.";
+      }
+      enum "two-way-delay" {
+        description
+          "Threshold of two-way delay.";
+      }
+      enum "one-way-jitter" {
+        description
+          "Threshold of one-way jitter.";
+      }
+      enum "two-way-jitter" {
+        description
+          "Threshold of two-way jitter.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef lossType {
+    type enumeration {
+      enum "single-ended-local-loss" {
+        description
+          "Threshold of local loss of single-ended loss measurement.";
+      }
+      enum "single-ended-remote-loss" {
+        description
+          "Threshold of remote loss of single-ended loss measurement.";
+      }
+      enum "dual-ended-local-loss" {
+        description
+          "Threshold of local loss of dual-ended loss measurement.";
+      }
+      enum "dual-ended-remote-loss" {
+        description
+          "Threshold of remote loss of dual-ended loss measurement.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef interval {
+    type enumeration {
+      enum "interval1000ms" {
+        description
+          "Interval of 1000 ms.";
+      }
+      enum "interval10000ms" {
+        description
+          "Interval of 10000 ms.";
+      }
+      enum "interval30000ms" {
+        description
+          "Interval of 30000 ms.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef tstPattern {
+    type enumeration {
+      enum "zero-no-crc" {
+        description
+          "Null signal without CRC-32.";
+      }
+      enum "zero-with-crc" {
+        description
+          "Null signal with CRC-32.";
+      }
+      enum "prbs-no-crc" {
+        description
+          "PRBS without CRC-32.";
+      }
+      enum "prbs-with-crc" {
+        description
+          "PRBS with CRC-32.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef tstDirection {
+    type enumeration {
+      enum "send-and-receive" {
+        description
+          "Send and receive location.";
+      }
+      enum "send" {
+        description
+          "Send location.";
+      }
+      enum "receive" {
+        description
+          "Receive location.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef onDemandStatus {
+    type enumeration {
+      enum "testing" {
+        description
+          "The test is testing.";
+      }
+      enum "finished" {
+        description
+          "The test is finished.";
+      }
+      enum "stopped" {
+        description
+          "The test is stopped.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef onDemandResult {
+    type enumeration {
+      enum "ok" {
+        description
+          "The test is success.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef tstMode {
+    type enumeration {
+      enum "one-way" {
+        description
+          "One-way.";
+      }
+      enum "two-way" {
+        description
+          "Two-way.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef tstRemoteType {
+    type enumeration {
+      enum "RMEPID" {
+        description
+          "Specify the ID of an RMEP.";
+      }
+      enum "RMEPMAC" {
+        description
+          "Specify the MAC address of an RMEP.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef maMipCreateType {
+    type enumeration {
+      enum "default" {
+        description
+          "The rule of default: MIPs can be created on the port of the MA only when the port does not have the MEP of a higher MD-level or the MIP of a lower MD-level.";
+      }
+      enum "explicit" {
+        description
+          "The rule of explicit: MIPs can be created on the port of the MA only when the port meets the following conditions: the port does not have the MEP of a higher MD-level or the MIP of a lower MD-level; the port has the MEP of a lower MD-level.";
+      }
+      enum "none" {
+        description
+          "The rule of none: no MIPs can be created on the port of the maintenance association.";
+      }
+      enum "defer" {
+        description
+          "The rule of defer: The rule of MIP creation is deferred to the corresponding variable in the enclosing maintenance domain.";
+      }
+    }
+    description
+      "";
+  }
+
+  typedef ethBnMode {
+    type enumeration {
+      enum "port" {
+        description
+          "ETH-BN port mode.
+           
+          ";
+      }
+      enum "port-vlan" {
+        description
+          "ETH-BN port-vlan mode.
+           
+          ";
+      }
+    }
+    description
+      "";
+  }
+}

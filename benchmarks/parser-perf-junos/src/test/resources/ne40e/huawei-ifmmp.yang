@@ -1,0 +1,413 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifmmp {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-ifmmp";
+  prefix ifmmp;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ifmmp-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Define the interface that bundles multiple interfaces into a logical interface.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+
+  container ifmmp {
+    description
+      "Define the interface that bundles multiple interfaces into a logical interface.";
+    container mpIfs {
+      description
+        "Specify the list of MP-group interfaces.";
+      list mpIf {
+        key "ifName";
+        description
+          "Define the interface that bundles multiple interfaces into a logical interface.";
+        leaf ifName {
+          type pub-type:ifName;
+          description
+            "MP-group interface name. For example, MP-group 0/1/1 and m0/1/1.";
+        }
+        leaf ifPhyType {
+          type ifmmpPhyType;
+          default "Mp-group";
+          description
+            "Interface phytype.";
+        }
+        leaf fragmentSize {
+          type ifmmpFragment;
+          default "noFragment";
+          description
+            "Set the size of an MP-group fragment. MP-group packets are not fragmented by default.";
+        }
+        leaf thresholdLeast {
+          type uint8 {
+            range "1..128";
+          }
+          default "1";
+          description
+            "Minimum number of member links in an MP-group. The default value is 1.";
+        }
+        leaf mrru {
+          type uint32 {
+            range "328..2048";
+          }
+          default "1500";
+          description
+            "Set the MP Max-Receive-Reconstructed Unit (MRRU) for an MP-group. The default value is 1500 bytes.";
+        }
+        leaf ssnhf {
+          when "not(../ifPhyType='Global-Mp-Group') or ../ifPhyType='Mp-group'";
+          type boolean;
+          default "false";
+          description
+            "Enable short-sequence negotiation.";
+        }
+        leaf discriminator {
+          type boolean;
+          default "true";
+          description
+            "Enable the MP discriminator negotiation.";
+        }
+        container crcErrInfo {
+          when "not(../ifPhyType='Global-Mp-Group')";
+          description
+            "MP-group CRC alarm threshold configuration.";
+          leaf crcErrAlmThrCoefficient {
+            when "not(../crcEnable='disable') or ../crcEnable='enable'";
+            type uint32 {
+              range "1..9";
+            }
+            mandatory true;
+            description
+              "MP-group CRC alarm threshold coefficient.";
+          }
+          leaf crcErrAlmThrPower {
+            when "not(../crcEnable='disable') or ../crcEnable='enable'";
+            type uint32 {
+              range "1..5";
+            }
+            mandatory true;
+            description
+              "MP-group CRC alarm threshold index.";
+          }
+          leaf crcErrRsumThrCoefficient {
+            when "not(../crcEnable='disable') or ../crcEnable='enable'";
+            type uint32 {
+              range "1..9";
+            }
+            description
+              "MP-group CRC resume threshold coefficient.";
+            ext:allowDelete "true";
+          }
+          leaf crcErrRsumThrPower {
+            when "not(../crcEnable='disable') or ../crcEnable='enable'";
+            type uint32 {
+              range "1..6";
+            }
+            description
+              "MP-group CRC resume threshold index.";
+            ext:allowDelete "true";
+          }
+          leaf crcErrAlmTriggerService {
+            when "not(../crcEnable='disable') or ../crcEnable='enable'";
+            type ifmmpcrcErrAlmTriggerService;
+            mandatory true;
+            description
+              "MP-group CRC association. ";
+          }
+          leaf crcEnable {
+            when "../../ifPhyType='Mp-group'";
+            type ifmmpcrcenable;
+            description
+              "MP-group CRC detect enable.";
+            ext:allowDelete "true";
+          }
+          leaf crcErrAlmEnable {
+            type ifmmpcrcerralmenable;
+            config false;
+            mandatory true;
+            description
+              "MP-group CRC alarm enable.";
+          }
+          leaf crcErrAlmStatus {
+            when "not(../crcEnable='disable')";
+            type ifmmpcrcerralmstatus;
+            config false;
+            mandatory true;
+            description
+              "MP-group CRC status.";
+          }
+          leaf crcErrCurrentRatio {
+            when "not(../crcEnable='disable')";
+            type string {
+              length "1..64";
+            }
+            config false;
+            mandatory true;
+            description
+              "MP-group CRC ratio.";
+          }
+          leaf crcErrAlarmThr {
+            when "not(../crcEnable='disable')";
+            type string {
+              length "1..64";
+            }
+            config false;
+            mandatory true;
+            description
+              "MP-group CRC alarm threshold.";
+          }
+          leaf crcErrResThr {
+            when "not(../crcEnable='disable')";
+            type string {
+              length "1..64";
+            }
+            config false;
+            mandatory true;
+            description
+              "MP-group CRC resume threshold.";
+          }
+        }
+        container damp {
+          when "not(../ifPhyType='Global-Mp-Group')";
+          description
+            "Enable the function of suppressing the links in an MP-group.";
+          leaf flapSet {
+            when "../../ifPhyType='Mp-group'";
+            type boolean;
+            default "false";
+            description
+              "Enable MP-group flap damp.";
+          }
+          leaf detectTime {
+            when "../flapSet='true'";
+            type uint32 {
+              range "30..3600";
+            }
+            default "30";
+            description
+              "MP-group detect time. The default value is 30s.";
+          }
+          leaf flapCount {
+            when "../flapSet='true'";
+            type uint16 {
+              range "1..64";
+            }
+            default "1";
+            description
+              "Maximum number of flappings allowed in an MP-group within the detect time. The default value is 1.";
+          }
+          leaf dampTime {
+            when "../flapSet='true'";
+            type uint32 {
+              range "60..86400";
+            }
+            default "60";
+            description
+              "Time during which the MP-group links must be Up before being unsuppressed. The default value is 60s.";
+          }
+        }
+        container mpMembers {
+          description
+            "List of MP-group member interfaces.";
+          list mpMember {
+            key "memberIfName";
+            max-elements "32";
+            description
+              "MP-group member interface.";
+            leaf memberIfName {
+              type leafref {
+                path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+              }
+              description
+                "Name of an MP-group member interface.";
+            }
+            leaf phyStatus {
+              type ifmmpPhyState;
+              config false;
+              mandatory true;
+              description
+                "Physical status of an MP-group member interface.";
+            }
+            leaf protoStatus {
+              type ifmmpProtocalState;
+              config false;
+              mandatory true;
+              description
+                "Protocol status of an MP-group member interface.";
+            }
+            container timeDelayStatus {
+              when "not(../../../ifPhyType='Global-Mp-Group') or ../../../ifPhyType='Mp-group'";
+              config false;
+              description
+                "Delay information of an MP-group member interface.";
+              leaf maxTimeDelay {
+                type uint32 {
+                  range "0..1000000";
+                }
+                config false;
+                mandatory true;
+                description
+                  "Max history delay of an MP-group member interface.";
+              }
+              leaf lastRcdNO1 {
+                type uint32 {
+                  range "0..1000000";
+                }
+                config false;
+                mandatory true;
+                description
+                  "Last delay of an MP-group member interface.";
+              }
+              leaf lastRcdNO2 {
+                type uint32 {
+                  range "0..1000000";
+                }
+                config false;
+                mandatory true;
+                description
+                  "Last but one delay of an MP-group member interface.";
+              }
+              leaf lastRcdNO3 {
+                type uint32 {
+                  range "0..1000000";
+                }
+                config false;
+                mandatory true;
+                description
+                  "Last but two delay of an MP-group member interface.";
+              }
+            }
+          }
+        }
+        container timeDelayConfig {
+          when "not(../ifPhyType='Global-Mp-Group') or ../ifPhyType='Mp-group'";
+          description
+            "MP-group delay.";
+          leaf timeDlySwitch {
+            type ifmmpTimeDlySwitch;
+            default "disable";
+            description
+              "MP-group delay switch.";
+          }
+          leaf timeDlyThres {
+            type uint32 {
+              range "25..500";
+            }
+            mandatory true;
+            description
+              "MP-group delay threshold.";
+          }
+        }
+        container mpAttrInfo {
+          description
+            "MP-group DropTime Out And BandWidth Mode.";
+          leaf droptimeout {
+            type uint32 {
+              range "10..100";
+            }
+            default "100";
+            description
+              "MP-group DropTime Out Threshold.";
+            ext:allowDelete "true";
+          }
+          leaf mpDynamicMode {
+            type ifmmpDynamicMode;
+            mandatory true;
+            description
+              "MP-group Dynamic BandWidth Mode Config.";
+          }
+          leaf mpLowLatencyMode {
+            type ifmmpLatencyMode;
+            mandatory true;
+            description
+              "MP-group Low Latency Mode Config.";
+          }
+          leaf mpPackPriority {
+            when "not(../../ifPhyType='Global-Mp-Group')";
+            type ifmmpPackPriority;
+            default "normal";
+            description
+              "MP-group Packet Priority Config.";
+            ext:allowDelete "true";
+          }
+          leaf mpPackQueDepth {
+            when "not(../../ifPhyType='Global-Mp-Group')";
+            type uint8 {
+              range "0..4";
+            }
+            default "1";
+            description
+              "MP-group Packet Queue Depth Config.";
+            ext:allowDelete "true";
+          }
+        }
+        container mpLosPktAlmThrd {
+          description
+            "MP-group Los Packet Alarm Threshold.";
+          leaf losPktAlmCoefficient {
+            type uint32 {
+              range "1..9";
+            }
+            default "3";
+            description
+              "MP-group Los Packet Alarm Threshold Coefficient.";
+            ext:allowDelete "true";
+          }
+          leaf losPktAlmPower {
+            type uint32 {
+              range "1..5";
+            }
+            default "5";
+            description
+              "MP-group Los Packet Alarm Threshold Power.";
+            ext:allowDelete "true";
+          }
+          leaf losPktResumeCoefficient {
+            type uint32 {
+              range "1..9";
+            }
+            default "1";
+            description
+              "MP-group Los Packet Alarm Resume Threshold Coefficient.";
+            ext:allowDelete "true";
+          }
+          leaf losPktResumePower {
+            type uint32 {
+              range "1..6";
+            }
+            default "5";
+            description
+              "MP-group Los Packet Alarm Resume Threshold Power.";
+            ext:allowDelete "true";
+          }
+        }
+      }
+    }
+  }
+}

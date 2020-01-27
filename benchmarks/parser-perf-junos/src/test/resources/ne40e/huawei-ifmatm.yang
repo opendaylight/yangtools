@@ -1,0 +1,910 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-ifmatm {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-ifmatm";
+  prefix ifmatm;
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-ifmatm-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "ATM interface.";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+
+
+  container ifmatm {
+    description
+      "ATM interface.";
+    container atmGlobalServices {
+      description
+        "ATM service template.";
+      list atmGlobalService {
+        key "atmServiceName";
+        max-elements "1024";
+        description
+          "ATM service template.";
+        leaf atmServiceName {
+          type string {
+            length "1..31";
+          }
+          description
+            "ATM service template name.";
+        }
+        leaf atmServiceType {
+          type ifmatmServeiceType;
+          mandatory true;
+          description
+            "ATM service template type.";
+        }
+        leaf pcr {
+          when "../atmServiceType='cbr' or ../atmServiceType='nrt-vbr' or ../atmServiceType='rt-vbr' or ../atmServiceType='ubr' or ../atmServiceType='ubr-plus'";
+          type uint32 {
+            range "8..599040";
+          }
+          mandatory true;
+          description
+            "ATM PCR.";
+        }
+        leaf scr {
+          when "not(../atmServiceType='cbr' or ../atmServiceType='ubr' or ../atmServiceType='ubr-plus') or ../atmServiceType='nrt-vbr' or ../atmServiceType='rt-vbr'";
+          type uint32 {
+            range "8..599040";
+          }
+          mandatory true;
+          description
+            "ATM configurate SCR.";
+        }
+        leaf mcr {
+          when "not(../atmServiceType='cbr' or ../atmServiceType='nrt-vbr' or ../atmServiceType='rt-vbr' or ../atmServiceType='ubr') or ../atmServiceType='ubr-plus'";
+          type uint32 {
+            range "8..599040";
+          }
+          mandatory true;
+          description
+            "ATM configurate MCR.";
+        }
+        leaf mbs {
+          when "not(../atmServiceType='cbr' or ../atmServiceType='ubr' or ../atmServiceType='ubr-plus') or ../atmServiceType='nrt-vbr' or ../atmServiceType='rt-vbr'";
+          type uint32 {
+            range "2..255";
+          }
+          mandatory true;
+          description
+            "ATM configurate MBS.";
+        }
+        leaf cdvt {
+          when "../atmServiceType='cbr' or ../atmServiceType='nrt-vbr' or ../atmServiceType='rt-vbr' or ../atmServiceType='ubr' or ../atmServiceType='ubr-plus'";
+          type uint32 {
+            range "1..10000000";
+          }
+          description
+            "ATM configurate CDVT.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+    container interfaces {
+      description
+        "ATM interface list.";
+      list interface {
+        key "ifName";
+        description
+          "ATM interface.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "ATM interface name.";
+        }
+        leaf ifType {
+          type ifType;
+          default "mainIf";
+          description
+            "Type of an interface. The available options are main interface and sub interface.";
+        }
+        leaf ifPhyType {
+          type ifPhyType;
+          default "Serial";
+          description
+            "Physical type of an interface. The available options are serial interface and IMA-group interface.";
+        }
+        leaf atmInterfaceType {
+          when "not(../ifType='mainIf' and ../ifPhyType='Trunk-Serial' or ../ifType='subIf' and ../ifPhyType!='Trunk-Serial' and ../ifPhyType!='Global-Ima-Group' and ../ifPhyType!='ATM' or ../ifType='subIf' and ../ifPhyType='ATM' or ../ifType='subIf' and ../ifPhyType='Global-Ima-Group' or ../ifType='subIf' and ../ifPhyType='Trunk-Serial') or ../ifType='mainIf' and ../ifPhyType!='Trunk-Serial' and ../ifPhyType!='Global-Ima-Group' and ../ifPhyType!='ATM' or ../ifType='mainIf' and ../ifPhyType='ATM' or ../ifType='mainIf' and ../ifPhyType='Global-Ima-Group'";
+          type ifmatmInterfaceType;
+          description
+            "ATM interface type.";
+          ext:allowDelete "true";
+        }
+        leaf atmMaxPvc {
+          when "not(../ifType='mainIf' and ../ifPhyType='Trunk-Serial' or ../ifType='subIf' and ../ifPhyType!='Trunk-Serial' and ../ifPhyType!='Global-Ima-Group' and ../ifPhyType!='ATM' or ../ifType='subIf' and ../ifPhyType='ATM' or ../ifType='subIf' and ../ifPhyType='Global-Ima-Group' or ../ifType='subIf' and ../ifPhyType='Trunk-Serial') or ../ifType='mainIf' and ../ifPhyType!='Trunk-Serial' and ../ifPhyType!='Global-Ima-Group' and ../ifPhyType!='ATM' or ../ifType='mainIf' and ../ifPhyType='ATM' or ../ifType='mainIf' and ../ifPhyType='Global-Ima-Group'";
+          type uint32 {
+            range "1..4096";
+          }
+          description
+            "Maximum number of PVCs for an ATM interface.";
+          ext:allowDelete "true";
+        }
+        leaf atmLinkCheck {
+          when "not(../ifType='mainIf' and ../ifPhyType!='Trunk-Serial' and ../ifPhyType!='Global-Ima-Group' and ../ifPhyType!='ATM' or ../ifType='mainIf' and ../ifPhyType='ATM' or ../ifType='mainIf' and ../ifPhyType='Global-Ima-Group' or ../ifType='mainIf' and ../ifPhyType='Trunk-Serial' or ../ifType='subIf' and ../ifPhyType='Global-Ima-Group' or ../ifType='subIf' and ../ifPhyType='Trunk-Serial') or ../ifType='subIf' and ../ifPhyType!='Trunk-Serial' and ../ifPhyType!='Global-Ima-Group' and ../ifPhyType!='ATM' or ../ifType='subIf' and ../ifPhyType='ATM'";
+          type ifmatmBool;
+          description
+            "ATM interface link check.";
+          ext:allowDelete "true";
+        }
+        leaf atmCellTrans {
+          when "not(../ifType='mainIf' and ../ifPhyType='Global-Ima-Group' or ../ifType='mainIf' and ../ifPhyType='Trunk-Serial' or ../ifType='subIf' and ../ifPhyType!='Trunk-Serial' and ../ifPhyType!='Global-Ima-Group' and ../ifPhyType!='ATM' or ../ifType='subIf' and ../ifPhyType='Global-Ima-Group' or ../ifType='subIf' and ../ifPhyType='Trunk-Serial') or ../ifType='mainIf' and ../ifPhyType!='Trunk-Serial' and ../ifPhyType!='Global-Ima-Group' and ../ifPhyType!='ATM' or ../ifType='mainIf' and ../ifPhyType='ATM' or ../ifType='subIf' and ../ifPhyType='ATM'";
+          type ifmatmCellTransBool;
+          default "Disable";
+          description
+            "ATM Interface Cell Transfer.";
+          ext:allowDelete "true";
+        }
+        leaf atmBwOverLoad {
+          when "not(../ifType='mainIf' and ../ifPhyType='Trunk-Serial' or ../ifType='subIf' and ../ifPhyType!='Trunk-Serial' and ../ifPhyType!='Global-Ima-Group' and ../ifPhyType!='ATM' or ../ifType='subIf' and ../ifPhyType='ATM' or ../ifType='subIf' and ../ifPhyType='Global-Ima-Group' or ../ifType='subIf' and ../ifPhyType='Trunk-Serial') or ../ifType='mainIf' and ../ifPhyType!='Trunk-Serial' and ../ifPhyType!='Global-Ima-Group' and ../ifPhyType!='ATM' or ../ifType='mainIf' and ../ifPhyType='ATM' or ../ifType='mainIf' and ../ifPhyType='Global-Ima-Group'";
+          type uint32 {
+            range "0..64000000";
+          }
+          description
+            "ATM interface excess bandwidth(kbps).";
+          ext:allowDelete "true";
+        }
+        leaf ifPriority {
+          when "not(../ifType='mainIf' and ../ifPhyType!='Trunk-Serial' and ../ifPhyType!='Global-Ima-Group' and ../ifPhyType!='ATM' or ../ifType='mainIf' and ../ifPhyType='Global-Ima-Group' or ../ifType='mainIf' and ../ifPhyType='Trunk-Serial' or ../ifType='subIf' and ../ifPhyType!='Trunk-Serial' and ../ifPhyType!='Global-Ima-Group' and ../ifPhyType!='ATM' or ../ifType='subIf' and ../ifPhyType='Global-Ima-Group' or ../ifType='subIf' and ../ifPhyType='Trunk-Serial')";
+          type uint16 {
+            range "1..7";
+          }
+          description
+            "ATM Interface priority.";
+          ext:allowDelete "true";
+        }
+        container atmBroadCast {
+          description
+            "ATM Broadcast.";
+          leaf atmbroadcast {
+            when "../../ifPhyType='ATM'";
+            type ifmatmScramble;
+            default "disabled";
+            description
+              "ATM Broadcast.";
+            ext:allowDelete "true";
+          }
+        }
+        container atmScramble {
+          description
+            "Interface scramble.";
+          leaf scramble {
+            when "not(../../ifPhyType!='Serial' and ../../ifPhyType!='Trunk-Serial' or ../../ifType!='mainIf')";
+            type ifmatmScramble;
+            default "enabled";
+            description
+              "Interface scramble.";
+            ext:allowDelete "true";
+          }
+        }
+        container atmStatistic {
+          config false;
+          description
+            "ATM statistic.";
+          leaf inBitRate {
+            type uint64;
+            config false;
+            description
+              "Rate of inputting bit.";
+          }
+          leaf outBitRate {
+            type uint64;
+            config false;
+            description
+              "Rate of outputting bit.";
+          }
+          leaf inCellRate {
+            type uint64;
+            config false;
+            description
+              "Rate of inputting cells.";
+          }
+          leaf outCellRate {
+            type uint64;
+            config false;
+            description
+              "Rate of outputting cells.";
+          }
+          leaf inCells {
+            type uint64;
+            config false;
+            description
+              "Input cells.";
+          }
+          leaf outCells {
+            type uint64;
+            config false;
+            description
+              "Output cells.";
+          }
+          leaf inDropped {
+            type uint64;
+            config false;
+            description
+              "Input dropped cells.";
+          }
+          leaf outDropped {
+            type uint64;
+            config false;
+            description
+              "Output dropped cells.";
+          }
+          leaf inErrors {
+            type uint64;
+            config false;
+            description
+              "Input error cells.";
+          }
+          leaf inCrc {
+            type uint64;
+            config false;
+            description
+              "Input CRC error cells.";
+          }
+          leaf sendOam {
+            type uint64;
+            config false;
+            description
+              "Send oam Cells.";
+          }
+          leaf receiveOam {
+            type uint64;
+            config false;
+            description
+              "Receive oam cells.";
+          }
+          leaf inSlcError {
+            type uint64;
+            config false;
+            description
+              "Receive slc error cells.";
+          }
+          leaf inParityErr {
+            type uint64;
+            config false;
+            description
+              "Receive parity error cells.";
+          }
+          leaf inMisMatchErr {
+            type uint64;
+            config false;
+            description
+              "Receive mismatch error cells.";
+          }
+          leaf inTotalErr {
+            type uint64;
+            config false;
+            description
+              "Receive total error cells.";
+          }
+          leaf txCorrectCell {
+            type uint64;
+            config false;
+            description
+              "Send Correct Cells.";
+          }
+          leaf txIdleCell {
+            type uint64;
+            config false;
+            description
+              "Send Idle Cells.";
+          }
+          leaf rxCorrectCell {
+            type uint64;
+            config false;
+            description
+              "Receive Correct Cells.";
+          }
+          leaf rxIdleCell {
+            type uint64;
+            config false;
+            description
+              "Receive Idle Cells.";
+          }
+          leaf rxCorrectedCell {
+            type uint64;
+            config false;
+            description
+              "Receive Corrected Cells.";
+          }
+          leaf rxUnCorrectedCell {
+            type uint64;
+            config false;
+            description
+              "Receive UnCorrected Cells.";
+          }
+          leaf inBytes {
+            type uint64;
+            config false;
+            description
+              "Input Bytes.";
+          }
+          leaf outBytes {
+            type uint64;
+            config false;
+            description
+              "Output Bytes.";
+          }
+          leaf rxPktRate {
+            type uint64;
+            config false;
+            description
+              "Receive Packets Rate.";
+          }
+          leaf txPktRate {
+            type uint64;
+            config false;
+            description
+              "Send Packets Rate.";
+          }
+          leaf rxPkts {
+            type uint64;
+            config false;
+            description
+              "Receive Packets.";
+          }
+          leaf rxDropPkts {
+            type uint64;
+            config false;
+            description
+              "Receive Dropped Packets.";
+          }
+          leaf txPkts {
+            type uint64;
+            config false;
+            description
+              "Send Packets.";
+          }
+          leaf txDropPkts {
+            type uint64;
+            config false;
+            description
+              "Send Dropped Packets.";
+          }
+        }
+        container atmPvcs {
+          description
+            "ATM interface PVCs.";
+          list atmPvc {
+            when "not(../../ifType='mainIf' and ../../ifPhyType!='Trunk-Serial' and ../../ifPhyType!='Global-Ima-Group' and ../../ifPhyType!='ATM' or ../../ifType='mainIf' and ../../ifPhyType='Global-Ima-Group' or ../../ifType='mainIf' and ../../ifPhyType='Trunk-Serial') or ../../ifType='mainIf' and ../../ifPhyType='ATM' or ../../ifType='subIf' and ../../ifPhyType!='Trunk-Serial' and ../../ifPhyType!='Global-Ima-Group' and ../../ifPhyType!='ATM' or ../../ifType='subIf' and ../../ifPhyType='ATM' or ../../ifType='subIf' and ../../ifPhyType='Global-Ima-Group' or ../../ifType='subIf' and ../../ifPhyType='Trunk-Serial'";
+            key "vpi vci";
+            max-elements "32";
+            description
+              "ATM interface PVC.";
+            leaf vpi {
+              type uint32 {
+                range "0..4095";
+              }
+              description
+                "PVC VPI.";
+            }
+            leaf vci {
+              type uint32 {
+                range "0..65535";
+              }
+              description
+                "PVC VCI.";
+            }
+            leaf atmPvcName {
+              type string {
+                length "1..16";
+              }
+              mandatory true;
+              description
+                "PVC name.";
+              ext:allowDelete "true";
+            }
+            leaf ifState {
+              type ifmatmIfStateType;
+              config false;
+              description
+                "Interface status.";
+            }
+            leaf atmPvcState {
+              type ifmatmPvcStateType;
+              default "up";
+              config false;
+              description
+                "PVC status.";
+            }
+            leaf atmBidirectional {
+              type ifmatmMapType;
+              must "not(../../../ifPhyType='ATM') or (../../../ifPhyType='ATM' and (../atmBidirectional='none' or ../atmBidirectional='directional') )";
+              default "none";
+              description
+                "PVC mapping type.";
+            }
+            leaf mapVpi {
+              when "not(../atmBidirectional='none' or not(../atmBidirectional)) or ../atmBidirectional='bidirectional' or ../atmBidirectional='directional'";
+              type uint32 {
+                range "0..4095";
+              }
+              mandatory true;
+              description
+                "Map VPI.";
+              ext:allowDelete "false";
+            }
+            leaf mapVci {
+              when "not(../atmBidirectional='none' or not(../atmBidirectional)) or ../atmBidirectional='bidirectional' or ../atmBidirectional='directional'";
+              type uint32 {
+                range "0..65535";
+              }
+              mandatory true;
+              description
+                "Map VCI. The VCI value ranges from 0 to 2 and 5 to 65535.";
+              ext:allowDelete "false";
+            }
+            leaf atmInServiceName {
+              type leafref {
+                path "/ifmatm/atmGlobalServices/atmGlobalService/atmServiceName";
+              }
+              mandatory true;
+              description
+                "Name of the input service bound to the PVC.";
+              ext:allowDelete "true";
+            }
+            leaf atmOutServiceName {
+              type leafref {
+                path "/ifmatm/atmGlobalServices/atmGlobalService/atmServiceName";
+              }
+              mandatory true;
+              description
+                "Name of the output service bound to the PVC.";
+              ext:allowDelete "true";
+            }
+            leaf atmEncapsulation {
+              when "not(../../../ifPhyType!='ATM') or ../../../atmCellTrans='Disable'";
+              type ifmatmEncapType;
+              description
+                "PVC Encapsulation.";
+              ext:allowDelete "true";
+            }
+            leaf description {
+              type string {
+                length "1..242";
+              }
+              description
+                "PVC description.";
+              ext:allowDelete "true";
+            }
+            leaf shutdown {
+              type ifmatmAdminStaType;
+              description
+                "PVC admin state.";
+              ext:allowDelete "true";
+            }
+            leaf priority {
+              when "not(../../../ifPhyType!='ATM')";
+              type uint16 {
+                range "1..7";
+              }
+              description
+                "PVC Priority.";
+              ext:allowDelete "true";
+            }
+            container pvcStatistic {
+              config false;
+              description
+                "PVC Statistic.";
+              leaf inputRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of inputting bit.";
+              }
+              leaf outputRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of outputting bit.";
+              }
+              leaf inputCells {
+                type uint64;
+                config false;
+                description
+                  "Input cells.";
+              }
+              leaf outputCells {
+                type uint64;
+                config false;
+                description
+                  "Output cells.";
+              }
+              leaf inputDropped {
+                type uint64;
+                config false;
+                description
+                  "Input dropped cells.";
+              }
+              leaf outputDropped {
+                type uint64;
+                config false;
+                description
+                  "Output dropped cells.";
+              }
+              leaf inputError {
+                type uint64;
+                config false;
+                description
+                  "Input error cells.";
+              }
+              leaf outputError {
+                type uint64;
+                config false;
+                description
+                  "Output error cells.";
+              }
+              leaf inputPkts {
+                type uint64;
+                config false;
+                description
+                  "Input Packets.";
+              }
+              leaf outputPkts {
+                type uint64;
+                config false;
+                description
+                  "Output Packets.";
+              }
+              leaf inputBytes {
+                type uint64;
+                config false;
+                description
+                  "Input Bytes.";
+              }
+              leaf outputBytes {
+                type uint64;
+                config false;
+                description
+                  "Output Bytes.";
+              }
+              leaf inputPktErr {
+                type uint64;
+                config false;
+                description
+                  "Input Error Packets.";
+              }
+              leaf outputPktErr {
+                type uint64;
+                config false;
+                description
+                  "Output Error Packets.";
+              }
+              leaf inputPktDropped {
+                type uint64;
+                config false;
+                description
+                  "Input Dropped Packets.";
+              }
+              leaf outputPktDropped {
+                type uint64;
+                config false;
+                description
+                  "Output Dropped Packets.";
+              }
+            }
+            container atmStatMapIps {
+              description
+                "Static Map Ip";
+              list atmStatMapIp {
+                when "not(../../../../ifPhyType!='ATM')";
+                key "ipAddress";
+                max-elements "512";
+                description
+                  "Static Map Ip";
+                leaf ipAddress {
+                  type inet:ipv4-address-no-zone;
+                  description
+                    "Remote IP Address";
+                }
+                leaf broadcast {
+                  type ifmatmBool;
+                  description
+                    "Enable Broadcast";
+                  ext:allowDelete "true";
+                }
+                leaf mapState {
+                  type ifmatmMapStateType;
+                  config false;
+                  description
+                    "Map State";
+                }
+              }
+            }
+            container atmInarpMapIp {
+              description
+                "Inarp Map";
+              leaf ipAddress {
+                type inet:ipv4-address-no-zone;
+                config false;
+                description
+                  "Remote IP Address";
+              }
+              leaf inarpEnable {
+                when "not(../../../../ifPhyType!='ATM')";
+                type ifmatmBool;
+                default "Disable";
+                description
+                  "Enable Inarp";
+                ext:allowDelete "false";
+              }
+              leaf minutes {
+                when "not(../../../../ifPhyType!='ATM' or ../inarpEnable='Disable') or ../inarpEnable='Enable'";
+                type uint16 {
+                  range "1..600";
+                }
+                description
+                  "Inarp Timer Interval(seconds)";
+                ext:allowDelete "true";
+              }
+              leaf broadcast {
+                when "not(../../../../ifPhyType!='ATM' or ../inarpEnable='Disable') or ../inarpEnable='Enable'";
+                type ifmatmBool;
+                description
+                  "Enable Broadcast";
+                ext:allowDelete "true";
+              }
+              leaf mapState {
+                type ifmatmMapStateType;
+                config false;
+                description
+                  "Map State";
+              }
+            }
+          }
+        }
+        container atmPvps {
+          description
+            "ATM interface PVPs.";
+          list atmPvp {
+            when "not(../../ifType='mainIf' and ../../ifPhyType!='Trunk-Serial' and ../../ifPhyType!='Global-Ima-Group' and ../../ifPhyType!='ATM' or ../../ifType='mainIf' and ../../ifPhyType='ATM' or ../../ifType='mainIf' and ../../ifPhyType='Global-Ima-Group' or ../../ifType='mainIf' and ../../ifPhyType='Trunk-Serial') or ../../ifType='subIf' and ../../ifPhyType!='Trunk-Serial' and ../../ifPhyType!='Global-Ima-Group' and ../../ifPhyType!='ATM' or ../../ifType='subIf' and ../../ifPhyType='ATM' or ../../ifType='subIf' and ../../ifPhyType='Global-Ima-Group' or ../../ifType='subIf' and ../../ifPhyType='Trunk-Serial'";
+            key "vpi";
+            max-elements "32";
+            description
+              "ATM interface PVP.";
+            leaf vpi {
+              type uint32 {
+                range "0..4095";
+              }
+              description
+                "PVP channel.";
+            }
+            leaf ifState {
+              type ifmatmIfStateType;
+              config false;
+              description
+                "Interface status.";
+            }
+            leaf atmPvcState {
+              type ifmatmPvpStateType;
+              config false;
+              description
+                "PVP status.";
+            }
+            leaf atmBidirectional {
+              type ifmatmMapType;
+              must "not(../../../ifPhyType='ATM') or (../../../ifPhyType='ATM' and (../atmBidirectional='none' or ../atmBidirectional='directional') )";
+              default "none";
+              description
+                "PVP mapping type.";
+            }
+            leaf atmMapPvp {
+              when "not(../atmBidirectional='none' or not(../atmBidirectional)) or ../atmBidirectional='bidirectional' or ../atmBidirectional='directional'";
+              type uint16 {
+                range "0..4095";
+              }
+              mandatory true;
+              description
+                "Map PVP.";
+              ext:allowDelete "false";
+            }
+            leaf atmInServiceName {
+              type leafref {
+                path "/ifmatm/atmGlobalServices/atmGlobalService/atmServiceName";
+              }
+              mandatory true;
+              description
+                "Name of the input service bound to the PVP.";
+              ext:allowDelete "true";
+            }
+            leaf atmOutServiceName {
+              type leafref {
+                path "/ifmatm/atmGlobalServices/atmGlobalService/atmServiceName";
+              }
+              mandatory true;
+              description
+                "Name of the output service bound to the PVP.";
+              ext:allowDelete "true";
+            }
+            leaf shutdown {
+              type ifmatmAdminStaType;
+              description
+                "PVP admin state.";
+              ext:allowDelete "true";
+            }
+            leaf priority {
+              when "not(../../../ifPhyType!='ATM')";
+              type uint16 {
+                range "1..7";
+              }
+              description
+                "PVP Priority";
+              ext:allowDelete "true";
+            }
+            container pvpStatistic {
+              config false;
+              description
+                "PVP Statistic.";
+              leaf inputRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of inputting bit.";
+              }
+              leaf outputRate {
+                type uint64;
+                config false;
+                description
+                  "Rate of outputting bit.";
+              }
+              leaf inputCells {
+                type uint64;
+                config false;
+                description
+                  "Input cells.";
+              }
+              leaf outputCells {
+                type uint64;
+                config false;
+                description
+                  "Output cells.";
+              }
+              leaf inputDropped {
+                type uint64;
+                config false;
+                description
+                  "Input dropped cells.";
+              }
+              leaf outputDropped {
+                type uint64;
+                config false;
+                description
+                  "Output dropped cells.";
+              }
+              leaf outputIdle {
+                type uint64;
+                config false;
+                description
+                  "Output idle cells.";
+              }
+              leaf inputBytes {
+                type uint64;
+                config false;
+                description
+                  "Input Bytes.";
+              }
+              leaf outputBytes {
+                type uint64;
+                config false;
+                description
+                  "Output Bytes.";
+              }
+              leaf inputError {
+                type uint64;
+                config false;
+                description
+                  "Input Error Cells.";
+              }
+              leaf outputError {
+                type uint64;
+                config false;
+                description
+                  "Output Error Cells.";
+              }
+            }
+          }
+        }
+      }
+    }
+    container atmPwAlarmCfgs {
+      description
+        "ATM PW Thresholds.";
+      list atmPwAlarmCfg {
+        key "ifName";
+        description
+          "ATM PW threshold instance.";
+        leaf ifName {
+          type leafref {
+            path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+          }
+          description
+            "Interface name.";
+        }
+        leaf losPktExcTriggerThreshold {
+          type uint16 {
+            range "1..1000";
+          }
+          default "100";
+          description
+            "Packet loss alarm trigger threshold.";
+          ext:allowDelete "true";
+        }
+        leaf losPktExcResumeThreshold {
+          type uint16 {
+            range "1..1000";
+          }
+          default "1";
+          description
+            "Packet loss alarm resume threshold.";
+          ext:allowDelete "true";
+        }
+        leaf misorderPktExcTriggerThreshold {
+          type uint16 {
+            range "1..1000";
+          }
+          default "100";
+          description
+            "Packet disorder alarm trigger threshold.";
+          ext:allowDelete "true";
+        }
+        leaf misorderPktExcResumeThreshold {
+          type uint16 {
+            range "1..1000";
+          }
+          default "1";
+          description
+            "Packet disorder alarm resume threshold.";
+          ext:allowDelete "true";
+        }
+        leaf unkownPktExcTriggerThreshold {
+          type uint16 {
+            range "1..1000";
+          }
+          default "100";
+          description
+            "Error packet alarm trigger threshold.";
+          ext:allowDelete "true";
+        }
+        leaf unkownPktExcResumeThreshold {
+          type uint16 {
+            range "1..1000";
+          }
+          default "1";
+          description
+            "Error packet alarm resume threshold.";
+          ext:allowDelete "true";
+        }
+      }
+    }
+  }
+}

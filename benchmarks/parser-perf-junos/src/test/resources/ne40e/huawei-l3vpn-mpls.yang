@@ -1,0 +1,125 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-l3vpn-mpls {
+  belongs-to huawei-l3vpn {
+    prefix l3vpn;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-l3vpn-mpls-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "the submodule of the l3vpn:l3vpn_mpls";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  grouping vrf_vrfttlmode_type {
+    description
+      "";
+    leaf ttlMode {
+      type l3vpnTtlMode;
+      default "pipe";
+      description
+        "TTL mode value. ";
+      ext:allowDelete "true";
+    }
+  }
+  grouping vrf_vrfpipe_type {
+    description
+      "";
+    leaf isPipeMode {
+      type boolean;
+      default "false";
+      description
+        "Is pipe mode. ";
+      ext:allowDelete "true";
+    }
+    leaf pipeMode {
+      when "not(../isPipeMode='true' and ../ingPipeMode='uniform' and ../egPipeMode='uniform' or ../isPipeMode='true') or ../isPipeMode='false'";
+      type l3vpnPipeMode;
+      default "uniform";
+      description
+        "Pipe mode. ";
+      ext:allowDelete "true";
+    }
+    leaf ingPipeMode {
+      when "not(../isPipeMode='false') or ../isPipeMode='true'";
+      type l3vpnIngPipeMode;
+      default "uniform";
+      description
+        "Ingress pipe mode. ";
+      ext:allowDelete "true";
+    }
+    leaf serviceClass {
+      type l3vpnServiceClass;
+      default "be";
+      description
+        "CoS.";
+      ext:allowDelete "true";
+    }
+    leaf color {
+      type l3vpnColor;
+      default "green";
+      description
+        "Color.";
+      ext:allowDelete "true";
+    }
+    leaf egPipeMode {
+      when "not(../isPipeMode='false') or ../isPipeMode='true'";
+      type l3vpnEgPipeMode;
+      default "uniform";
+      description
+        "Egress pipe mode. ";
+      ext:allowDelete "true";
+    }
+    leaf dsName {
+      when "not(../egPipeMode='pipe' or ../egPipeMode='uniform' or ../ingPipeMode='pipe' or ../ingPipeMode='shortPipe' and ../isPipeMode='true' or ../ingPipeMode='shortPipe' or ../ingPipeMode='uniform' or ../isPipeMode='false' and ../pipeMode='pipe' or ../isPipeMode='false' and ../pipeMode='uniform' or ../isPipeMode='true' and ../ingPipeMode='uniform' and ../egPipeMode='uniform' or ../isPipeMode='true' or ../pipeMode='pipe' or ../pipeMode='uniform' or not(../color) and ../pipeMode='pipe' or not(../serviceClass) and ../pipeMode='pipe') or ../egPipeMode='shortPipe' or ../isPipeMode='false' and ../pipeMode='shortPipe' or ../pipeMode='shortPipe' and ../isPipeMode='false' or not(../color) and ../pipeMode='shortPipe' or not(../serviceClass) and ../pipeMode='shortPipe'";
+      type l3vpnDsName {
+        length "1..31";
+      }
+      default "default";
+      description
+        "dsName";
+      ext:allowDelete "true";
+    }
+  }
+  grouping L2_arpDualSend_type {
+    description
+      "";
+    leaf arpDualEnable {
+      type boolean;
+      default "false";
+      description
+        "Enbale AP ARP Dual-Sending Packet";
+      ext:allowDelete "true";
+    }
+  }
+  grouping l3vpn_p2mpVlinkLb_type {
+    description
+      "";
+    leaf p2mpVlinkLbEnable {
+      type boolean;
+      default "false";
+      description
+        "P2MP VlinkLb Enable.";
+      ext:allowDelete "true";
+    }
+  }
+}

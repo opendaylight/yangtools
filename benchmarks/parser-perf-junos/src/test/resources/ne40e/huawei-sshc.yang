@@ -1,0 +1,420 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+module huawei-sshc {
+  namespace "http://www.huawei.com/netconf/vrp/huawei-sshc";
+  prefix sshc;
+  import huawei-pub-type {
+    prefix pub-type;
+  }
+  import huawei-ifm {
+    prefix ifm;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import huawei-extension {
+    prefix ext;
+  }
+  include huawei-sshc-action;
+  include huawei-sshc-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "SSH client";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference      "Huawei private.";
+  }
+  container sshc {
+    description
+      "SSH client";
+    container sshClient {
+      description
+        "SSH client";
+      leaf keepAliveTime {
+        type int32 {
+          range "0..3600";
+        }
+        default "0";
+        description
+          "If Client does not receive any data from Server for KeepAlive interval time, it sends first KeepAlive message to Server. Further KeepAlive messages are sent after every expiry of KeepAlive interval only for max number of times configured. If Client does not get any response from Server still, Client disconnects the current connection. 0 seconds means do not send KeepAlive message to Server.";
+        ext:allowDelete "true";
+      }
+      leaf keepAliveCount {
+        type int32 {
+          range "1..30";
+        }
+        default "3";
+        description
+          "If Client does not receive any data from Server for KeepAlive interval time, it sends first KeepAlive message to Server. Further KeepAlive messages are sent after every expiry of KeepAlive interval only for max number of times configured. If Client does not get any response from Server still, Client disconnects the current connection. By default, KeepAlive maximum count is configured to 3.";
+        ext:allowDelete "true";
+      }
+      leaf firstTimeEnable {
+        type sshcBoolType;
+        description
+          "If enabled, then RSA public key check for SSH server will be skipped for any new incoming connection. By default, it is disabled.";
+        ext:allowDelete "true";
+      }
+      leaf SrcInterface {
+        when "not(../SrcIpv4Addr)";
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+        }
+        description
+          "Source Interface name.";
+        ext:allowDelete "true";
+      }
+      leaf SrcIpv4Addr {
+        when "not(../SrcInterface)";
+        type inet:ipv4-address-no-zone;
+        description
+          "IPV4 source ip address.";
+        ext:allowDelete "true";
+      }
+      leaf vpnInstanceName {
+        type pub-type:vrfName {
+          length "1..31";
+        }
+        description
+          "Specify the VPN instance name of an MPLS VPN.";
+        ext:allowDelete "true";
+      }
+      leaf scpSrcInterface {
+        when "not(../scpSrcIpv4Addr)";
+        type leafref {
+          path "/ifm:ifm/ifm:interfaces/ifm:interface/ifm:ifName";
+        }
+        description
+          "Source Interface name.";
+        ext:allowDelete "true";
+      }
+      leaf scpSrcIpv4Addr {
+        when "not(../scpSrcInterface)";
+        type inet:ipv4-address-no-zone;
+        description
+          "IPV4 source ip address.";
+        ext:allowDelete "true";
+      }
+      leaf scpVpnInstanceName {
+        type pub-type:vrfName {
+          length "1..31";
+        }
+        description
+          "Specify the VPN instance name of an MPLS VPN.";
+        ext:allowDelete "true";
+      }
+    }
+    container sshCliKeyCfgs {
+      description
+        "SSH host name and key name configuration list";
+      list sshCliKeyCfg {
+        key "serverName pubKeyType";
+        description
+          "SSH host name and key name configuration";
+        leaf serverName {
+          type string {
+            length "1..255";
+          }
+          description
+            "Set SSH host name";
+        }
+        leaf pubKeyType {
+          type sshcPubKeyType;
+          description
+            "SSH server public key type";
+        }
+        leaf keyName {
+          type string {
+            length "1..30";
+          }
+          description
+            "Key Name";
+        }
+        leaf state {
+          type sshcMapKeyState;
+          config false;
+          description
+            "SSH server public key state";
+        }
+      }
+    }
+    container sshCCipherAlg {
+      description
+        "Encryption algorithms supported for SSHS.";
+      leaf descbc {
+        type boolean;
+        default "false";
+        description
+          "DES CBC encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf des3cbc {
+        type boolean;
+        default "false";
+        description
+          "3DES CBC encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes128cbc {
+        type boolean;
+        default "true";
+        description
+          "AES128 CBC encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes192cbc {
+        type boolean;
+        default "true";
+        description
+          "AES192 CBC encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes256cbc {
+        type boolean;
+        default "true";
+        description
+          "AES256 CBC encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes128ctr {
+        type boolean;
+        default "true";
+        description
+          "AES128 CTR encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes192ctr {
+        type boolean;
+        default "true";
+        description
+          "AES192 CTR encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes256ctr {
+        type boolean;
+        default "true";
+        description
+          "AES256 CTR encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf arcfour128 {
+        type boolean;
+        default "true";
+        description
+          "ARCFOUR128 encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf arcfour256 {
+        type boolean;
+        default "true";
+        description
+          "ARCFOUR256 encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes128gcm {
+        type boolean;
+        default "true";
+        description
+          "AES128 GCM encryption algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf aes256gcm {
+        type boolean;
+        default "true";
+        description
+          "AES256 GCM encryption algorithm.";
+        ext:allowDelete "true";
+      }
+    }
+    container sshCHMacAlg {
+      description
+        "HMAC algorithms supported for SSHS.";
+      leaf md5 {
+        type boolean;
+        default "true";
+        description
+          "MD5 Hmac Algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf md596 {
+        type boolean;
+        default "true";
+        description
+          "MD5_96 Hmac Algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf sha1 {
+        type boolean;
+        default "true";
+        description
+          "SHA1 Hmac Algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf sha196 {
+        type boolean;
+        default "true";
+        description
+          "SHA1_96 Hmac Algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf sha2256 {
+        type boolean;
+        default "true";
+        description
+          "SHA2_256 Hmac Algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf sha225696 {
+        type boolean;
+        default "true";
+        description
+          "SHA2_256_96 Hmac Algorithm.";
+        ext:allowDelete "true";
+      }
+      leaf sha2512 {
+        type boolean;
+        default "true";
+        description
+          "SHA2_512 Hmac Algorithm.";
+        ext:allowDelete "true";
+      }
+    }
+    container sshcLocalKeys {
+      description
+        "Configure RSA server key";
+      container sshcLocalKey {
+        description
+          "Configure RSA server key";
+        leaf keySize {
+          type uint32 {
+            range "512..2048";
+          }
+          description
+            "key size";
+          ext:allowDelete "false";
+        }
+        leaf passphrase {
+          type pub-type:password {
+            length "12..16";
+          }
+          description
+            "passphrase";
+          ext:allowDelete "true";
+        }
+        leaf hostKeyName {
+          type string {
+            length "0..264";
+          }
+          config false;
+          description
+            "Hostkey name";
+        }
+        leaf hostKeyCode {
+          type string {
+            length "0..4096";
+          }
+          config false;
+          description
+            "Hostkey code";
+        }
+        leaf hostKeySSH1 {
+          type string {
+            length "0..1280";
+          }
+          config false;
+          description
+            "Hostkey code in SSH1 format";
+        }
+        leaf hostKeyPEM {
+          type string {
+            length "0..1280";
+          }
+          config false;
+          description
+            "Hostkey code in PEM format";
+        }
+        leaf hostKeyOpenSSH {
+          type string {
+            length "0..1281";
+          }
+          config false;
+          description
+            "Hostkey code in OpenSSH format";
+        }
+      }
+    }
+    container sshcKexAlg {
+      description
+        "Key Exchange Algorithm";
+      leaf dhGroup14Sha1 {
+        type boolean;
+        default "true";
+        description
+          "Diffie-hellman-group14-sha1 algorithm";
+        ext:allowDelete "true";
+      }
+      leaf dhGroup1Sha1 {
+        type boolean;
+        default "true";
+        description
+          "Diffie-hellman-group1-sha1 algorithm";
+        ext:allowDelete "true";
+      }
+      leaf ecdhSha2Nistp521 {
+        type boolean;
+        default "true";
+        description
+          "Ecdh-sha2-nistp521 algorithm";
+        ext:allowDelete "true";
+      }
+      leaf ecdhSha2Nistp384 {
+        type boolean;
+        default "true";
+        description
+          "Ecdh-sha2-nistp384 algorithm";
+        ext:allowDelete "true";
+      }
+      leaf ecdhSha2Nistp256 {
+        type boolean;
+        default "true";
+        description
+          "Ecdh-sha2-nistp256 algorithm";
+        ext:allowDelete "true";
+      }
+      leaf dhGroupExchangeSha256 {
+        type boolean;
+        default "true";
+        description
+          "Diffie-hellman-group-exchange-sha256 algorithm";
+        ext:allowDelete "true";
+      }
+      leaf dhGroupExchangeSha1 {
+        type boolean;
+        default "true";
+        description
+          "Diffie-hellman-group-exchange-sha1 algorithm";
+        ext:allowDelete "true";
+      }
+      leaf sm2Kep {
+        type boolean;
+        default "true";
+        description
+          "Sm2kep-sha2-nistp256 algorithm";
+        ext:allowDelete "true";
+      }
+    }
+  }
+}

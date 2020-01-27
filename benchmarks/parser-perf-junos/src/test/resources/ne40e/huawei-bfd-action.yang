@@ -1,0 +1,48 @@
+/*
+Copyright (C) 2013-2017 Huawei Technologies Co., Ltd. All rights reserved.
+*/
+submodule huawei-bfd-action {
+  belongs-to huawei-bfd {
+    prefix bfd;
+  }
+  include huawei-bfd-type;
+  
+  organization
+    "Huawei Technologies Co.,Ltd.";
+  contact
+    "Huawei Industrial Base Bantian, Longgang Shenzhen 518129                    
+        People's Republic of China                    
+        Website: http://www.huawei.com Email: support@huawei.com";
+  description
+    "Query the maintenance information of BFD";
+  revision 2017-03-23 {
+    description
+      "Functions supported by the schema are added to the YANG file.";
+    reference
+      "Huawei private.";
+  }
+  revision 2013-01-01 {
+    description
+      "Init revision";
+    reference
+      "Huawei private.";
+  }
+  rpc bfdResetSessSta {
+    description
+      "Reset session statistics.";
+    input {
+      leaf resetType {
+        type bfdSmpDispType;
+        description
+          "Clear BFD session statistics.";
+      }
+      leaf localDiscr {
+        type uint32 {
+          range "1..16384";
+        }
+        description
+          "Local discriminator.";
+      }
+    }
+  }
+}
