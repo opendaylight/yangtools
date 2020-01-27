@@ -7,22 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.mandatory;
 
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.BaseBooleanStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class MandatoryStatementSupport extends
-        AbstractStatementSupport<Boolean, MandatoryStatement, EffectiveStatement<Boolean, MandatoryStatement>> {
+        BaseBooleanStatementSupport<MandatoryStatement, MandatoryEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.MANDATORY).build();
     private static final MandatoryStatementSupport INSTANCE = new MandatoryStatementSupport();
 
     private MandatoryStatementSupport() {
-        super(YangStmtMapping.MANDATORY);
+        super(YangStmtMapping.MANDATORY,
+            new EmptyMandatoryEffectiveStatement(new EmptyMandatoryStatement(Boolean.FALSE)),
+            new EmptyMandatoryEffectiveStatement(new EmptyMandatoryStatement(Boolean.TRUE)));
     }
 
     public static MandatoryStatementSupport getInstance() {
@@ -30,40 +34,25 @@ public final class MandatoryStatementSupport extends
     }
 
     @Override
-    public Boolean parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return ArgumentUtils.parseBoolean(ctx, value);
-    }
-
-    @Override
-    public MandatoryStatement createDeclared(final StmtContext<Boolean, MandatoryStatement, ?> ctx) {
-        final MandatoryStatement ret = new MandatoryStatementImpl(ctx);
-        if (EmptyMandatoryStatement.FALSE.equals(ret)) {
-            return EmptyMandatoryStatement.FALSE;
-        } else if (EmptyMandatoryStatement.TRUE.equals(ret)) {
-            return EmptyMandatoryStatement.TRUE;
-        } else {
-            return ret;
-        }
-    }
-
-    @Override
-    public EffectiveStatement<Boolean, MandatoryStatement> createEffective(
-            final StmtContext<Boolean, MandatoryStatement, EffectiveStatement<Boolean, MandatoryStatement>> ctx) {
-        final EffectiveStatement<Boolean, MandatoryStatement> ret = new MandatoryEffectiveStatementImpl(ctx);
-        final MandatoryStatement declared = ret.getDeclared();
-        if (declared instanceof EmptyMandatoryStatement && ret.effectiveSubstatements().isEmpty()) {
-            return ((EmptyMandatoryStatement)declared).toEffective();
-        }
-        return ret;
-    }
-
-    @Override
-    public String internArgument(final String rawArgument) {
-        return ArgumentUtils.internBoolean(rawArgument);
-    }
-
-    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    protected MandatoryStatement createDeclared(final StmtContext<Boolean, MandatoryStatement, ?> ctx,
+            final ImmutableList<? extends DeclaredStatement<?>> substatements) {
+        return new RegularMandatoryStatement(ctx.coerceStatementArgument(), substatements);
+    }
+
+    @Override
+    protected MandatoryEffectiveStatement createEffective(
+            final StmtContext<Boolean, MandatoryStatement, MandatoryEffectiveStatement> ctx,
+            final MandatoryStatement declared, final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
+        return new RegularMandatoryEffectiveStatement(declared, substatements);
+    }
+
+    @Override
+    protected MandatoryEffectiveStatement createEmptyEffective(final MandatoryStatement declared) {
+        return new EmptyMandatoryEffectiveStatement(declared);
     }
 }
